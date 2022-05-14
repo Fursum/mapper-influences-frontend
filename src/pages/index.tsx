@@ -4,6 +4,7 @@ import DarkModeToggle from "@components/DarkModeToggle";
 import styles from "@styles/pages/Home.module.css";
 
 const Home: NextPage = () => {
+
   return (
     <div className={styles.container}>
       <Head>

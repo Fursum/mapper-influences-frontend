@@ -3,12 +3,18 @@ html[data-theme="dark"] {
   --primaryColor: hsl(205, 50%, 25%);
   --secondaryColor: hsl(294, 50%, 25%);
   --textColor: hsl(0, 0%, 90%);
+
+  --cardShadow: 0 0 0 0.1rem rgba(150, 150, 150, 0.1);
+  --cardShadowHover: 0 0 0 0.2rem rgba(150, 150, 150, 0.5);
 }
 html[data-theme="light"] {
   --backgroundColor: hsl(0, 0%, 90%);
   --primaryColor: hsl(205, 100%, 50%);
   --secondaryColor: hsl(294, 100%, 50%);
   --textColor: hsl(0, 0%, 10%);
+
+  --cardShadow: 0 0.05rem 0.1rem 0.1rem rgba(0, 0, 0, 0.15);
+  --cardShadowHover: 0 0.1rem 0.2rem 0.15rem rgba(0, 0, 0, 0.2);
 }
 
 $color-primary: var(--primaryColor);
@@ -17,3 +23,6 @@ $color-secondary: var(--secondaryColor);
 
 $color-text: var(--textColor);
 $color-background: var(--backgroundColor);
+
+$color-shadow: var(--shadowColor);
+$color-shadow-hover: var(--shadowColor);

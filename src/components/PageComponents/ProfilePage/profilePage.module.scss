@@ -1,0 +1,43 @@
+.profilePage{
+
+  display:flex;
+
+  .mapperDetails{
+    flex-basis: 30%;
+    outline: 2px solid red;
+
+    .profileCard{
+      @extend %cardShadow;
+
+      display: flex;
+      padding: 1em;
+      margin: 1em;
+
+      border-radius: 0.1em;
+      
+      .mapperName{
+        display: flex;
+        margin-inline: auto;
+        margin-top: 1em;
+        height: fit-content;
+        text-align: center;
+
+        font-weight: bold;
+      }
+    }
+
+    .description{
+
+    }
+
+    .stats{
+      
+    }
+  }
+
+  .mapperInfluences{
+    flex-basis: 70%;
+    outline: solid 2px green;
+  }
+
+}
