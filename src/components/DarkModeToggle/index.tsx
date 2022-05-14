@@ -1,4 +1,4 @@
-import useToggleDarkMode from "@hooks/useToggleDarkMode";
+import useToggleDarkMode from "@hooks/useDarkMode";
 import React, { FC, useEffect } from "react";
 
 type Props = {};
