@@ -1,12 +1,11 @@
-.profilePage{
+.profilePage {
+  display: flex;
 
-  display:flex;
-
-  .mapperDetails{
+  .mapperDetails {
     flex-basis: 30%;
     outline: 2px solid red;
 
-    .profileCard{
+    .profileCard {
       @extend %cardShadow;
 
       display: flex;
@@ -14,8 +13,8 @@
       margin: 1em;
 
       border-radius: 0.1em;
-      
-      .mapperName{
+
+      .mapperName {
         display: flex;
         margin-inline: auto;
         margin-top: 1em;
@@ -26,18 +25,23 @@
       }
     }
 
-    .description{
+    .description {
+      outline: 1px solid blue;
+      min-height: 2em;
 
+      margin: 1em;
     }
 
-    .stats{
-      
+    .stats {
+      margin-inline: 1em;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5em;
     }
   }
 
-  .mapperInfluences{
+  .mapperInfluences {
     flex-basis: 70%;
     outline: solid 2px green;
   }
-
 }

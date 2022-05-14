@@ -3,6 +3,7 @@ import { Influence } from "./influence.d";
 export interface UserBase {
   id: number;
   username: string;
+  avatarUrl: string;
 }
 
 export interface User extends UserBase {
@@ -12,11 +13,10 @@ export interface User extends UserBase {
 }
 
 export type UserDetails = {
-  avatarUrl: string;
   graveyardCount: number;
   pendingCount: number;
   rankedCount: number;
   lovedCount: number;
   followerCount: number;
   subCount: number;
-}
+};

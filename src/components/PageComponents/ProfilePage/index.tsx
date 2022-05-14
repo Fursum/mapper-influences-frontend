@@ -5,15 +5,19 @@ import MapperDetails from "./MapperDetails";
 
 import styles from "./profilePage.module.scss";
 
-type Props = { userData: User };
+type Props = { userData: User; editable?: boolean };
 
-const ProfilePage: FC<Props> = ({ userData }) => {
+const ProfilePage: FC<Props> = ({ userData, editable = false }) => {
   return (
     <div className={styles.profilePage}>
       <MapperDetails
         description={userData.description}
         details={userData.details}
-        name={userData.username}
+        profileData={{
+          username: userData.username,
+          avatarUrl: userData.avatarUrl,
+          id: userData.id,
+        }}
       />
       <InfluenceList influences={userData.influences} />
     </div>

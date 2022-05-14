@@ -1,6 +1,8 @@
+import { UserBase } from "./user";
+
 export interface Influence {
-  id: number;
+  profileData: UserBase
   description: string;
-  lastUpdated: Date;
+  lastUpdated: number;
   affection: number;
 }

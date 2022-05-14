@@ -1,21 +1,21 @@
 import ProfilePhoto from "@components/ProfilePhoto";
 import React, { FC } from "react";
-import { UserDetails } from "src/types/user";
+import { UserBase, UserDetails } from "src/types/user";
 
 import styles from "./profilePage.module.scss";
 
 type Props = {
-  name: string;
+  profileData: UserBase;
   description: string;
   details: UserDetails;
 };
 
-const MapperDetails: FC<Props> = ({ name, description, details }) => {
+const MapperDetails: FC<Props> = ({ profileData, description, details }) => {
   return (
     <div className={styles.mapperDetails}>
       <div className={styles.profileCard}>
-        <ProfilePhoto photoUrl={details.avatarUrl} size="lg" />
-        <span className={styles.mapperName}>{name}</span>
+        <ProfilePhoto photoUrl={profileData.avatarUrl} size="lg" />
+        <span className={styles.mapperName}>{profileData.username}</span>
       </div>
       <div className={styles.description}>{description}</div>
       <div className={styles.stats}>

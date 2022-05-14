@@ -1,0 +1,31 @@
+$card-height: 8em;
+$card-padding: 1em;
+
+.cardWrapper {
+  display: flex;
+  position: relative;
+
+  margin: 1em;
+  padding: $card-padding;
+  padding-right: 0;
+  width: 15em;
+  max-height: $card-height;
+
+  @extend %cardShadow;
+
+  .photo{
+    margin-block: auto;
+  }
+
+  .name {
+    height: fit-content;
+    max-height: $card-height - ($card-padding * 2);
+
+    overflow-y: auto;
+    margin-left: 1em;
+    padding-right: 0.5em;
+
+    font-weight: bold;
+    word-wrap: break-word;
+  }
+}

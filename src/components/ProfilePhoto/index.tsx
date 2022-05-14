@@ -1,5 +1,5 @@
 import Image from "next/image";
-import styles from "./styles.module.scss";
+import styles from "./style.module.scss";
 
 interface Props {
   photoUrl: string | undefined;

@@ -9,9 +9,13 @@ $lg-size: calc($md-size * 4);
 }
 
 .md {
-  height: 3em;
+  min-height: 3em;
+  max-height: 3em;
+  min-width: 3em;
 }
 
 .lg {
-  height: 6em;
+  min-height: 6em;
+  max-height: 6em;
+  min-width: 6em;
 }
