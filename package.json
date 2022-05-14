@@ -10,11 +10,13 @@
   },
   "dependencies": {
     "@redux-devtools/extension": "^3.2.2",
+    "@reduxjs/toolkit": "^1.8.1",
     "next": "12.1.5",
     "next-redux-wrapper": "^7.0.5",
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "react-redux": "^8.0.0",
+    "react-select": "^5.3.2",
     "redux": "^4.1.2",
     "redux-thunk": "^2.4.1",
     "sass": "^1.50.0"
