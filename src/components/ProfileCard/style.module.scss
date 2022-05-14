@@ -11,6 +11,8 @@ $card-padding: 1em;
   width: 15em;
   max-height: $card-height;
 
+  cursor: pointer;
+
   @extend %cardShadow;
 
   .photo{

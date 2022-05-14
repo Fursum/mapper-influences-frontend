@@ -1,0 +1,26 @@
+.outerSlider{
+  height: 2em;
+  width: 3em;
+  border-radius: 1em;
+  padding: 0;
+
+  background-color: $color-text;
+
+  .innerSlider{
+    aspect-ratio: 1;
+    height: 1.25em;
+    width: 1.25em;
+    border-radius: 2em;
+    background-color: $color-background;
+
+    transition: margin 0.25s ease-out;
+
+    &.dark{
+      margin-left: 1.25em;
+    }
+
+    &.light{
+      margin-left: 0.25em;
+    }
+  }
+}

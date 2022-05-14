@@ -1,6 +1,8 @@
 import useDarkMode from "@hooks/useDarkMode";
 import React, { FC, useEffect } from "react";
 
+import styles from "./style.module.scss";
+
 type Props = {};
 
 const DarkModeToggle: FC<Props> = ({}) => {
@@ -10,7 +12,11 @@ const DarkModeToggle: FC<Props> = ({}) => {
     setMode(currentMode === "dark" ? "light" : "dark");
   };
 
-  return <button onClick={toggleMode}>Toggle Dark Mode</button>;
+  return (
+    <button className={styles.outerSlider} onClick={toggleMode}>
+      <div className={`${styles.innerSlider} ${styles[currentMode]}`} />
+    </button>
+  );
 };
 
 export default DarkModeToggle;
