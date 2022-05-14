@@ -8,6 +8,7 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 
   background-color: $color-background;
+  
 }
 
 a {
@@ -19,6 +20,8 @@ a {
   box-sizing: border-box;
 
   color: $color-text;
+  transition: background-color 0.2s ease-in, color 0.2s ease-in;
+  
 }
 
 button {
