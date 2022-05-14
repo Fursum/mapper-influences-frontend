@@ -1,0 +1,19 @@
+html[data-theme="dark"] {
+  --backgroundColor: hsl(0, 0%, 10%);
+  --primaryColor: hsl(205, 50%, 25%);
+  --secondaryColor: hsl(294, 50%, 25%);
+  --textColor: hsl(0, 0%, 90%);
+}
+html[data-theme="light"] {
+  --backgroundColor: hsl(0, 0%, 90%);
+  --primaryColor: hsl(205, 100%, 50%);
+  --secondaryColor: hsl(294, 100%, 50%);
+  --textColor: hsl(0, 0%, 10%);
+}
+
+$color-primary: var(--primaryColor);
+$color-secondary: var(--secondaryColor);
+//$color-tertiary: hsl(0, 0, 0);
+
+$color-text: var(--textColor);
+$color-background: var(--backgroundColor);
