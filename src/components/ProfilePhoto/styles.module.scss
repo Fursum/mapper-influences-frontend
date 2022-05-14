@@ -1,0 +1,17 @@
+$md-size: 24px;
+$lg-size: calc($md-size * 4);
+
+.wrapper {
+  border-radius: 10em;
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 1;
+}
+
+.md {
+  height: 3em;
+}
+
+.lg {
+  height: 6em;
+}

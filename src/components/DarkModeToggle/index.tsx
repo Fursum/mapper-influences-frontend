@@ -1,10 +1,10 @@
-import useToggleDarkMode from "@hooks/useDarkMode";
+import useDarkMode from "@hooks/useDarkMode";
 import React, { FC, useEffect } from "react";
 
 type Props = {};
 
 const DarkModeToggle: FC<Props> = ({}) => {
-  const [currentMode, setMode] = useToggleDarkMode();
+  const [currentMode, setMode] = useDarkMode();
 
   const toggleMode = () => {
     setMode(currentMode === "dark" ? "light" : "dark");

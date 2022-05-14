@@ -3,11 +3,10 @@ const path = require('path');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: [''], // Add domains here
+    domains: ['a.ppy.sh'], // Add domains here
   },
   sassOptions: {
-    includePaths: [path.join(__dirname, 'styles')],
-    prependData: `@import "extendables/index.scss";`,
+    prependData: `@import "src/styles/extendables/index.scss";`,
   },
   reactStrictMode: true,
 }

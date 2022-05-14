@@ -1,8 +1,9 @@
 import "../styles/globals.scss";
 import type { AppProps } from "next/app";
-import { wrapper, store } from "../redux/store";
+import store from "../redux/store";
 import { Provider } from "react-redux";
 import Head from "next/head";
+import Layout from "@components/Layout";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -13,10 +14,12 @@ function MyApp({ Component, pageProps }: AppProps) {
         <title>Next.js Template</title>
       </Head>
       <Provider store={store}>
-        <Component {...pageProps} />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </Provider>
     </>
   );
 }
 
-export default wrapper.withRedux(MyApp);
+export default MyApp;
