@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Influence } from "src/types/influence";
+import { Influence } from "src/libs/types/influence";
 
 import styles from "../profilePage.module.scss";
 import InfluenceElement from "./InfluenceElement";

@@ -1,6 +1,8 @@
 import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
+import Link from "next/link";
 import React, { FC } from "react";
-import { UserBase, UserDetails } from "src/types/user";
+import { osuBaseUrl } from "src/libs/consts/urls";
+import { UserBase, UserDetails } from "src/libs/types/user";
 
 import styles from "./profilePage.module.scss";
 
@@ -13,10 +15,17 @@ type Props = {
 const MapperDetails: FC<Props> = ({ profileData, description, details }) => {
   return (
     <div className={styles.mapperDetails}>
-      <div className={styles.profileCard}>
-        <ProfilePhoto photoUrl={profileData.avatarUrl} size="lg" />
-        <span className={styles.mapperName}>{profileData.username}</span>
-      </div>
+      <a
+        href={`${osuBaseUrl}profile/${profileData.id}`}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <div className={styles.profileCard}>
+          <ProfilePhoto photoUrl={profileData.avatarUrl} size="lg" />
+          <span className={styles.mapperName}>{profileData.username}</span>
+        </div>
+      </a>
+
       <div className={styles.description}>{description}</div>
       <div className={styles.stats}>
         <span>Followers: {details.followerCount}</span>

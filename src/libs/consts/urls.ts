@@ -1,0 +1,1 @@
+export const osuBaseUrl = "https://osu.ppy.sh/"

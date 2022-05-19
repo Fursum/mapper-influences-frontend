@@ -1,6 +1,6 @@
 import ProfileCard from "@components/SharedComponents/ProfileCard";
 import React, { FC } from "react";
-import { Influence } from "src/types/influence";
+import { Influence } from "src/libs/types/influence";
 import Description from "./Description";
 
 import styles from "./style.module.scss";

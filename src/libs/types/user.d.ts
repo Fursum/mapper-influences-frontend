@@ -1,4 +1,4 @@
-import { Influence } from "./influence.d";
+import { Influence } from "./influence";
 
 export interface UserBase {
   id: number;

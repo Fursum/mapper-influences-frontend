@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { User } from "src/types/user";
+import { User } from "src/libs/types/user";
 import InfluenceList from "./InfluenceList";
 import MapperDetails from "./MapperDetails";
 

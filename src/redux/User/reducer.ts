@@ -1,6 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { Status } from "src/enums/status";
-import { User } from "src/types/user";
+import { Status } from "src/libs/enums/status";
+import { User } from "src/libs/types/user";
 import { getCurrentUser } from "./action";
 
 interface StateInterface {

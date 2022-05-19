@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import { GetServerSideProps } from "next";
 import ProfilePage from "@components/PageComponents/ProfilePage";
-import { User } from "src/types/user";
+import { User } from "src/libs/types/user";
 
 type Props = {
   userData: User;
