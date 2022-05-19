@@ -1,4 +1,4 @@
-import ProfilePhoto from "@components/ProfilePhoto";
+import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
 import Link from "next/link";
 import React, { FC } from "react";
 import { UserBase } from "src/types/user";

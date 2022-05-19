@@ -1,8 +1,8 @@
-import DarkModeToggle from "@components/DarkModeToggle";
-import ProfilePhoto from "@components/ProfilePhoto";
+import DarkModeToggle from "@components/SharedComponents/DarkModeToggle";
+import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
 import Link from "next/link";
 import { useAppSelector } from "src/redux/hooks";
-import SearchBar from "../../SearchBar";
+import SearchBar from "../../SharedComponents/SearchBar";
 import styles from "./style.module.scss";
 
 export default function Header() {

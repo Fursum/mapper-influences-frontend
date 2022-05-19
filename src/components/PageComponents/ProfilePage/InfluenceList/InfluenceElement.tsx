@@ -1,4 +1,4 @@
-import ProfileCard from "@components/ProfileCard";
+import ProfileCard from "@components/SharedComponents/ProfileCard";
 import React, { FC } from "react";
 import { Influence } from "src/types/influence";
 import Description from "./Description";
