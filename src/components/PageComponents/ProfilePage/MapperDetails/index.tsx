@@ -4,7 +4,7 @@ import Stats from "./Stats";
 
 import styles from "../profilePage.module.scss";
 import ProfileCard from "./ProfileCard";
-import EditableDescription from "./EditableDescription";
+import EditableDescription from "../EditableDescription";
 
 type Props = {
   profileData: UserBase;
