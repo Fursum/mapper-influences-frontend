@@ -1,12 +1,14 @@
 import Image from "next/image";
+import { FC } from "react";
 import styles from "./style.module.scss";
 
-interface Props {
-  photoUrl: string | undefined;
+type Props = {
+  photoUrl?: string;
   size: "md" | "lg";
+  className?: string;
 }
 
-export default function ProfilePhoto({ photoUrl, size }: Props) {
+const ProfilePhoto:FC<Props> = ({ photoUrl, size }) => {
   return (
     <div className={`${styles.wrapper} ${styles[size]}`}>
       <Image
@@ -17,3 +19,5 @@ export default function ProfilePhoto({ photoUrl, size }: Props) {
     </div>
   );
 }
+
+export default ProfilePhoto

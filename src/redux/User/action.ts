@@ -10,7 +10,6 @@ export const getCurrentUser = createAsyncThunk(
       const user: User = {
         description: "",
         details: {
-          avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
           followerCount: 1,
           graveyardCount: 1,
           lovedCount: 0,
@@ -21,6 +20,7 @@ export const getCurrentUser = createAsyncThunk(
         id: 1234,
         influences: [],
         username: "Fursum",
+        avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
       };
       return user;
     } catch (err) {

@@ -2,9 +2,21 @@
   display: flex;
   position: relative;
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
 
   padding: 0.5em;
   background-color: $color-background-secondary;
+}
+
+.searchBar{
+
+}
+
+.darkMode{
+  margin-left: auto;
+  margin-right: 1em;
+}
+
+.avatar{
+
 }

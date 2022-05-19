@@ -11,7 +11,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Head>
         <meta name="description" content="" />
         <meta name="keywords" content="" />
-        <title>Next.js Template</title>
+        <title>Mapper Influences</title>
       </Head>
       <Provider store={store}>
         <Layout>

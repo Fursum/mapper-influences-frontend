@@ -9,9 +9,9 @@ export default function Header() {
 
   return (
     <div className={styles.header}>
-      <SearchBar />
-      <DarkModeToggle />
-      <ProfilePhoto photoUrl={currentUser?.details?.avatarUrl} size="md" />
+      <SearchBar className={styles.searchBar}/>
+      <DarkModeToggle className={styles.darkMode}/>
+      <ProfilePhoto className={styles.avatar} photoUrl={currentUser?.avatarUrl} size="md" />
     </div>
   );
 }

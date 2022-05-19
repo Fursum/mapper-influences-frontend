@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, FC } from "react";
 import Select, { MultiValue } from "react-select";
 
 import styles from "./styles.module.scss";
@@ -8,7 +8,11 @@ type Option = {
   readonly label: string;
 };
 
-export default function SearchBar() {
+type Props = {
+  className?: string;
+}
+
+const SearchBar:FC<Props> = ({className}) => {
   const [selectedMappers, setSelectedMappers] = useState<MultiValue<Option>>(
     []
   );
@@ -27,7 +31,7 @@ export default function SearchBar() {
   };
 
   return (
-    <div className={styles.searchBar}>
+    <div className={`${styles.searchBar} ${className}`}>
       <Select
         instanceId="searchBar"
         closeMenuOnSelect={false}
@@ -39,3 +43,5 @@ export default function SearchBar() {
     </div>
   );
 }
+
+export default SearchBar;
