@@ -1,5 +1,5 @@
 import { createAsyncThunk, createAction } from "@reduxjs/toolkit";
-import { User } from "src/libs/types/user";
+import { User } from "@libs/types/user";
 import { GET_CURRENT_USER } from "./type";
 
 export const getCurrentUser = createAsyncThunk(

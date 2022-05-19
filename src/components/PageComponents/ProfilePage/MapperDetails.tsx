@@ -1,8 +1,7 @@
-import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
-import Link from "next/link";
 import React, { FC } from "react";
-import { osuBaseUrl } from "src/libs/consts/urls";
-import { UserBase, UserDetails } from "src/libs/types/user";
+import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
+import { osuBaseUrl } from "@libs/consts/urls";
+import { UserBase, UserDetails } from "@libs/types/user";
 
 import styles from "./profilePage.module.scss";
 
