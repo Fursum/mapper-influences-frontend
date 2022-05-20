@@ -1,4 +1,4 @@
-import ProfileCard from "@components/SharedComponents/ProfileCard";
+import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
 import React, { FC } from "react";
 import { Influence } from "@libs/types/influence";
 
@@ -12,7 +12,7 @@ type Props = {
 const InfluenceElement: FC<Props> = ({ influenceData }) => {
   return (
     <div className={styles.influenceRow}>
-      <ProfileCard userData={influenceData.profileData} />
+      <BaseProfileCard userData={influenceData.profileData} />
       <EditableDescription description={influenceData.description} />
     </div>
   );

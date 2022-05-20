@@ -3,39 +3,89 @@
 
   .mapperDetails {
     flex-basis: 30%;
-    outline: 2px solid red;
+    padding: 1rem;
+
+    .avatar {
+      outline: 0.1rem solid $color-secondary;
+      z-index: 1;
+    }
 
     .profileCard {
       @extend %cardShadow;
-
       display: flex;
-      padding: 1em;
-      margin: 1em;
 
-      border-radius: 0.1em;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      width: 100%;
 
-      .mapperName {
+      background-color: $color-background-card;
+      border-radius: 0.1rem;
+
+      &:hover {
+        background-color: $color-background-card-hover;
+      }
+
+      .rightSide {
         display: flex;
-        margin-inline: auto;
-        margin-top: 1em;
-        height: fit-content;
-        text-align: center;
+        flex-direction: column;
+        position: relative;
+        width: 100%;
 
-        font-weight: bold;
+        .mapperName {
+          position: relative;
+          display: flex;
+          height: fit-content;
+          margin: 1rem;
+          margin-left: 0;
+          margin-bottom: 0.5rem;
+          width: calc(100% + 1rem); // ?????
+          justify-content: center;
+          font-weight: bold;
+        }
+
+        .mapperName::after {
+          content: "";
+          position: absolute;
+          background-color: $color-secondary;
+          height: 0.1rem;
+          top: 1.6rem;
+          left: 1rem;
+          right: 1rem;
+        }
+
+        .title{
+          text-align: center;
+          width: calc(100% + 1rem); // ?????
+        }
       }
     }
 
     .description {
-      outline: 1px solid blue;
-      min-height: 2em;
+      background-color: $color-background-card;
+      border: 0;
 
-      margin: 1em;
+      height: 5rem;
+      min-height: 2rem;
 
-      width: calc(100% - 2em);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      margin-top: 0;
+
+      width: 100%;
+      resize: none;
+
+      &.editable:hover {
+        background-color: $color-background-card-hover;
+      }
+
+      &:focus-within,
+      &:focus-visible,
+      &:focus {
+        outline: 0.1rem solid $color-primary;
+      }
     }
 
     .stats {
-      margin-inline: 1em;
       display: flex;
       flex-direction: column;
       gap: 0.5em;

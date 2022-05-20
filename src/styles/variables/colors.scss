@@ -3,8 +3,11 @@ $color-secondary: var(--secondaryColor);
 //$color-tertiary: hsl(0, 0, 0);
 
 $color-text: var(--textColor);
-$color-background: var(--backgroundColor);
-$color-background-secondary: var(--backgroundColorSecondary);
+$color-background: var(--bgColor-1);
+$color-background-content: var(--bgColor-2);
+$color-background-card: var(--bgColor-3);
+$color-background-card-hover: var(--bgColor-3-hover);
+$color-background-header: $color-primary;
 
 $color-shadow: var(--shadowColor);
 $color-shadow-hover: var(--shadowColor);

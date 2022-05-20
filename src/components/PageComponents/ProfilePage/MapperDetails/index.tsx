@@ -16,7 +16,7 @@ const MapperDetails: FC<Props> = ({ profileData, description, details }) => {
   return (
     <div className={styles.mapperDetails}>
       <ProfileCard profileData={profileData} />
-      <EditableDescription description={description} />
+      <EditableDescription description={description} editable/>
       <Stats details={details} />
     </div>
   );

@@ -4,14 +4,14 @@
   border-radius: 1em;
   padding: 0;
 
-  background-color: $color-text;
+  background-color: $color-background;
 
   .innerSlider{
     aspect-ratio: 1;
     height: 1.25em;
     width: 1.25em;
     border-radius: 2em;
-    background-color: $color-background;
+    background-color: $color-text;
 
     transition: margin 0.25s ease-out;
 

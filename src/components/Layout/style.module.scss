@@ -1,0 +1,8 @@
+.contentWrapper{
+    display: flex;
+    flex-direction: column;
+    max-width: $screen-size;
+    margin-inline: auto;
+    margin-top: 1rem;
+    background: $color-background-content;
+}

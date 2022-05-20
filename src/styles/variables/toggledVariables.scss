@@ -1,18 +1,22 @@
 // This is only imported in globals.scss
 
 html[data-theme="dark"] {
-  --backgroundColor: hsl(252, 19%, 15%);
-  --backgroundColorSecondary: hsl(255, 20%, 20%);
+  --bgColor-1: hsl(252, 10%, 10%);
+  --bgColor-2: hsl(252, 19%, 15%);
+  --bgColor-3: hsl(255, 20%, 20%);
+  --bgColor-3-hover: hsl(255, 20%, 23%);
+  --bgColorContent: hsl(255, 11%, 15%);
   --primaryColor: hsl(205, 50%, 25%);
   --secondaryColor: hsl(294, 50%, 25%);
   --textColor: hsl(0, 0%, 90%);
 
-  --cardShadow: 0 0 0 0.1rem rgba(150, 150, 150, 0.1);
-  --cardShadowHover: 0 0 0 0.2rem rgba(150, 150, 150, 0.5);
+  --cardShadow: 0 0 0 0.05rem rgba(150, 150, 150, 0.5);
+  --cardShadowHover: 0 0 0 0.1rem rgba(150, 150, 150, 0.9);
 }
 html[data-theme="light"] {
-  --backgroundColor: hsl(0, 0%, 100%);
-  --backgroundColorSecondary: hsl(319, 25%, 76%);
+  --bgColor-1: hsl(0, 0%, 100%);
+  --bgColor-2: hsl(319, 25%, 76%);
+  --bgColor-3: hsl(255, 20%, 20%);
   --primaryColor: hsl(205, 100%, 50%);
   --secondaryColor: hsl(294, 100%, 50%);
   --textColor: hsl(0, 0%, 10%);

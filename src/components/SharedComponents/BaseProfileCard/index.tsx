@@ -7,7 +7,7 @@ import styles from "./style.module.scss";
 
 type Props = { userData: UserBase };
 
-const ProfileCard: FC<Props> = ({ userData }) => {
+const BaseProfileCard: FC<Props> = ({ userData }) => {
   return (
     <Link href={`/profile/${userData.id}`} passHref={true}>
       <div className={styles.cardWrapper}>
@@ -20,4 +20,4 @@ const ProfileCard: FC<Props> = ({ userData }) => {
   );
 };
 
-export default ProfileCard;
+export default BaseProfileCard;
