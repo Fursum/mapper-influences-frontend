@@ -1,7 +1,7 @@
 # Credits
 
 ## Frontend / Design
-- Me
+- [Fursum](https://github.com/Fursum)
 - [Skytuna](https://github.com/Skytuna)
 - [Coderbora](https://github.com/Coderbora)
 
