@@ -12,7 +12,7 @@ const BaseProfileCard: FC<Props> = ({ userData }) => {
     <Link href={`/profile/${userData.id}`} passHref={true}>
       <div className={styles.cardWrapper}>
         <div className={styles.photo}>
-          <ProfilePhoto photoUrl={userData.avatarUrl} size="md" />
+          <ProfilePhoto photoUrl={userData.avatarUrl} size="lg" />
         </div>
         <span className={styles.name}>{userData.username}</span>
       </div>

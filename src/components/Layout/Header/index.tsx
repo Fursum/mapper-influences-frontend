@@ -26,6 +26,7 @@ export default function Header() {
             className={styles.avatar}
             photoUrl={currentUser?.avatarUrl}
             size="md"
+            circle
           />
         </a>
       </Link>

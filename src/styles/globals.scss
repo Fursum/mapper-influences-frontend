@@ -30,3 +30,18 @@ button {
 
   cursor: pointer;
 }
+
+*::-webkit-scrollbar{
+  color: transparent;
+  width: 0.25rem;
+  height: 0.25rem;
+  margin: 0.25rem;
+  
+}
+*::-webkit-scrollbar-thumb{
+  background-color: $color-primary;
+  border-radius: 5rem;
+  
+}
+
+

@@ -21,6 +21,7 @@ const ProfileInfo: FC<Props> = ({ profileData }) => {
           photoUrl={profileData.avatarUrl}
           size="xl"
           className={styles.avatar}
+          circle
         />
       </a>
       <a

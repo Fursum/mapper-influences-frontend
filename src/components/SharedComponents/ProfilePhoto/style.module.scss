@@ -1,12 +1,15 @@
 $md-size: 2rem;
-$lg-size: calc($md-size * 3);
+$lg-size: calc($md-size * 2);
 $xl-size: calc($md-size * 6);
 
 .wrapper {
-  border-radius: 10em;
   overflow: hidden;
   position: relative;
   aspect-ratio: 1;
+}
+
+.circle {
+  border-radius: 99rem;
 }
 
 .md {

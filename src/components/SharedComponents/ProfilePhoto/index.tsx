@@ -6,11 +6,16 @@ type Props = {
   photoUrl?: string;
   size: "md" | "lg" | "xl";
   className?: string;
-}
+  circle?: boolean;
+};
 
-const ProfilePhoto:FC<Props> = ({ photoUrl, size, className }) => {
+const ProfilePhoto: FC<Props> = ({ photoUrl, size, className, circle }) => {
   return (
-    <div className={`${styles.wrapper} ${styles[size]} ${className}`}>
+    <div
+      className={`${styles.wrapper} ${styles[size]} ${className} ${
+        circle ? styles.circle : ""
+      }`}
+    >
       <Image
         src={photoUrl || "/defaultAvatar.png"}
         alt="Avatar Image"
@@ -18,6 +23,6 @@ const ProfilePhoto:FC<Props> = ({ photoUrl, size, className }) => {
       />
     </div>
   );
-}
+};
 
-export default ProfilePhoto
+export default ProfilePhoto;

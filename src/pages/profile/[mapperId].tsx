@@ -2,6 +2,7 @@ import { NextPage } from "next";
 import { GetServerSideProps } from "next";
 import ProfilePage from "@components/PageComponents/ProfilePage";
 import { User } from "@libs/types/user";
+import { InfluenceTypeEnum } from "@libs/types/influence";
 
 type Props = {
   userData: User;
@@ -36,9 +37,19 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         profileData: {
           avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
           id: 12345,
-          username: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          username: "Fursum",
         },
-        affection: 50,
+        type: InfluenceTypeEnum.respect,
+        description: "",
+        lastUpdated: Date.now(),
+      },
+      {
+        profileData: {
+          avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
+          id: 12345,
+          username: "Longernamelonger",
+        },
+        type: InfluenceTypeEnum.respect,
         description: "",
         lastUpdated: Date.now(),
       },

@@ -1,33 +1,51 @@
-$card-height: 8em;
-$card-padding: 1em;
+$card-height: 5em;
+$card-width: 15em;
 
 .cardWrapper {
   display: flex;
   position: relative;
+  align-items: center;
+  border-radius: 0.25rem;
+  width: $card-width;
 
   margin: 1em;
-  padding: $card-padding;
   padding-right: 0;
-  width: 15em;
-  max-height: $card-height;
+  overflow: hidden;
 
   cursor: pointer;
 
   @extend %cardShadow;
 
   .photo{
-    margin-block: auto;
+    position: relative;
+  }
+
+  .photo::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0) 50%, $color-background-content 100%);
   }
 
   .name {
+    position: absolute;
     height: fit-content;
-    max-height: $card-height - ($card-padding * 2);
-
-    overflow-y: auto;
+    width: 90%;
+    max-height: $card-height;
+    
+    right: 0;
+    top: 1em;
     margin-left: 1em;
     padding-right: 0.5em;
+    
+    overflow-y: auto;
 
-    font-weight: bold;
-    word-wrap: break-word;
+    text-align: right;
+    font-weight: 500;
+    text-shadow:
+    -1px -1px 0 $color-background-content,  
+     1px -1px 0 $color-background-content,
+     -1px 1px 0 $color-background-content,
+      1px 1px 0 $color-background-content;
   }
 }

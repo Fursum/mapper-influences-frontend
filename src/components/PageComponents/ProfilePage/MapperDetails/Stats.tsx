@@ -2,6 +2,7 @@ import { UserDetails } from "@libs/types/user";
 import { FC } from "react";
 
 import styles from "../profilePage.module.scss";
+import Pill from "./Pill";
 
 type Props = {
   details: UserDetails;
@@ -9,14 +10,18 @@ type Props = {
 
 const Stats: FC<Props> = ({ details }) => {
   return (
-    <div className={styles.stats}>
-      <span>Followers: {details.followerCount}</span>
-      <span>Subscribers: {details.subCount}</span>
-      <span>Ranked Maps: {details.rankedCount}</span>
-      <span>Loved Maps: {details.lovedCount}</span>
-      <span>Pending Maps: {details.pendingCount}</span>
-      <span>Graved Maps: {details.graveyardCount}</span>
-    </div>
+    <>
+      <div className={styles.followers}>
+        <Pill type="Followers" count={details.followerCount} />
+        <Pill type="Subscribers" count={details.subCount} />
+      </div>
+      <div className={styles.stats}>
+        <Pill type="Ranked" count={details.rankedCount} />
+        <Pill type="Loved" count={details.lovedCount} />
+        <Pill type="Pending" count={details.pendingCount} />
+        <Pill type="Graved" count={details.graveyardCount} />
+      </div>
+    </>
   );
 };
 
