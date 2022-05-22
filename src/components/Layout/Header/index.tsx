@@ -20,7 +20,7 @@ export default function Header() {
     <div className={styles.header}>
       <SearchBar className={styles.searchBar} />
       <DarkModeToggle className={styles.darkMode} />
-      <Link href={"/profile"} passHref>
+      <Link href={"/profile"} passHref prefetch>
         <a>
           <ProfilePhoto
             className={styles.avatar}
