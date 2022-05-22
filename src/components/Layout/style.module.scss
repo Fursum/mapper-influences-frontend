@@ -1,9 +1,11 @@
-.contentWrapper {
-  display: flex;
-  flex-direction: column;
+.contentCenterer {
   max-width: $screen-size;
   margin-inline: auto;
-  margin: 1rem;
+  .contentWrapper {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem;
+  }
 }
 
 .header {

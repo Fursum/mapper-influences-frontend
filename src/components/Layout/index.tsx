@@ -11,7 +11,9 @@ const Layout: FC<Props> = ({ children }) => {
   return (
     <>
       <Header />
-      <main className={styles.contentWrapper}>{children}</main>
+      <div className={styles.contentCenterer}>
+        <main className={styles.contentWrapper}>{children}</main>
+      </div>
     </>
   );
 };

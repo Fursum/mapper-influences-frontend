@@ -12,7 +12,6 @@ export default function Header() {
   const currentUser = useAppSelector((s) => s.user.currentUser.data);
 
   useEffect(() => {
-    
     dispatch(getCurrentUser("1234"));
   }, []);
 
@@ -20,7 +19,7 @@ export default function Header() {
     <div className={styles.header}>
       <SearchBar className={styles.searchBar} />
       <DarkModeToggle className={styles.darkMode} />
-      <Link href={"/profile"} passHref prefetch>
+      <Link href={"/profile"} passHref>
         <a>
           <ProfilePhoto
             className={styles.avatar}
