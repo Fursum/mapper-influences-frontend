@@ -1,8 +1,28 @@
-.contentWrapper{
-    display: flex;
-    flex-direction: column;
-    max-width: $screen-size;
-    margin-inline: auto;
-    margin-top: 1rem;
-    background: $color-background-content;
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+  max-width: $screen-size;
+  margin-inline: auto;
+  margin: 1rem;
+}
+
+.header {
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  align-items: center;
+
+  padding: 0.5em;
+  background-color: $color-background-header;
+}
+
+.searchBar {
+}
+
+.darkMode {
+  margin-left: auto;
+  margin-right: 1em;
+}
+
+.avatar {
 }

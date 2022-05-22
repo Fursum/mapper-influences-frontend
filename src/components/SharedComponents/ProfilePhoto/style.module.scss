@@ -1,5 +1,6 @@
-$md-size: 24px;
-$lg-size: calc($md-size * 4);
+$md-size: 2rem;
+$lg-size: calc($md-size * 3);
+$xl-size: calc($md-size * 6);
 
 .wrapper {
   border-radius: 10em;
@@ -9,13 +10,19 @@ $lg-size: calc($md-size * 4);
 }
 
 .md {
-  min-height: 3em;
-  max-height: 3em;
-  min-width: 3em;
+  min-height: $md-size;
+  max-height: $md-size;
+  min-width: $md-size;
 }
 
 .lg {
-  min-height: 6em;
-  max-height: 6em;
-  min-width: 6em;
+  min-height: $lg-size;
+  max-height: $lg-size;
+  min-width: $lg-size;
+}
+
+.xl {
+  min-height: $xl-size;
+  max-height: $xl-size;
+  min-width: $xl-size;
 }

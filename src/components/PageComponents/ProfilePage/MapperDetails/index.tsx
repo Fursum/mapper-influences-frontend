@@ -3,7 +3,7 @@ import { UserBase, UserDetails } from "@libs/types/user";
 import Stats from "./Stats";
 
 import styles from "../profilePage.module.scss";
-import ProfileCard from "./ProfileCard";
+import ProfileInfo from "./ProfileInfo";
 import EditableDescription from "../EditableDescription";
 
 type Props = {
@@ -15,7 +15,7 @@ type Props = {
 const MapperDetails: FC<Props> = ({ profileData, description, details }) => {
   return (
     <div className={styles.mapperDetails}>
-      <ProfileCard profileData={profileData} />
+      <ProfileInfo profileData={profileData} />
       <EditableDescription description={description} editable/>
       <Stats details={details} />
     </div>

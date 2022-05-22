@@ -4,7 +4,7 @@ import styles from "./style.module.scss";
 
 type Props = {
   photoUrl?: string;
-  size: "md" | "lg";
+  size: "md" | "lg" | "xl";
   className?: string;
 }
 
