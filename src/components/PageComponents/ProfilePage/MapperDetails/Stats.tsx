@@ -1,7 +1,7 @@
 import { UserDetails } from "@libs/types/user";
 import { FC } from "react";
 
-import styles from "../profilePage.module.scss";
+import styles from "./style.module.scss";
 import Pill from "./Pill";
 
 type Props = {

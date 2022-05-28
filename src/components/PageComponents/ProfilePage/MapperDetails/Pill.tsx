@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { FC } from "react";
 
-import styles from "../profilePage.module.scss"
+import styles from "./style.module.scss"
 
 type Props = {
   type: "Followers" | "Subscribers" | "Ranked" | "Loved" | "Pending" | "Graved";

@@ -3,7 +3,7 @@ import { osuBaseUrl } from "@libs/consts/urls";
 import { UserBase } from "@libs/types/user";
 import { FC } from "react";
 
-import styles from "../profilePage.module.scss";
+import styles from "./style.module.scss";
 
 type Props = {
   profileData: UserBase;
