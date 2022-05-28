@@ -12,6 +12,7 @@ const Pill: FC<Props> = ({ type, count }) => {
 
   return (
     <div className={styles.pill}>
+      <span className={styles.tooltip}>{type}</span>
       <div className={styles.icon}><Image src={iconPath} alt={`${type} icon`} layout="fill" /></div>
       <span className={styles.countText}>{count}</span>
     </div>
