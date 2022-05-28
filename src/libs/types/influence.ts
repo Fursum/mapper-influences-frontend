@@ -12,3 +12,5 @@ export interface Influence {
   lastUpdated: number;
   type: InfluenceTypeEnum;
 }
+
+export type ProfileInfoIcons = "Followers" | "Subscribers" | "Ranked" | "Loved" | "Pending" | "Graved"

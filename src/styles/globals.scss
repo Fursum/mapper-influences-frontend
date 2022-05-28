@@ -8,7 +8,6 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 
   background-color: $color-background;
-  
 }
 
 a {
@@ -20,8 +19,9 @@ a {
   box-sizing: border-box;
 
   color: $color-text;
-  transition: background-color 0.2s ease-in, color 0.2s ease-in;
-  
+  // All of the color transitions
+  transition: background-color 0.2s ease-in, color 0.2s ease-in,
+    fill 0.2s ease-in;
 }
 
 button {
@@ -31,17 +31,13 @@ button {
   cursor: pointer;
 }
 
-*::-webkit-scrollbar{
+*::-webkit-scrollbar {
   color: transparent;
   width: 0.25rem;
   height: 0.25rem;
   margin: 0.25rem;
-  
 }
-*::-webkit-scrollbar-thumb{
+*::-webkit-scrollbar-thumb {
   background-color: $color-primary;
   border-radius: 5rem;
-  
 }
-
-

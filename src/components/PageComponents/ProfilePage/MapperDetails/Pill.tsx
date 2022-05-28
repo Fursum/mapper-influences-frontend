@@ -1,10 +1,12 @@
+import { ProfileInfoIcons } from "@libs/types/influence";
 import Image from "next/image";
 import { FC } from "react";
+import PillIcon from "./PillIcon";
 
 import styles from "./style.module.scss"
 
 type Props = {
-  type: "Followers" | "Subscribers" | "Ranked" | "Loved" | "Pending" | "Graved";
+  type: ProfileInfoIcons;
   count: number;
 };
 const Pill: FC<Props> = ({ type, count }) => {
@@ -13,7 +15,7 @@ const Pill: FC<Props> = ({ type, count }) => {
   return (
     <div className={styles.pill}>
       <span className={styles.tooltip}>{type}</span>
-      <div className={styles.icon}><Image src={iconPath} alt={`${type} icon`} layout="fill" /></div>
+      <PillIcon iconName={type} className={styles.icon}/>
       <span className={styles.countText}>{count}</span>
     </div>
   );

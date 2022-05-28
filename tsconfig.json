@@ -29,7 +29,8 @@
       ],
       "@libs/*":[
         "src/libs/*"
-      ]
+      ],
+
     },
     "incremental": true
   },
