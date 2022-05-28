@@ -21,7 +21,7 @@ a {
   color: $color-text;
   // All of the color transitions
   transition: background-color 0.2s ease-in, color 0.2s ease-in,
-    fill 0.2s ease-in;
+    fill 0.2s ease-in, outline-color 0.2s ease-in;
 }
 
 button {
