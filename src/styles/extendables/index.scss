@@ -1,3 +1,5 @@
+@import "../variables/index";
+
 %cardShadow {
   position: relative;
   box-shadow: var(--cardShadow);
@@ -11,7 +13,7 @@
     left: 0;
 
     pointer-events: none;
-    border-radius: 0.1em;
+    border-radius: $border-radius;
 
     box-shadow: var(--cardShadowHover);
     opacity: 0;
