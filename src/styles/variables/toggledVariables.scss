@@ -15,8 +15,9 @@ html[data-theme="dark"] {
 }
 html[data-theme="light"] {
   --bgColor-1: hsl(0, 0%, 100%);
-  --bgColor-2: hsl(319, 25%, 76%);
-  --bgColor-3: hsl(255, 20%, 20%);
+  --bgColor-2: hsl(313, 100%, 98%);
+  --bgColor-3: hsl(334, 100%, 94%);
+  --bgColor-3-hover: hsl(313, 35%, 81%);
   --primaryColor: hsl(205, 100%, 50%);
   --secondaryColor: hsl(294, 100%, 50%);
   --textColor: hsl(0, 0%, 10%);

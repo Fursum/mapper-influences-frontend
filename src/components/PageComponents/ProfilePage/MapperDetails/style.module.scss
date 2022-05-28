@@ -75,7 +75,8 @@
       .tooltip {
         position: absolute;
         background-color: $color-background;
-        padding: 0.25em;
+        padding: 0.25em 0.5em;
+
         top: -2.25em;
         border-radius: $border-radius;
         z-index: 2;
@@ -83,8 +84,8 @@
         transition: opacity ease-out 0.15s;
         pointer-events: none;
       }
-      &:hover{
-        .tooltip{
+      &:hover {
+        .tooltip {
           opacity: 1;
         }
       }
