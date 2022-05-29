@@ -5,6 +5,7 @@ import { UserBase } from "@libs/types/user";
 
 import styles from "./style.module.scss";
 import Pill from "./Pill";
+import Image from "next/image";
 const textFit = require("textfit");
 
 type Props = { userData: UserBase };
@@ -22,7 +23,7 @@ const BaseProfileCard: FC<Props> = ({ userData }) => {
     <Link href={`/profile/${userData.id}`} passHref={true}>
       <div className={styles.cardWrapper}>
         <div className={styles.photo}>
-          <ProfilePhoto photoUrl={userData.avatarUrl} size="lg" />
+          <Image src={userData.avatarUrl} alt="Profile photo" layout="fill" />
         </div>
         <div className={styles.rightSide}>
           <div className={styles.name}>{userData.username}</div>

@@ -1,15 +1,15 @@
-$card-height: 5em;
-$card-width: 15em;
+$card-height: 4rem;
+$card-width: 12rem;
 
 .cardWrapper {
   display: flex;
   position: relative;
   align-items: center;
+
   border-radius: $border-radius;
   width: $card-width;
-
-  margin: 1em;
-  padding-right: 0;
+  height: $card-height;
+  min-width: $card-width;
 
   cursor: pointer;
 
@@ -17,38 +17,36 @@ $card-width: 15em;
 
   .photo {
     position: relative;
-    mask-image: linear-gradient(
-      to right,
-      rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 1) 50%,
-      rgba(0, 0, 0, 0) 100%
-    );
-    border-radius: $border-radius 0 0 $border-radius;
+    width: 3rem;
+    min-width: 3rem;
+    margin-inline: 0.5rem;
+    aspect-ratio: 1;
+    border-radius: 50rem;
+    overflow: hidden;
   }
 
   .rightSide {
-    position: absolute;
-    right: 0.5em;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     height: 100%;
+    
+    flex-grow: 1;
+
     .name {
       position: relative;
-      margin-top: 1.2rem;
-      width: 17ch;
-
-      text-align: right;
+      width: calc($card-width - 4rem);
+      padding-right: 0.5rem;
+      text-align: center;
       font-weight: 500;
-
-      // Wraps the text for legibility
-      text-shadow: -1px -1px 0 $color-background-content,
-        1px -1px 0 $color-background-content,
-        -1px 1px 0 $color-background-content,
-        1px 1px 0 $color-background-content;
     }
 
     .pills {
       margin-top: 0.1rem;
       display: flex;
-      justify-content: right;
+      justify-content: center;
+      padding-right: 0.5rem;
       .pill {
         position: relative;
         display: flex;
