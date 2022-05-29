@@ -15,31 +15,60 @@ $card-width: 15em;
 
   @extend %cardShadow;
 
-  .photo{
+  .photo {
     position: relative;
-    mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+    mask-image: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 1) 50%,
+      rgba(0, 0, 0, 0) 100%
+    );
     border-radius: $border-radius 0 0 $border-radius;
   }
 
-  .name {
+  .rightSide {
     position: absolute;
-    height: fit-content;
-    width: 90%;
-    max-height: $card-height;
-    
-    right: 0;
-    top: 1em;
-    margin-left: 1em;
-    padding-right: 0.5em;
-    
-    overflow-y: auto;
+    right: 0.5em;
+    height: 100%;
+    .name {
+      position: relative;
+      margin-top: 1.2rem;
+      width: 17ch;
 
-    text-align: right;
-    font-weight: 500;
-    text-shadow:
-    -1px -1px 0 $color-background-content,  
-     1px -1px 0 $color-background-content,
-     -1px 1px 0 $color-background-content,
-      1px 1px 0 $color-background-content;
+      text-align: right;
+      font-weight: 500;
+
+      // Wraps the text for legibility
+      text-shadow: -1px -1px 0 $color-background-content,
+        1px -1px 0 $color-background-content,
+        -1px 1px 0 $color-background-content,
+        1px 1px 0 $color-background-content;
+    }
+
+    .pills {
+      margin-top: 0.1rem;
+      display: flex;
+      justify-content: right;
+      .pill {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        background-color: $color-background-card;
+        padding: 0.15rem 0.35rem;
+        border-radius: 50rem;
+        font-size: x-small;
+        .tooltip {
+          @extend %tooltip;
+          max-width: 10em;
+          width: max-content;
+          top: 1.25rem;
+        }
+        &:hover {
+          .tooltip {
+            opacity: 1;
+          }
+        }
+      }
+    }
   }
 }

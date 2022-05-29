@@ -1,9 +1,11 @@
 import { Influence } from "./influence";
+import { Group } from "./IOsuApi";
 
 export interface UserBase {
   id: number;
   username: string;
   avatarUrl: string;
+  groups?: Group[];
 }
 
 export interface User extends UserBase {

@@ -72,17 +72,8 @@
         font-size: large;
       }
 
-      .tooltip {
-        position: absolute;
-        background-color: $color-background;
-        padding: 0.25em 0.5em;
-
-        top: -2.25em;
-        border-radius: $border-radius;
-        z-index: 2;
-        opacity: 0;
-        transition: opacity ease-out 0.15s;
-        pointer-events: none;
+      .tooltip{
+        @extend %tooltip
       }
       &:hover {
         .tooltip {
