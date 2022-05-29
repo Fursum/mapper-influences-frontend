@@ -10,7 +10,7 @@ html[data-theme="dark"] {
   --secondaryColor: hsl(294, 50%, 25%);
   --textColor: hsl(0, 0%, 90%);
 
-  --cardShadow: 0 0 0 0.05rem rgba(150, 150, 150, 0.5);
+  --cardShadow: 0 0 0 0.075rem rgba(150, 150, 150, 0.5);
   --cardShadowHover: 0 0 0 0.1rem rgba(150, 150, 150, 0.9);
 }
 html[data-theme="light"] {

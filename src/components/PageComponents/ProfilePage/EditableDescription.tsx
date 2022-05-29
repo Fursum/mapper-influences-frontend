@@ -4,8 +4,14 @@ import { DebounceInput } from "react-debounce-input";
 
 import styles from "./profilePage.module.scss";
 
-type Props = { description: string; editable?: boolean; onChange?: () => void };
+type Props = {
+  className?: string;
+  description: string;
+  editable?: boolean;
+  onChange?: () => void;
+};
 const EditableDescription: FC<Props> = ({
+  className,
   description,
   editable,
   onChange,
@@ -18,7 +24,7 @@ const EditableDescription: FC<Props> = ({
 
   return (
     <DebounceInput
-      className={`${styles.description} ${editable ? styles.editable : ''}`}
+      className={`${className} ${styles.description} ${editable ? styles.editable : ""}`}
       element={"textarea"}
       onChange={submitChanges}
       value={description}

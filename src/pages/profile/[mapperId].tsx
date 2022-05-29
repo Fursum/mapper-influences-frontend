@@ -47,7 +47,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         profileData: {
           avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
           id: 12345,
-          username: "Longernamelonger",
+          username: "Edisberkserbest",
           groups: [
             {
               colour: "red",

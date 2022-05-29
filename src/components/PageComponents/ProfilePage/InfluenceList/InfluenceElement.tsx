@@ -13,7 +13,7 @@ const InfluenceElement: FC<Props> = ({ influenceData }) => {
   return (
     <div className={styles.influenceRow}>
       <BaseProfileCard userData={influenceData.profileData} />
-      <EditableDescription description={influenceData.description} />
+      <EditableDescription className={styles.influenceDescription} description={influenceData.description} />
     </div>
   );
 };
