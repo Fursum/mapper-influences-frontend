@@ -8,7 +8,7 @@ type Props = {
   userData: User;
 };
 
-const MapperPage: NextPage<Props> = ({ userData }) => {
+const MapperPage: NextPage = ({ userData }: Props) => {
   return (
     <>
       <ProfilePage userData={userData} />
