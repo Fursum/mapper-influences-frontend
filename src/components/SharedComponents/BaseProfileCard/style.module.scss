@@ -39,7 +39,7 @@ $card-width: 12rem;
       width: calc($card-width - 4rem);
       padding-right: 0.5rem;
       text-align: center;
-      font-weight: 500;
+      font-weight: $username-weight;
     }
 
     .pills {
@@ -51,10 +51,15 @@ $card-width: 12rem;
         position: relative;
         display: flex;
         justify-content: center;
+        align-items: center;
         background-color: $color-background-card;
         padding: 0.15rem 0.35rem;
+        padding-top: 0.25rem;
         border-radius: 50rem;
+
         font-size: x-small;
+        text-transform: capitalize;
+
         .tooltip {
           @extend %tooltip;
           max-width: 10em;
