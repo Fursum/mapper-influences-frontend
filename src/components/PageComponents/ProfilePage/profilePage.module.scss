@@ -1,12 +1,9 @@
 .profilePage {
   display: flex;
+  flex-wrap: wrap;
   height: 100%;
   gap: 1rem;
-
-  .mapperInfluences {
-    flex-basis: 70%;
-    background-color: $color-background-content;
-  }
+  justify-content: center;
 
   .description {
     background-color: $color-background-card;

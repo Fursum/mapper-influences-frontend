@@ -1,12 +1,35 @@
-.influenceRow {
-  display: flex;
-
-  padding: 1rem;
-  padding-bottom: 0;
+.mapperInfluences {
+  display:flex;
+  flex-direction: column;
+  flex-grow: 1;
   align-items: center;
-  
-  .influenceDescription {
-    flex-grow: 1;
-    margin-left: 1rem;
+
+  background-color: $color-background-content;
+  min-width: 20em;
+
+  >h2{
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .influenceRow {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+
+    padding: 1rem;
+    max-width: 40rem;
+    padding-bottom: 0;
+    margin-bottom: 1rem;
+
+    .influenceDescription {
+      flex-grow: 1;
+      flex-basis: 0;
+      min-width: 10rem;
+      max-width: 30rem;
+    }
   }
 }
