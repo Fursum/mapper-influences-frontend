@@ -11,13 +11,9 @@
     padding: 1rem;
     width: 100%;
 
-    .avatar {
-      outline: 0.1rem solid $color-secondary;
-    }
-
     .avatar:hover {
-      outline: 0.25rem solid $color-secondary;
-      transition: outline 0.15s ease-out;
+      outline: 0.15rem solid $color-secondary;
+      transition: color 0s
     }
 
     .mapperName {
