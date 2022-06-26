@@ -1,11 +1,8 @@
+import HomeScreen from "@components/PageComponents/Home";
 import type { NextPage } from "next";
-import Head from "next/head";
 
 const Home: NextPage = () => {
-  return (
-    <div className={""}>
-    </div>
-  );
+  return <HomeScreen />;
 };
 
 export default Home;

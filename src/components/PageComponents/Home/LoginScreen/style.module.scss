@@ -1,0 +1,54 @@
+.background {
+  position: fixed;
+  height: calc(100% + $padding);
+  width: 100vw;
+  left: 0;
+  top: -$padding;
+  margin-inline-start: 50%;
+  transform: translateX(-50%);
+
+  background: linear-gradient(180deg, $color-primary, $color-secondary);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  .content {
+
+    padding: 1rem;
+
+    > h1 {
+      font-size: clamp(2rem, 0.5rem + 5vw, 3rem);
+      font-weight: 300;
+      margin-bottom: 0.5rem;
+      > b {
+        font-weight: 700;
+      }
+    }
+
+    > h4 {
+      font-size: clamp(1rem, 0.25rem + 2vw, 1.5rem);
+      font-weight: 200;
+    }
+
+    .login {
+      border-radius: 100vmax;
+      padding: 0.25em 0.5em;
+      margin-inline: 0.25rem;
+      margin-bottom: 0.25rem;
+      font-weight: inherit;
+      font-size: inherit;
+
+      transition: box-shadow 0.1s ease-in, font-weight 0.1s ease-in;
+
+      box-shadow: 0 0.05rem 0.25rem 0 $color-background;
+      &:hover {
+        box-shadow: 0 0.05rem 0.5rem 0 $color-background;
+        font-weight: 700;
+      }
+    }
+  }
+}

@@ -26,8 +26,11 @@ a {
 }
 
 button {
+  border: none;
   color: $color-text;
   background-color: $color-primary;
+  
+  font-family: 'Comfortaa', cursive;
 
   cursor: pointer;
 }
