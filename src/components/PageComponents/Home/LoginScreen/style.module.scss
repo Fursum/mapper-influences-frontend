@@ -44,9 +44,9 @@
 
       transition: box-shadow 0.1s ease-in, font-weight 0.1s ease-in;
 
-      box-shadow: 0 0.05rem 0.25rem 0 $color-background;
+      box-shadow: 0 0.05rem 0.25rem -0.1rem $color-background;
       &:hover {
-        box-shadow: 0 0.05rem 0.5rem 0 $color-background;
+        box-shadow: 0 0.05rem 0.5rem -0.1rem $color-background;
         font-weight: 700;
       }
     }
