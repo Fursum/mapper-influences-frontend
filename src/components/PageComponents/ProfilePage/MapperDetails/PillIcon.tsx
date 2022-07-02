@@ -1,7 +1,14 @@
 import { FC } from "react";
 import { ProfileInfoIcons } from "@libs/types/influence";
-import { Followers, Graved, Loved, Pending, Ranked, Subscribers } from "@components/svgComponents";
-
+import {
+  Followers,
+  Graved,
+  Influences,
+  Loved,
+  Pending,
+  Ranked,
+  Subscribers,
+} from "@components/svgComponents";
 
 type Props = { iconName: ProfileInfoIcons; className: string };
 const PillIcon: FC<Props> = ({ iconName, className }) => {
@@ -12,6 +19,9 @@ const PillIcon: FC<Props> = ({ iconName, className }) => {
       break;
     case "Graved":
       Selected = Graved;
+      break;
+    case "Influences":
+      Selected = Influences;
       break;
     case "Loved":
       Selected = Loved;

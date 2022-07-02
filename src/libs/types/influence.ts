@@ -13,4 +13,4 @@ export interface Influence {
   type: InfluenceTypeEnum;
 }
 
-export type ProfileInfoIcons = "Followers" | "Subscribers" | "Ranked" | "Loved" | "Pending" | "Graved"
+export type ProfileInfoIcons = "Followers" | "Subscribers" | "Influences" | "Ranked" | "Loved" | "Pending" | "Graved" 

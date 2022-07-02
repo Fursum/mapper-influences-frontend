@@ -14,6 +14,7 @@ const Stats: FC<Props> = ({ details }) => {
       <div className={styles.followers}>
         <Pill type="Followers" count={details.followerCount} />
         <Pill type="Subscribers" count={details.subCount} />
+        <Pill type="Influences" count={0} />
       </div>
       <div className={styles.stats}>
         <Pill type="Ranked" count={details.rankedCount} />
