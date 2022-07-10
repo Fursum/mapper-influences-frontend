@@ -36,16 +36,24 @@ const InfluenceType: FC<Props> = ({
   const showMinusButton =
     editable && influenceState !== InfluenceTypeEnum.Respect;
   const MinusButton = (
-    <button aria-label="Decrease Influence" className={styles.minus} onClick={reduceInfluence}>
-      -
+    <button
+      aria-label="Decrease Influence"
+      className={styles.minus}
+      onClick={reduceInfluence}
+    >
+      {"<"}
     </button>
   );
 
   const showPlusButton =
     editable && influenceState !== InfluenceTypeEnum.Implementation;
   const PlusButton = (
-    <button aria-label="Increase Influence" className={styles.plus} onClick={increaseInfluence}>
-      +
+    <button
+      aria-label="Increase Influence"
+      className={styles.plus}
+      onClick={increaseInfluence}
+    >
+      {">"}
     </button>
   );
 

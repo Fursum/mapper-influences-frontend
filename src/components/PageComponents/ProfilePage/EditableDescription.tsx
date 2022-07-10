@@ -29,7 +29,7 @@ const EditableDescription: FC<Props> = ({
       onChange={submitChanges}
       value={description}
       debounceTimeout={1000}
-      readOnly={!editable}
+      readOnly={editable}
     />
   );
 };
