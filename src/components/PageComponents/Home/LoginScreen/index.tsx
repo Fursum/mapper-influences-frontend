@@ -10,7 +10,7 @@ const LoginScreen: FC<Props> = () => {
         <h1>
           Welcome to <b>Mapper Influences</b>
         </h1>
-        <h4>This is a site to track and share your influences.</h4>
+        <h4>You can track and share your influences here.</h4>
         <h4>
           You need to <button className={styles.login}>Log In</button> with osu! to use the features.
         </h4>
