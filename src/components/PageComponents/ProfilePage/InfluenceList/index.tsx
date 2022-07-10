@@ -18,6 +18,13 @@ const InfluenceList: FC<Props> = ({ influences }) => {
     <div className={styles.mapperInfluences}>
       <h2>Influenced By</h2>
       {InfluenceCards}
+      {influences.length === 0 && (
+        <span>
+          {`This person is unique!`}
+          <br />
+          {`...Or they haven't added anyone yet.`}
+        </span>
+      )}
     </div>
   );
 };
