@@ -18,7 +18,7 @@
 
   .content {
 
-    padding: 1rem;
+    padding: $padding;
 
     > h1 {
       font-size: clamp(2rem, 0.5rem + 5vw, 3rem);

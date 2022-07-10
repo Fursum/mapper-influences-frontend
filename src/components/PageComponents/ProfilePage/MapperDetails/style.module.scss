@@ -1,80 +1,87 @@
 .mapperDetails {
+  height: 100%;
   flex-basis: 30%;
-  padding: 1rem;
+  padding: $padding;
+  position: relative;
 
   background-color: $color-background-content;
 
-  .profileInfo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 1rem;
-    width: 100%;
-
-    .avatar:hover {
-      outline: 0.15rem solid $color-secondary;
-      transition: color 0s
-    }
-
-    .mapperName {
-      position: relative;
+  .stickyWrapper {
+    top: $padding;
+    position: sticky;
+    
+    .profileInfo {
       display: flex;
-      height: fit-content;
-      margin-top: 0.5em;
-      margin-bottom: 0.15em;
-      justify-content: center;
-      font-weight: $username-weight;
-      font-size: x-large;
-      line-height: 1em;
-    }
-
-    .mapperName:hover {
-      text-decoration: underline;
-    }
-
-    .title {
-      text-align: center;
-    }
-  }
-
-  .followers {
-    margin-bottom: 1rem;
-  }
-
-  .stats,
-  .followers {
-    display: flex;
-    margin-top: 1rem;
-    gap: 1rem;
-    justify-content: center;
-
-    .pill {
-      position: relative;
-      display: flex;
-      justify-content: space-around;
+      flex-direction: column;
       align-items: center;
-      border-radius: 50rem;
-      //outline: 0.1rem solid $color-secondary;
-      padding: 0.5rem;
+      padding: $padding;
+      width: 100%;
 
-      width: 4em;
-      height: 2.25em;
+      .avatar:hover {
+        outline: 0.15rem solid $color-secondary;
+        transition: color 0s;
+      }
 
-      .icon {
+      .mapperName {
         position: relative;
-        width: 1.25em;
-        aspect-ratio: 1;
-      }
-      .countText {
-        font-size: large;
+        display: flex;
+        height: fit-content;
+        margin-top: 0.5em;
+        margin-bottom: 0.15em;
+        justify-content: center;
+        font-weight: $username-weight;
+        font-size: x-large;
+        line-height: 1em;
       }
 
-      .tooltip{
-        @extend %tooltip
+      .mapperName:hover {
+        text-decoration: underline;
       }
-      &:hover {
+
+      .title {
+        text-align: center;
+      }
+    }
+
+    .followers {
+      margin-bottom: 1rem;
+    }
+
+    .stats,
+    .followers {
+      display: flex;
+      margin-top: 1rem;
+      gap: $padding;
+      justify-content: center;
+
+      .pill {
+        position: relative;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        border-radius: 50rem;
+        //outline: 0.1rem solid $color-secondary;
+        padding: 0.5rem;
+
+        width: 4em;
+        height: 2.25em;
+
+        .icon {
+          position: relative;
+          width: 1.25em;
+          aspect-ratio: 1;
+        }
+        .countText {
+          font-size: large;
+        }
+
         .tooltip {
-          opacity: 1;
+          @extend %tooltip;
+        }
+        &:hover {
+          .tooltip {
+            opacity: 1;
+          }
         }
       }
     }

@@ -15,9 +15,11 @@ type Props = {
 const MapperDetails: FC<Props> = ({ profileData, description, details }) => {
   return (
     <div className={styles.mapperDetails}>
-      <ProfileInfo profileData={profileData} />
-      <EditableDescription description={description} editable/>
-      <Stats details={details} />
+      <div className={styles.stickyWrapper}>
+        <ProfileInfo profileData={profileData} />
+        <EditableDescription description={description} editable />
+        <Stats details={details} />
+      </div>
     </div>
   );
 };
