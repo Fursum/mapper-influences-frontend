@@ -1,4 +1,4 @@
-import Magnify from "@components/SvgComponents/Magnify";
+import { Magnify } from "@components/SvgComponents";
 import { MaxNameLength } from "@libs/consts/sizes";
 import { FC, ChangeEvent } from "react";
 import { DebounceInput } from "react-debounce-input";
