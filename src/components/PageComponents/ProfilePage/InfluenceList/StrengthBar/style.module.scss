@@ -1,0 +1,17 @@
+.strengthWrapper {
+  display: flex;
+  position: relative;
+  height: 0.25rem;
+
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+
+  .strengthBar {
+    flex-basis: calc((100% - 1rem) / 3);
+    flex-grow: 0;
+    height: 100%;
+    border-radius: 100vmax;
+    
+    background-color: $color-secondary;
+  }
+}

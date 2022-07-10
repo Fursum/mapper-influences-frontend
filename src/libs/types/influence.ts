@@ -16,6 +16,7 @@ export interface Influence {
   description: string;
   lastUpdated: number;
   type: InfluenceTypeEnum;
+  strength: 1 | 2 | 3;
 }
 
 export type ProfileInfoIcons =
