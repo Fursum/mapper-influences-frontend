@@ -4,6 +4,7 @@ import InfluenceList from "./InfluenceList";
 import MapperDetails from "./MapperDetails";
 
 import styles from "./profilePage.module.scss";
+import MentionList from "./MentionList";
 
 type Props = { userData: User; editable?: boolean };
 
@@ -20,6 +21,7 @@ const ProfilePage: FC<Props> = ({ userData, editable = false }) => {
         }}
       />
       <InfluenceList influences={userData.influences} />
+      <MentionList mentions={[]} />
     </div>
   );
 };

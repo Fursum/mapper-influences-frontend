@@ -1,10 +1,10 @@
 .mapperInfluences {
-  height: 100%;
-  overflow-y: scroll;
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
   align-items: center;
+
+  height: 100%;
+  overflow-y: scroll;
 
   background-color: $color-background-content;
   min-width: 20em;
@@ -28,6 +28,9 @@
     margin-bottom: 1rem;
 
     .cardSide {
+      flex-basis: 30%;
+      flex-grow: 0;
+
       .influenceType {
         position: relative;
         width: 100%;
@@ -52,12 +55,16 @@
       }
     }
 
-    .right {
+    .descriptionSide {
+      height: 100%;
+      max-width: 20rem;
+      min-width: 10rem;
+
       flex-grow: 1;
       flex-basis: 0;
       .influenceDescription {
-        min-width: 10rem;
-        max-width: 30rem;
+        height: 100%;
+        width: 100%;
       }
     }
   }

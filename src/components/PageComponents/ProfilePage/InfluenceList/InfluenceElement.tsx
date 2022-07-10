@@ -17,11 +17,12 @@ const InfluenceElement: FC<Props> = ({ influenceData }) => {
         <BaseProfileCard userData={influenceData.profileData} />
         <InfluenceType editable influenceType={influenceData.type} />
       </div>
-
-      <EditableDescription
-        className={styles.influenceDescription}
-        description={influenceData.description}
-      />
+      <div className={styles.descriptionSide}>
+        <EditableDescription
+          className={styles.influenceDescription}
+          description={influenceData.description}
+        />
+      </div>
     </div>
   );
 };

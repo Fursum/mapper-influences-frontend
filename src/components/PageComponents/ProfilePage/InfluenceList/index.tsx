@@ -16,7 +16,7 @@ const InfluenceList: FC<Props> = ({ influences }) => {
 
   return (
     <div className={styles.mapperInfluences}>
-      <h2>Influences</h2>
+      <h2>Influenced By</h2>
       {InfluenceCards}
     </div>
   );

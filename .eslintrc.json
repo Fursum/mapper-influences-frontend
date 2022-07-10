@@ -2,7 +2,7 @@
   "extends": "next/core-web-vitals",
   "rules": {
     "react/jsx-sort-props": [
-      "2",
+      2,
       {
         //"callbacksLast": true,
         //"shorthandFirst": false,
