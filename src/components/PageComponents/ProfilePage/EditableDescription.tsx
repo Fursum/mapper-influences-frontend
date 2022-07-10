@@ -24,10 +24,12 @@ const EditableDescription: FC<Props> = ({
 
   return (
     <DebounceInput
-      className={`${className} ${styles.description} ${editable ? styles.editable : ""}`}
+      className={`${className} ${styles.description} ${
+        editable ? styles.editable : ""
+      }`}
       element={"textarea"}
       onChange={submitChanges}
-      value={description}
+      defaultValue={description}
       debounceTimeout={1000}
       readOnly={editable}
     />

@@ -6,7 +6,7 @@
   max-width: $screen-size;
   height: calc(100vh - 3.5rem);
   margin-inline: auto;
-  
+
   .contentWrapper {
     display: flex;
     height: 100%;
@@ -26,7 +26,7 @@
   padding: $padding / 2;
   background-color: $color-background-header;
 
-  .home{
+  .home {
     font-size: large;
     font-weight: 700;
     height: 3.5rem;
@@ -37,10 +37,11 @@
 }
 
 .searchBar {
+  margin-left: auto;
+  margin-right: $padding;
 }
 
 .darkMode {
-  margin-left: auto;
   margin-right: $padding;
 }
 

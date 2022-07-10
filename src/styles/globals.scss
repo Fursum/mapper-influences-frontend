@@ -18,6 +18,7 @@ a {
 
 * {
   box-sizing: border-box;
+  font-family: 'Comfortaa', cursive;
 
   color: $color-text;
   // All of the color transitions
@@ -29,8 +30,6 @@ button {
   border: none;
   color: $color-text;
   background-color: $color-primary;
-  
-  font-family: 'Comfortaa', cursive;
 
   cursor: pointer;
 }
@@ -44,4 +43,10 @@ button {
 *::-webkit-scrollbar-thumb {
   background-color: $color-primary;
   border-radius: 5rem;
+}
+
+input{
+  border: none;
+  padding: $padding / 2;
+  border-radius: $border-radius;
 }

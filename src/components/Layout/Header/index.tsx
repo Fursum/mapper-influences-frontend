@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "src/redux/hooks";
 import { getCurrentUser } from "src/redux/User/action";
 import DarkModeToggle from "@components/SharedComponents/DarkModeToggle";
 import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
-import SearchBar from "../../SharedComponents/SearchBar";
+import SearchBar from "./SearchBar";
 import styles from "../style.module.scss";
 
 export default function Header() {

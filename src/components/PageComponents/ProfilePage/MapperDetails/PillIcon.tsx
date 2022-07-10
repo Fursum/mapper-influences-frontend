@@ -8,7 +8,7 @@ import {
   Pending,
   Ranked,
   Subscribers,
-} from "@components/svgComponents";
+} from "@components/SvgComponents";
 
 type Props = { iconName: ProfileInfoIcons; className: string };
 const PillIcon: FC<Props> = ({ iconName, className }) => {
