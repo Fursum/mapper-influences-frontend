@@ -17,6 +17,9 @@ export default function Header() {
 
   return (
     <div className={styles.header}>
+      <Link href="/" passHref>
+        <a className={styles.home}>Mapper Influences</a>
+      </Link>
       <SearchBar className={styles.searchBar} />
       <DarkModeToggle className={styles.darkMode} />
       <Link href={"/profile"} passHref>
