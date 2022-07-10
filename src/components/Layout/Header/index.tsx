@@ -13,7 +13,7 @@ export default function Header() {
 
   useEffect(() => {
     dispatch(getCurrentUser("1234"));
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className={styles.header}>
