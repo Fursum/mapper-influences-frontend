@@ -1,10 +1,15 @@
 import { UserBase } from "./user";
 
 export enum InfluenceTypeEnum {
-  respect = "Respect",
-  fascination = "Fascination",
-  implementation = "Implementation",
+  Respect = "Respect",
+  Fascination = "Fascination",
+  Implementation = "Implementation",
 }
+export const InfluenceOrder = [
+  InfluenceTypeEnum.Respect,
+  InfluenceTypeEnum.Fascination,
+  InfluenceTypeEnum.Implementation,
+];
 
 export interface Influence {
   profileData: UserBase;
@@ -13,4 +18,11 @@ export interface Influence {
   type: InfluenceTypeEnum;
 }
 
-export type ProfileInfoIcons = "Followers" | "Subscribers" | "Influences" | "Ranked" | "Loved" | "Pending" | "Graved" 
+export type ProfileInfoIcons =
+  | "Followers"
+  | "Subscribers"
+  | "Influences"
+  | "Ranked"
+  | "Loved"
+  | "Pending"
+  | "Graved";

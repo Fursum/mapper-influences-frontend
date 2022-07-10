@@ -8,7 +8,7 @@ type Props = {
   userData: User;
 };
 
-const MapperPage: NextPage = ({ userData }: Props) => {
+const MapperPage: NextPage<Props> = ({ userData }) => {
   return (
     <>
       <ProfilePage userData={userData} />
@@ -39,7 +39,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           id: 12345,
           username: "Fursum",
         },
-        type: InfluenceTypeEnum.respect,
+        type: InfluenceTypeEnum.Respect,
         description: "",
         lastUpdated: Date.now(),
       },
@@ -62,7 +62,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
             },
           ],
         },
-        type: InfluenceTypeEnum.respect,
+        type: InfluenceTypeEnum.Respect,
         description: "",
         lastUpdated: Date.now(),
       },
@@ -85,7 +85,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
             },
           ],
         },
-        type: InfluenceTypeEnum.respect,
+        type: InfluenceTypeEnum.Fascination,
         description: "",
         lastUpdated: Date.now(),
       },
@@ -108,7 +108,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
             },
           ],
         },
-        type: InfluenceTypeEnum.respect,
+        type: InfluenceTypeEnum.Implementation,
         description: "",
         lastUpdated: Date.now(),
       },
