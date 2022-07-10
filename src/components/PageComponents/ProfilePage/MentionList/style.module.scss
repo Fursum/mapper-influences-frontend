@@ -2,12 +2,18 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  
+  align-items: center;
+
   background-color: $color-background-content;
 
   > h2 {
     text-align: center;
     margin-bottom: 0.5rem;
+  }
+
+  // Empty message
+  > span {
+    margin-top: 1rem;
   }
 
   .mentionRow {
