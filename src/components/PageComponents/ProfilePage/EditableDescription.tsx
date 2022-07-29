@@ -1,6 +1,5 @@
-import { ChangeEvent } from "react";
 import { FC } from "react";
-import { DebounceInput } from "react-debounce-input";
+import AwesomeDebouncePromise from "awesome-debounce-promise";
 
 import styles from "./profilePage.module.scss";
 
@@ -16,21 +15,21 @@ const EditableDescription: FC<Props> = ({
   editable,
   onChange,
 }) => {
-  const submitChanges = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
+  const submitChanges = (e: string) => {
+    console.log(e);
 
     if (onChange) onChange();
   };
 
+  const debouncedSubmit = AwesomeDebouncePromise(submitChanges, 250);
+
   return (
-    <DebounceInput
+    <textarea
       className={`${className} ${styles.description} ${
         editable ? styles.editable : ""
       }`}
-      element={"textarea"}
-      onChange={submitChanges}
+      onChange={(e) => debouncedSubmit(e.target.value)}
       defaultValue={description}
-      debounceTimeout={1000}
       readOnly={editable}
     />
   );

@@ -15,6 +15,7 @@ const BaseProfileCard: FC<Props> = ({ userData }) => {
     <Pill key={group.id} group={group} />
   ));
 
+  // Fit text to card
   useEffect(() => {
     if (document) textFit(document.getElementsByClassName(styles.name));
   }, []);

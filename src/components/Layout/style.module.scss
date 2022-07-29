@@ -47,5 +47,6 @@
   margin-right: $padding;
 }
 
-.avatar {
+.avatar:hover {
+  outline: 1px $color-text solid;
 }
