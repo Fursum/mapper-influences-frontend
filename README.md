@@ -9,5 +9,6 @@
 - [Boraarslan](https://github.com/boraarslan)
 - [Coderbora](https://github.com/Coderbora)
 
-## Tech stack
+## Tools Used
 - Next.js
+- Figma
