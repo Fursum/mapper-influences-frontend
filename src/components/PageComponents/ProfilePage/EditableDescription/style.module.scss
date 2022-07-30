@@ -7,6 +7,7 @@
   min-height: 2rem;
   padding: $spacing;
   width: 100%;
+  resize: vertical;
 
   &.editable:hover {
     background-color: $color-background-card-hover;
