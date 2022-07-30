@@ -3,7 +3,7 @@
 %cardShadow {
   position: relative;
   box-shadow: var(--cardShadow);
-  
+
   &::after {
     content: "";
     position: absolute;
@@ -19,7 +19,7 @@
     opacity: 0;
     transition: opacity 0.15s ease-in-out;
   }
-  
+
   &:hover::after {
     opacity: 1;
   }
@@ -31,12 +31,12 @@
   background-color: $color-background;
   padding: 0.25em 0.5em;
 
-  top: -2.25em;
+  top: -1.75em;
   border-radius: $border-radius;
   z-index: 2;
   opacity: 0;
   transition: opacity ease-out 0.15s;
   pointer-events: none;
   text-align: center;
+  box-shadow: 0 0 1rem 0.5rem rgba(0, 0, 0, 0.1);
 }
-
