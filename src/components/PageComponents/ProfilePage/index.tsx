@@ -2,9 +2,9 @@ import React, { FC } from "react";
 import { User } from "@libs/types/user";
 import InfluenceList from "./InfluenceList";
 import MapperDetails from "./MapperDetails";
-
-import styles from "./profilePage.module.scss";
 import MentionList from "./MentionList";
+
+import styles from "./style.module.scss";
 
 type Props = { userData: User; editable?: boolean };
 

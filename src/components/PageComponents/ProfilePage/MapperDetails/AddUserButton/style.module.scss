@@ -1,0 +1,19 @@
+.addUser {
+  .icon{
+    width: 2rem;
+    height: 2rem;
+  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing;
+
+  font-size: large;
+  font-weight: bold;
+
+  border-radius: $border-radius;
+
+  background-color: $color-primary;
+  padding-inline: $spacing;
+  padding-block: $spacing / 2;
+}

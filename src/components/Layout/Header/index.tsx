@@ -8,12 +8,9 @@ import SearchBar from "./SearchBar";
 import styles from "../style.module.scss";
 
 export default function Header() {
-  const dispatch = useAppDispatch();
   const currentUser = useAppSelector((s) => s.user.currentUser.data);
 
-  useEffect(() => {
-    dispatch(getCurrentUser("1234"));
-  }, [dispatch]);
+  if (!currentUser) return <></>;
 
   return (
     <div className={styles.header}>

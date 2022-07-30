@@ -1,19 +1,22 @@
 .mapperDetails {
   height: 100%;
-  padding: $padding;
+  padding: $spacing;
   position: relative;
 
   background-color: $color-background-content;
 
   .stickyWrapper {
-    top: $padding;
+    top: $spacing;
     position: sticky;
-    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing;
+
     .profileInfo {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: $padding;
       width: 100%;
 
       .avatar:hover {
@@ -41,15 +44,10 @@
       }
     }
 
-    .followers {
-      margin-bottom: 1rem;
-    }
-
     .stats,
     .followers {
       display: flex;
-      margin-top: 1rem;
-      gap: $padding;
+      gap: $spacing;
       justify-content: center;
 
       .pill {
@@ -65,7 +63,6 @@
         height: 2.25em;
 
         .icon {
-          position: relative;
           width: 1.25em;
           aspect-ratio: 1;
         }

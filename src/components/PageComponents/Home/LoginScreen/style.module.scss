@@ -1,9 +1,9 @@
 .background {
   position: fixed;
-  height: calc(100% + $padding);
+  height: calc(100% + $spacing);
   width: 100vw;
   left: 0;
-  top: -$padding;
+  top: -$spacing;
   margin-inline-start: 50%;
   transform: translateX(-50%);
 
@@ -18,7 +18,7 @@
 
   .content {
 
-    padding: $padding;
+    padding: $spacing;
 
     > h1 {
       font-size: clamp(2rem, 0.5rem + 5vw, 3rem);

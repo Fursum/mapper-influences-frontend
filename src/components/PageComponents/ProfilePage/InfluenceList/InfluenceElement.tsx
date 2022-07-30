@@ -1,6 +1,6 @@
 import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
 import React, { FC } from "react";
-import { Influence, InfluenceTypeEnum } from "@libs/types/influence";
+import { Influence } from "@libs/types/influence";
 import EditableDescription from "../EditableDescription";
 
 import styles from "./style.module.scss";
@@ -21,6 +21,7 @@ const InfluenceElement: FC<Props> = ({ influenceData }) => {
         <EditableDescription
           className={styles.influenceDescription}
           description={influenceData.description}
+          editable
         />
       </div>
     </div>

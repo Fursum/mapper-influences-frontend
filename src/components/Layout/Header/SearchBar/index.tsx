@@ -1,7 +1,8 @@
 import { Magnify } from "@components/SvgComponents";
 import { MaxNameLength } from "@libs/consts/sizes";
 import AwesomeDebouncePromise from "awesome-debounce-promise";
-import { FC, ChangeEvent } from "react";
+import { useRouter } from "next/router";
+import { FC } from "react";
 
 import styles from "./styles.module.scss";
 
@@ -10,7 +11,10 @@ type Props = {
 };
 
 const SearchBar: FC<Props> = ({ className }) => {
+  const router = useRouter()
+
   const searchUser = (query: string) => {
+    router.push("/profile/" + query)
     // TODO: Search user service
     console.log(query);
   };

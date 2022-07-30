@@ -10,7 +10,7 @@ import {
   Subscribers,
 } from "@components/SvgComponents";
 
-type Props = { iconName: ProfileInfoIcons; className: string };
+type Props = { iconName: ProfileInfoIcons; className?: string };
 const PillIcon: FC<Props> = ({ iconName, className }) => {
   let Selected: FC<any>;
   switch (iconName) {
@@ -39,6 +39,6 @@ const PillIcon: FC<Props> = ({ iconName, className }) => {
       return <span>?</span>;
   }
 
-  return <Selected className={className} />;
+  return <Selected className={className || ""} />;
 };
 export default PillIcon;

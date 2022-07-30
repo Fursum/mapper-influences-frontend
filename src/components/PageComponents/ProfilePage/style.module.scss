@@ -1,0 +1,8 @@
+.profilePage {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  flex-wrap: wrap;
+  height: 100%;
+  gap: 1rem;
+  justify-content: center;
+}

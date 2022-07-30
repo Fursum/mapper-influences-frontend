@@ -1,0 +1,22 @@
+.influenceType {
+  position: relative;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+
+  margin-top: 0.5rem;
+
+  > button {
+    position: absolute;
+    border-radius: 100vmax;
+    user-select: none;
+  }
+
+  .plus {
+    right: 0;
+  }
+  .minus {
+    left: 0;
+  }
+}

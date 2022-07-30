@@ -5,6 +5,7 @@ import Stats from "./Stats";
 import styles from "./style.module.scss";
 import ProfileInfo from "./ProfileInfo";
 import EditableDescription from "../EditableDescription";
+import AddUserButton from "./AddUserButton";
 
 type Props = {
   profileData: UserBase;
@@ -13,10 +14,15 @@ type Props = {
 };
 
 const MapperDetails: FC<Props> = ({ profileData, description, details }) => {
+  const addUserHandler = () => {
+    // TODO: Add user service
+  };
+
   return (
     <div className={styles.mapperDetails}>
       <div className={styles.stickyWrapper}>
         <ProfileInfo profileData={profileData} />
+        <AddUserButton onClick={addUserHandler} />
         <EditableDescription description={description} editable />
         <Stats details={details} />
       </div>

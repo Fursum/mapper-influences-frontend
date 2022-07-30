@@ -1,7 +1,7 @@
 import { FC } from "react";
 import AwesomeDebouncePromise from "awesome-debounce-promise";
 
-import styles from "./profilePage.module.scss";
+import styles from "./style.module.scss";
 
 type Props = {
   className?: string;
@@ -30,7 +30,7 @@ const EditableDescription: FC<Props> = ({
       }`}
       onChange={(e) => debouncedSubmit(e.target.value)}
       defaultValue={description}
-      readOnly={editable}
+      readOnly={!editable}
     />
   );
 };
