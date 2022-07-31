@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "src/redux/hooks";
 import { getCurrentUser } from "src/redux/User/action";
-import DarkModeToggle from "@components/SharedComponents/DarkModeToggle";
+import DarkModeToggle from "@components/Layout/Header/DarkModeToggle";
 import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
 import SearchBar from "./SearchBar";
 import styles from "../style.module.scss";

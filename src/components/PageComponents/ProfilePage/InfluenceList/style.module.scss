@@ -4,10 +4,13 @@
   align-items: center;
 
   height: 100%;
+  min-width: 20em;
   overflow-y: scroll;
 
+  padding: $spacing;
+  padding-top: 0;
+
   background-color: $color-background-content;
-  min-width: 20em;
 
   > h2 {
     text-align: center;

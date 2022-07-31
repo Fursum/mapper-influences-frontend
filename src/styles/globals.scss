@@ -12,8 +12,10 @@ body {
 
   background-color: $color-background;
 
+  font-size: 16px;
+
   @media screen and (max-width:$responsive-breakpoint) {
-    font-size: rem(14);
+    font-size: 14px;
   }
 }
 
@@ -30,6 +32,15 @@ a {
   // All of the color transitions
   transition: background-color 0.1s ease-in, color 0.1s ease-in,
     fill 0.1s ease-in, outline-color 0.1s ease-in, text-shadow 0.1s ease-in;
+
+  &::after{
+    transition: background-color 0.1s ease-in, color 0.1s ease-in,
+    fill 0.1s ease-in, outline-color 0.1s ease-in, text-shadow 0.1s ease-in;
+  }
+  &::before{
+    transition: background-color 0.1s ease-in, color 0.1s ease-in,
+    fill 0.1s ease-in, outline-color 0.1s ease-in, text-shadow 0.1s ease-in;
+  }
 }
 
 button {

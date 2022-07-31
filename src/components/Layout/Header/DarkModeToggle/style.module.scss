@@ -1,0 +1,85 @@
+.outerSlider {
+  position: relative;
+  overflow: hidden;
+  height: 2rem;
+  width: 3rem;
+  border-radius: 100vmax;
+  padding: 0;
+
+  background-color: $color-background;
+
+  .innerSlider {
+    position: absolute;
+
+    width: 1.25rem;
+    height: 1.25rem;
+    top: calc(0.75rem / 2);
+    border-radius: 100vmax;
+    background-color: $color-text;
+
+    transition: transform 0.25s ease-out;
+
+    // Shadow for the crescent shape
+    &::after {
+      position: absolute;
+      content: "";
+      width: 1rem;
+      height: 1rem;
+      background-color: $color-background;
+      border-radius: 100vmax;
+      left: 0.4rem;
+    }
+
+    &.dark::after {
+      animation: toDark 0.5s ease-out 0.25s both;
+    }
+    &.light::after {
+      animation: toLight 0.5s ease-out 0.25s both;
+    }
+
+    @media screen and (min-width: $responsive-breakpoint) {
+      &.dark {
+        transform: translateX(calc(0.75rem / 2));
+      }
+
+      &.light {
+        transform: translateX(1.75rem - calc(0.75rem / 2));
+      }
+    }
+  }
+}
+
+@media screen and (max-width: $responsive-breakpoint) {
+  .outerSlider {
+    width: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .innerSlider {
+      position: relative;
+      top: auto;
+    }
+  }
+}
+
+@keyframes toLight {
+  0% {
+    transform: scale(.9) translate(0, 0);
+  }
+  50% {
+    transform: scale(1.2) translate(-5%, 5%);
+  }
+  100% {
+    transform: translate(75%, -40%) scale(0.75);
+  }
+}
+
+@keyframes toDark {
+  0% {
+    transform: scale(0.90) translate(75%, -60%);
+  }
+  100% {
+    transform: scale(1) translate(0, 0);
+  }
+}
