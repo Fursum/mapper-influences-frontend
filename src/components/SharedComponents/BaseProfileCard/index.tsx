@@ -2,10 +2,13 @@ import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
 import Link from "next/link";
 import React, { FC, useEffect } from "react";
 import { UserBase } from "@libs/types/user";
-
-import styles from "./style.module.scss";
 import Pill from "./Pill";
 import Image from "next/image";
+import useWindowSize from "@hooks/useWindowSize";
+
+import styles from "./style.module.scss";
+import AwesomeDebouncePromise from "awesome-debounce-promise";
+
 const textFit = require("textfit");
 
 type Props = { userData: UserBase };
@@ -15,10 +18,18 @@ const BaseProfileCard: FC<Props> = ({ userData }) => {
     <Pill key={group.id} group={group} />
   ));
 
+  const runFitText = () =>
+    textFit(document.getElementsByClassName(styles.name));
+  const debounceFitText = AwesomeDebouncePromise(runFitText, 2000);
+
+  const windowSize = useWindowSize();
   // Fit text to card
   useEffect(() => {
-    if (document) textFit(document.getElementsByClassName(styles.name));
+    if (document) runFitText();
   }, []);
+  useEffect(() => {
+    if (document) debounceFitText();
+  }, [windowSize]);
 
   return (
     <Link href={`/profile/${userData.id}`} passHref={true}>
