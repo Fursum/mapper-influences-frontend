@@ -73,6 +73,22 @@
           flex-grow: 1;
           margin-left: $spacing / 2;
         }
+
+        @media screen and (max-width: $responsive-breakpoint) {
+          position: relative;
+          width: 20rem;
+          .centerer {
+            display: flex;
+            flex-direction: column;
+            gap: $spacing / 2;
+            width: 20rem - $spacing * 2;
+
+            .descriptionSide {
+              margin-left: 0;
+              width: 100%;
+            }
+          }
+        }
       }
     }
   }

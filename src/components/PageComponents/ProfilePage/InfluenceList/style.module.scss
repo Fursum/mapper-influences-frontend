@@ -24,7 +24,7 @@
     gap: 0.5rem;
     align-items: center;
     justify-content: center;
-    
+
     width: 100%;
     max-width: 40rem;
 
@@ -52,3 +52,11 @@
   }
 }
 
+@media screen and (max-width: $responsive-breakpoint) {
+  .influenceRow {
+    flex-direction: column;
+    .descriptionSide{
+      width: 100%;
+    }
+  }
+}
