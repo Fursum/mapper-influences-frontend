@@ -5,4 +5,14 @@
   height: 100%;
   gap: 1rem;
   justify-content: center;
+
 }
+
+@media screen and (max-width: $responsive-breakpoint) {
+  .profilePage{
+    display: flex;
+    flex-direction: column;
+    max-width: $mobile-size;
+  }
+}
+

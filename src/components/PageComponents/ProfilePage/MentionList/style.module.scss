@@ -3,6 +3,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: $spacing;
+  padding-top: 0;
 
   background-color: $color-background-content;
 

@@ -116,6 +116,28 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         description: "",
         lastUpdated: Date.now(),
       },
+      {
+        profileData: {
+          avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
+          id: 12345,
+          username: "Fursum",
+        },
+        type: InfluenceTypeEnum.Respect,
+        strength: 2,
+        description: "",
+        lastUpdated: Date.now(),
+      },
+      {
+        profileData: {
+          avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
+          id: 12345,
+          username: "Fursum",
+        },
+        type: InfluenceTypeEnum.Respect,
+        strength: 2,
+        description: "",
+        lastUpdated: Date.now(),
+      },
     ],
   };
 

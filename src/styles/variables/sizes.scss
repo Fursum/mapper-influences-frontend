@@ -1,4 +1,9 @@
-$screen-size: 1366px;
+@import "../mixins/index";
+
+$screen-size: rem(1366);
+$mobile-size: rem(428);
 $border-radius: 0.5rem;
 $username-weight: 700;
 $spacing: 1rem;
+
+$responsive-breakpoint: 60rem;

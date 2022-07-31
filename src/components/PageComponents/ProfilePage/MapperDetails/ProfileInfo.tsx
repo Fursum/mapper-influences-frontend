@@ -29,7 +29,7 @@ const ProfileInfo: FC<Props> = ({ profileData }) => {
         target="_blank"
         rel="noreferrer"
       >
-        <div className={styles.mapperName}>{profileData.username}</div>{" "}
+        <div className={styles.mapperName}>{profileData.username}</div>
       </a>
       <div className={styles.title}>Nomination Assesment Team</div>
       

@@ -1,3 +1,5 @@
+@import "./mixins/index";
+@import "./variables/sizes";
 @import "./variables/toggledVariables";
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap');
 html,
@@ -9,6 +11,10 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif; */
 
   background-color: $color-background;
+
+  @media screen and (max-width:$responsive-breakpoint) {
+    font-size: rem(14);
+  }
 }
 
 a {

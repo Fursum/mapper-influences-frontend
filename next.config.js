@@ -8,7 +8,8 @@ const nextConfig = {
   sassOptions: {
     prependData: `
     @import "src/styles/extendables/index.scss";
-    @import "src/styles/variables/index.scss";`,
+    @import "src/styles/variables/index.scss";
+    @import "src/styles/mixins/index.scss";`,
   },
   reactStrictMode: true,
 };

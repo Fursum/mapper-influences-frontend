@@ -14,7 +14,7 @@
     margin-bottom: 0.5rem;
   }
 
-  >span{
+  > span {
     margin-top: 1rem;
     text-align: center;
   }
@@ -22,21 +22,19 @@
   .influenceRow {
     display: flex;
     gap: 0.5rem;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
+    
     width: 100%;
+    max-width: 40rem;
 
     padding: $spacing;
-    max-width: 40rem;
     padding-bottom: 0;
     margin-bottom: 1rem;
 
     .cardSide {
       flex-basis: 30%;
       flex-grow: 0;
-
-      
     }
 
     .descriptionSide {
@@ -53,3 +51,4 @@
     }
   }
 }
+
