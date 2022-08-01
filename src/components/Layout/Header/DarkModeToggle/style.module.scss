@@ -23,7 +23,6 @@
       border-radius: 100vmax;
       width: 100%;
       height: 100%;
-      
     }
 
     .beam {
@@ -62,7 +61,6 @@
     &.light {
       .colorFill {
         animation: toLightFill 0.25s ease-out 0.5s both;
-        background-color: orange;
       }
       .beam {
         animation: toLightBeams 0.25s ease-out 0.75s both;
@@ -119,7 +117,7 @@
   0% {
     transform: scale(0.9) translate(75%, -60%);
   }
-  75%{
+  75% {
     transform: translate(-10%, 5%);
   }
   100% {
@@ -132,7 +130,7 @@
     opacity: 0.5;
     transform: scale(0);
   }
-  75%{
+  75% {
     transform: scale(1.1);
   }
   100% {
@@ -158,8 +156,13 @@
 @keyframes toLightFill {
   0% {
     transform: scale(1);
+    background-color: $color-text;
+  }
+  50% {
+    background-color: $color-text;
   }
   100% {
+    background-color: orange;
     transform: scale(0.75);
   }
 }
