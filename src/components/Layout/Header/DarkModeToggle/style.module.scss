@@ -15,9 +15,25 @@
     height: 1.25rem;
     top: calc(0.75rem / 2);
     border-radius: 100vmax;
-    background-color: $color-text;
 
     transition: transform 0.25s ease-out;
+
+    .colorFill {
+      position: absolute;
+      border-radius: 100vmax;
+      width: 100%;
+      height: 100%;
+      background-color: $color-text;
+    }
+
+    .beam {
+      position: absolute;
+      width: 1.75rem;
+      height: 1.75rem;
+      left: -0.25rem;
+      top: -0.25rem;
+      transform-origin: center;
+    }
 
     // Shadow for the crescent shape
     &::after {
@@ -30,11 +46,28 @@
       left: 0.4rem;
     }
 
-    &.dark::after {
-      animation: toDark 0.5s ease-out 0.25s both;
+    // Toggle differences
+    &.dark {
+      .colorFill {
+        animation: toDarkFill 0.25s ease-out both;
+      }
+      .beam {
+        animation: toDarkBeams 0.25s ease-out both;
+      }
+      &::after {
+        animation: toDarkCrescent 0.25s ease-out 0.25s both;
+      }
     }
-    &.light::after {
-      animation: toLight 0.5s ease-out 0.25s both;
+    &.light {
+      .colorFill {
+        animation: toLightFill 0.25s ease-out 0.5s both;
+      }
+      .beam {
+        animation: toLightBeams 0.25s ease-out 0.75s both;
+      }
+      &::after {
+        animation: toLightCrescent 0.5s ease-out 0.1s both;
+      }
     }
 
     @media screen and (min-width: $responsive-breakpoint) {
@@ -63,15 +96,15 @@
   }
 }
 
-@keyframes toLight {
+@keyframes toLightCrescent {
   0% {
     opacity: 1;
-    transform: scale(.9) translate(0, 0);
+    transform: scale(0.9) translate(0, 0);
   }
   50% {
     transform: scale(1.2) translate(-5%, 5%);
   }
-  75%{
+  75% {
     opacity: 1;
   }
   100% {
@@ -80,11 +113,60 @@
   }
 }
 
-@keyframes toDark {
+@keyframes toDarkCrescent {
   0% {
-    transform: scale(0.90) translate(75%, -60%);
+    transform: scale(0.9) translate(75%, -60%);
+  }
+  75%{
+    transform: translate(-10%, 5%);
   }
   100% {
     transform: scale(1) translate(0, 0);
+  }
+}
+
+@keyframes toLightBeams {
+  0% {
+    opacity: 0.5;
+    transform: scale(0);
+  }
+  75%{
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes toDarkBeams {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  90% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+
+@keyframes toLightFill {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.75);
+  }
+}
+
+@keyframes toDarkFill {
+  0% {
+    transform: scale(0.75);
+  }
+  100% {
+    transform: scale(1);
   }
 }
