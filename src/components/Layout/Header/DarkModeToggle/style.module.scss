@@ -65,12 +65,17 @@
 
 @keyframes toLight {
   0% {
+    opacity: 1;
     transform: scale(.9) translate(0, 0);
   }
   50% {
     transform: scale(1.2) translate(-5%, 5%);
   }
+  75%{
+    opacity: 1;
+  }
   100% {
+    opacity: 0;
     transform: translate(75%, -40%) scale(0.75);
   }
 }
