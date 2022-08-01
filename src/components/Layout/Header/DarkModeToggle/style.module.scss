@@ -23,7 +23,7 @@
       border-radius: 100vmax;
       width: 100%;
       height: 100%;
-      background-color: $color-text;
+      
     }
 
     .beam {
@@ -50,6 +50,7 @@
     &.dark {
       .colorFill {
         animation: toDarkFill 0.25s ease-out both;
+        background-color: $color-text;
       }
       .beam {
         animation: toDarkBeams 0.25s ease-out both;
@@ -61,6 +62,7 @@
     &.light {
       .colorFill {
         animation: toLightFill 0.25s ease-out 0.5s both;
+        background-color: orange;
       }
       .beam {
         animation: toLightBeams 0.25s ease-out 0.75s both;
