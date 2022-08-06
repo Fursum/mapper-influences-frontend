@@ -60,10 +60,10 @@
     }
     &.light {
       .colorFill {
-        animation: toLightFill 0.25s ease-out 0.5s both;
+        animation: toLightFill 0.25s ease-out 0.3s both;
       }
       .beam {
-        animation: toLightBeams 0.25s ease-out 0.75s both;
+        animation: toLightBeams 0.25s ease-out 0.5s both;
       }
       &::after {
         animation: toLightCrescent 0.5s ease-out 0.1s both;
@@ -131,7 +131,7 @@
     transform: scale(0);
   }
   75% {
-    transform: scale(1.1);
+    transform: scale(1.2);
   }
   100% {
     opacity: 1;
