@@ -2,7 +2,8 @@ import { Magnify } from "@components/SvgComponents";
 import { MaxNameLength } from "@libs/consts/sizes";
 import AwesomeDebouncePromise from "awesome-debounce-promise";
 import { useRouter } from "next/router";
-import { FC } from "react";
+import { FC, useRef, useState } from "react";
+import { useOnClickOutside } from "usehooks-ts";
 
 import styles from "./styles.module.scss";
 
@@ -11,10 +12,15 @@ type Props = {
 };
 
 const SearchBar: FC<Props> = ({ className }) => {
-  const router = useRouter()
+  const router = useRouter();
+  const containerRef = useRef(null);
+  const [isSelected, setIsSelected] = useState(false);
+
+  // Close search bar on mobile
+  useOnClickOutside(containerRef, () => setIsSelected(false));
 
   const searchUser = (query: string) => {
-    router.push("/profile/" + query)
+    router.push("/profile/" + query);
     // TODO: Search user service
     console.log(query);
   };
@@ -27,14 +33,23 @@ const SearchBar: FC<Props> = ({ className }) => {
     debouncedSearch(query);
   };
 
+  const wrapperClass = `${styles.searchBar} ${className} ${
+    isSelected ? styles.isSelected : ""
+  }`;
+
   return (
-    <div className={`${styles.searchBar} ${className}`}>
+    <div className={wrapperClass} ref={containerRef}>
       <input
         onChange={(e) => handleChange(e.target.value)}
         placeholder={"Search User"}
         maxLength={MaxNameLength}
       />
-      <Magnify className={styles.magnify} />
+      <button
+        className={styles.magnifyButton}
+        onClick={() => setIsSelected(true)}
+      >
+        <Magnify className={styles.magnifySvg} />
+      </button>
     </div>
   );
 };

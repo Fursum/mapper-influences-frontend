@@ -1,25 +1,67 @@
 .searchBar {
-  position: relative;
+  display: flex;
+  align-items: center;
   background-color: $color-background;
   border-radius: $border-radius;
+  width: 10.5rem;
 
   > input {
     background-color: transparent;
-    width: 100%;
+    width: 10rem-1.25rem;
 
     &:focus-within,
     &:focus-visible,
     &:focus {
       outline: 0.1rem solid $color-primary;
     }
-
   }
 
-  .magnify {
-    position: absolute;
+  .magnifyButton {
+    display: inline;
+    padding-block: 0;
+    padding-inline: 0.25rem;
+    background-color: transparent;
     height: 1.25rem;
-    aspect-ratio: 1;
+    width: 1.75rem;
     right: 0.25rem;
     top: calc(50% - (1.25rem / 2));
+  }
+
+  .magnifySvg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+@media screen and (max-width: $responsive-breakpoint) {
+  .searchBar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 100vmax;
+    .magnifyButton {
+      position: relative;
+      inset: 0;
+    }
+    > input {
+      display: none;
+    }
+  }
+
+  .isSelected {
+    > input {
+      position: absolute;
+      display: block;
+      z-index: 5;
+      
+      width: unset;
+      left: 0.25rem;
+      right: 0.25rem;
+
+      background-color: $color-background;
+    }
   }
 }
