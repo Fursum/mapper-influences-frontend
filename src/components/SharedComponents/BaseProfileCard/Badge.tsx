@@ -4,12 +4,12 @@ import { FC } from "react";
 import styles from "./style.module.scss";
 
 type Props = { group: Group };
-const Pill: FC<Props> = ({ group }) => {
+const Badge: FC<Props> = ({ group }) => {
   return (
-    <span className={styles.pill} style={{ color: group.colour }}>
+    <span className={styles.badge} style={{ color: group.colour }}>
       {group.short_name}
       <span className={styles.tooltip}>{group.name}</span>
     </span>
   );
 };
-export default Pill;
+export default Badge;

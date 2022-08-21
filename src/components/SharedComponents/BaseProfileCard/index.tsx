@@ -1,8 +1,7 @@
-import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
 import Link from "next/link";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect } from "react";
 import { UserBase } from "@libs/types/user";
-import Pill from "./Pill";
+import Badge from "./Badge";
 import Image from "next/image";
 
 import styles from "./style.module.scss";
@@ -13,8 +12,8 @@ const textFit = require("textfit");
 type Props = { userData: UserBase };
 
 const BaseProfileCard: FC<Props> = ({ userData }) => {
-  const Pills = userData.groups?.map((group) => (
-    <Pill key={group.id} group={group} />
+  const Badges = userData.groups?.map((group) => (
+    <Badge key={group.id} group={group} />
   ));
 
   const runFitText = () =>
@@ -43,7 +42,7 @@ const BaseProfileCard: FC<Props> = ({ userData }) => {
         </div>
         <div className={styles.rightSide}>
           <div className={styles.name}>{userData.username}</div>
-          <div className={styles.pills}>{Pills}</div>
+          <div className={styles.badges}>{Badges}</div>
         </div>
       </div>
     </Link>
