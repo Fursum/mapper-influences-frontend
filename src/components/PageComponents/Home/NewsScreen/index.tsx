@@ -26,7 +26,7 @@ const NewsScreen: FC<Props> = ({}) => {
             <BaseProfileCard userData={rowData.user} />
             <div className={styles.number}>
               {rowData.number}
-              <span>Mentions</span>
+              <span>{`Mention${rowData.number !== 1 ? "s" : ""}`}</span>
             </div>
           </div>
         ))}
