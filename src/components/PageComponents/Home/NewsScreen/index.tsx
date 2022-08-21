@@ -4,44 +4,18 @@ import { userData } from "@libs/consts/dummyUserData";
 
 import styles from "./style.module.scss";
 import NewsRow from "./NewsRow";
-
-const exampleMarkdown = "**Test1** *test2* test3 ~~test4~~";
-const exampleNews = [
-  {
-    fullText: exampleMarkdown,
-    title: "News Title",
-    type: "Update Type",
-    desc: "Short description",
-  },
-];
-
-type NewsType = {
-  fullText: string;
-  title: string;
-  type: string;
-  desc: string;
-};
+import { LeaderboardType, NewsType } from "..";
 
 type Props = {
   newsList: NewsType[];
+  topList: LeaderboardType[];
 };
-const NewsScreen: FC<Props> = ({ newsList = exampleNews }) => {
-  const exampleTopList = useMemo(
-    () =>
-      userData.influences
-        .map((influence) => ({
-          user: influence.profileData,
-          number: 50,
-        }))
-        .sort((a, b) => b.number - a.number),
-    []
-  );
-
+const NewsScreen: FC<Props> = ({ newsList, topList }) => {
   return (
     <div className={styles.newsScreen}>
       <div className={styles.topInfluencers}>
         <h2>Top Influencers</h2>
-        {exampleTopList.map((rowData) => (
+        {topList.map((rowData) => (
           <div key={rowData.user.id} className={styles.row}>
             <BaseProfileCard userData={rowData.user} />
             <div className={styles.number}>
