@@ -11,6 +11,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Head>
         <meta name="description" content="" />
         <meta name="keywords" content="" />
+        <link rel="icon" href="/svg/Influences.svg"/>
         <title>Mapper Influences</title>
       </Head>
       <Provider store={store}>
