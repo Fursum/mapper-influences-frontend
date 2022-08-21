@@ -47,6 +47,11 @@
   &:hover {
     background-color: $color-background-card;
     cursor: pointer;
+
+    &::before{
+      transition: transform ease-out 0.1s;
+      transform: scaleX(1.5);
+    }
   }
 
   &::before {
@@ -55,7 +60,7 @@
     left: 0;
     content: "";
     height: 100%;
-    width: 0.1rem;
+    width: 0.25rem;
     border-radius: 100vmax;
     background-color: $color-primary;
   }
