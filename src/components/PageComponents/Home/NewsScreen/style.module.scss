@@ -1,0 +1,41 @@
+.newsScreen {
+  display: flex;
+  gap: $spacing;
+  height: 100%;
+
+  .topInfluencers,
+  .newsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+
+    padding-inline: $spacing;
+    padding-bottom: $spacing;
+
+    background-color: $color-background-content;
+  }
+
+  .topInfluencers {
+    width: 20rem;
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: $spacing;
+      margin-bottom: $spacing;
+      .number {
+        position: relative;
+        font-size: 2rem;
+        > div {
+          font-size: 0.75rem;
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .newsContainer {
+    width: 30rem;
+  }
+}
