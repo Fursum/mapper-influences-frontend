@@ -26,7 +26,7 @@ const BaseProfileCard: FC<Props> = ({ userData }) => {
     const debounceFitText = AwesomeDebouncePromise(
       runFitText,
       //Add random delay to updates
-      1000 + Math.random() * 10
+      100 + Math.random() * 10
     );
     window.addEventListener("resize", debounceFitText);
     return () => {

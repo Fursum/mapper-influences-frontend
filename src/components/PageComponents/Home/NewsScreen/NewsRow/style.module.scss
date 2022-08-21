@@ -1,0 +1,91 @@
+.modalBg {
+  outline: none;
+  border: none;
+
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  padding: $spacing;
+
+  // Escape parent to fill screen
+  width: calc(100vw - 0.25rem); // -0.25 rem for scrollbar
+  height: 100%;
+  margin-left: calc(-50vw + 50%);
+
+  background-color: transparent;
+  backdrop-filter: blur(10px);
+
+  z-index: 1;
+
+  .modal {
+    max-width: 25rem;
+    padding: $spacing;
+    height: fit-content;
+
+    background-color: $color-background;
+    border-radius: $border-radius;
+
+    // @extend %cardShadow has hover effect. We only need the shadow
+    box-shadow: var(--cardShadow);
+  }
+}
+
+.newsRow {
+  display: flex;
+  position: relative;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-block: $spacing;
+  padding: $spacing;
+
+  &:hover {
+    background-color: $color-background-card;
+    cursor: pointer;
+  }
+
+  &::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: "";
+    height: 100%;
+    width: 0.1rem;
+    border-radius: 100vmax;
+    background-color: $color-primary;
+  }
+
+  // Title
+  > h4 {
+    padding: 0;
+    margin: 0;
+    margin-bottom: $spacing / 2;
+    line-height: 1;
+    width: 100%;
+
+    .type {
+      font-size: 0.75rem;
+      &::before {
+        content: " - ";
+      }
+    }
+  }
+
+  // Short description
+  > p {
+    display: inline;
+    width: 70%;
+    margin: 0;
+    font-size: 0.75rem;
+  }
+
+  // Modal button
+  > button {
+    height: fit-content;
+    padding: 0.5rem;
+
+    line-height: 1;
+    border-radius: $border-radius;
+  }
+}

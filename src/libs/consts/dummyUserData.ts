@@ -29,7 +29,7 @@ export const userData: User = {
     {
       profileData: {
         avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
-        id: 12345,
+        id: 1,
         username: "Edisberkserbest",
         groups: [
           {
@@ -53,7 +53,7 @@ export const userData: User = {
     {
       profileData: {
         avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
-        id: 12345,
+        id: 2,
         username: "MMMMMMMMMMMMM",
         groups: [
           {
@@ -77,7 +77,7 @@ export const userData: User = {
     {
       profileData: {
         avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
-        id: 12345,
+        id: 3,
         username: "WWWWWWWWWWWWW",
         groups: [
           {
@@ -101,7 +101,7 @@ export const userData: User = {
     {
       profileData: {
         avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
-        id: 12345,
+        id: 4,
         username: "Fursum",
       },
       type: InfluenceTypeEnum.Respect,
@@ -112,7 +112,7 @@ export const userData: User = {
     {
       profileData: {
         avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
-        id: 12345,
+        id: 5,
         username: "Fursum",
       },
       type: InfluenceTypeEnum.Respect,

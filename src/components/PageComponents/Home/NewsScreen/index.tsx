@@ -3,15 +3,35 @@ import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
 import { userData } from "@libs/consts/dummyUserData";
 
 import styles from "./style.module.scss";
+import NewsRow from "./NewsRow";
 
-type Props = {};
-const NewsScreen: FC<Props> = ({}) => {
+const exampleMarkdown = "**Test1** *test2* test3 ~~test4~~";
+const exampleNews = [
+  {
+    fullText: exampleMarkdown,
+    title: "News Title",
+    type: "Update Type",
+    desc: "Short description",
+  },
+];
+
+type NewsType = {
+  fullText: string;
+  title: string;
+  type: string;
+  desc: string;
+};
+
+type Props = {
+  newsList: NewsType[];
+};
+const NewsScreen: FC<Props> = ({ newsList = exampleNews }) => {
   const exampleTopList = useMemo(
     () =>
       userData.influences
         .map((influence) => ({
           user: influence.profileData,
-          number: Math.floor(Math.random() * 100),
+          number: 50,
         }))
         .sort((a, b) => b.number - a.number),
     []
@@ -33,6 +53,9 @@ const NewsScreen: FC<Props> = ({}) => {
       </div>
       <div className={styles.newsContainer}>
         <h2>Latest News</h2>
+        {newsList.map((item, index) => (
+          <NewsRow key={index} {...item} />
+        ))}
       </div>
     </div>
   );

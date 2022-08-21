@@ -57,10 +57,10 @@ $card-width: 12rem;
         padding-top: 0.25rem;
         border-radius: 50rem;
 
-        font-size: x-small;
+        font-size: 0.75rem;
         font-weight: bold;
         text-transform: capitalize;
-        line-height: 1;
+        line-height: 1; //This will properly center the badge
 
         .tooltip {
           @extend %tooltip;
