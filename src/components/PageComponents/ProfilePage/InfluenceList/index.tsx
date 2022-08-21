@@ -9,7 +9,7 @@ type Props = { influences: Influence[] };
 const InfluenceList: FC<Props> = ({ influences }) => {
   const InfluenceCards = influences.map((influence) => (
     <InfluenceElement
-      key={influence.profileData.username}
+      key={influence.profileData.id}
       influenceData={influence}
     />
   ));
