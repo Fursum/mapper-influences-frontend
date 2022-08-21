@@ -17,15 +17,17 @@ const BaseProfileCard: FC<Props> = ({ userData }) => {
     <Pill key={group.id} group={group} />
   ));
 
-  const [randomDelay] = useState(Math.random() * 10)
-
   const runFitText = () =>
     textFit(document.getElementsByClassName(styles.name));
   // Random delay so every fit text does not run at once
-  const debounceFitText = AwesomeDebouncePromise(runFitText, 1000 + randomDelay);
 
   // Fit text to card on resize
   useEffect(() => {
+    const debounceFitText = AwesomeDebouncePromise(
+      runFitText,
+      //Add random delay to updates
+      1000 + Math.random() * 10
+    );
     if (document) runFitText();
     window.addEventListener("resize", debounceFitText);
     return () => {
