@@ -6,12 +6,9 @@
   justify-content: center;
   position: absolute;
   top: 0;
-  padding: $spacing;
 
-  // Escape parent to fill screen
-  width: calc(100vw - 1.05rem); // -1.05 rem for scrollbar
+  width: 100%;
   height: 100%;
-  margin-left: calc(-50vw + 50% + 0.525rem); // -1.05 / 2
 
   animation: backdropBlur forwards ease-out 0.2s;
 
