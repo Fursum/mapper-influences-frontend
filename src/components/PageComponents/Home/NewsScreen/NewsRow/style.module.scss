@@ -9,19 +9,25 @@
   padding: $spacing;
 
   // Escape parent to fill screen
-  width: calc(100vw - 0.25rem); // -0.25 rem for scrollbar
+  width: calc(100vw - 1.05rem); // -1.05 rem for scrollbar
   height: 100%;
   margin-left: calc(-50vw + 50%);
 
+  animation: backdropBlur forwards ease-out 0.1s;
+
   background-color: transparent;
-  backdrop-filter: blur(10px);
 
   z-index: 1;
 
   .modal {
-    max-width: 25rem;
+    max-width: 40rem;
+    max-height: calc(100vh - 6rem);
+    overflow: hidden;
+    overflow-y: scroll;
     padding: $spacing;
     height: fit-content;
+
+    animation: modalSlide both ease-out 0.3s 0.1s;
 
     background-color: $color-background;
     border-radius: $border-radius;
@@ -87,5 +93,25 @@
 
     line-height: 1;
     border-radius: $border-radius;
+  }
+}
+
+@keyframes backdropBlur {
+  0% {
+    backdrop-filter: blur(10px) opacity(0);
+  }
+  100% {
+    backdrop-filter: blur(10px) opacity(1);
+  }
+}
+
+@keyframes modalSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

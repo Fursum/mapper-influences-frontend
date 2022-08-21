@@ -1,10 +1,10 @@
-import { FC, useMemo } from "react";
+import { FC } from "react";
 import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
-import { userData } from "@libs/consts/dummyUserData";
+
+import NewsRow from "./NewsRow";
+import { LeaderboardType, NewsType } from "@libs/types/influence";
 
 import styles from "./style.module.scss";
-import NewsRow from "./NewsRow";
-import { LeaderboardType, NewsType } from "..";
 
 type Props = {
   newsList: NewsType[];

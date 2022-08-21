@@ -27,3 +27,15 @@ export type ProfileInfoIcons =
   | "Loved"
   | "Pending"
   | "Graved";
+
+export type NewsType = {
+  fullText: string;
+  title: string;
+  type: string;
+  desc: string;
+};
+
+export type LeaderboardType = {
+  user: UserBase;
+  number: number;
+};
