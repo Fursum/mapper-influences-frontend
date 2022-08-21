@@ -19,16 +19,16 @@ const BaseProfileCard: FC<Props> = ({ userData }) => {
 
   const runFitText = () =>
     textFit(document.getElementsByClassName(styles.name));
-  // Random delay so every fit text does not run at once
 
-  // Fit text to card on resize
+  // Fit text to card on resize and on mount
   useEffect(() => {
+    if (document) runFitText();
+
     const debounceFitText = AwesomeDebouncePromise(
       runFitText,
       //Add random delay to updates
       1000 + Math.random() * 10
     );
-    if (document) runFitText();
     window.addEventListener("resize", debounceFitText);
     return () => {
       window.removeEventListener("resize", debounceFitText);
