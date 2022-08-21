@@ -57,7 +57,7 @@ const InfluenceType: FC<Props> = ({
   const MinusButton = (
     <button
       aria-label="Decrease Influence"
-      className={styles.minus}
+      className={`${styles.minus} ${strengthState === 1 ? styles.purple : ""}`}
       onClick={reduceInfluence}
     >
       {strengthState === 1 ? "<" : "-"}
@@ -70,7 +70,7 @@ const InfluenceType: FC<Props> = ({
   const PlusButton = (
     <button
       aria-label="Increase Influence"
-      className={styles.plus}
+      className={`${styles.plus} ${strengthState === 3 ? styles.purple : ""}`}
       onClick={increaseInfluence}
     >
       {strengthState === 3 ? ">" : "+"}
