@@ -1,6 +1,6 @@
+import { FC, useMemo } from "react";
 import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
 import { userData } from "@libs/consts/dummyUserData";
-import { FC, useMemo } from "react";
 
 import styles from "./style.module.scss";
 
@@ -26,7 +26,7 @@ const NewsScreen: FC<Props> = ({}) => {
             <BaseProfileCard userData={rowData.user} />
             <div className={styles.number}>
               {rowData.number}
-              <div>Mentions</div>
+              <span>Mentions</span>
             </div>
           </div>
         ))}
