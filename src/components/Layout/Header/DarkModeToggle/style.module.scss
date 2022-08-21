@@ -60,13 +60,13 @@
     }
     &.light {
       .colorFill {
-        animation: toLightFill 0.25s ease-out 0.3s both;
+        animation: toLightFill 0.25s ease-out 0.15s both;
       }
       .beam {
-        animation: toLightBeams 0.25s ease-out 0.5s both;
+        animation: toLightBeams 0.25s ease-out 0.25s both;
       }
       &::after {
-        animation: toLightCrescent 0.5s ease-out 0.1s both;
+        animation: toLightCrescent 0.5s ease-out 0s both;
       }
     }
 
