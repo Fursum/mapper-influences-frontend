@@ -1,0 +1,28 @@
+.button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing;
+  padding: $spacing;
+
+  background-color: transparent;
+  outline: 2px solid $color-primary;
+  border-radius: $border-radius;
+
+  &:hover {
+    background-color: $color-primary;
+    > h4 {
+      text-decoration: underline;
+    }
+  }
+
+  .icon {
+    width: 2rem;
+    height: 2rem;
+  }
+  > h4 {
+    line-height: 1;
+    margin: 0;
+  }
+}

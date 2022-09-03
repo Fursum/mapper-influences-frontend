@@ -1,6 +1,7 @@
 import { FC } from "react";
 import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
 
+import { ReportBug, SendFeedback } from "./ContributeButtons";
 import NewsRow from "./NewsRow";
 import { LeaderboardType, NewsType } from "@libs/types/influence";
 
@@ -30,6 +31,13 @@ const NewsScreen: FC<Props> = ({ newsList, topList }) => {
         {newsList.map((item, index) => (
           <NewsRow key={index} {...item} />
         ))}
+      </div>
+      <div className={styles.contribute}>
+        <h2>Want To Contribute?</h2>
+        <div className={styles.buttons}>
+          <ReportBug />
+          <SendFeedback />
+        </div>
       </div>
     </div>
   );

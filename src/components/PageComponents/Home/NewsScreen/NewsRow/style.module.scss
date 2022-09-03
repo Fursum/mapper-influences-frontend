@@ -48,7 +48,7 @@
     background-color: $color-background-card;
     cursor: pointer;
 
-    &::before{
+    &::before {
       transition: transform ease-out 0.1s;
       transform: scaleX(1.5);
     }
@@ -62,7 +62,7 @@
     height: 100%;
     width: 0.25rem;
     border-radius: 100vmax;
-    background-color: $color-primary;
+    background-color: $color-secondary;
   }
 
   // Title

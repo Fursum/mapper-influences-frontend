@@ -1,14 +1,19 @@
 .newsScreen {
   display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
   gap: $spacing;
   height: 100%;
 
   .topInfluencers,
-  .newsContainer {
+  .newsContainer,
+  .contribute {
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100%;
+
+    overflow-y: scroll;
 
     padding-inline: $spacing;
     padding-bottom: $spacing;
@@ -16,8 +21,30 @@
     background-color: $color-background-content;
   }
 
+  .topInfluencers,
+  .newsContainer {
+    height: calc(70% - $spacing / 2);
+  }
+
+  .newsContainer {
+    width: 30rem;
+  }
+
+  .contribute {
+    height: calc(30% - $spacing / 2);
+    max-width: 50rem + $spacing;
+    flex-basis: 100%;
+
+    .buttons {
+      display: flex;
+      flex-grow: 1;
+      gap: $spacing;
+    }
+  }
+
   .topInfluencers {
     width: 20rem;
+
     .row {
       display: flex;
       align-items: center;
@@ -34,18 +61,16 @@
       }
     }
   }
-
-  .newsContainer {
-    width: 30rem;
-  }
 }
 
 @media screen and (max-width: $responsive-breakpoint) {
   .newsScreen {
-    flex-wrap: wrap;
-    justify-content: center;
-    .newsContainer {
+    flex-direction: column;
+    .newsContainer,
+    .contribute {
       width: 20rem;
+      max-width: 20rem;
+      flex-basis: 100%;
     }
   }
 }
