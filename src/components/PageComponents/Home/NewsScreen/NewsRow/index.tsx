@@ -23,9 +23,8 @@ const NewsRow: FC<Props> = ({ fullText, title, type, desc }) => {
         </Modal>
       )}
       <div className={styles.newsRow} onClick={() => setShowModal(true)}>
-        <h4>
-          {title} <span className={styles.type}>{type}</span>
-        </h4>
+        <span className={styles.type}>{type}</span>
+        <h4>{title}</h4>
         <p>{desc}</p>
       </div>
     </>
