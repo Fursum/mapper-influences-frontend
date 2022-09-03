@@ -21,12 +21,12 @@ const BaseProfileCard: FC<Props> = ({ userData }) => {
 
   // Fit text to card on resize and on mount
   useEffect(() => {
-    if (document) runFitText();
+    document.fonts.ready.then(() => runFitText());
 
     const debounceFitText = AwesomeDebouncePromise(
       runFitText,
       //Add random delay to updates
-      100 + Math.random() * 10
+      100 + Math.random() * 15
     );
     window.addEventListener("resize", debounceFitText);
     return () => {
