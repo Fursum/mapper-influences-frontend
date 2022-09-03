@@ -40,9 +40,12 @@ a {
 }
 
 button {
-  border: none;
   color: $color-text;
   background-color: $color-primary;
+  padding: $spacing;
+  > span {
+    line-height: 1;
+  }
 
   cursor: pointer;
 }
@@ -58,7 +61,9 @@ button {
   border-radius: 5rem;
 }
 
-input {
+input,
+textarea,
+button {
   border: none;
   padding: $spacing / 2;
   border-radius: $border-radius;

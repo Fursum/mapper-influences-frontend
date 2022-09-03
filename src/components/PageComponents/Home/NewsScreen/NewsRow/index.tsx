@@ -1,7 +1,8 @@
-import { FC, useRef, useState } from "react";
+import { FC, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import gfm from "remark-gfm";
-import { useOnClickOutside } from "usehooks-ts";
+
+import Modal from "@components/SharedComponents/Modal";
 
 import styles from "./style.module.scss";
 
@@ -12,21 +13,15 @@ type Props = {
   desc: string;
 };
 const NewsRow: FC<Props> = ({ fullText, title, type, desc }) => {
-  const modalRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
-  useOnClickOutside(modalRef, () => setShowModal(false));
-
-  const Modal: FC = () => (
-    <dialog className={styles.modalBg} open>
-      <div className={styles.modal} ref={modalRef}>
-        <ReactMarkdown remarkPlugins={[gfm]}>{fullText || ""}</ReactMarkdown>
-      </div>
-    </dialog>
-  );
 
   return (
     <>
-      {showModal && <Modal />}
+      {showModal && (
+        <Modal showModal={showModal} setShowModal={setShowModal}>
+          <ReactMarkdown remarkPlugins={[gfm]}>{fullText || ""}</ReactMarkdown>
+        </Modal>
+      )}
       <div className={styles.newsRow} onClick={() => setShowModal(true)}>
         <h4>
           {title} <span className={styles.type}>{type}</span>

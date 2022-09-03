@@ -1,40 +1,3 @@
-.modalBg {
-  outline: none;
-  border: none;
-
-  display: flex;
-  justify-content: center;
-  position: absolute;
-  top: 0;
-
-  width: 100%;
-  height: 100%;
-
-  animation: backdropBlur forwards ease-out 0.2s;
-
-  background-color: transparent;
-
-  z-index: 1;
-
-  .modal {
-    max-width: 40rem;
-    max-height: calc(100vh - 6rem);
-    overflow: hidden;
-    overflow-y: scroll;
-    padding: $spacing;
-    height: fit-content;
-    max-height: 100%;
-
-    animation: modalSlide both ease-out 0.3s 0.1s;
-
-    background-color: $color-background;
-    border-radius: $border-radius;
-
-    // @extend %cardShadow has hover effect. We only need the shadow
-    box-shadow: var(--cardShadow);
-  }
-}
-
 .newsRow {
   display: flex;
   position: relative;
@@ -58,6 +21,7 @@
     }
   }
 
+  // Colored bar
   &::before {
     position: absolute;
     top: 0;
@@ -91,34 +55,5 @@
     width: 70%;
     margin: 0;
     font-size: 0.75rem;
-  }
-
-  // Modal button
-  > button {
-    height: fit-content;
-    padding: 0.5rem;
-
-    line-height: 1;
-    border-radius: $border-radius;
-  }
-}
-
-@keyframes backdropBlur {
-  0% {
-    backdrop-filter: blur(10px) opacity(0);
-  }
-  100% {
-    backdrop-filter: blur(10px) opacity(1);
-  }
-}
-
-@keyframes modalSlide {
-  0% {
-    opacity: 0;
-    transform: translateY(-1rem);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
