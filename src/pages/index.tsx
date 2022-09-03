@@ -14,7 +14,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   news,
 }) => {
   const session = true;
-  const showTutorial = true;
+  const showTutorial = false;
 
   const UserScreen = showTutorial ? (
     <TutorialScreen />

@@ -30,9 +30,10 @@ a {
 
   color: $color-text;
   // All of the color transitions
-  $allTransitions: background-color 0.1s ease-in, color 0.1s ease-in,
-    fill 0.1s ease-in, outline-color 0.1s ease-in, text-shadow 0.1s ease-in,
-    fill 0.1s ease-in;
+  $transitionConfig: 0.1s ease-in;
+  $allTransitions: background-color $transitionConfig, color $transitionConfig,
+    outline-color $transitionConfig, text-shadow $transitionConfig,
+    fill $transitionConfig;
   transition: $allTransitions;
   &::after,
   &::before {

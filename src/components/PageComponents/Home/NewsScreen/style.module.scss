@@ -51,10 +51,21 @@
       align-items: center;
       gap: $spacing;
       margin-bottom: $spacing;
+
       .number {
         position: relative;
-        font-size: 2rem;
         > span {
+          &:first-of-type {
+            font-weight: 700;
+            font-size: 2rem;
+            background: -webkit-linear-gradient(
+              left,
+              $color-secondary-text,
+              $color-primary-text
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+          }
           display: block;
           font-size: 0.75rem;
           width: 100%;
