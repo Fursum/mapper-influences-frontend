@@ -10,8 +10,8 @@ import {
   Subscribers,
 } from "@components/SvgComponents";
 
-type Props = { iconName: ProfileInfoIcons; className?: string };
-const PillIcon: FC<Props> = ({ iconName, className }) => {
+type Props = { iconName: ProfileInfoIcons; className?: string; color?: string };
+const PillIcon: FC<Props> = ({ iconName, className, color }) => {
   let Selected: FC<any>;
   switch (iconName) {
     case "Followers":
@@ -39,6 +39,6 @@ const PillIcon: FC<Props> = ({ iconName, className }) => {
       return <span>?</span>;
   }
 
-  return <Selected className={className || ""} />;
+  return <Selected className={className || ""} color={color} />;
 };
 export default PillIcon;

@@ -9,7 +9,13 @@ html {
   --bgColorContent: hsl(255, 11%, 15%);
   --primaryColor: hsl(205, 50%, 25%);
   --secondaryColor: hsl(294, 50%, 25%);
+  --primaryColorBg: hsl(205, 50%, 25%);
+  --secondaryColorBg: hsl(294, 50%, 25%);
+
   --textColor: hsl(0, 0%, 90%);
+  // Buttons use these colors over the colored backgrounds
+  --primaryTextColor: hsl(0, 0%, 90%);
+  --secondaryTextColor: hsl(0, 0%, 90%);
 
   --cardShadow: 0 0 0 0.075rem rgba(150, 150, 150, 0.5);
   --cardShadowHover: 0 0 0 0.1rem rgba(150, 150, 150, 0.9);
@@ -21,7 +27,13 @@ html[data-theme="light"] {
   --bgColor-3-hover: hsl(313, 35%, 81%);
   --primaryColor: hsl(205, 100%, 50%);
   --secondaryColor: hsl(294, 100%, 50%);
+  --primaryColorBg: hsla(205, 100%, 50%, 15%);
+  --secondaryColorBg: hsl(294, 100%, 50%, 15%);
+
   --textColor: hsl(0, 0%, 10%);
+  // Buttons use these colors over the colored backgrounds
+  --primaryTextColor: hsl(205, 100%, 50%);
+  --secondaryTextColor: hsl(294, 100%, 50%);
 
   --cardShadow: 0 0.05rem 0.2rem 0.05rem rgba(0, 0, 0, 0.15);
   --cardShadowHover: 0 0.1rem 0.5rem 0.15rem rgba(0, 0, 0, 0.2);

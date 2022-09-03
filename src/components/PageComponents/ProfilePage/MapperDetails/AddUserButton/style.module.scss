@@ -1,5 +1,5 @@
 .addUser {
-  .icon{
+  .icon {
     width: 2rem;
     height: 2rem;
   }
@@ -12,8 +12,6 @@
   font-weight: bold;
 
   border-radius: $border-radius;
-
-  background-color: $color-primary;
   padding-inline: $spacing;
   padding-block: $spacing / 2;
 }

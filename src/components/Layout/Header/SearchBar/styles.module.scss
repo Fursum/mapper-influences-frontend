@@ -17,6 +17,7 @@
   }
 
   .magnifyButton {
+    outline: none;
     display: inline;
     padding-block: 0;
     padding-inline: 0.25rem;
@@ -56,7 +57,7 @@
       position: absolute;
       display: block;
       z-index: 5;
-      
+
       width: unset;
       left: 0.25rem;
       right: 0.25rem;

@@ -31,7 +31,8 @@ a {
   color: $color-text;
   // All of the color transitions
   $allTransitions: background-color 0.1s ease-in, color 0.1s ease-in,
-    fill 0.1s ease-in, outline-color 0.1s ease-in, text-shadow 0.1s ease-in;
+    fill 0.1s ease-in, outline-color 0.1s ease-in, text-shadow 0.1s ease-in,
+    fill 0.1s ease-in;
   transition: $allTransitions;
   &::after,
   &::before {
@@ -40,14 +41,22 @@ a {
 }
 
 button {
-  color: $color-text;
-  background-color: $color-primary;
+  color: $color-primary-text;
+  background-color: $color-primary-bg;
+  outline: 2px solid $color-primary;
   padding: $spacing;
   > span {
+    font-weight: 700;
     line-height: 1;
+    color: inherit;
   }
 
   cursor: pointer;
+
+  &:hover {
+    --primaryTextColor: var(--textColor);
+    --primaryColorBg: var(--primaryColor);
+  }
 }
 
 *::-webkit-scrollbar {
