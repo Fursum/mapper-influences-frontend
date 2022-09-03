@@ -1,6 +1,7 @@
 // This is only imported in globals.scss
 
-html[data-theme="dark"] {
+html[data-theme="dark"],
+html {
   --bgColor-1: hsl(252, 10%, 10%);
   --bgColor-2: hsl(252, 19%, 15%);
   --bgColor-3: hsl(255, 20%, 20%);
