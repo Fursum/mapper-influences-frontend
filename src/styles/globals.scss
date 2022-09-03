@@ -12,10 +12,9 @@ body {
 
   background-color: $color-background;
 
-  font-size: 16px;
-
+  font-size: 1rem;
   @media screen and (max-width: $responsive-breakpoint) {
-    font-size: 14px;
+    font-size: 0.8rem;
   }
 }
 
