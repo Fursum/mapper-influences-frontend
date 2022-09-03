@@ -31,7 +31,7 @@ $card-width: 12rem;
     flex-direction: column;
     justify-content: center;
     height: 100%;
-    
+
     flex-grow: 1;
 
     .name {
@@ -66,7 +66,6 @@ $card-width: 12rem;
           @extend %tooltip;
           max-width: 10em;
           width: max-content;
-          top: 1.25rem;
         }
         &:hover {
           .tooltip {

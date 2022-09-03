@@ -27,21 +27,25 @@
 
 %tooltip {
   position: absolute;
-  display: flex;
-  background-color: $color-background;
   padding: 0.25em 0.5em;
-
-  top: -1.75em;
   border-radius: $border-radius;
-  z-index: 2;
+  top: -$spacing / 4;
+  transform: translateY(-100%);
+
+  background-color: $color-background;
+  box-shadow: 0 0 1rem 0.5rem rgba(0, 0, 0, 0.05);
+
+  text-align: center;
+  pointer-events: none;
+
   opacity: 0;
   transition: opacity ease-out 0.15s;
-  pointer-events: none;
-  text-align: center;
-  box-shadow: 0 0 1rem 0.5rem rgba(0, 0, 0, 0.05);
+
+  z-index: 2;
 }
 
 %contentBox {
   background-color: $color-background-content;
   box-shadow: var(--contentShadow);
+  border-radius: $border-radius;
 }
