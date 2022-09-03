@@ -6,6 +6,8 @@
   gap: $spacing;
   padding: $spacing;
 
+  height: fit-content;
+
   background-color: transparent;
   outline: 2px solid $color-primary;
   border-radius: $border-radius;
@@ -18,8 +20,8 @@
   }
 
   .icon {
-    width: 2rem;
-    height: 2rem;
+    width: 3rem;
+    height: 3rem;
   }
   > h4 {
     line-height: 1;

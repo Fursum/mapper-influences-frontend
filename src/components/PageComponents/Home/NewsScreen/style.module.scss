@@ -23,7 +23,7 @@
 
   .topInfluencers,
   .newsContainer {
-    height: calc(70% - $spacing / 2);
+    height: calc(65% - $spacing / 2);
   }
 
   .newsContainer {
@@ -31,13 +31,14 @@
   }
 
   .contribute {
-    height: calc(30% - $spacing / 2);
+    height: calc(35% - $spacing / 2);
     max-width: 50rem + $spacing;
     flex-basis: 100%;
 
     .buttons {
       display: flex;
       flex-grow: 1;
+      align-items: center;
       gap: $spacing;
     }
   }
