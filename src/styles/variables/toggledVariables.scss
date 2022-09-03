@@ -19,11 +19,12 @@ html {
 
   --cardShadow: 0 0 0 0.075rem rgba(150, 150, 150, 0.5);
   --cardShadowHover: 0 0 0 0.1rem rgba(150, 150, 150, 0.9);
+  --contentShadow: none;
 }
 html[data-theme="light"] {
   --bgColor-1: hsl(0, 0%, 100%);
-  --bgColor-2: hsl(313, 100%, 98%);
-  --bgColor-3: hsl(334, 100%, 94%);
+  --bgColor-2: hsl(310, 100%, 99%);
+  --bgColor-3: hsl(333, 100%, 96%);
   --bgColor-3-hover: hsl(313, 35%, 81%);
   --primaryColor: hsl(205, 100%, 50%);
   --secondaryColor: hsl(294, 100%, 50%);
@@ -37,4 +38,5 @@ html[data-theme="light"] {
 
   --cardShadow: 0 0.05rem 0.2rem 0.05rem rgba(0, 0, 0, 0.15);
   --cardShadowHover: 0 0.1rem 0.5rem 0.15rem rgba(0, 0, 0, 0.2);
+  --contentShadow: 0 0.1rem 1.5rem -0.25rem rgba(0, 0, 0, 0.1);
 }

@@ -18,7 +18,7 @@
     padding-inline: $spacing;
     padding-bottom: $spacing;
 
-    background-color: $color-background-content;
+    @extend %contentBox;
   }
 
   .topInfluencers,

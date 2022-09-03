@@ -50,7 +50,9 @@ const TutorialScreen: FC<Props> = ({}) => {
           number={1}
           title={"Look up someone who inspired your mapping"}
         >
-          <SearchBar />
+          <div className={styles.searchWrapper}>
+            <SearchBar />
+          </div>
         </TutorialStep>
         <TutorialStep number={2} title={"Add the user to your influences list"}>
           <AddUserButton onClick={toggleTooltip} />
@@ -71,7 +73,10 @@ const TutorialScreen: FC<Props> = ({}) => {
             <InfluenceType editable />
           </div>
           <div className={styles.descriptionSide}>
-            <EditableDescription description="Edit here to give more details." editable />
+            <EditableDescription
+              description="Edit here to give more details."
+              editable
+            />
           </div>
         </TutorialStep>
       </div>

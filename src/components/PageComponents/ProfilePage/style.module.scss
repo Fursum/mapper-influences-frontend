@@ -6,13 +6,15 @@
   gap: 1rem;
   justify-content: center;
 
+  > div {
+    @extend %contentBox;
+  }
 }
 
 @media screen and (max-width: $responsive-breakpoint) {
-  .profilePage{
+  .profilePage {
     display: flex;
     flex-direction: column;
     max-width: $mobile-size;
   }
 }
-
