@@ -44,6 +44,10 @@
   margin-block: $spacing;
   padding: $spacing;
 
+  &:first-of-type {
+    margin-top: 0;
+  }
+
   &:hover {
     background-color: $color-background-card;
     cursor: pointer;
