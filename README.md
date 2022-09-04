@@ -1,13 +1,9 @@
-# Credits
+# Mapper Influences
 
-## Frontend / Design
-- [Fursum](https://github.com/Fursum)
-- [Skytuna](https://github.com/Skytuna)
-- [Coderbora](https://github.com/Coderbora) ![peepostare](https://cdn.discordapp.com/emojis/896081172801658921.webp?size=20&quality=lossless)
-
-## Backend
-- [Boraarslan](https://github.com/boraarslan)
-- [Coderbora](https://github.com/Coderbora) ![peepostare](https://cdn.discordapp.com/emojis/896081172801658921.webp?size=20&quality=lossless)
+## How to run the server locally
+1. Clone or download this repo. 
+2. In the folder, run `yarn install` or `npm install`.
+3. After the installation, start the dev server with `yarn dev` or `npm run dev`.
 
 ## Tools Used
 - Next.js
