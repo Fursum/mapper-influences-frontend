@@ -39,9 +39,9 @@
   &::after {
     position: absolute;
     content: "";
-    width: calc(100vw + $spacing);
+    width: 100vw;
     bottom: 0;
-    left: -$spacing/ 2;
+    left: 0;
     height: $spacing / 8;
     background: linear-gradient(to right, $color-secondary, $color-primary);
   }
