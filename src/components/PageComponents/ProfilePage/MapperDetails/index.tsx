@@ -23,7 +23,11 @@ const MapperDetails: FC<Props> = ({ profileData, description, details }) => {
       <div className={styles.stickyWrapper}>
         <ProfileInfo profileData={profileData} />
         <AddUserButton onClick={addUserHandler} />
-        <EditableDescription description={description} editable />
+        <EditableDescription
+          description={description}
+          placeholder={"Enter a description for your profile."}
+          editable
+        />
         <Stats details={details} />
       </div>
     </div>

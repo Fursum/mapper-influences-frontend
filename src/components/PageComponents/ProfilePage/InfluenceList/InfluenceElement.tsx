@@ -6,11 +6,10 @@ import EditableDescription from "../EditableDescription";
 import styles from "./style.module.scss";
 import InfluenceType from "./InfluenceType";
 
-type Props = {
+const InfluenceElement: FC<{
   influenceData: Influence;
-};
-
-const InfluenceElement: FC<Props> = ({ influenceData }) => {
+  editable?: boolean;
+}> = ({ influenceData, editable }) => {
   return (
     <div className={styles.influenceRow}>
       <div className={styles.cardSide}>
@@ -21,7 +20,8 @@ const InfluenceElement: FC<Props> = ({ influenceData }) => {
         <EditableDescription
           className={styles.influenceDescription}
           description={influenceData.description}
-          editable
+          editable={editable}
+          placeholder={"Describe your influence here."}
         />
       </div>
     </div>

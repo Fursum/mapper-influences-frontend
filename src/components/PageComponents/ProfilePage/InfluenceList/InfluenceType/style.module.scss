@@ -16,6 +16,7 @@
     width: 1.25rem;
     height: 1.25rem;
     font-size: 1rem;
+    font-weight: 700;
 
     user-select: none;
   }
@@ -31,5 +32,10 @@
     background-color: $color-secondary-bg;
     color: $color-text-secondary;
     outline-color: $color-secondary;
+
+    &:hover {
+      background-color: $color-secondary;
+      color: $color-text;
+    }
   }
 }

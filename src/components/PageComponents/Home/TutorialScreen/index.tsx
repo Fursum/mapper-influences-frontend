@@ -74,7 +74,8 @@ const TutorialScreen: FC<Props> = ({ children }) => {
           </div>
           <div className={styles.descriptionSide}>
             <EditableDescription
-              description="Edit here to give more details."
+              description=""
+              placeholder="Edit here to give more details."
               editable
             />
           </div>

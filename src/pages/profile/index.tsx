@@ -10,7 +10,7 @@ type Props = {
 const MapperPage: NextPage<Props> = ({ userData }) => {
   return (
     <>
-      <ProfilePage userData={userData} editable={true} />
+      <ProfilePage userData={userData} editable />
     </>
   );
 };

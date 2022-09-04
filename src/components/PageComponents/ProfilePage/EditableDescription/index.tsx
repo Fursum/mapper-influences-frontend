@@ -6,6 +6,7 @@ import styles from "./style.module.scss";
 type Props = {
   className?: string;
   description: string;
+  placeholder: string;
   editable?: boolean;
   onChange?: () => void;
 };
@@ -13,6 +14,7 @@ const EditableDescription: FC<Props> = ({
   className,
   description,
   editable,
+  placeholder,
   onChange,
 }) => {
   const submitChanges = (e: string) => {
@@ -30,7 +32,9 @@ const EditableDescription: FC<Props> = ({
       }`}
       onChange={(e) => debouncedSubmit(e.target.value)}
       defaultValue={description}
+      placeholder={editable ? placeholder : ""}
       readOnly={!editable}
+      disabled={!editable}
     />
   );
 };

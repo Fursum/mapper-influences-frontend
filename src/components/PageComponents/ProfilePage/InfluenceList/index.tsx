@@ -4,13 +4,15 @@ import { Influence } from "@libs/types/influence";
 import styles from "./style.module.scss";
 import InfluenceElement from "./InfluenceElement";
 
-type Props = { influences: Influence[] };
-
-const InfluenceList: FC<Props> = ({ influences }) => {
+const InfluenceList: FC<{ influences: Influence[]; editable?: boolean }> = ({
+  influences,
+  editable,
+}) => {
   const InfluenceCards = influences.map((influence) => (
     <InfluenceElement
       key={influence.profileData.id}
       influenceData={influence}
+      editable={editable}
     />
   ));
 
