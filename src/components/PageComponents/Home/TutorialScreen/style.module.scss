@@ -43,12 +43,6 @@
 
       @extend %contentBox;
 
-      .searchWrapper {
-        padding: $spacing / 4;
-        border-radius: $border-radius * 1.5;
-        background: linear-gradient(to right, $color-secondary, $color-primary);
-      }
-
       .centerer {
         position: relative;
         display: flex;

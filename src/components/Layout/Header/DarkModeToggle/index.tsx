@@ -21,7 +21,7 @@ const DarkModeToggle: FC<Props> = ({ className }) => {
     >
       <div className={`${styles.innerSlider} ${styles[currentMode]}`}>
         <div className={styles.colorFill} />
-        <Beams className={styles.beam} color={"orange"} />
+        <Beams className={styles.beam} color={"var(--primaryColor)"} />
       </div>
     </button>
   );

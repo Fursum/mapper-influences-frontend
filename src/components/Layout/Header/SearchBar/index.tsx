@@ -33,23 +33,25 @@ const SearchBar: FC<Props> = ({ className }) => {
     debouncedSearch(query);
   };
 
-  const wrapperClass = `${styles.searchBar} ${className} ${
+  const wrapperClass = `${styles.searchBorder} ${className} ${
     isSelected ? styles.isSelected : ""
   }`;
 
   return (
-    <div className={wrapperClass} ref={containerRef}>
-      <input
-        onChange={(e) => handleChange(e.target.value)}
-        placeholder={"Search User"}
-        maxLength={MaxNameLength}
-      />
-      <button
-        className={styles.magnifyButton}
-        onClick={() => setIsSelected(true)}
-      >
-        <Magnify className={styles.magnifySvg} />
-      </button>
+    <div className={wrapperClass}>
+      <div className={styles.searchBar} ref={containerRef}>
+        <input
+          onChange={(e) => handleChange(e.target.value)}
+          placeholder={"Search User"}
+          maxLength={MaxNameLength}
+        />
+        <button
+          className={styles.magnifyButton}
+          onClick={() => setIsSelected(true)}
+        >
+          <Magnify className={styles.magnifySvg} />
+        </button>
+      </div>
     </div>
   );
 };

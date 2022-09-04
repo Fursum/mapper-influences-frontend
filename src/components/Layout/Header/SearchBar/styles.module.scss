@@ -1,3 +1,9 @@
+.searchBorder {
+  padding: $spacing / 4;
+  border-radius: $border-radius * 1.5;
+  background: linear-gradient(to right, $color-secondary, $color-primary);
+}
+
 .searchBar {
   display: flex;
   align-items: center;
@@ -12,7 +18,7 @@
     &:focus-within,
     &:focus-visible,
     &:focus {
-      outline: 0.1rem solid $color-primary;
+      outline: none;
     }
   }
 

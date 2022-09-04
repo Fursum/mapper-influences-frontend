@@ -31,9 +31,20 @@
 
   padding-block: $spacing / 2;
   padding-inline: $spacing;
-  background: linear-gradient(to right, $color-secondary, $color-primary);
 
   z-index: 1;
+
+  @extend %contentBox;
+
+  &::after {
+    position: absolute;
+    content: "";
+    width: calc(100vw + $spacing);
+    bottom: 0;
+    left: -$spacing/ 2;
+    height: $spacing / 8;
+    background: linear-gradient(to right, $color-secondary, $color-primary);
+  }
 
   .home {
     font-size: 1.5rem;
@@ -49,19 +60,22 @@
       height: 2.5rem;
     }
   }
-}
 
-.searchBar {
-  margin-left: auto;
-  margin-right: $spacing;
-}
+  .searchBar {
+    margin-left: auto;
+    margin-right: $spacing;
+  }
 
-.darkMode {
-  margin-right: $spacing;
-}
+  .darkMode {
+    margin-right: $spacing;
+  }
 
-.avatar:hover {
-  outline: 1px $color-text solid;
+  .avatar {
+    outline: 2px $color-primary solid;
+  }
+  .avatar:hover {
+    outline-color: $color-secondary;
+  }
 }
 
 @media screen and (max-width: $responsive-breakpoint) {
