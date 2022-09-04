@@ -1,1 +1,0 @@
-export const GET_CURRENT_USER = "USER/GET_CURRENT_USER";

@@ -33,6 +33,7 @@ a {
   $transitionConfig: 0.1s ease-in;
   $allTransitions: background-color $transitionConfig, color $transitionConfig,
     outline-color $transitionConfig, text-shadow $transitionConfig,
+    box-shadow $transitionConfig, font-weight $transitionConfig,
     fill $transitionConfig;
   transition: $allTransitions;
   &::after,
@@ -42,7 +43,7 @@ a {
 }
 
 button {
-  color: $color-primary-text;
+  color: $color-text-primary;
   background-color: $color-primary-bg;
   outline: 2px solid $color-primary;
   padding: $spacing;

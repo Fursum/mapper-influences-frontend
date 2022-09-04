@@ -1,27 +1,35 @@
 import type { NextPage, GetStaticProps, InferGetStaticPropsType } from "next";
 import { readFileSync } from "fs";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   LoginScreen,
   NewsScreen,
   TutorialScreen,
 } from "@components/PageComponents/Home";
 import { userData } from "@libs/consts/dummyUserData";
+import { useAppSelector } from "src/redux/hooks";
+
+type SelectedScreen = "Tutorial" | "News";
 
 const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   leaderboard,
-  mdFile,
   news,
 }) => {
-  const session = true;
-  const showTutorial = false;
+  const [screen, setScreen] = useState<SelectedScreen>("Tutorial");
+  const session = useAppSelector((s) => s.session);
 
-  const UserScreen = showTutorial ? (
-    <TutorialScreen />
-  ) : (
-    <NewsScreen newsList={news} topList={leaderboard} />
-  );
-  return !session ? <LoginScreen /> : UserScreen;
+  if (!session) return <LoginScreen />;
+
+  switch (screen) {
+    case "News":
+      return <NewsScreen newsList={news} topList={leaderboard} />;
+    case "Tutorial":
+      return (
+        <TutorialScreen>
+          <button onClick={() => setScreen("News")}>Close tutorial</button>
+        </TutorialScreen>
+      );
+  }
 };
 
 export const getStaticProps = async () => {
@@ -37,7 +45,7 @@ export const getStaticProps = async () => {
   ];
 
   const exampleTopList = userData.influences
-    .map((influence, index) => ({
+    .map((influence) => ({
       user: influence.profileData,
       number: Math.floor(Math.random() * 150),
     }))
@@ -45,7 +53,6 @@ export const getStaticProps = async () => {
 
   return {
     props: {
-      mdFile: file,
       news: exampleNews,
       leaderboard: exampleTopList,
     },

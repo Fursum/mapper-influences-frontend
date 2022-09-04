@@ -1,13 +1,23 @@
-import { configureStore } from "@reduxjs/toolkit";
-import UserReducer from "./User/reducer";
+import { combineReducers, configureStore, Middleware } from "@reduxjs/toolkit";
+import { SessionSlice } from "./Slices/session";
+import { UserSlice } from "./Slices/user";
 
-const reducer = {
-  user: UserReducer,
+const reducer = combineReducers({
+  user: UserSlice.reducer,
+  session: SessionSlice.reducer,
+});
+
+const logger: Middleware = (store) => (next) => (action) => {
+  console.log("dispatching", action);
+  let result = next(action);
+  console.log("next state", store.getState());
+  return result;
 };
 
 const store = configureStore({
   reducer,
   devTools: process.env.NODE_ENV !== "production",
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

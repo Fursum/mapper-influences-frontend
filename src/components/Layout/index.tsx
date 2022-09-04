@@ -9,10 +9,10 @@ type Props = {
 };
 
 const Layout: FC<Props> = ({ children }) => {
-  const currentUser = useAppSelector((s) => s.user.currentUser.data);
+  const session = useAppSelector((s) => s.session);
   return (
     <>
-      {currentUser && <Header />}
+      {session && <Header />}
       <div className={styles.contentCenterer}>
         <main className={styles.contentWrapper}>{children}</main>
       </div>

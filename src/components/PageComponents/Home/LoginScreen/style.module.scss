@@ -17,8 +17,10 @@
   text-align: center;
 
   .content {
-
-    padding: $spacing;
+    padding: $spacing * 4;
+    background-color: $color-login-bg;
+    backdrop-filter: blur(5px);
+    @extend %contentBox;
 
     > h1 {
       font-size: clamp(2rem, 0.5rem + 5vw, 3rem);
@@ -42,7 +44,8 @@
       font-weight: inherit;
       font-size: inherit;
 
-      transition: box-shadow 0.1s ease-in, font-weight 0.1s ease-in;
+      color: $color-text;
+      background-color: $color-primary;
 
       box-shadow: 0 0.05rem 0.25rem -0.1rem $color-background;
       &:hover {

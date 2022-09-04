@@ -33,7 +33,7 @@
   transform: translateY(-100%);
 
   background-color: $color-background;
-  box-shadow: 0 0 1rem 0.5rem rgba(0, 0, 0, 0.05);
+  @extend %cardShadow;
 
   text-align: center;
   pointer-events: none;

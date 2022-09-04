@@ -21,8 +21,8 @@ const TutorialStep: FC<{
   );
 };
 
-type Props = {};
-const TutorialScreen: FC<Props> = ({}) => {
+type Props = { children?: ReactNode };
+const TutorialScreen: FC<Props> = ({ children }) => {
   const [showTooltip, setShowTooltip] = useState(false);
 
   const toggleTooltip = () => {
@@ -80,6 +80,7 @@ const TutorialScreen: FC<Props> = ({}) => {
           </div>
         </TutorialStep>
       </div>
+      {children}
     </div>
   );
 };

@@ -1,13 +1,16 @@
 import { useRouter } from "next/router";
 import { FC } from "react";
+import { useAppDispatch } from "src/redux/hooks";
+import { SessionActions } from "src/redux/Slices/session";
 
 import styles from "./style.module.scss";
 
 type Props = {};
 const LoginScreen: FC<Props> = () => {
+  const dispatch = useAppDispatch();
   const router = useRouter();
   const handleClick = () => {
-    router.push("/profile");
+    dispatch(SessionActions.login());
   };
   const LoginButton = (
     <button className={styles.login} onClick={handleClick}>
