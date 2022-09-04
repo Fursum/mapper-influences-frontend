@@ -4,6 +4,7 @@ import DarkModeToggle from "@components/Layout/Header/DarkModeToggle";
 import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
 import SearchBar from "./SearchBar";
 import styles from "../style.module.scss";
+import { Influences } from "@components/SvgComponents";
 
 export default function Header() {
   const currentUser = useAppSelector((s) => s.user.currentUser.data);
@@ -14,6 +15,7 @@ export default function Header() {
     <div className={styles.header}>
       <Link href="/" passHref>
         <a className={styles.home}>
+          <Influences />
           <span>Mapper Influences</span>
         </a>
       </Link>

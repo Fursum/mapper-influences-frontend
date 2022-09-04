@@ -41,7 +41,13 @@
     height: 3.5rem;
     display: flex;
     align-items: center;
+    gap: $spacing / 2;
     margin-right: 1rem;
+
+    > svg {
+      width: 2rem;
+      height: 2.5rem;
+    }
   }
 }
 
@@ -61,5 +67,11 @@
 @media screen and (max-width: $responsive-breakpoint) {
   .contentCenterer {
     height: auto;
+  }
+}
+
+@media screen and (max-width: ($responsive-breakpoint / 2)) {
+  .home > span {
+    display: none;
   }
 }
