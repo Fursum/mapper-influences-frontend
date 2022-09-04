@@ -1,7 +1,25 @@
 .searchBorder {
+  position: relative;
   padding: $spacing / 4;
   border-radius: $border-radius * 1.5;
-  background: linear-gradient(to right, $color-secondary, $color-primary);
+  isolation: isolate;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(to right, $color-secondary, $color-primary);
+    opacity: 0.25;
+    pointer-events: none;
+  }
+
+  &:focus-within {
+    &::after {
+      opacity: 1;
+      z-index: -1;
+    }
+  }
 }
 
 .searchBar {
