@@ -1,7 +1,5 @@
 import Link from "next/link";
-import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "src/redux/hooks";
-import { getCurrentUser } from "src/redux/User/action";
+import { useAppSelector } from "src/redux/hooks";
 import DarkModeToggle from "@components/Layout/Header/DarkModeToggle";
 import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
 import SearchBar from "./SearchBar";
@@ -10,7 +8,7 @@ import styles from "../style.module.scss";
 export default function Header() {
   const currentUser = useAppSelector((s) => s.user.currentUser.data);
 
-  if (!currentUser) return <></>;
+  if (!currentUser) return null;
 
   return (
     <div className={styles.header}>
