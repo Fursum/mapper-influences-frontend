@@ -19,12 +19,11 @@ export const ReportBug: FC<Props> = ({}) => {
   );
 };
 
-//TODO: Create discord server
 export const SendFeedback: FC<Props> = ({}) => {
   return (
     <a
       className={styles.button}
-      href={"discord server link"}
+      href={"https://discord.gg/SAwxBDe3Rf"}
       target="_blank"
       rel="noreferrer"
     >
