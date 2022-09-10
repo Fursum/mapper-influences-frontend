@@ -1,9 +1,9 @@
-import "../styles/globals.scss";
-import type { AppProps } from "next/app";
-import store from "../redux/store";
-import { Provider } from "react-redux";
 import Head from "next/head";
+import type { AppProps } from "next/app";
+import { Provider } from "react-redux";
+import store from "../redux/store";
 import Layout from "@components/Layout";
+import "../styles/globals.scss";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

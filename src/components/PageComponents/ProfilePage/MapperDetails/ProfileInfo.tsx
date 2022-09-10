@@ -1,4 +1,5 @@
 import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
+import { LinkIcon } from "@components/SvgComponents";
 import { osuBaseUrl } from "@libs/consts/urls";
 import { UserBase } from "@libs/types/user";
 import { FC } from "react";
@@ -32,7 +33,6 @@ const ProfileInfo: FC<Props> = ({ profileData }) => {
         <div className={styles.mapperName}>{profileData.username}</div>
       </a>
       <div className={styles.title}>Nomination Assesment Team</div>
-      
     </div>
   );
 };

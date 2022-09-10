@@ -1,4 +1,4 @@
-import Beams from "@components/SvgComponents/Beams";
+import { Beams } from "@components/SvgComponents";
 import useDarkMode from "@hooks/useDarkMode";
 import React, { FC } from "react";
 

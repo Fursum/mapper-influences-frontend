@@ -1,11 +1,9 @@
 import { FC } from "react";
-import Github from "@components/SvgComponents/Github";
+import { Github, Discord } from "@components/SvgComponents";
 
 import styles from "./style.module.scss";
-import Discord from "@components/SvgComponents/Discord";
 
-type Props = {};
-export const ReportBug: FC<Props> = ({}) => {
+export const ReportBug: FC = () => {
   return (
     <a
       className={styles.button}
@@ -19,7 +17,7 @@ export const ReportBug: FC<Props> = ({}) => {
   );
 };
 
-export const SendFeedback: FC<Props> = ({}) => {
+export const SendFeedback: FC = () => {
   return (
     <a
       className={styles.button}

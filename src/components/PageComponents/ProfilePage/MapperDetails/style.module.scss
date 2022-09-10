@@ -19,6 +19,12 @@
       align-items: center;
       width: 100%;
 
+      > a:hover {
+        .linkIcon {
+          display: block;
+        }
+      }
+
       .avatar:hover {
         outline: 0.15rem solid $color-text;
       }

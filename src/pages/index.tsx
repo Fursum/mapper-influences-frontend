@@ -1,6 +1,6 @@
-import type { NextPage, GetStaticProps, InferGetStaticPropsType } from "next";
+import type { NextPage, InferGetStaticPropsType } from "next";
 import { readFileSync } from "fs";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import {
   LoginScreen,
   NewsScreen,

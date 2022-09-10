@@ -6,6 +6,10 @@ import Ranked from "./Ranked";
 import Subscribers from "./Subscribers";
 import Influences from "./Influences";
 import Magnify from "./Magnify";
+import LinkIcon from "./LinkIcon";
+import Discord from "./Discord";
+import Github from "./Github";
+import Beams from "./Beams";
 
 export {
   Followers,
@@ -16,4 +20,8 @@ export {
   Subscribers,
   Influences,
   Magnify,
+  LinkIcon,
+  Discord,
+  Github,
+  Beams,
 };
