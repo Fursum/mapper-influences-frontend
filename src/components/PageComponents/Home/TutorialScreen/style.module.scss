@@ -54,8 +54,7 @@
       .addButtonTooltip {
         @extend %tooltip;
         opacity: 1;
-        top: auto;
-        bottom: -3.5rem;
+        margin-top: 4rem;
         animation: fadeIn 0.1s ease-out;
       }
 

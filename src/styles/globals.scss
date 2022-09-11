@@ -2,6 +2,7 @@
 @import "./variables/sizes";
 @import "./variables/toggledVariables";
 @import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap");
+
 html,
 body {
   padding: 0;
@@ -10,9 +11,8 @@ body {
   background-color: $color-background;
   overflow-x: hidden;
 
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+  font-family: "Comfortaa", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  font-family: "Comfortaa", cursive;
 
   font-size: 1rem;
   @media screen and (max-width: $responsive-breakpoint) {
@@ -44,8 +44,8 @@ a {
 }
 
 button {
+  position: relative;
   color: $color-text-primary;
-  background-color: $color-primary-bg;
   outline: 2px solid $color-primary;
   padding: $spacing;
   > span {
@@ -53,13 +53,9 @@ button {
     line-height: 1;
     color: inherit;
   }
-
+  
   cursor: pointer;
-
-  &:hover {
-    background-color: $color-primary;
-    color: $color-text;
-  }
+  @extend %buttonHover;
 }
 
 *::-webkit-scrollbar {
