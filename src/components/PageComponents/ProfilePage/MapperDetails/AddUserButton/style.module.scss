@@ -14,4 +14,16 @@
   border-radius: $border-radius;
   padding-inline: $spacing;
   padding-block: $spacing / 2;
+
+  // Linear gradient as solid color is needed because the color flickers on hover without it
+  background: linear-gradient($color-primary-bg, $color-primary-bg);
+  &:hover {
+    background: linear-gradient(
+      to right,
+      $color-secondary-bg 0%,
+      $color-primary-bg 4% 96%,
+      $color-secondary-bg 100%
+    );
+    outline-color: $color-secondary;
+  }
 }
