@@ -14,10 +14,6 @@ type Props = {
 const SearchBar: FC<Props> = ({ className }) => {
   const router = useRouter();
   const containerRef = useRef(null);
-  const [isSelected, setIsSelected] = useState(false);
-
-  // Close search bar on mobile
-  useOnClickOutside(containerRef, () => setIsSelected(false));
 
   const searchUser = (query: string) => {
     router.push("/profile/" + query);
@@ -33,9 +29,7 @@ const SearchBar: FC<Props> = ({ className }) => {
     debouncedSearch(query);
   };
 
-  const wrapperClass = `${styles.searchBorder} ${className} ${
-    isSelected ? styles.isSelected : ""
-  }`;
+  const wrapperClass = `${styles.searchBorder} ${className}`;
 
   return (
     <div className={wrapperClass}>
@@ -45,10 +39,7 @@ const SearchBar: FC<Props> = ({ className }) => {
           placeholder={"Search User"}
           maxLength={MaxNameLength}
         />
-        <button
-          className={styles.magnifyButton}
-          onClick={() => setIsSelected(true)}
-        >
+        <button className={styles.magnifyButton}>
           <Magnify className={styles.magnifySvg} />
         </button>
       </div>

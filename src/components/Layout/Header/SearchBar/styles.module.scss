@@ -59,34 +59,39 @@
 }
 
 @media screen and (max-width: $responsive-breakpoint) {
-  .searchBar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 2rem;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 100vmax;
-    .magnifyButton {
-      position: relative;
-      inset: 0;
+  .searchBorder {
+    .searchBar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 2rem;
+      width: 2rem;
+      height: 2rem;
+      .magnifyButton {
+        position: relative;
+        inset: 0;
+      }
+      > input {
+        display: none;
+      }
     }
-    > input {
-      display: none;
-    }
-  }
 
-  .isSelected {
-    > input {
-      position: absolute;
+    // Expand to full width on mobile
+    &:focus-within {
       display: block;
+      position: absolute;
+      width: calc(100% - $spacing);
+      left: $spacing / 2;
       z-index: 5;
 
-      width: unset;
-      left: 0.25rem;
-      right: 0.25rem;
+      .searchBar{
+        width: 100%;
 
-      background-color: $color-background;
+        > input {
+          display: block;
+          width: 100%;
+        }
+      }
     }
   }
 }

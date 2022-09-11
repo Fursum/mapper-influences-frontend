@@ -58,6 +58,15 @@
         animation: fadeIn 0.1s ease-out;
       }
 
+      // Mobile search bar expanding alignment fix
+      &:nth-child(1) {
+        @media screen and (max-width: $responsive-breakpoint) {
+          > div:focus-within {
+            bottom: 15%;
+          }
+        }
+      }
+
       // Editing step
       &:nth-child(3) {
         width: 40rem + $spacing;
