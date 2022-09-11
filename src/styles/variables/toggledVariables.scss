@@ -27,16 +27,16 @@ html[data-theme="light"] {
   --bgColor-2: hsl(310, 100%, 99%);
   --bgColor-3: hsl(333, 100%, 96%);
   --bgColor-3-hover: hsl(313, 60%, 90%);
-  --primaryColor: hsl(205, 100%, 50%);
-  --secondaryColor: hsl(294, 100%, 50%);
+  --primaryColor: hsl(205, 75%, 50%);
+  --secondaryColor: hsl(294, 75%, 50%);
   --primaryColorBg: hsla(205, 100%, 50%, 15%);
   --secondaryColorBg: hsl(294, 100%, 50%, 15%);
   --loginScreenBg: hsla(0, 100%, 100%, 20%);
 
   --textColor: hsl(0, 0%, 10%);
   // Buttons use these colors over the colored backgrounds
-  --primaryTextColor: hsl(205, 100%, 50%);
-  --secondaryTextColor: hsl(294, 100%, 50%);
+  --primaryTextColor: var(--primaryColor);
+  --secondaryTextColor: var(--secondaryColor);
 
   --cardShadow: 0 0.05rem 0.2rem 0.05rem rgba(0, 0, 0, 0.15);
   --cardShadowHover: 0 0.1rem 0.5rem 0.15rem rgba(0, 0, 0, 0.2);

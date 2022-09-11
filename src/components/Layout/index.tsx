@@ -12,12 +12,12 @@ const Layout: FC<Props> = ({ children }) => {
   const session = useAppSelector((s) => s.session);
   return (
     <>
-      {session && <Header />}
+      {<Header />}
       <div className={styles.contentCenterer}>
         <main className={styles.contentWrapper}>{children}</main>
       </div>
     </>
   );
-};;
+};
 
 export default Layout;
