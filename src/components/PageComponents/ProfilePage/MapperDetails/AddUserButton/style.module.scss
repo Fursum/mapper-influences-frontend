@@ -3,6 +3,9 @@
     width: 2rem;
     height: 2rem;
   }
+
+  isolation: isolate;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11,19 +14,48 @@
   font-size: 1.25rem;
   font-weight: bold;
 
+  background-color: transparent;
+
   border-radius: $border-radius;
   padding-inline: $spacing;
   padding-block: $spacing / 2;
 
-  // Linear gradient as solid color is needed because the color flickers on hover without it
-  background: linear-gradient($color-primary-bg, $color-primary-bg);
-  &:hover {
+  &::before,
+  &::after {
+    border-radius: inherit;
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    transition: opacity 0.1s ease-out;
+  }
+
+  // Used for gradient transitions
+  &::after {
     background: linear-gradient(
       to right,
-      $color-secondary-bg 0%,
-      $color-primary-bg 4% 96%,
-      $color-secondary-bg 100%
+      $color-secondary 0%,
+      $color-primary 4% 96%,
+      $color-secondary 100%
     );
+    box-shadow: 0.1rem 0 1rem -0.25rem $color-secondary;
+    opacity: 0;
+  }
+  // Only used for background color
+  &::before {
+    content: "";
+    background-color: $color-primary-bg;
+    z-index: -2;
+  }
+
+  &:hover {
+    background-color: transparent;
     outline-color: $color-secondary;
+    .icon {
+      --primaryTextColor: var(--textColor);
+    }
+    &::after {
+      opacity: 1;
+    }
   }
 }
