@@ -19,8 +19,9 @@ const ProfilePage: FC<Props> = ({ userData, editable = false }) => {
           avatarUrl: userData.avatarUrl,
           id: userData.id,
         }}
+        editable={editable}
       />
-      <InfluenceList influences={userData.influences} />
+      <InfluenceList influences={userData.influences} editable={editable} />
       <MentionList mentions={[]} />
     </div>
   );

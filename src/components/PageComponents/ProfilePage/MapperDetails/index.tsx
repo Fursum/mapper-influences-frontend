@@ -11,9 +11,15 @@ type Props = {
   profileData: UserBase;
   description: string;
   details: UserDetails;
+  editable: boolean;
 };
 
-const MapperDetails: FC<Props> = ({ profileData, description, details }) => {
+const MapperDetails: FC<Props> = ({
+  profileData,
+  description,
+  details,
+  editable,
+}) => {
   const addUserHandler = () => {
     // TODO: Add user service
   };
@@ -26,7 +32,7 @@ const MapperDetails: FC<Props> = ({ profileData, description, details }) => {
         <EditableDescription
           description={description}
           placeholder={"Enter a description for your profile."}
-          editable
+          editable={editable}
         />
         <Stats details={details} />
       </div>
