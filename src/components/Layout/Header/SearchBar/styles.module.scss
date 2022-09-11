@@ -1,8 +1,8 @@
 .searchBorder {
+  isolation: isolate;
   position: relative;
   padding: $spacing / 4;
   border-radius: $border-radius * 1.5;
-  isolation: isolate;
 
   &::after {
     content: "";
@@ -50,6 +50,11 @@
     width: 1.75rem;
     right: 0.25rem;
     top: calc(50% - (1.25rem / 2));
+
+    // Hide hover effect
+    &::before, &::after{
+      display: none;
+    }
   }
 
   .magnifySvg {

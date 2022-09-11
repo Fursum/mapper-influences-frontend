@@ -51,7 +51,8 @@
 }
 
 %buttonHover {
-  
+  isolation: isolate;
+  position: relative;
   background-color: transparent;
   &::before,
   &::after {
