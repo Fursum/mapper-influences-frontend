@@ -53,7 +53,6 @@
 %buttonHover {
   isolation: isolate;
   position: relative;
-  background-color: transparent;
   &::before,
   &::after {
     border-radius: inherit;
@@ -84,7 +83,6 @@
 
   &:hover {
     --primaryTextColor: var(--textColor);
-    background-color: transparent;
     outline-color: $color-secondary;
     .icon {
       --primaryTextColor: var(--textColor);
