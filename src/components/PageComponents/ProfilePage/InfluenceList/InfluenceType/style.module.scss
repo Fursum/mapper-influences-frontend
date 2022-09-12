@@ -7,7 +7,14 @@
   align-items: center;
   margin-top: 0.5rem;
 
-  > button {
+  //This has position relative inside, needs the override below
+  .purple {
+    @extend %buttonHoverSecondary;
+  }
+
+  .plus,
+  .minus,
+  .purple {
     position: absolute;
     display: flex;
     align-items: center;
@@ -26,16 +33,5 @@
   }
   .minus {
     left: 0;
-  }
-
-  .purple {
-    background-color: $color-secondary-bg;
-    color: $color-text-secondary;
-    outline-color: $color-secondary;
-
-    &:hover {
-      background-color: $color-secondary;
-      color: $color-text;
-    }
   }
 }

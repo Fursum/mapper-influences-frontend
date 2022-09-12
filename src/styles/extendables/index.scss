@@ -83,7 +83,7 @@
   }
 
   &:hover {
-    --primaryTextColor: var(--textColor); 
+    --primaryTextColor: var(--textColor);
     background-color: transparent;
     outline-color: $color-secondary;
     .icon {
@@ -92,5 +92,32 @@
     &::after {
       opacity: 0.4;
     }
+  }
+}
+
+// Just swapping colors
+%buttonHoverSecondary {
+  @extend %buttonHover;
+  outline-color: $color-secondary;
+  color: $color-text-secondary;
+
+  // Used for gradient transitions
+  &::after {
+    background: linear-gradient(
+      to right,
+      $color-primary 0%,
+      $color-secondary 4% 96%,
+      $color-primary 100%
+    );
+    box-shadow: 0.1rem 0 1rem -0.25rem $color-primary;
+  }
+  // Only used for background color
+  &::before {
+    background-color: $color-secondary-bg;
+  }
+
+  &:hover {
+    outline-color: $color-primary;
+    color: $color-text;
   }
 }
