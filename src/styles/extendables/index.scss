@@ -13,7 +13,7 @@
     left: 0;
 
     pointer-events: none;
-    border-radius: $border-radius;
+    border-radius: inherit;
 
     box-shadow: var(--cardShadowHover);
     opacity: 0;

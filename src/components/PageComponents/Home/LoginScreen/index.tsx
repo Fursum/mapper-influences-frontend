@@ -7,7 +7,7 @@ import { SessionActions } from "src/redux/Slices/session";
 import ContributeButtons from "../Shared/ContributeButtons";
 import Leaderboard from "../Shared/Leaderboard";
 import News from "../Shared/News";
-import CoolCards from "./3dCards";
+import CoolCards from "./CoolCards";
 
 import styles from "./style.module.scss";
 
@@ -35,6 +35,8 @@ const LoginScreen: FC<Props> = ({ topList, newsList }) => {
         <h4>Most features are locked to guests.</h4>
         <h4>To continue, {LoginButton}</h4>
       </section>
+
+      <CoolCards />
 
       <section>
         <h2>What is this site?</h2>
@@ -70,8 +72,6 @@ const LoginScreen: FC<Props> = ({ topList, newsList }) => {
       </section>
 
       <ContributeButtons />
-
-      <CoolCards />
     </div>
   );
 };

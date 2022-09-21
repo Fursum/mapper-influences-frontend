@@ -1,0 +1,116 @@
+.positioner {
+  position: absolute;
+  top: -9rem;
+  transform: translateX(1rem);
+  pointer-events: none; // Enable it on children
+
+  .cardWrapper {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing * 2;
+
+    transform: perspective(25rem) rotateX(30deg) rotateY(-25deg) rotateZ(15deg)
+      scale(0.65);
+
+    *,
+    *::before,
+    *::after {
+      transition: opacity 0.5s ease-out, background-color 0.5s ease-out,
+        transform 0.5s ease-out;
+    }
+
+    // Card
+    > div,
+    > a {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 46rem;
+      aspect-ratio: 16 / 9;
+
+      background-color: $color-primary-bg;
+      border-radius: $border-radius * 4;
+
+      pointer-events: all;
+      user-select: none;
+
+      // Center one div on left side
+      &:nth-child(1) {
+        grid-row-start: 1;
+        grid-row-end: 3;
+        margin-block: auto;
+      }
+
+      &:hover {
+        transform: translateX(-0.15rem) translateY(-0.15rem);
+      }
+
+      // Fit video to card
+      > video {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        max-height: 100%;
+        max-width: 100%;
+        transform: translate(-50%, -50%);
+        border-radius: inherit;
+      }
+
+      // Overlay for hover effect
+      &::after,
+      &::before {
+        position: absolute;
+        opacity: 0;
+        border-radius: inherit;
+      }
+      &::after {
+        content: "";
+        inset: 0;
+        background-color: transparent;
+        backdrop-filter: blur(5px);
+      }
+      &::before {
+        content: "Go to map";
+        z-index: 1;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+
+        padding: $spacing;
+        border-radius: $border-radius * 2;
+
+        background-color: $color-button-bg;
+        color: $color-button-text;
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      &:hover {
+        &::after,
+        &::before {
+          opacity: 1;
+        }
+        &::after {
+          background-color: hsla(0, 0%, 100%, 0.1);
+        }
+      }
+
+      // Animated hover shadow
+      .shadow {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        box-shadow: 0 0 0.25rem 0.25rem hsla(0, 0%, 0%, 0.75);
+        transition: box-shadow 0.5s ease-out;
+      }
+      &:hover {
+        .shadow {
+          box-shadow: 0 0 1.25rem 0.25rem hsla(0, 0%, 0%, 0.75);
+        }
+      }
+    }
+  }
+}
