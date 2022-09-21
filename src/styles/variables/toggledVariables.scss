@@ -38,7 +38,7 @@ html[data-theme="light"] {
 
   --buttonBg: hsl(293, 100%, 95%);
   --buttonOutline: var(--secondaryColor);
-  --buttonText: var(--textColor);
+  --buttonText: var(--secondaryColor);
 
   --textColor: hsl(0, 0%, 10%);
   // Buttons use these colors over the colored backgrounds
