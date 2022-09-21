@@ -1,0 +1,34 @@
+.positioner {
+  z-index: -1;
+  position: absolute;
+  top: 3rem;
+  transform: translateX(15rem);
+
+  .cardWrapper {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing * 2;
+
+    transform: perspective(25rem) rotateX(30deg) rotateY(-25deg) rotateZ(15deg);
+
+    > div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 30rem;
+      height: 15rem;
+
+      background-color: $color-primary-bg;
+      border-radius: $border-radius * 4;
+
+      // Center one div on left side
+      &:nth-child(1) {
+        grid-row-start: 1;
+        grid-row-end: 3;
+        margin-block: auto;
+      }
+    }
+  }
+}

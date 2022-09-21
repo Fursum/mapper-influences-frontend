@@ -11,8 +11,7 @@ export const ReportBug: FC = () => {
       target="_blank"
       rel="noreferrer"
     >
-      <h4>Report Bugs</h4>
-      <Github className={styles.icon} />
+      <Github className={styles.icon} color={"var(--buttonText)"} />
     </a>
   );
 };
@@ -25,8 +24,21 @@ export const SendFeedback: FC = () => {
       target="_blank"
       rel="noreferrer"
     >
-      <h4>Make Suggestions</h4>
-      <Discord className={styles.icon} />
+      <Discord className={styles.icon} color={"var(--buttonText)"} />
     </a>
   );
 };
+
+const ContributeButtons: FC<{ className?: string }> = ({ className }) => {
+  return (
+    <div className={`${styles.wrapper} ${className}`}>
+      <h2>Got Feedback?</h2>
+      <div className={styles.buttons}>
+        <ReportBug />
+        <SendFeedback />
+      </div>
+    </div>
+  );
+};
+
+export default ContributeButtons;

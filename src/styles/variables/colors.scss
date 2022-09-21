@@ -3,7 +3,10 @@ $color-secondary: var(--secondaryColor);
 $color-primary-bg: var(--primaryColorBg);
 $color-secondary-bg: var(--secondaryColorBg);
 $color-login-bg: var(--loginScreenBg);
-//$color-tertiary: hsl(0, 0, 0);
+
+$color-button-bg: var(--buttonBg);
+$color-button-outline: var(--buttonOutline);
+$color-button-text: var(--buttonText);
 
 $color-text: var(--textColor);
 $color-text-primary: var(--primaryTextColor);

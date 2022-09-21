@@ -11,23 +11,31 @@ body {
   background-color: $color-background;
   overflow-x: hidden;
 
-  font-family: "Comfortaa", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: "Comfortaa", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 
-  font-size: 1rem;
-  @media screen and (max-width: $responsive-breakpoint) {
-    font-size: 0.8rem;
-  }
+  font-size: clamp(0.8rem, 1vw, 1.1rem);
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+h1 {
+  font-size: 2rem;
+}
+h2 {
+  font-size: 1.75rem;
+}
+h3 {
+  font-size: 1.25rem;
+}
+h4,
+h5,
+h6 {
+  font-size: 1rem;
 }
 
 * {
   box-sizing: border-box;
   font-family: "Comfortaa", cursive;
+  font-size: 1rem;
 
   color: $color-text;
   // All of the color transitions
@@ -43,19 +51,29 @@ a {
   }
 }
 
+a {
+  text-decoration: none;
+  color: $color-button-outline;
+  cursor: pointer;
+}
+
 button {
   position: relative;
-  color: $color-text-primary;
-  outline: 2px solid $color-primary;
   padding: $spacing;
+
+  background-color: $color-button-bg;
+  color: $color-button-text;
+  outline: 2px solid $color-button-outline;
+
+  font-weight: 700;
+
   > span {
     font-weight: 700;
     line-height: 1;
     color: inherit;
   }
-  
+
   cursor: pointer;
-  @extend %buttonHover;
 }
 
 *::-webkit-scrollbar {

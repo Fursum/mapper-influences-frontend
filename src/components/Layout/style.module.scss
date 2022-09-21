@@ -2,24 +2,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
 
   isolation: isolate;
-  position: relative;
-  overflow-y: scroll;
+  overflow: visible;
 
   max-width: $screen-size;
-  height: calc(100vh - 3.5rem);
 
   margin-inline: auto;
-
-  .contentWrapper {
-    position: relative;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    padding: $spacing;
-  }
+  padding: $spacing;
 }
 
 .header {
@@ -47,8 +37,6 @@
   }
 
   .home {
-    font-size: 1.5rem;
-    font-weight: 700;
     height: 3.5rem;
     display: flex;
     align-items: center;
@@ -58,6 +46,11 @@
     > svg {
       width: 2rem;
       height: 2.5rem;
+      margin-bottom: 0.25rem;
+    }
+    span {
+      font-size: 1.5rem;
+      font-weight: 700;
     }
   }
 

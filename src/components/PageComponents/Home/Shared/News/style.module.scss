@@ -1,0 +1,11 @@
+.newsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  overflow-y: scroll;
+
+  padding-inline: $spacing;
+  padding-bottom: $spacing;
+  @extend %contentBox;
+}

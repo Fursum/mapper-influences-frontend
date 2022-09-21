@@ -18,7 +18,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   const [screen, setScreen] = useState<SelectedScreen>("Tutorial");
   const session = useAppSelector((s) => s.session);
 
-  if (!session) return <LoginScreen />;
+  if (!session) return <LoginScreen topList={leaderboard} newsList={news} />;
 
   switch (screen) {
     case "News":

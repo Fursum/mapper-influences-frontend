@@ -1,29 +1,16 @@
 .newsScreen {
+  position: relative;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
   flex-wrap: wrap;
   gap: $spacing;
-  height: 100%;
 
-  .topInfluencers,
-  .newsContainer,
-  .contribute {
+  .double {
+    position: relative;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    overflow-y: scroll;
-
-    padding-inline: $spacing;
-    padding-bottom: $spacing;
-
-    @extend %contentBox;
-  }
-
-  .topInfluencers,
-  .newsContainer {
-    height: calc(65% - $spacing / 2);
+    gap: inherit;
+    height: 100%;
   }
 
   .newsContainer {
@@ -31,52 +18,7 @@
   }
 
   .contribute {
-    height: calc(35% - $spacing / 2);
-    max-width: 50rem + $spacing;
-    flex-basis: 100%;
-
-    .buttons {
-      position: relative;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      width: 100%;
-      max-width: 30rem;
-      height: 100%;
-      align-items: center;
-      justify-content: center;
-      gap: $spacing;
-    }
-  }
-
-  .topInfluencers {
-    width: 20rem;
-
-    .row {
-      display: flex;
-      align-items: center;
-      gap: $spacing;
-      margin-bottom: $spacing;
-
-      .number {
-        position: relative;
-        > span {
-          &:first-of-type {
-            font-weight: 700;
-            font-size: 2rem;
-            background: -webkit-linear-gradient(
-              left,
-              $color-text-secondary,
-              $color-text-primary
-            );
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-          }
-          display: block;
-          font-size: 0.75rem;
-          width: 100%;
-        }
-      }
-    }
+    width: 100%;
   }
 }
 

@@ -1,4 +1,4 @@
-export enum NewsType {
+export enum NewsEnum {
   UPDATE,
   ANNOUNCEMENT,
 }

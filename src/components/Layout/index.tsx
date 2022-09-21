@@ -13,9 +13,7 @@ const Layout: FC<Props> = ({ children }) => {
   return (
     <>
       {session && <Header />}
-      <div className={styles.contentCenterer}>
-        <main className={styles.contentWrapper}>{children}</main>
-      </div>
+      <main className={styles.contentCenterer}>{children}</main>
     </>
   );
 };
