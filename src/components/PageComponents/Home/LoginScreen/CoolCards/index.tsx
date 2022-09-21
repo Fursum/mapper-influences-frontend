@@ -14,6 +14,7 @@ const CoolCards: FC = () => {
           <video autoPlay muted loop playsInline>
             <source src="/example1.webm" type="video/webm" />
           </video>
+          <div className={styles.overlay}>Go to map</div>
           <div className={styles.shadow} />
         </a>
         <a
@@ -23,7 +24,8 @@ const CoolCards: FC = () => {
         >
           <video autoPlay muted loop playsInline>
             <source src="/example2.webm" type="video/webm" />
-          </video>{" "}
+          </video>
+          <div className={styles.overlay}>Go to map</div>
           <div className={styles.shadow} />
         </a>
         <div>
