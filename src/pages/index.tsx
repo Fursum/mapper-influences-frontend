@@ -8,6 +8,7 @@ import {
 } from "@components/PageComponents/Home";
 import { userData } from "@libs/consts/dummyUserData";
 import { useAppSelector } from "src/redux/hooks";
+import { NewsType } from "@libs/types/influence";
 
 type SelectedScreen = "Tutorial" | "News";
 
@@ -35,12 +36,12 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 export const getStaticProps = async () => {
   const file = readFileSync("src/libs/consts/exampleChangelog.md", "utf-8");
 
-  const exampleNews = [
+  const exampleNews:NewsType[] = [
     {
       fullText: file,
-      title: "News Title",
-      type: "Update Type",
-      desc: "Short description",
+      title: "Version 1.0 is out!",
+      date: new Date().toDateString(),
+      desc: "Not really. This is just a placeholder.",
     },
   ];
 

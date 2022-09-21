@@ -31,7 +31,7 @@ export type ProfileInfoIcons =
 export type NewsType = {
   fullText: string;
   title: string;
-  type: string;
+  date: string;
   desc: string;
 };
 

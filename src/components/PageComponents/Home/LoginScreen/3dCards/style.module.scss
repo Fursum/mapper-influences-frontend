@@ -14,17 +14,18 @@
     transform: perspective(25rem) rotateX(30deg) rotateY(-25deg) rotateZ(15deg);
 
     > div {
-      pointer-events: all;
       display: flex;
       align-items: center;
       justify-content: center;
-
+      
       width: 30rem;
       height: 15rem;
-
+      
       background-color: $color-primary-bg;
       border-radius: $border-radius * 4;
-
+      
+      pointer-events: all;
+      user-select: none;
 
       // Center one div on left side
       &:nth-child(1) {
