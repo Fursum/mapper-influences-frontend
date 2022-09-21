@@ -1,6 +1,6 @@
 .positioner {
   position: absolute;
-  top: -9rem;
+  top: -8.5rem;
   transform: translateX(1rem);
   pointer-events: none; // Enable it on children
 
@@ -10,7 +10,7 @@
     grid-template-columns: 1fr 1fr;
     gap: $spacing * 2;
 
-    transform: perspective(25rem) rotateX(30deg) rotateY(-25deg) rotateZ(15deg)
+    transform: perspective(30rem) rotateX(30deg) rotateY(-25deg) rotateZ(15deg)
       scale(0.65);
 
     *,
