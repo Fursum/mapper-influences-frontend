@@ -14,10 +14,14 @@ const CoolCards: FC = () => {
           <video autoPlay muted loop playsInline>
             <source src="/example1.webm" type="video/webm" />
           </video>
-          <div className={styles.shadow}/>
+          <div className={styles.shadow} />
         </a>
-        <div>card2</div>
-        <div>card3</div>
+        <div>
+          card2 <div className={styles.shadow} />
+        </div>
+        <div>
+          card3 <div className={styles.shadow} />
+        </div>
       </div>
     </div>
   );
