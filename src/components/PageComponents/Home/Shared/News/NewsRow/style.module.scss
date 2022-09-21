@@ -16,21 +16,32 @@
     cursor: pointer;
 
     &::before {
-      transition: transform ease-out 0.1s;
       transform: scaleX(1.5);
+    }
+    &::after {
+      transform: scaleY(1.5);
     }
   }
 
   // Colored bar
+  &::after,
   &::before {
     position: absolute;
     top: 0;
     left: 0;
     content: "";
+    background-color: $color-secondary;
+    border-radius: 100vmax;
+    transition: transform ease-out 0.1s;
+  }
+  &::before {
     height: 100%;
     width: 0.25rem;
-    border-radius: 100vmax;
-    background-color: $color-secondary;
+  }
+
+  &::after {
+    width: 1rem;
+    height: 0.25rem;
   }
 
   // Title

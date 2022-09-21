@@ -13,7 +13,7 @@ const AddUserButton: FC<Props> = ({ onClick }) => {
       <PillIcon
         iconName="Influences"
         className={styles.icon}
-        color={"var(--primaryTextColor)"}
+        color={"var(--buttonText)"}
       />{" "}
       Add Influence
     </button>
