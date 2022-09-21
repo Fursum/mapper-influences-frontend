@@ -1,5 +1,5 @@
 import Modal from "@components/SharedComponents/Modal";
-import { NewsPost } from "@libs/types/news";
+import { NewsType } from "@libs/types/influence";
 import { FC, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import NewsRow from "../NewsRow";
@@ -8,10 +8,10 @@ import styles from "./style.module.scss";
 
 const CreatePost: FC = ({}) => {
   const [showModal, setShowModal] = useState(false);
-  const { register, handleSubmit, watch } = useForm<NewsPost>();
+  const { register, handleSubmit, watch } = useForm<NewsType>();
 
   // TODO: Implement service
-  const onSubmit: SubmitHandler<NewsPost> = (data) => {
+  const onSubmit: SubmitHandler<NewsType> = (data) => {
     console.log(data);
   };
 
@@ -21,9 +21,9 @@ const CreatePost: FC = ({}) => {
         <h2 className={styles.title}>Create Post</h2>
         <NewsRow
           title={watch("title")}
-          desc={watch("shortDesc")}
-          type={watch("type")}
-          fullText={watch("fullPost")}
+          desc={watch("desc")}
+          date={watch("date")}
+          fullText={watch("fullText")}
         />
         <button
           className={styles.closePost}
@@ -37,16 +37,16 @@ const CreatePost: FC = ({}) => {
             <input {...register("title")} />
           </label>
           <label>
-            Post Type:
-            <input {...register("type")} />
+            Post Date:
+            <input {...register("date")} />
           </label>
           <label>
             Short Description:
-            <input {...register("shortDesc")} />
+            <input {...register("desc")} />
           </label>
           <label>
             Full Post:
-            <textarea {...register("fullPost")} />
+            <textarea {...register("fullText")} />
           </label>
           <button>Create</button>
         </form>
