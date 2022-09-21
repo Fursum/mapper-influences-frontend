@@ -1,8 +1,9 @@
 .positioner {
-  z-index: -1;
   position: absolute;
   top: 3rem;
   transform: translateX(15rem);
+  pointer-events: none; // Enable it on children
+
 
   .cardWrapper {
     position: relative;
@@ -13,6 +14,7 @@
     transform: perspective(25rem) rotateX(30deg) rotateY(-25deg) rotateZ(15deg);
 
     > div {
+      pointer-events: all;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -23,11 +25,17 @@
       background-color: $color-primary-bg;
       border-radius: $border-radius * 4;
 
+
       // Center one div on left side
       &:nth-child(1) {
         grid-row-start: 1;
         grid-row-end: 3;
         margin-block: auto;
+      }
+
+      transition: transform ease-out 0.5s;
+      &:hover {
+        transform: translateX(-0.15rem) translateY(-0.15rem);
       }
     }
   }

@@ -71,9 +71,7 @@ const LoginScreen: FC<Props> = ({ topList, newsList }) => {
 
       <ContributeButtons />
 
-      <div className={styles.coolCards}>
-        <CoolCards />
-      </div>
+      <CoolCards />
     </div>
   );
 };
