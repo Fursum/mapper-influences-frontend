@@ -16,9 +16,16 @@ const CoolCards: FC = () => {
           </video>
           <div className={styles.shadow} />
         </a>
-        <div>
-          card2 <div className={styles.shadow} />
-        </div>
+        <a
+          href="https://osu.ppy.sh/beatmapsets/1846040"
+          target={"_blank"}
+          rel="noreferrer"
+        >
+          <video autoPlay muted loop playsInline>
+            <source src="/example2.webm" type="video/webm" />
+          </video>{" "}
+          <div className={styles.shadow} />
+        </a>
         <div>
           card3 <div className={styles.shadow} />
         </div>
