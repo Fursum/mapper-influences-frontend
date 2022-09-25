@@ -1,0 +1,54 @@
+.viewport {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  height: max-content;
+
+  overflow: hidden;
+  width: 100%;
+
+  // Embla container
+  > div {
+    display: flex;
+    user-select: none;
+
+    transition: transform 0.1s ease-out;
+
+    // Wrapper for every card
+    .slide {
+      position: relative;
+      padding-left: $spacing/2;
+
+      &:nth-child(1) {
+        padding-left: 0;
+      }
+      //Card
+      > a {
+      }
+    }
+  }
+
+  .prevGradient,
+  .nextGradient {
+    position: absolute;
+    background: linear-gradient(to right, var(--currentBg), transparent);
+    top: 0;
+    bottom: 0;
+    opacity: 0;
+    width: 2rem;
+    transition: opacity 0.25s ease-out;
+  }
+
+  .prevGradient {
+    left: 0;
+  }
+
+  .nextGradient {
+    right: 0;
+    rotate: 180deg;
+  }
+
+  .visible {
+    opacity: 1;
+  }
+}

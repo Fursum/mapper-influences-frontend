@@ -2,9 +2,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  flex-grow: 1;
 
   height: 100%;
   min-width: 20em;
+  max-width: max-content;
   overflow-y: scroll;
 
   padding: $spacing;
@@ -24,33 +26,50 @@
 
   .influenceRow {
     display: flex;
-    gap: 0.5rem;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: $spacing;
 
     width: 100%;
-    max-width: 40rem;
+    max-width: 60rem;
 
     padding: $spacing;
     padding-bottom: 0;
     margin-bottom: 1rem;
 
-    .cardSide {
-      flex-basis: 30%;
-      flex-grow: 0;
+    .top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: $spacing / 2;
+      max-width: 45rem;
+      width: 100%;
+      .cardSide {
+        flex-grow: 0;
+        flex-shrink: 0;
+      }
+
+      .descriptionSide {
+        display: flex;
+        flex-direction: column;
+        max-width: 30rem;
+        min-width: 10rem;
+        flex-grow: 1;
+
+        .desc {
+          flex-grow: 1;
+        }
+      }
     }
 
-    .descriptionSide {
-      height: 100%;
-      max-width: 20rem;
-      min-width: 10rem;
-
-      flex-grow: 1;
-      flex-basis: 0;
-      .influenceDescription {
-        height: 100%;
-        width: 100%;
-      }
+    .maps {
+      --currentBg: var(--bgColor-2); // For carousel gradient
+      
+      position: relative;
+      max-width: 45rem;
+      width: 100%;
+      height: max-content;
     }
   }
 }
@@ -58,7 +77,7 @@
 @media screen and (max-width: $responsive-breakpoint) {
   .influenceRow {
     flex-direction: column;
-    .descriptionSide{
+    .descriptionSide {
       width: 100%;
     }
   }

@@ -1,5 +1,4 @@
 import { FC } from "react";
-import PillIcon from "../PillIcon";
 
 import styles from "./style.module.scss";
 
@@ -10,11 +9,6 @@ type Props = {
 const AddUserButton: FC<Props> = ({ onClick }) => {
   return (
     <button className={styles.addUser} onClick={onClick}>
-      <PillIcon
-        iconName="Influences"
-        className={styles.icon}
-        color={"var(--buttonText)"}
-      />{" "}
       Add Influence
     </button>
   );

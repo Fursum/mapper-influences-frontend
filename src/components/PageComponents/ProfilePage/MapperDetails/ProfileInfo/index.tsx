@@ -1,8 +1,8 @@
+import { FC } from "react";
 import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
-import { LinkIcon } from "@components/SvgComponents";
 import { osuBaseUrl } from "@libs/consts/urls";
 import { UserBase } from "@libs/types/user";
-import { FC } from "react";
+import AddUserButton from "../AddUserButton";
 
 import styles from "./style.module.scss";
 
@@ -25,14 +25,21 @@ const ProfileInfo: FC<Props> = ({ profileData }) => {
           circle
         />
       </a>
-      <a
-        href={`${osuBaseUrl}profile/${profileData.id}`}
-        target="_blank"
-        rel="noreferrer"
-      >
-        <div className={styles.mapperName}>{profileData.username}</div>
-      </a>
-      <div className={styles.title}>Nomination Assesment Team</div>
+      <div className={styles.rightSide}>
+        <a
+          href={`${osuBaseUrl}profile/${profileData.id}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <div className={styles.mapperName}>{profileData.username}</div>
+        </a>
+        <div className={styles.title}>Nomination Assesment Team</div>
+        <AddUserButton
+          onClick={() => {
+            //TODO: Add service
+          }}
+        />
+      </div>
     </div>
   );
 };

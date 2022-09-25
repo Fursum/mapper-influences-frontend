@@ -1,10 +1,10 @@
 import { FC } from "react";
-import { User } from "@libs/types/user";
+import { UserBase } from "@libs/types/user";
 import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
 
 import styles from "./style.module.scss";
 
-type Props = { mentions: User[] };
+type Props = { mentions: UserBase[] };
 const MentionList: FC<Props> = ({ mentions }) => {
   return (
     <div className={styles.mentionList}>

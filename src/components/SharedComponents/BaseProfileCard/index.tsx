@@ -12,10 +12,6 @@ const textFit = require("textfit");
 type Props = { userData: UserBase };
 
 const BaseProfileCard: FC<Props> = ({ userData }) => {
-  const Badges = userData.groups?.map((group) => (
-    <Badge key={group.id} group={group} />
-  ));
-
   const runFitText = () =>
     textFit(document.getElementsByClassName(styles.name));
 
@@ -34,15 +30,22 @@ const BaseProfileCard: FC<Props> = ({ userData }) => {
     };
   }, []);
 
+  const Badges = userData.groups?.map((group) => (
+    <Badge key={group.id} group={group} />
+  ));
+
   return (
     <Link href={`/profile/${userData.id}`} passHref={true}>
       <div className={styles.cardWrapper}>
-        <div className={styles.photo}>
-          <Image src={userData.avatarUrl} alt="Profile photo" layout="fill" />
-        </div>
+        {/* Using normal image instead of next.js for custom server */}
+        <img
+          src={userData.avatarUrl}
+          alt="Profile photo"
+          className={styles.photo}
+        />
         <div className={styles.rightSide}>
           <div className={styles.name}>{userData.username}</div>
-          <div className={styles.badges}>{Badges}</div>
+          {Badges?.length && <div className={styles.badges}>{Badges}</div>}
         </div>
       </div>
     </Link>

@@ -1,90 +1,42 @@
 .mapperDetails {
-  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: $spacing;
   padding: $spacing;
-  position: relative;
+  width: 100%;
 
-  background-color: $color-background-content;
+  > div {
+    flex-basis: 0%;
+    flex-grow: 1;
+  }
 
-  .stickyWrapper {
-    top: $spacing;
-    position: sticky;
+  .info {
+    max-width: 35rem;
+    min-width: 35rem;
+  }
+
+  .bio {
+    // Used for gradient in carousel
+    --currentBg: var(--bgColor-1);
+
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: $spacing;
+    min-width: 25rem;
+    max-width: calc($card-width * 3 + $spacing);
+    min-height: 100%;
+    flex-grow: 1;
 
-    .profileInfo {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    > h4 {
+      margin-block: $spacing/2;
       width: 100%;
-
-      > a:hover {
-        .linkIcon {
-          display: block;
-        }
-      }
-
-      .avatar:hover {
-        outline: 0.15rem solid $color-text;
-      }
-
-      .mapperName {
-        position: relative;
-        display: flex;
-        height: fit-content;
-        margin-top: 0.5em;
-        margin-bottom: 0.15em;
-        justify-content: center;
-        font-weight: $username-weight;
-        font-size: 1.5rem;
-        line-height: 1em;
-      }
-
-      .mapperName:hover {
-        text-decoration: underline;
-      }
-
-      .title {
-        text-align: center;
-      }
+      text-align: center;
     }
 
-    .stats,
-    .followers {
-      display: flex;
-      gap: $spacing;
-      justify-content: center;
-
-      .pill {
-        position: relative;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        border-radius: 50rem;
-        //outline: 0.1rem solid $color-secondary;
-        padding: 0.5rem;
-
-        width: 4em;
-        height: 2.25em;
-
-        .icon {
-          width: 1.25em;
-          aspect-ratio: 1;
-        }
-        .countText {
-          font-size: large;
-        }
-
-        .tooltip {
-          @extend %tooltip;
-        }
-        &:hover {
-          .tooltip {
-            opacity: 1;
-          }
-        }
-      }
+    .desc {
+      flex-grow: 1;
+      flex-shrink: 1;
+      min-height: 10rem;
     }
   }
 }

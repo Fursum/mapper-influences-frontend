@@ -12,6 +12,8 @@
     "@redux-devtools/extension": "^3.2.2",
     "@reduxjs/toolkit": "^1.8.1",
     "awesome-debounce-promise": "^2.1.0",
+    "embla-carousel-react": "^7.0.3",
+    "embla-carousel-wheel-gestures": "^3.0.0",
     "next": "12.1.5",
     "next-redux-wrapper": "^7.0.5",
     "react": "18.0.0",

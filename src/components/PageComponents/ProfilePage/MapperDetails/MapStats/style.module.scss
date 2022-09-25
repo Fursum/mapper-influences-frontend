@@ -1,0 +1,29 @@
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 24rem;
+  gap: $spacing;
+  margin-top: $spacing * 2;
+  width: 100%;
+
+  // Singular stat
+  .stat {
+    display: flex;
+    .text {
+      text-align: right;
+      height: 100%;
+      font-size: 1.5rem;
+      // "maps" text
+      > span {
+        display: block;
+        font-size: 1rem;
+      }
+      margin-right: $spacing / 2;
+    }
+    .number {
+      font-size: 3rem;
+      width: 3ch;
+    }
+  }
+}

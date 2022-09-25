@@ -1,4 +1,4 @@
-import { UserBase } from "./user";
+import { MapInfo, UserBase } from "./user";
 
 export enum InfluenceTypeEnum {
   Respect = "Respect",
@@ -17,6 +17,7 @@ export interface Influence {
   lastUpdated: number;
   type: InfluenceTypeEnum;
   strength: 1 | 2 | 3;
+  maps: MapInfo[];
 }
 
 export type ProfileInfoIcons =

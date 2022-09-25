@@ -1,0 +1,47 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  padding: $spacing/2;
+
+  border-radius: $border-radius;
+  width: $card-width;
+  height: $card-height;
+  min-width: $card-width;
+  isolation: isolate;
+
+  // Fade for readability
+  &::after,
+  > div::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: black;
+    opacity: 0.25;
+  }
+
+  > div {
+    position: relative;
+    max-width: $card-width;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.9rem;
+
+    padding-right: $spacing/2;
+    overflow: clip;
+    overflow-clip-margin: $spacing/4;
+
+    z-index: 1;
+
+    &::after {
+      z-index: -1;
+      opacity: 0.5;
+      top: -$spacing/8;
+      bottom: -$spacing/8;
+      transform: translateX(-$spacing/4);
+    }
+  }
+}

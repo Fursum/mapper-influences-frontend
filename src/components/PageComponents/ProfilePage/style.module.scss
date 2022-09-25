@@ -1,20 +1,24 @@
 .profilePage {
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  flex-wrap: wrap;
-  height: 100%;
-  gap: 1rem;
-  justify-content: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing * 2;
 
-  > div {
-    @extend %contentBox;
+  .doubleCol{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    gap: $spacing;
+
+    >div{
+      max-height: 30rem;
+      height: 30rem;
+      flex-grow: 1;
+    }
   }
 }
 
 @media screen and (max-width: $responsive-breakpoint) {
-  .profilePage {
-    display: flex;
-    flex-direction: column;
-    max-width: $mobile-size;
-  }
 }

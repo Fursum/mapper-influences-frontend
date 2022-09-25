@@ -1,15 +1,17 @@
 import { FC } from "react";
-import { UserBase, UserDetails } from "@libs/types/user";
-import Stats from "./Stats";
+import { MapInfo, UserBase, UserDetails } from "@libs/types/user";
 
-import styles from "./style.module.scss";
 import ProfileInfo from "./ProfileInfo";
 import EditableDescription from "../EditableDescription";
-import AddUserButton from "./AddUserButton";
+import MapStats from "./MapStats";
+
+import styles from "./style.module.scss";
+import MapCarousel from "@components/SharedComponents/MapCarousel";
 
 type Props = {
   profileData: UserBase;
   description: string;
+  mapList: MapInfo[];
   details: UserDetails;
   editable: boolean;
 };
@@ -17,24 +19,26 @@ type Props = {
 const MapperDetails: FC<Props> = ({
   profileData,
   description,
+  mapList,
   details,
   editable,
 }) => {
-  const addUserHandler = () => {
-    // TODO: Add user service
-  };
-
   return (
     <div className={styles.mapperDetails}>
-      <div className={styles.stickyWrapper}>
+      <div className={styles.info}>
         <ProfileInfo profileData={profileData} />
-        <AddUserButton onClick={addUserHandler} />
-        <EditableDescription
-          description={description}
-          placeholder={"Enter a description for your profile."}
-          editable={editable}
-        />
-        <Stats details={details} />
+        <MapStats details={details} />
+      </div>
+      <div className={styles.bio}>
+        <div className={styles.desc}>
+          <EditableDescription
+            description={description}
+            placeholder={"Enter a description for your profile."}
+            editable={editable}
+          />
+        </div>
+        <h4>Featured Maps</h4>
+        <MapCarousel mapList={mapList} />
       </div>
     </div>
   );

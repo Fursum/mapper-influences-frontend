@@ -30,6 +30,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     },
     id: 12345,
     influences: [],
+    maps: [],
+    mentions: [],
     username: "Skytuna",
     avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
   };

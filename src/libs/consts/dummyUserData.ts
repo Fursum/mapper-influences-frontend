@@ -1,11 +1,50 @@
 import { InfluenceTypeEnum } from "@libs/types/influence";
 import { User } from "@libs/types/user";
 
+const exampleMapList = [
+  {
+    artist: "NCT",
+    title: "Before I Go (Blooom remix)",
+    diff: "pjm",
+    backgroundUrl: "https://assets.ppy.sh/beatmaps/1801710/covers/card.jpg",
+    mapUrl: "https://osu.ppy.sh/beatmapsets/1801710#osu/3694128",
+  },
+  {
+    artist: "NCT",
+    title: "Before I Go (Blooom remix)",
+    diff: "pjm",
+    backgroundUrl: "https://assets.ppy.sh/beatmaps/1801710/covers/card.jpg",
+    mapUrl: "https://osu.ppy.sh/beatmapsets/1729824#osu/3535240",
+  },
+  {
+    artist: "NCT",
+    title: "Before I Go (Blooom remix)",
+    diff: "pjm",
+    backgroundUrl: "https://assets.ppy.sh/beatmaps/1801710/covers/card.jpg",
+    mapUrl: "https://osu.ppy.sh/beatmapsets/817932#osu/1715114",
+  },
+  {
+    artist: "NCT",
+    title: "Before I Go (Blooom remix)",
+    diff: "pjm",
+    backgroundUrl: "https://assets.ppy.sh/beatmaps/1801710/covers/card.jpg",
+    mapUrl: "https://osu.ppy.sh/beatmapsets/1570536#osu/3460598",
+  },
+  {
+    artist: "NCT",
+    title: "Before I Go (Blooom remix)",
+    diff: "pjm",
+    backgroundUrl: "https://assets.ppy.sh/beatmaps/1801710/covers/card.jpg",
+    mapUrl: "https://osu.ppy.sh/beatmapsets/1570536",
+  },
+];
+
 export const userData: User = {
   id: 12345,
   username: "Skytuna",
   avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
-  description: "",
+  description: "Test description",
+  maps: exampleMapList,
   details: {
     followerCount: 1,
     graveyardCount: 1,
@@ -25,6 +64,7 @@ export const userData: User = {
       strength: 2,
       description: "",
       lastUpdated: Date.now(),
+      maps: exampleMapList,
     },
     {
       profileData: {
@@ -49,6 +89,7 @@ export const userData: User = {
       strength: 1,
       description: "",
       lastUpdated: Date.now(),
+      maps: exampleMapList,
     },
     {
       profileData: {
@@ -73,6 +114,7 @@ export const userData: User = {
       strength: 3,
       description: "",
       lastUpdated: Date.now(),
+      maps: exampleMapList,
     },
     {
       profileData: {
@@ -97,6 +139,7 @@ export const userData: User = {
       strength: 3,
       description: "",
       lastUpdated: Date.now(),
+      maps: exampleMapList,
     },
     {
       profileData: {
@@ -108,6 +151,7 @@ export const userData: User = {
       strength: 2,
       description: "",
       lastUpdated: Date.now(),
+      maps: exampleMapList,
     },
     {
       profileData: {
@@ -119,6 +163,14 @@ export const userData: User = {
       strength: 2,
       description: "",
       lastUpdated: Date.now(),
+      maps: exampleMapList,
+    },
+  ],
+  mentions: [
+    {
+      id: 12345,
+      username: "Fursum",
+      avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
     },
   ],
 };

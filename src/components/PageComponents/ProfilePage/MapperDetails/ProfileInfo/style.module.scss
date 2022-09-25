@@ -1,0 +1,40 @@
+.profileInfo {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  width: max-content;
+
+  // Right side of avatar
+  .rightSide {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing;
+    margin-left: $spacing;
+
+    .mapperName {
+      position: relative;
+      display: flex;
+      height: fit-content;
+      font-weight: 700;
+      font-size: 4rem;
+      margin-left: -0.25rem;
+      line-height: 75%;
+      width: 20rem;
+    }
+
+    .mapperName:hover {
+      text-decoration: underline;
+    }
+
+    .title {
+      text-align: center;
+    }
+  }
+
+  .avatar:hover {
+    outline: 0.15rem solid $color-text;
+  }
+
+}
