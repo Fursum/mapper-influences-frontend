@@ -64,6 +64,8 @@ const getCurrentUser = createAsyncThunk(
         },
         id: 1234,
         influences: [],
+        maps: [],
+        mentions: [],
         username: "Fursum",
         avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
       };

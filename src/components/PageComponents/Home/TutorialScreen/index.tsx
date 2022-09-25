@@ -38,6 +38,7 @@ const TutorialScreen: FC<Props> = ({ children }) => {
       username: "Fursum",
       id: 1234,
     },
+    maps: [],
     strength: 1,
     type: InfluenceTypeEnum.Respect,
   };
