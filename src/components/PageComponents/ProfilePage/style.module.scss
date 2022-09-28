@@ -5,20 +5,24 @@
   align-items: center;
   gap: $spacing * 2;
 
-  .doubleCol{
+  .doubleCol {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     width: 100%;
     gap: $spacing;
+    padding: $spacing;
 
-    >div{
-      max-height: 30rem;
-      height: 30rem;
+    > div {
+      height: 40rem;
       flex-grow: 1;
+      flex-basis: 0;
     }
   }
 }
 
 @media screen and (max-width: $responsive-breakpoint) {
+  .profilePage .doubleCol > div{
+    flex-basis: 100%;
+  }
 }

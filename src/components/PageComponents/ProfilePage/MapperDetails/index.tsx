@@ -37,8 +37,12 @@ const MapperDetails: FC<Props> = ({
             editable={editable}
           />
         </div>
-        <h4>Featured Maps</h4>
-        <MapCarousel mapList={mapList} />
+        {mapList.length > 0 && (
+          <>
+            <h4>Featured Maps</h4>
+            <MapCarousel mapList={mapList} />
+          </>
+        )}
       </div>
     </div>
   );

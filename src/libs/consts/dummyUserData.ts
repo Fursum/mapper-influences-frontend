@@ -172,5 +172,15 @@ export const userData: User = {
       username: "Fursum",
       avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
     },
+    {
+      id: 123456,
+      username: "Fursum",
+      avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
+    },
+    {
+      id: 1234567,
+      username: "Fursum",
+      avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
+    },
   ],
 };

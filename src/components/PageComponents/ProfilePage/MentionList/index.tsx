@@ -9,10 +9,12 @@ const MentionList: FC<Props> = ({ mentions }) => {
   return (
     <div className={styles.mentionList}>
       <h2>Mentioned In</h2>
-      {mentions.map((user) => (
-        <BaseProfileCard key={user.id} userData={user} />
-      ))}
 
+      <div className={styles.mentionGrid}>
+        {mentions.map((user) => (
+          <BaseProfileCard key={user.id} userData={user} />
+        ))}
+      </div>
       {mentions.length === 0 && <span>{"No mentions :("}</span>}
     </div>
   );
