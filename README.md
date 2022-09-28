@@ -7,4 +7,4 @@
 
 ## Tech used
 - Next.js
-- Figma
+- [Figma](https://www.figma.com/file/VerS95ernbLC6cKEwo4c8Y/Mapper-Influences)
