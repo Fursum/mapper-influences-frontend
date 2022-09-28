@@ -22,6 +22,7 @@ const InfluenceElement: FC<{
           <div className={styles.descriptionSide}>
             <div className={styles.desc}>
               <EditableDescription
+                label={`Description textarea for ${influenceData.profileData.username}`}
                 description={influenceData.description}
                 editable={editable}
                 placeholder={"Describe your influence here."}

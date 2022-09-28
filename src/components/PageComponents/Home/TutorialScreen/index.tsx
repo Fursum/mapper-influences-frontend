@@ -75,6 +75,7 @@ const TutorialScreen: FC<Props> = ({ children }) => {
           </div>
           <div className={styles.descriptionSide}>
             <EditableDescription
+              label="Description textarea in tutorial"
               description=""
               placeholder="Edit here to give more details."
               editable
