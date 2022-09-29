@@ -12,17 +12,18 @@
   gap: $spacing;
 
   background: linear-gradient(to right, $color-secondary, $color-primary);
-  color: $color-text;
+
   outline: none;
 
   border-radius: $border-radius;
-  padding-inline: $spacing;
-  padding-block: $spacing / 2;
+  padding-inline: $spacing * 2;
+  padding-block: $spacing;
 
-  >span{
+  > span {
     font-size: 1.5rem;
     font-weight: 700;
     z-index: 1;
+    color: $white;
   }
 
   &::after {
