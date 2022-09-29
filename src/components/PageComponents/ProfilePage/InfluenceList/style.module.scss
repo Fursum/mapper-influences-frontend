@@ -17,6 +17,9 @@
 
   .scrollWrapper {
     overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     > span {
       margin-top: 1rem;
       text-align: center;
