@@ -38,4 +38,20 @@
     outline: 0.15rem solid $color-text;
   }
 
+  @media screen and (max-width: ($responsive-breakpoint / 2)) {
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+
+    .rightSide {
+      align-items: center;
+      justify-content: center;
+      margin-left: 0;
+
+      .mapperName{
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
 }
