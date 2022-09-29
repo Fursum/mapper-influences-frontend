@@ -11,7 +11,7 @@ export const ReportBug: FC = () => {
       target="_blank"
       rel="noreferrer"
     >
-      <Github className={styles.icon} color={"var(--buttonText)"} />
+      <Github className={styles.icon} color={"var(--buttonText-alt)"} />
     </a>
   );
 };
@@ -24,7 +24,7 @@ export const SendFeedback: FC = () => {
       target="_blank"
       rel="noreferrer"
     >
-      <Discord className={styles.icon} color={"var(--buttonText)"} />
+      <Discord className={styles.icon} color={"var(--buttonText-alt)"} />
     </a>
   );
 };

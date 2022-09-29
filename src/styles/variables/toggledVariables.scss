@@ -13,8 +13,11 @@ html {
   --backgroundGradient: transparent;
 
   --buttonBg: hsl(306, 86%, 88%);
-  --buttonOutline: hsl(306, 86%, 88%);
+  --buttonOutline: var(--buttonBg);
   --buttonText: var(--bgColor-1);
+  // Alternative button coloring for dark mode
+  --buttonBg-alt: var(--bgColor-1);
+  --buttonText-alt: var(--buttonOutline);
 
   --textColor: hsl(0, 0%, 90%);
   // Buttons use these colors over the colored backgrounds
@@ -41,6 +44,9 @@ html[data-theme="light"] {
   --buttonBg: hsl(293, 100%, 95%);
   --buttonOutline: var(--secondaryColor);
   --buttonText: var(--secondaryColor);
+  // Alternative button coloring for dark mode
+  --buttonBg-alt: var(--buttonBg);
+  --buttonText-alt: var(--buttonOutline);
 
   --textColor: hsl(0, 0%, 10%);
   // Buttons use these colors over the colored backgrounds

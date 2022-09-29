@@ -61,8 +61,9 @@ button {
 
   padding: $spacing;
 
-  background-color: $color-button-bg;
-  color: $color-button-text;
+  background-color: var(--buttonBg-alt);
+  color: var(--buttonText-alt);
+
   outline: 2px solid $color-button-outline;
 
   font-weight: 700;
@@ -74,8 +75,8 @@ button {
   }
 
   &:hover {
-    background-color: $color-button-text;
-    color: $color-text;
+    background-color: $color-button-outline;
+    color: $color-background;
   }
 }
 

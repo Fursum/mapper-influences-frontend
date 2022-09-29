@@ -19,7 +19,7 @@
   padding: $spacing;
   border-radius: $border-radius;
   outline: 2px solid $color-button-outline;
-  background-color: $color-button-bg;
+  background-color: var(--buttonBg-alt);
 
   .icon {
     width: 5rem;
@@ -27,7 +27,7 @@
   }
 
   &:hover {
-    --buttonText: var(--textColor);
+    --buttonText-alt: var(--bgColor-1);
     background-color: $color-button-outline;
   }
 }

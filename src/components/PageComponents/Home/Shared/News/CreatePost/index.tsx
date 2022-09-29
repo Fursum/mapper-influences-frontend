@@ -52,7 +52,7 @@ const CreatePost: FC = ({}) => {
         </form>
       </Modal>
       <button className={styles.createPost} onClick={() => setShowModal(true)}>
-        <span>Create Post</span>
+        Create Post
       </button>
     </>
   );
