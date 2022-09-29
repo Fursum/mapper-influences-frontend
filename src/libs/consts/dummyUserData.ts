@@ -43,6 +43,19 @@ export const userData: User = {
   id: 12345,
   username: "Skytuna",
   avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
+  groups: [
+    {
+      colour: "red",
+      has_listing: true,
+      has_playmodes: false,
+      id: 1,
+      identifier: "NAT",
+      is_probationary: false,
+      name: "Nomination Assesment Team",
+      playmodes: [],
+      short_name: "NAT",
+    },
+  ],
   description: "Test description",
   maps: exampleMapList,
   details: {

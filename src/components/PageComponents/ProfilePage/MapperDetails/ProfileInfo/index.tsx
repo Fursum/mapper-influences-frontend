@@ -11,6 +11,17 @@ type Props = {
 };
 
 const ProfileInfo: FC<Props> = ({ profileData }) => {
+  const renderGroup = () => {
+    if (!profileData.groups?.length) return <></>;
+    return (
+      <div
+        className={styles.title}
+        style={{ color: profileData.groups[0].colour }}
+      >
+        {profileData.groups[0].name}
+      </div>
+    );
+  };
   return (
     <div className={styles.profileInfo}>
       <a
@@ -33,7 +44,7 @@ const ProfileInfo: FC<Props> = ({ profileData }) => {
         >
           <div className={styles.mapperName}>{profileData.username}</div>
         </a>
-        <div className={styles.title}>Nomination Assesment Team</div>
+        {renderGroup()}
         <AddUserButton
           onClick={() => {
             //TODO: Add service
