@@ -1,3 +1,4 @@
+import Arrow from "@components/SvgComponents/Arrow";
 import { InfluenceOrder, InfluenceTypeEnum } from "@libs/types/influence";
 import { FC, useState } from "react";
 import StrengthBar from "./StrengthBar";
@@ -57,10 +58,10 @@ const InfluenceType: FC<Props> = ({
   const MinusButton = (
     <button
       aria-label="Decrease Influence"
-      className={`${styles.minus} ${strengthState === 1 ? styles.purple : ""}`}
+      className={`${styles.minus} ${strengthState === 1 ? styles.notch : ""}`}
       onClick={reduceInfluence}
     >
-      {strengthState === 1 ? "<" : "-"}
+      <Arrow color={"var(--buttonBg)"} />
     </button>
   );
 
@@ -70,10 +71,10 @@ const InfluenceType: FC<Props> = ({
   const PlusButton = (
     <button
       aria-label="Increase Influence"
-      className={`${styles.plus} ${strengthState === 3 ? styles.purple : ""}`}
+      className={`${styles.plus} ${strengthState === 3 ? styles.notch : ""}`}
       onClick={increaseInfluence}
     >
-      {strengthState === 3 ? ">" : "+"}
+      <Arrow color={"var(--buttonBg)"} />
     </button>
   );
 

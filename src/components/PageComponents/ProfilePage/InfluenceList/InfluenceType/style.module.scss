@@ -6,31 +6,57 @@
   justify-content: center;
   align-items: center;
   margin-top: 0.5rem;
-  font-size: 1.25rem;
-
-  //This has position relative inside, needs the override below
-  .purple {
-    @extend %buttonHoverSecondary;
-  }
 
   .plus,
-  .minus,
-  .purple {
+  .minus {
     position: absolute;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 100vmax;
     width: 1.25rem;
     height: 1.25rem;
-    font-size: 1rem;
-    font-weight: 700;
+    padding: 0;
+
+    outline: none;
+
+    background-color: transparent;
 
     user-select: none;
+
+    > svg {
+      height: 1.25rem;
+      width: 1.25rem;
+    }
+  }
+
+  .notch {
+    &::after {
+      content: "";
+      position: absolute;
+      width: 0.3rem;
+      height: 0.3rem;
+      border-radius: 100vmax;
+      background-color: var(--buttonBg);
+    }
+
+    &.plus {
+      &::after {
+        transform: translateX(-150%);
+      }
+    }
+
+    &.minus {
+      &::after {
+        transform: translateX(150%);
+      }
+    }
   }
 
   .plus {
     right: 0;
+    > svg {
+      rotate: 180deg;
+    }
   }
   .minus {
     left: 0;
