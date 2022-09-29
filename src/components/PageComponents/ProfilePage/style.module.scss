@@ -14,6 +14,7 @@
     padding: $spacing;
 
     > div {
+      @extend %contentBox;
       height: 40rem;
       flex-grow: 1;
       flex-basis: 0;
@@ -22,7 +23,7 @@
 }
 
 @media screen and (max-width: $responsive-breakpoint) {
-  .profilePage .doubleCol > div{
+  .profilePage .doubleCol > div {
     flex-basis: 100%;
   }
 }

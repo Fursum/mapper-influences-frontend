@@ -5,8 +5,6 @@
 
   height: 100%;
   min-width: 20em;
-  overflow-y: scroll;
-
   padding: $spacing;
   padding-top: 0;
 
@@ -17,71 +15,74 @@
     margin-bottom: 0.5rem;
   }
 
-  > span {
-    margin-top: 1rem;
-    text-align: center;
-  }
-
-  .influenceRow {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: $spacing;
-
-    width: 100%;
-    max-width: 60rem;
-
-    padding: $spacing;
-    padding-bottom: 0;
-    margin-bottom: 1rem;
-
-    // Line separator
-    &:not(:first-of-type) {
-      .top::after {
-        content: "";
-        position: absolute;
-        width: 100%;
-        height: 0.1rem;
-        background-color: $color-background-card;
-        top: -$spacing - 0.05rem;
-      }
+  .scrollWrapper {
+    overflow-y: scroll;
+    > span {
+      margin-top: 1rem;
+      text-align: center;
     }
 
-    .top {
-      position: relative;
+    .influenceRow {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
+      align-items: center;
       justify-content: center;
-      gap: $spacing / 2;
-      max-width: 45rem;
+      gap: $spacing;
+
       width: 100%;
-      .cardSide {
-        flex-grow: 0;
-        flex-shrink: 0;
-      }
+      max-width: 60rem;
 
-      .descriptionSide {
-        display: flex;
-        flex-direction: column;
-        max-width: 35rem;
-        min-width: 20rem;
-        min-height: 8rem;
-        flex-grow: 1;
+      padding: $spacing / 2;
+      padding-bottom: 0;
+      margin-bottom: $spacing;
 
-        .desc {
-          flex-grow: 1;
+      // Line separator
+      &:not(:first-of-type) {
+        .top::after {
+          content: "";
+          position: absolute;
+          width: 100%;
+          height: 0.2rem;
+          background-color: $color-background-card;
+          top: -($spacing * 0.75) - 0.1rem;
         }
       }
-    }
 
-    .maps {
-      --currentBg: var(--bgColor-2); // For carousel gradient
+      .top {
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: $spacing / 2;
+        max-width: 45rem;
+        width: 100%;
+        .cardSide {
+          flex-grow: 0;
+          flex-shrink: 0;
+        }
 
-      position: relative;
-      max-width: 45rem;
-      width: 100%;
-      height: max-content;
+        .descriptionSide {
+          display: flex;
+          flex-direction: column;
+          max-width: 35rem;
+          min-width: 20rem;
+          min-height: 8rem;
+          flex-grow: 1;
+
+          .desc {
+            flex-grow: 1;
+          }
+        }
+      }
+
+      .maps {
+        --currentBg: var(--bgColor-2); // For carousel gradient
+
+        position: relative;
+        max-width: 45rem;
+        width: 100%;
+        height: max-content;
+      }
     }
   }
 }

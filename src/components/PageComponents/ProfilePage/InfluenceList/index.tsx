@@ -19,14 +19,16 @@ const InfluenceList: FC<{ influences: Influence[]; editable?: boolean }> = ({
   return (
     <div className={styles.mapperInfluences}>
       <h2>Influenced By</h2>
-      {InfluenceCards}
-      {influences.length === 0 && (
-        <span>
-          {`This person is unique!`}
-          <br />
-          {`...Or they haven't added anyone yet.`}
-        </span>
-      )}
+      <div className={styles.scrollWrapper}>
+        {InfluenceCards}
+        {influences.length === 0 && (
+          <span>
+            {`This person is unique!`}
+            <br />
+            {`...Or they haven't added anyone yet.`}
+          </span>
+        )}
+      </div>
     </div>
   );
 };

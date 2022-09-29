@@ -9,7 +9,7 @@ type Props = {
 const AddUserButton: FC<Props> = ({ onClick }) => {
   return (
     <button className={styles.addUser} onClick={onClick}>
-      Add Influence
+      <span>Add Influence</span>
     </button>
   );
 };

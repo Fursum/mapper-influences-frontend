@@ -23,12 +23,15 @@
     opacity: 0.25;
   }
 
+  // Text line
   > div {
     position: relative;
     max-width: $card-width;
     text-overflow: ellipsis;
     white-space: nowrap;
     font-size: 0.9rem;
+
+    color: $white;
 
     padding-right: $spacing/2;
     overflow: clip;
