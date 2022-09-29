@@ -8,9 +8,11 @@ const reducer = combineReducers({
 });
 
 const logger: Middleware = (store) => (next) => (action) => {
-  console.log("Dispatching: ", action);
+  if (process.env.NODE_ENV !== "production")
+    console.log("Dispatching: ", action);
   let result = next(action);
-  console.log("Next state: ", store.getState());
+  if (process.env.NODE_ENV !== "production")
+    console.log("Next state: ", store.getState());
   return result;
 };
 

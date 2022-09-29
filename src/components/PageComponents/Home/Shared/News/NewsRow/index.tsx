@@ -10,8 +10,6 @@ const LazyMarkdown = lazy(() => import("./RenderMarkdown"));
 const NewsRow: FC<NewsType> = ({ fullText, title, date, desc }) => {
   const [showModal, setShowModal] = useState(false);
 
-  console.log(showModal)
-
   return (
     <>
       {showModal && (

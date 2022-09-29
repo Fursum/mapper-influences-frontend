@@ -21,12 +21,13 @@
   outline: 2px solid $color-button-outline;
   background-color: $color-button-bg;
 
-  >a{
-    aspect-ratio: 1;
-  }
-
   .icon {
     width: 5rem;
     height: 5rem;
+  }
+
+  &:hover {
+    --buttonText: var(--textColor);
+    background-color: $color-button-outline;
   }
 }

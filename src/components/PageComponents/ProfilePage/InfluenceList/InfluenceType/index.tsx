@@ -61,7 +61,7 @@ const InfluenceType: FC<Props> = ({
       className={`${styles.minus} ${strengthState === 1 ? styles.notch : ""}`}
       onClick={reduceInfluence}
     >
-      <Arrow color={"var(--buttonBg)"} />
+      <Arrow color={"var(--buttonOutline)"} />
     </button>
   );
 
@@ -74,7 +74,7 @@ const InfluenceType: FC<Props> = ({
       className={`${styles.plus} ${strengthState === 3 ? styles.notch : ""}`}
       onClick={increaseInfluence}
     >
-      <Arrow color={"var(--buttonBg)"} />
+      <Arrow color={"var(--buttonOutline)"} />
     </button>
   );
 

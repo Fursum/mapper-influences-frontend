@@ -16,12 +16,13 @@ const DarkModeToggle: FC<Props> = ({ className }) => {
   };
   return (
     <button
+      aria-label="Toggle dark mode"
       className={`${styles.outerSlider} ${className}`}
       onClick={toggleMode}
     >
       <div className={`${styles.innerSlider} ${styles[currentMode]}`}>
         <div className={styles.colorFill} />
-        <Beams className={styles.beam} color={"var(--primaryColor)"} />
+        <Beams className={styles.beam} color={"var(--buttonText)"} />
       </div>
     </button>
   );

@@ -50,15 +50,15 @@ h6 {
     transition: $allTransitions;
   }
 }
-
 a {
   text-decoration: none;
   color: $color-button-outline;
   cursor: pointer;
 }
-
 button {
+  cursor: pointer;
   position: relative;
+
   padding: $spacing;
 
   background-color: $color-button-bg;
@@ -73,7 +73,10 @@ button {
     color: inherit;
   }
 
-  cursor: pointer;
+  &:hover {
+    background-color: $color-button-text;
+    color: $color-text;
+  }
 }
 
 *::-webkit-scrollbar {

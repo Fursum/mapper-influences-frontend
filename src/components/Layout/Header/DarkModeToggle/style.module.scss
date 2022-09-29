@@ -7,11 +7,13 @@
   padding: 0;
 
   background-color: $color-background;
-  &::before, &::after{
-    display: none;
+  &:hover {
+    background-color: $color-background;
   }
-  &:hover{
-    --primaryColor: var(--secondaryColor);
+
+  &::before,
+  &::after {
+    display: none;
   }
 
   .innerSlider {
@@ -29,6 +31,7 @@
       border-radius: 100vmax;
       width: 100%;
       height: 100%;
+      background-color: $color-button-text;
     }
 
     .beam {
@@ -163,13 +166,8 @@
 @keyframes toLightFill {
   0% {
     transform: scale(1);
-    background-color: $color-text;
-  }
-  50% {
-    background-color: $color-text;
   }
   100% {
-    background-color: $color-primary;
     transform: scale(0.75);
   }
 }
