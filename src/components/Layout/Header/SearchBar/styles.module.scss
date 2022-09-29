@@ -63,7 +63,7 @@
   }
 }
 
-@media screen and (max-width: $responsive-breakpoint) {
+@media screen and (max-width: $responsive-breakpoint / 2) {
   .searchBorder {
     .searchBar {
       display: flex;
