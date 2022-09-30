@@ -72,6 +72,7 @@
   // This has leaderboard and news
   .fullSection {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     gap: $spacing * 2;
     max-width: 100%;
