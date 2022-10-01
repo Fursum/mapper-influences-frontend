@@ -1,16 +1,22 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
 import { osuBaseUrl } from "@libs/consts/urls";
 import { UserBase } from "@libs/types/user";
 import AddUserButton from "../AddUserButton";
 
 import styles from "./style.module.scss";
+import { useRouter } from "next/router";
 
 type Props = {
   profileData: UserBase;
 };
 
 const ProfileInfo: FC<Props> = ({ profileData }) => {
+  const router = useRouter();
+  const ownProfile = useMemo(() => {
+    return router.asPath === "/profile";
+  }, [router]);
+
   const renderGroup = () => {
     if (!profileData.groups?.length) return <></>;
     return (
@@ -45,11 +51,13 @@ const ProfileInfo: FC<Props> = ({ profileData }) => {
           <div className={styles.mapperName}>{profileData.username}</div>
         </a>
         {renderGroup()}
-        <AddUserButton
-          onClick={() => {
-            //TODO: Add service
-          }}
-        />
+        {!ownProfile && (
+          <AddUserButton
+            onClick={() => {
+              //TODO: Add service
+            }}
+          />
+        )}
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ type Props = {
   description: string;
   mapList: MapInfo[];
   details: UserDetails;
-  editable: boolean;
+  editable?: boolean;
 };
 
 const MapperDetails: FC<Props> = ({

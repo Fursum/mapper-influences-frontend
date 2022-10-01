@@ -3,7 +3,6 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: $spacing;
-  padding: $spacing;
   width: 100%;
 
   > div {
@@ -37,6 +36,16 @@
       flex-grow: 1;
       flex-shrink: 1;
       min-height: 10rem;
+    }
+  }
+
+  @media screen and (max-width: ($responsive-breakpoint / 2)) {
+    .info{
+      min-width: 15rem;
+      flex-basis: 100%;
+    }
+    .bio {
+      min-width: 10rem;
     }
   }
 }
