@@ -1,11 +1,13 @@
-import { FC, useMemo } from "react";
+import { FC, useEffect, useMemo } from "react";
+import { useRouter } from "next/router";
 import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
 import { osuBaseUrl } from "@libs/consts/urls";
 import { UserBase } from "@libs/types/user";
 import AddUserButton from "../AddUserButton";
+import AwesomeDebouncePromise from "awesome-debounce-promise";
+const textFit = require("textfit");
 
 import styles from "./style.module.scss";
-import { useRouter } from "next/router";
 
 type Props = {
   profileData: UserBase;
@@ -16,6 +18,24 @@ const ProfileInfo: FC<Props> = ({ profileData }) => {
   const ownProfile = useMemo(() => {
     return router.asPath === "/profile";
   }, [router]);
+
+  const runFitText = () =>
+    textFit(document.getElementsByClassName(styles.mapperName));
+
+  // Fit text to card on resize and on mount
+  useEffect(() => {
+    document.fonts.ready.then(() => runFitText());
+
+    const debounceFitText = AwesomeDebouncePromise(
+      runFitText,
+      //Add random delay to updates
+      50 + Math.random() * 15
+    );
+    window.addEventListener("resize", debounceFitText);
+    return () => {
+      window.removeEventListener("resize", debounceFitText);
+    };
+  }, []);
 
   const renderGroup = () => {
     if (!profileData.groups?.length) return <></>;

@@ -2,12 +2,11 @@ import Link from "next/link";
 import React, { FC, useEffect } from "react";
 import { UserBase } from "@libs/types/user";
 import Badge from "./Badge";
-import Image from "next/image";
+import AwesomeDebouncePromise from "awesome-debounce-promise";
+const textFit = require("textfit");
 
 import styles from "./style.module.scss";
-import AwesomeDebouncePromise from "awesome-debounce-promise";
 
-const textFit = require("textfit");
 
 type Props = { userData: UserBase };
 
