@@ -17,7 +17,7 @@ const LoginScreen: FC<Props> = ({ topList, newsList }) => {
   const router = useRouter();
   const handleClick = () => {
     router.push(
-      "https://osu.ppy.sh/oauth/authorize?response_type=code&client_id=14840&redirect_uri=http://localhost:3000/oauth"
+      "https://osu.ppy.sh/oauth/authorize?response_type=code&client_id=14840&redirect_uri=https://mapper-influences.vercel.app/oauth"
     );
   };
   const LoginButton = (
