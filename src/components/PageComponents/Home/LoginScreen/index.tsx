@@ -16,7 +16,9 @@ const LoginScreen: FC<Props> = ({ topList, newsList }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const handleClick = () => {
-    dispatch(SessionActions.login());
+    router.push(
+      "https://osu.ppy.sh/oauth/authorize?response_type=code&client_id=14840&redirect_uri=http://localhost:3000/oauth"
+    );
   };
   const LoginButton = (
     <button className={styles.login} onClick={handleClick}>
