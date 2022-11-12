@@ -1,22 +1,30 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useAppDispatch } from "src/redux/hooks";
+import { SessionActions } from "src/redux/Slices/session";
 
 const Oauth: NextPage = ({}) => {
   const router = useRouter();
   const [code, setCode] = useState("");
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (router.query.code) setCode(router.query.code.toString());
-  }, [router.query]);
+    if (router.query.code) {
+      setCode(router.query.code.toString());
+      dispatch(SessionActions.login());
+    }
+  }, [router.query, dispatch]);
 
   return (
     <div>
       <h1>Oauth page</h1>
       <button
         onClick={() => {
-          alert("Copied!");
-          navigator.clipboard.writeText(code);
+          navigator.clipboard
+            .writeText(code)
+            .then(() => alert("Copied!"))
+            .catch(() => alert("Failed to copy."));
         }}
       >
         Copy code
