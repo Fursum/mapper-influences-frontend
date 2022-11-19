@@ -30,6 +30,7 @@ const CoolCards: FC = () => {
             href={item.url}
             target={"_blank"}
             rel="noreferrer"
+            className={styles.card}
           >
             <video autoPlay muted loop playsInline>
               <source src={item.filePath} type="video/webm" />

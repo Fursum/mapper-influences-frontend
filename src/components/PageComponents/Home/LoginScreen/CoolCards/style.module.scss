@@ -20,9 +20,7 @@
         transform 0.5s ease-out;
     }
 
-    // Card
-    > div,
-    > a {
+    .card {
       position: relative;
       display: flex;
       align-items: center;
@@ -35,6 +33,18 @@
 
       pointer-events: all;
       user-select: none;
+
+      animation-name: slideIn;
+      animation-timing-function: ease-out;
+      animation-fill-mode: both;
+      animation-duration: 1s;
+
+      // Staggered animation
+      @for $i from 1 through 3 {
+        &:nth-child(#{$i}n) {
+          animation-delay: #{$i * 0.1}s;
+        }
+      }
 
       // Center one div on left side
       &:nth-child(1) {
@@ -125,5 +135,16 @@
         }
       }
     }
+  }
+}
+
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(5%) translateY(2%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0%) translateY(0%);
   }
 }
