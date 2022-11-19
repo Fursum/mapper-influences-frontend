@@ -1,34 +1,41 @@
 import type { NextPage, InferGetStaticPropsType } from "next";
 import { readFileSync } from "fs";
+import dynamic from "next/dynamic";
 import { useState } from "react";
-import {
-  LoginScreen,
-  NewsScreen,
-  TutorialScreen,
-} from "@components/PageComponents/Home";
 import { userData } from "@libs/consts/dummyUserData";
 import { NewsType } from "@libs/types/influence";
 import { useSessionStore } from "states/user";
 
-type SelectedScreen = "Tutorial" | "News";
+const DynamicNewsScreen = dynamic(() =>
+  import("@components/PageComponents/Home").then((r) => r.NewsScreen), {}
+);
+
+const DynamicTutorialScreen = dynamic(() =>
+  import("@components/PageComponents/Home").then((r) => r.TutorialScreen)
+);
+
+const DynamicLoginScreen = dynamic(() =>
+  import("@components/PageComponents/Home").then((r) => r.LoginScreen)
+);
 
 const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   leaderboard,
   news,
 }) => {
-  const [screen, setScreen] = useState<SelectedScreen>("Tutorial");
+  const [screen, setScreen] = useState<"Tutorial" | "News">("Tutorial");
   const { user } = useSessionStore();
 
-  if (!user) return <LoginScreen topList={leaderboard} newsList={news} />;
+  if (!user)
+    return <DynamicLoginScreen topList={leaderboard} newsList={news} />;
 
   switch (screen) {
     case "News":
-      return <NewsScreen newsList={news} topList={leaderboard} />;
+      return <DynamicNewsScreen newsList={news} topList={leaderboard} />;
     case "Tutorial":
       return (
-        <TutorialScreen>
+        <DynamicTutorialScreen>
           <button onClick={() => setScreen("News")}>Close tutorial</button>
-        </TutorialScreen>
+        </DynamicTutorialScreen>
       );
   }
 };
