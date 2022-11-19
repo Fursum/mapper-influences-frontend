@@ -26,7 +26,8 @@
     height: 5rem;
   }
 
-  &:hover {
+  &:hover,
+  &:focus {
     --buttonText-alt: var(--bgColor-1);
     background-color: $color-button-outline;
   }

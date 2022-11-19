@@ -50,11 +50,13 @@ h6 {
     transition: $allTransitions;
   }
 }
+
 a {
   text-decoration: none;
   color: $color-button-outline;
   cursor: pointer;
 }
+
 button {
   cursor: pointer;
   position: relative;
@@ -74,7 +76,7 @@ button {
     color: inherit;
   }
 
-  &:hover {
+  &:hover, &:focus {
     background-color: $color-button-outline;
     color: $color-background;
   }

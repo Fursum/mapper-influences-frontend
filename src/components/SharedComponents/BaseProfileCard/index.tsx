@@ -7,7 +7,6 @@ const textFit = require("textfit");
 
 import styles from "./style.module.scss";
 
-
 type Props = { userData: UserBase };
 
 const BaseProfileCard: FC<Props> = ({ userData }) => {
@@ -35,8 +34,7 @@ const BaseProfileCard: FC<Props> = ({ userData }) => {
 
   return (
     <Link href={`/profile/${userData.id}`} passHref={true}>
-      <div className={styles.cardWrapper}>
-        {/* Using normal image instead of next.js for custom server */}
+      <div className={styles.cardWrapper} tabIndex={0}>
         <img
           src={userData.avatarUrl}
           alt="Profile photo"
