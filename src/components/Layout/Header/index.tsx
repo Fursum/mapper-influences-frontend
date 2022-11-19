@@ -3,7 +3,7 @@ import DarkModeToggle from "@components/Layout/Header/DarkModeToggle";
 import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
 import SearchBar from "./SearchBar";
 import { Influences } from "@components/SvgComponents";
-import { useSessionStore } from "states/user";
+import { useSessionStore } from "src/states/user";
 import styles from "../style.module.scss";
 
 export default function Header() {

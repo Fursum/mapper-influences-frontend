@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { useSessionStore } from "states/user";
+import { useSessionStore } from "src/states/user";
 import { userData } from "@libs/consts/dummyUserData";
 
 const Oauth: NextPage = ({}) => {

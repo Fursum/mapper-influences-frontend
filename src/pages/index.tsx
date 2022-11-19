@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import { userData } from "@libs/consts/dummyUserData";
 import { NewsType } from "@libs/types/influence";
-import { useSessionStore } from "states/user";
+import { useSessionStore } from "src/states/user";
 
 const DynamicNewsScreen = dynamic(() =>
   import("@components/PageComponents/Home").then((r) => r.NewsScreen), {}
