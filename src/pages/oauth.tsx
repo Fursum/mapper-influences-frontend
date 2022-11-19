@@ -1,20 +1,20 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { useAppDispatch } from "src/redux/hooks";
-import { SessionActions } from "src/redux/Slices/session";
+import { useSessionStore } from "states/user";
+import { userData } from "@libs/consts/dummyUserData";
 
 const Oauth: NextPage = ({}) => {
   const router = useRouter();
   const [code, setCode] = useState("");
-  const dispatch = useAppDispatch();
+  const { login } = useSessionStore();
 
   useEffect(() => {
     if (router.query.code) {
       setCode(router.query.code.toString());
-      dispatch(SessionActions.login());
+      login(userData, "testAuthKey");
     }
-  }, [router.query, dispatch]);
+  }, [router.query]);
 
   return (
     <div>

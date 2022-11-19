@@ -2,8 +2,6 @@ import DarkModeToggle from "@components/Layout/Header/DarkModeToggle";
 import { LeaderboardType, NewsType } from "@libs/types/influence";
 import { useRouter } from "next/router";
 import { FC } from "react";
-import { useAppDispatch } from "src/redux/hooks";
-import { SessionActions } from "src/redux/Slices/session";
 import ContributeButtons from "../Shared/ContributeButtons";
 import Leaderboard from "../Shared/Leaderboard";
 import News from "../Shared/News";
@@ -13,7 +11,6 @@ import styles from "./style.module.scss";
 
 type Props = { newsList: NewsType[]; topList: LeaderboardType[] };
 const LoginScreen: FC<Props> = ({ topList, newsList }) => {
-  const dispatch = useAppDispatch();
   const router = useRouter();
   const handleClick = () => {
     router.push(

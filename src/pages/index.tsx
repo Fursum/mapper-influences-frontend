@@ -7,8 +7,8 @@ import {
   TutorialScreen,
 } from "@components/PageComponents/Home";
 import { userData } from "@libs/consts/dummyUserData";
-import { useAppSelector } from "src/redux/hooks";
 import { NewsType } from "@libs/types/influence";
+import { useSessionStore } from "states/user";
 
 type SelectedScreen = "Tutorial" | "News";
 
@@ -17,9 +17,9 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   news,
 }) => {
   const [screen, setScreen] = useState<SelectedScreen>("Tutorial");
-  const session = useAppSelector((s) => s.session);
+  const { user } = useSessionStore();
 
-  if (!session) return <LoginScreen topList={leaderboard} newsList={news} />;
+  if (!user) return <LoginScreen topList={leaderboard} newsList={news} />;
 
   switch (screen) {
     case "News":
@@ -36,7 +36,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 export const getStaticProps = async () => {
   const file = readFileSync("src/libs/consts/exampleChangelog.md", "utf-8");
 
-  const exampleNews:NewsType[] = [
+  const exampleNews: NewsType[] = [
     {
       fullText: file,
       title: "Version 1.0 is out!",

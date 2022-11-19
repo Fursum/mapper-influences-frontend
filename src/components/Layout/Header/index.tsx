@@ -1,15 +1,15 @@
 import Link from "next/link";
-import { useAppSelector } from "src/redux/hooks";
 import DarkModeToggle from "@components/Layout/Header/DarkModeToggle";
 import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
 import SearchBar from "./SearchBar";
-import styles from "../style.module.scss";
 import { Influences } from "@components/SvgComponents";
+import { useSessionStore } from "states/user";
+import styles from "../style.module.scss";
 
 export default function Header() {
-  const currentUser = useAppSelector((s) => s.user.currentUser.data);
+  const { user } = useSessionStore();
 
-  if (!currentUser) return null;
+  if (!user) return null;
 
   return (
     <div className={styles.header}>
@@ -25,7 +25,7 @@ export default function Header() {
         <a>
           <ProfilePhoto
             className={styles.avatar}
-            photoUrl={currentUser?.avatarUrl}
+            photoUrl={user.avatarUrl}
             size="md"
             circle
           />
