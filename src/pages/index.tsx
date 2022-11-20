@@ -7,7 +7,7 @@ import { NewsType } from "@libs/types/influence";
 import { useSessionStore } from "src/states/user";
 
 const DynamicNewsScreen = dynamic(() =>
-  import("@components/PageComponents/Home").then((r) => r.NewsScreen), {}
+  import("@components/PageComponents/Home").then((r) => r.NewsScreen)
 );
 
 const DynamicTutorialScreen = dynamic(() =>
