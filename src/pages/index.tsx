@@ -1,7 +1,7 @@
 import type { NextPage, InferGetStaticPropsType } from "next";
 import { readFileSync } from "fs";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { userData } from "@libs/consts/dummyUserData";
 import { NewsType } from "@libs/types/influence";
 import { useSessionStore } from "src/states/user";
@@ -24,8 +24,13 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 }) => {
   const [screen, setScreen] = useState<"Tutorial" | "News">("Tutorial");
   const { user } = useSessionStore();
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  if (!user)
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  if (!isHydrated || !user)
     return <DynamicLoginScreen topList={leaderboard} newsList={news} />;
 
   switch (screen) {

@@ -30,19 +30,6 @@ const TutorialScreen: FC<Props> = ({ children }) => {
     setTimeout(() => setShowTooltip(false), 3000);
   };
 
-  const influenceData: Influence = {
-    description: "Edit here to give details.",
-    lastUpdated: new Date().getDate(),
-    profileData: {
-      avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
-      username: "Fursum",
-      id: 1234,
-    },
-    maps: [],
-    strength: 1,
-    type: InfluenceTypeEnum.Respect,
-  };
-
   return (
     <div className={styles.tutorialWrapper}>
       <h1>Getting Started:</h1>
@@ -87,4 +74,18 @@ const TutorialScreen: FC<Props> = ({ children }) => {
     </div>
   );
 };
+
+const influenceData: Influence = {
+  description: "Edit here to give details.",
+  lastUpdated: new Date().getDate(),
+  profileData: {
+    avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
+    username: "Fursum",
+    id: 1234,
+  },
+  maps: [],
+  strength: 1,
+  type: InfluenceTypeEnum.Respect,
+};
+
 export default TutorialScreen;
