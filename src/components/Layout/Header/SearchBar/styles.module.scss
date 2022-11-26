@@ -52,7 +52,8 @@
     top: calc(50% - (1.25rem / 2));
 
     // Hide hover effect
-    &::before, &::after{
+    &::before,
+    &::after {
       display: none;
     }
   }
@@ -89,7 +90,7 @@
       left: $spacing / 2;
       z-index: 5;
 
-      .searchBar{
+      .searchBar {
         width: 100%;
 
         > input {
