@@ -1,13 +1,9 @@
-import ProfilePage from "@components/PageComponents/ProfilePage";
 import { NextPage } from "next";
-import { GetServerSideProps } from "next";
+import ProfilePage from "@components/PageComponents/ProfilePage";
 import { User } from "@libs/types/user";
 
-type Props = {
-  userData: User;
-};
 
-const MapperPage: NextPage<Props> = ({ userData }) => {
+const MapperPage: NextPage = () => {
   return (
     <>
       <ProfilePage userData={userData} editable />
@@ -17,8 +13,7 @@ const MapperPage: NextPage<Props> = ({ userData }) => {
 
 export default MapperPage;
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const userData: User = {
+const userData: User = {
     description: "",
     details: {
       followerCount: 1,
@@ -35,10 +30,3 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     username: "Skytuna",
     avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
   };
-
-  return {
-    props: {
-      userData: userData,
-    },
-  };
-};
