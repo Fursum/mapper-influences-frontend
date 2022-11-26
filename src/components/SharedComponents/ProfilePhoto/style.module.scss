@@ -6,6 +6,11 @@ $xl-size: calc($md-size * 6);
   overflow: hidden;
   position: relative;
   aspect-ratio: 1;
+  > img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
 }
 
 .circle {

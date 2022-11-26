@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { FC } from "react";
 import styles from "./style.module.scss";
 
@@ -16,11 +15,7 @@ const ProfilePhoto: FC<Props> = ({ photoUrl, size, className, circle }) => {
         circle ? styles.circle : ""
       }`}
     >
-      <Image
-        src={photoUrl || "/defaultAvatar.png"}
-        alt="Avatar Image"
-        layout="fill"
-      />
+      <img src={photoUrl || "/defaultAvatar.png"} alt="Avatar Image" />
     </div>
   );
 };
