@@ -5,11 +5,18 @@ import SearchBar from "./SearchBar";
 import { Influences } from "@components/SvgComponents";
 import { useSessionStore } from "src/states/user";
 import styles from "../style.module.scss";
+import { useEffect, useState } from "react";
 
 export default function Header() {
   const { user } = useSessionStore();
 
-  if (!user) return null;
+  // This block prevents hydration render mismatch from persisted user store
+  const [hasHydrated, setHasHydrated] = useState(false);
+  useEffect(() => {
+    setHasHydrated(true);
+  }, []);
+  
+  if (hasHydrated && !user) return <></>;
 
   return (
     <div className={styles.header}>
@@ -25,7 +32,7 @@ export default function Header() {
         <a>
           <ProfilePhoto
             className={styles.avatar}
-            photoUrl={user.avatarUrl}
+            photoUrl={user?.avatarUrl}
             size="md"
             circle
           />

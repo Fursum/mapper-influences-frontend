@@ -1,5 +1,5 @@
 import create from "zustand";
-import { devtools } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
 import { User } from "@libs/types/user";
 
 type SessionStore = {
@@ -9,8 +9,10 @@ type SessionStore = {
 };
 
 export const useSessionStore = create<SessionStore>()(
-  devtools((set) => ({
-    user: undefined,
-    login: (user, key) => set({ user: user, authKey: key }),
-  }))
+  devtools(
+    persist((set) => ({
+      user: undefined,
+      login: (user, key) => set({ user: user, authKey: key }),
+    }))
+  )
 );

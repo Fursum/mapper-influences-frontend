@@ -7,6 +7,7 @@ export interface UserBase {
   avatarUrl: string;
   groups?: Group[];
 }
+
 export interface User extends UserBase {
   details: UserDetails;
   description: string;
