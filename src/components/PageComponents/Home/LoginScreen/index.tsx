@@ -8,17 +8,18 @@ import News from "../Shared/News";
 import CoolCards from "./CoolCards";
 
 import styles from "./style.module.scss";
+import { env } from "process";
 
 type Props = { newsList: NewsType[]; topList: LeaderboardType[] };
 const LoginScreen: FC<Props> = ({ topList, newsList }) => {
   const router = useRouter();
-  const handleClick = () => {
+  const onLogin = () => {
     router.push(
-      "https://osu.ppy.sh/oauth/authorize?response_type=code&client_id=14840&redirect_uri=https://mapper-influences.vercel.app/oauth"
+      `https://osu.ppy.sh/oauth/authorize?response_type=code&client_id=${env.NEXT_PUBLIC_AUTH_CLIENT_ID}&redirect_uri=${env.NEXT_PUBLIC_AUTH_CALLBACK_URL}`
     );
   };
   const LoginButton = (
-    <button className={styles.login} onClick={handleClick}>
+    <button className={styles.login} onClick={onLogin}>
       Log In
     </button>
   );
