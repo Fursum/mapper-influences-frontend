@@ -6,13 +6,14 @@ type SessionStore = {
   authKey?: string;
   user?: User;
   login: (user: User, key: string) => void;
+  logout: () => void;
 };
 
 export const useSessionStore = create<SessionStore>()(
   devtools(
     persist((set) => ({
-      user: undefined,
       login: (user, key) => set({ user: user, authKey: key }),
+      logout: () => set({ user: undefined, authKey: undefined }),
     }))
   )
 );
