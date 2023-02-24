@@ -5,23 +5,17 @@ import SearchBar from "./SearchBar";
 import { Influences } from "@components/SvgComponents";
 import { useSessionStore } from "src/states/user";
 import styles from "../style.module.scss";
-import { FC, useEffect, useState } from "react";
-import { UserBase } from "@libs/types/user";
-import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 
 export default function Header() {
   const { user } = useSessionStore();
-  const NoSSRProfile = dynamic(
-    () => import(".").then((modules) => modules.ProfileLinkAvatar),
-    { ssr: false }
-  );
 
   // This block prevents hydration render mismatch from persisted user store
   const [hasHydrated, setHasHydrated] = useState(false);
   useEffect(() => {
     setHasHydrated(true);
   }, []);
-
+  
   if (hasHydrated && !user) return <></>;
 
   return (
@@ -34,20 +28,16 @@ export default function Header() {
       </Link>
       <SearchBar className={styles.searchBar} />
       <DarkModeToggle className={styles.darkMode} />
-      <NoSSRProfile user={user} />
+      <Link href={"/profile"} passHref>
+        <a>
+          <ProfilePhoto
+            className={styles.avatar}
+            photoUrl={user?.avatarUrl}
+            size="md"
+            circle
+          />
+        </a>
+      </Link>
     </div>
   );
 }
-
-export const ProfileLinkAvatar: FC<{ user?: UserBase }> = ({ user }) => (
-  <Link href={"/profile"} passHref>
-    <a>
-      <ProfilePhoto
-        className={styles.avatar}
-        photoUrl={user?.avatarUrl}
-        size="md"
-        circle
-      />
-    </a>
-  </Link>
-);
