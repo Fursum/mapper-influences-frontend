@@ -1,9 +1,12 @@
 import Head from "next/head";
 import type { AppProps } from "next/app";
+import { useEffect } from "react";
+import { CookiesProvider } from "react-cookie";
 import Layout from "@components/Layout";
 import "../styles/globals.scss";
 
-function MyApp({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
+
   return (
     <>
       <Head>
@@ -24,11 +27,13 @@ function MyApp({ Component, pageProps }: AppProps) {
         <title>Mapper Influences</title>
       </Head>
 
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <CookiesProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </CookiesProvider>
     </>
   );
 }
 
-export default MyApp;
+export default App;
