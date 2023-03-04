@@ -13,9 +13,14 @@ type Props = { newsList: NewsType[]; topList: LeaderboardType[] };
 const LoginScreen: FC<Props> = ({ topList, newsList }) => {
   const router = useRouter();
   const onLogin = () => {
-    router.push(
-      `https://osu.ppy.sh/oauth/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_AUTH_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_AUTH_CALLBACK_URL}`
-    );
+    const client_id = process.env.NEXT_PUBLIC_AUTH_CLIENT_ID || "";
+    const redirect_uri = process.env.NEXT_PUBLIC_AUTH_CALLBACK_URL || "";
+    const url = new URL("https://osu.ppy.sh/oauth/authorize");
+    url.searchParams.set("response_type", "code");
+    url.searchParams.set("client_id", client_id);
+    url.searchParams.set("redirect_uri", redirect_uri);
+    url.searchParams.set("scope", "public");
+    router.push(url);
   };
   const LoginButton = (
     <button className={styles.login} onClick={onLogin}>
