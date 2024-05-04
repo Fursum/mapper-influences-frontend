@@ -5,18 +5,16 @@ import styles from "./style.module.scss";
 const CoolCards: FC = () => {
   const meta = [
     {
-      url: "https://osu.ppy.sh/beatmapsets/1536948",
-      video:
-        "https://cdn.discordapp.com/attachments/645591556585291776/1038477819912650792/example1.webm",
+      url: "https://osu.ppy.sh/beatmapsets/705788#osu/1492654",
+      video: "lH5Hyy-4s7U",
     },
     {
-      url: "https://osu.ppy.sh/beatmapsets/1846040",
-      video:
-        "https://cdn.discordapp.com/attachments/645591556585291776/1038477820751515789/example2.webm",
+      url: "https://osu.ppy.sh/beatmapsets/1411188#osu/3844605",
+      video: "qbfpUjC6sZ0",
     },
     {
-      url: "https://osu.ppy.sh/beatmapsets/855677",
-      video: "Bzj7u4Q5GG0",
+      url: "https://osu.ppy.sh/beatmapsets/406217#osu/882812",
+      video: "eYDS1vdnGD4",
     },
   ];
 
@@ -29,7 +27,8 @@ const CoolCards: FC = () => {
             href={item.url}
             target={"_blank"}
             rel="noreferrer"
-            className={styles.card}>
+            className={styles.card}
+          >
             <iframe
               width="100%"
               height="100%"
