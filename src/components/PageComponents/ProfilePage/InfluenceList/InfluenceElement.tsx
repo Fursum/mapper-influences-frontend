@@ -1,41 +1,71 @@
 import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
-import React, { FC } from "react";
-import { Influence } from "@libs/types/influence";
+import MapCarousel from "@components/SharedComponents/MapCarousel/SingleItem";
+import { convertFromInfluence } from "@libs/enums";
+import {
+  editInfluenceInfo,
+  editInfluenceLevel,
+  InfluenceResponse,
+} from "@services/influence";
+import { forwardRef } from "react";
+
 import EditableDescription from "../EditableDescription";
 import InfluenceType from "./InfluenceType";
-import MapCarousel from "@components/SharedComponents/MapCarousel";
-
 import styles from "./style.module.scss";
 
-const InfluenceElement: FC<{
-  influenceData: Influence;
+type Props = {
+  influenceData: InfluenceResponse;
   editable?: boolean;
-}> = ({ influenceData, editable }) => {
-  return (
+};
+
+const InfluenceElement = forwardRef<HTMLDivElement, Props>(
+  ({ influenceData, editable }, ref) => (
     <>
-      <div className={styles.influenceRow}>
-        <div className={styles.top}>
-          <div className={styles.cardSide}>
-            <BaseProfileCard userData={influenceData.profileData} />
-            <InfluenceType editable influenceType={influenceData.type} />
-          </div>
-          <div className={styles.descriptionSide}>
-            <div className={styles.desc}>
-              <EditableDescription
-                label={`Description textarea for ${influenceData.profileData.username}`}
-                description={influenceData.description}
-                editable={editable}
-                placeholder={"Describe your influence here."}
-              />
-            </div>
-          </div>
+      <div className={styles.influenceRow} ref={ref}>
+        <div className={styles.cardWrapper}>
+          <InfluenceType
+            editable={editable}
+            influenceData={influenceData}
+            onChange={(type) =>
+              editInfluenceLevel({
+                from_id: influenceData.from_id,
+                level: convertFromInfluence(type),
+              })
+            }
+          />
+          <BaseProfileCard
+            userId={influenceData.from_id}
+            className={`${editable ? styles.editable : ""}`}
+          />
         </div>
-        <div className={styles.maps}>
-          <MapCarousel mapList={influenceData.maps || []} />
-        </div>
+        <EditableDescription
+          className={styles.description}
+          label={`Description textarea`}
+          description={influenceData.info || ""}
+          editable={editable}
+          placeholder={"Describe your influence here."}
+          onChange={(e) =>
+            editInfluenceInfo({
+              from_id: influenceData.from_id,
+              info: e.target.value,
+            })
+          }
+          statusText={{
+            loading: "Submitting influence description.",
+            error: "Could not update influence description.",
+            success: "Updated influence description.",
+          }}
+        />
+        {false && (
+          <div className={styles.maps}>
+            <h4>Featured Maps</h4>
+            <MapCarousel mapList={[]} />
+          </div>
+        )}
       </div>
     </>
-  );
-};
+  )
+);
+
+InfluenceElement.displayName = "InfluenceElement";
 
 export default InfluenceElement;

@@ -1,24 +1,4 @@
-import { MapInfo, UserBase } from "./user";
-
-export enum InfluenceTypeEnum {
-  Respect = "Respect",
-  Fascination = "Fascination",
-  Implementation = "Implementation",
-}
-export const InfluenceOrder = [
-  InfluenceTypeEnum.Respect,
-  InfluenceTypeEnum.Fascination,
-  InfluenceTypeEnum.Implementation,
-];
-
-export interface Influence {
-  profileData: UserBase;
-  description: string;
-  lastUpdated: number;
-  type: InfluenceTypeEnum;
-  strength: 1 | 2 | 3;
-  maps: MapInfo[];
-}
+import { UserBaseResponse } from "@services/user";
 
 export type ProfileInfoIcons =
   | "Followers"
@@ -37,6 +17,6 @@ export type NewsType = {
 };
 
 export type LeaderboardType = {
-  user: UserBase;
+  user: UserBaseResponse;
   number: number;
 };

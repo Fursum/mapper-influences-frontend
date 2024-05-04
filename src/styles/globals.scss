@@ -1,7 +1,10 @@
 @import "./mixins/index";
 @import "./variables/sizes";
 @import "./variables/toggledVariables";
-@import "./variables/fonts";
+
+$fallback-font: "Comfortaa Variable", -apple-system, BlinkMacSystemFont,
+  Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans,
+  Helvetica Neue, sans-serif;
 
 html,
 body {
@@ -11,20 +14,63 @@ body {
   background-color: $color-background;
   overflow-x: hidden;
 
-  font-family: "Comfortaa", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: "Inter Variable", $fallback-font;
 
-  font-size: clamp(0.8rem, .5vw + 0.5rem, 1.5rem);
+  font-size: 1rem;
+  @media screen and (max-width: $responsive-breakpoint) {
+    font-size: 0.75rem;
+  }
+
+  &::-webkit-scrollbar-track {
+    margin: $spacing;
+  }
+}
+
+body {
+  background-color: transparent;
+  position: relative;
+  &::before {
+    z-index: -1;
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.025;
+    background-image: linear-gradient($color-text 0.1rem, transparent 0.1rem),
+      linear-gradient(to right, $color-text 0.1rem, transparent 0.1rem);
+    background-size: 2rem 2rem;
+    background-position: 50%;
+  }
+}
+
+html[data-theme="light"] {
+  background: linear-gradient(
+    to left,
+    $color-primary-bg,
+    $color-secondary-bg
+  ) !important;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Comfortaa Variable", $fallback-font;
 }
 
 h1 {
   font-size: 2rem;
+  letter-spacing: -0.1rem;
 }
 h2 {
   font-size: 1.75rem;
+  letter-spacing: -0.05rem;
 }
 h3 {
   font-size: 1.25rem;
+  letter-spacing: -0.025rem;
 }
 h4,
 h5,
@@ -33,8 +79,8 @@ h6 {
 }
 
 * {
+  font-family: inherit;
   box-sizing: border-box;
-  font-family: "Comfortaa", cursive;
   font-size: 1rem;
 
   color: $color-text;
@@ -43,7 +89,7 @@ h6 {
   $allTransitions: background-color $transitionConfig, color $transitionConfig,
     outline-color $transitionConfig, text-shadow $transitionConfig,
     box-shadow $transitionConfig, font-weight $transitionConfig,
-    fill $transitionConfig;
+    opacity $transitionConfig, fill $transitionConfig;
   transition: $allTransitions;
   &::after,
   &::before {
@@ -58,39 +104,12 @@ a {
 }
 
 button {
-  cursor: pointer;
-  position: relative;
-
-  padding: $spacing;
-
-  background-color: var(--buttonBg-alt);
-  color: var(--buttonText-alt);
-
-  outline: 2px solid $color-button-outline;
-
-  font-weight: 700;
+  @extend %button;
 
   > span {
-    font-weight: 700;
     line-height: 1;
     color: inherit;
   }
-
-  &:hover, &:focus {
-    background-color: $color-button-outline;
-    color: $color-background;
-  }
-}
-
-*::-webkit-scrollbar {
-  color: transparent;
-  width: 0.25rem;
-  height: 0.25rem;
-  margin: 0.25rem;
-}
-*::-webkit-scrollbar-thumb {
-  background-color: $color-primary;
-  border-radius: 5rem;
 }
 
 input,
@@ -99,4 +118,36 @@ button {
   border: none;
   padding: $spacing / 2;
   border-radius: $border-radius;
+}
+
+.danger {
+  color: $color-danger;
+  background-color: $color-danger-bg;
+  outline-color: $color-danger;
+
+  &:hover,
+  &:focus,
+  &:focus-within,
+  &:focus-visible {
+    &:not(:disabled) {
+      background-color: $color-danger;
+      color: $color-background;
+    }
+  }
+}
+
+.cancel {
+  color: $color-reset;
+  background-color: $color-reset-bg;
+  outline-color: $color-reset;
+
+  &:hover,
+  &:focus,
+  &:focus-within,
+  &:focus-visible {
+    &:not(:disabled) {
+      background-color: $color-reset;
+      color: $color-background;
+    }
+  }
 }

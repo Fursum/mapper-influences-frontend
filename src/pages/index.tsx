@@ -1,48 +1,25 @@
-import type { NextPage, InferGetStaticPropsType } from "next";
-import { readFileSync } from "fs";
-import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
-import { userData } from "@libs/consts/dummyUserData";
+import { LoginScreen } from "@components/PageComponents/Home";
+import { useCurrentUser } from "@hooks/useUser";
 import { NewsType } from "@libs/types/influence";
-import { useSessionStore } from "src/states/user";
-
-const DynamicNewsScreen = dynamic(() =>
-  import("@components/PageComponents/Home").then((r) => r.NewsScreen)
-);
-
-const DynamicTutorialScreen = dynamic(() =>
-  import("@components/PageComponents/Home").then((r) => r.TutorialScreen)
-);
-
-const DynamicLoginScreen = dynamic(() =>
-  import("@components/PageComponents/Home").then((r) => r.LoginScreen)
-);
+import { readFileSync } from "fs";
+import type { InferGetStaticPropsType, NextPage } from "next";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   leaderboard,
   news,
 }) => {
-  const [screen, setScreen] = useState<"Tutorial" | "News">("Tutorial");
-  const { user } = useSessionStore();
-  const [isHydrated, setIsHydrated] = useState(false);
+  const router = useRouter();
+  const { user, isLoading } = useCurrentUser();
 
   useEffect(() => {
-    setIsHydrated(true);
-  }, []);
+    //if (!user && isLoading) toast.loading("Logging in...");
+    if (user) router.push("/dashboard");
+  }, [user, router, isLoading]);
 
-  if (!isHydrated || !user)
-    return <DynamicLoginScreen topList={leaderboard} newsList={news} />;
-
-  switch (screen) {
-    case "News":
-      return <DynamicNewsScreen newsList={news} topList={leaderboard} />;
-    case "Tutorial":
-      return (
-        <DynamicTutorialScreen>
-          <button onClick={() => setScreen("News")}>Close tutorial</button>
-        </DynamicTutorialScreen>
-      );
-  }
+  return <LoginScreen topList={leaderboard} newsList={news} />;
 };
 
 export const getStaticProps = async () => {
@@ -57,17 +34,19 @@ export const getStaticProps = async () => {
     },
   ];
 
-  const exampleTopList = userData.influences
+  /*
+  const exampleTopList = DUMMY_USER.influences
     .map((influence) => ({
       user: influence.profileData,
       number: Math.floor(Math.random() * 150),
     }))
     .sort((a, b) => b.number - a.number);
+  */
 
   return {
     props: {
       news: exampleNews,
-      leaderboard: exampleTopList,
+      leaderboard: [],
     },
   };
 };

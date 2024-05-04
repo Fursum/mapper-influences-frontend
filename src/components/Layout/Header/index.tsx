@@ -1,15 +1,18 @@
-import Link from "next/link";
 import DarkModeToggle from "@components/Layout/Header/DarkModeToggle";
 import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
-import SearchBar from "./SearchBar";
 import { Influences } from "@components/SvgComponents";
-import { useSessionStore } from "src/states/user";
-import styles from "../style.module.scss";
-import { FC, useEffect, useState } from "react";
-import { UserBase } from "@libs/types/user";
+import { UserBaseResponse } from "@services/user";
 import dynamic from "next/dynamic";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { FC, useEffect, useState } from "react";
+import { useSessionStore } from "src/states/user";
+
+import styles from "../style.module.scss";
+import SearchBar from "./SearchBar";
 
 export default function Header() {
+  const router = useRouter();
   const { user } = useSessionStore();
   const NoSSRProfile = dynamic(
     () => import(".").then((modules) => modules.ProfileLinkAvatar),
@@ -22,15 +25,14 @@ export default function Header() {
     setHasHydrated(true);
   }, []);
 
+  if (router.pathname === "/") return <></>;
   if (hasHydrated && !user) return <></>;
 
   return (
     <div className={styles.header}>
-      <Link href="/" passHref>
-        <a className={styles.home}>
-          <Influences />
-          <span>Mapper Influences</span>
-        </a>
+      <Link href="/dashboard" className={styles.home}>
+        <Influences />
+        <span>Mapper Influences</span>
       </Link>
       <SearchBar className={styles.searchBar} />
       <DarkModeToggle className={styles.darkMode} />
@@ -39,15 +41,15 @@ export default function Header() {
   );
 }
 
-export const ProfileLinkAvatar: FC<{ user?: UserBase }> = ({ user }) => (
-  <Link href={"/profile"} passHref>
-    <a>
-      <ProfilePhoto
-        className={styles.avatar}
-        photoUrl={user?.avatarUrl}
-        size="md"
-        circle
-      />
-    </a>
+export const ProfileLinkAvatar: FC<{ user?: UserBaseResponse }> = ({
+  user,
+}) => (
+  <Link href={"/profile"}>
+    <ProfilePhoto
+      className={styles.avatar}
+      photoUrl={user?.profile_picture}
+      size="md"
+      circle
+    />
   </Link>
 );

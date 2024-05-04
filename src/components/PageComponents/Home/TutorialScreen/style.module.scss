@@ -31,9 +31,7 @@
     width: 90%;
 
     .tutorialStep {
-      position: relative;
       display: flex;
-
       flex-direction: column;
       text-align: center;
       width: 20rem;
@@ -44,7 +42,6 @@
       @extend %contentBox;
 
       .centerer {
-        position: relative;
         display: flex;
         flex-grow: 1;
         align-items: center;
@@ -52,9 +49,12 @@
       }
 
       .addButtonTooltip {
-        @extend %tooltip;
-        opacity: 1;
-        margin-top: 4rem;
+        position: absolute;
+        z-index: 1;
+
+        font-family: "Inter Variable";
+        padding-block: $spacing;
+        background-color: $color-background-content;
         animation: fadeIn 0.1s ease-out;
       }
 
@@ -65,6 +65,8 @@
             bottom: 15%;
           }
         }
+        z-index: 1; // fix for search results
+        // apparently backdrop-filter messes up stacking context
       }
 
       // Editing step
@@ -72,15 +74,23 @@
         width: 40rem + $spacing;
         padding-bottom: $spacing;
 
+        .centerer {
+          gap: $spacing;
+        }
+
         .profileSide {
+          position: relative;
           display: flex;
           flex-direction: column;
+
+          .card {
+            margin-top: $spacing * 5;
+          }
         }
 
         .descriptionSide {
           height: 100%;
           flex-grow: 1;
-          margin-left: $spacing / 2;
         }
 
         @media screen and (max-width: $responsive-breakpoint) {

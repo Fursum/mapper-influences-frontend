@@ -1,27 +1,10 @@
 @import "../variables/index";
 
 %cardShadow {
-  position: relative;
   box-shadow: var(--cardShadow);
 
-  &::after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-
-    pointer-events: none;
-    border-radius: inherit;
-
+  &:hover {
     box-shadow: var(--cardShadowHover);
-    opacity: 0;
-    transition: opacity 0.15s ease-in-out;
-  }
-
-  &:hover::after {
-    opacity: 1;
   }
 }
 
@@ -44,10 +27,58 @@
   z-index: 2;
 }
 
+%skeleton {
+  background: linear-gradient(
+    90deg,
+    $color-text-faded 0%,
+    $color-text 10%,
+    $color-text-faded 20%,
+    $color-text-faded 100%
+  );
+  background-size: 400% 100%;
+  animation: moveGradient 3s linear infinite;
+  opacity: 10% !important;
+  border-radius: $border-radius;
+  border: 0.1px solid $color-text;
+}
+
+@keyframes moveGradient {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: -100% 50%;
+  }
+}
+
 %contentBox {
   background-color: $color-background-content;
   box-shadow: var(--contentShadow);
   border-radius: $border-radius;
+  backdrop-filter: blur(0.1rem);
+}
+
+%button {
+  cursor: pointer;
+  padding: $spacing;
+  background-color: var(--buttonBg-alt);
+  outline: 0.1rem solid $color-button-outline;
+  border-radius: $border-radius;
+  color: var(--buttonText-alt);
+  font-weight: 700;
+
+  &:hover,
+  &:focus-visible {
+    &:not(:disabled) {
+      background-color: $color-button-outline;
+      color: $color-background;
+    }
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
 }
 
 %buttonHover {
@@ -117,5 +148,20 @@
   &:hover {
     outline-color: $color-primary;
     color: $color-text;
+  }
+}
+
+%resetButtonDefaults {
+  color: inherit;
+  background-color: inherit;
+  outline: none;
+
+  &:hover,
+  &:focus,
+  &:focus-within,
+  &:focus-visible {
+    color: inherit;
+    background-color: inherit;
+    outline: none;
   }
 }

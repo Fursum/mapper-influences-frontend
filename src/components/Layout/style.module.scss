@@ -1,10 +1,10 @@
 .contentCenterer {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
 
   max-width: $screen-size;
+  min-height: calc(100vh - 3.5rem);
 
   margin-inline: auto;
   padding: $spacing;
@@ -44,7 +44,6 @@
     > svg {
       width: 2rem;
       height: 2.5rem;
-      margin-bottom: 0.25rem;
     }
     span {
       font-size: 1.5rem;
@@ -62,10 +61,10 @@
   }
 
   .avatar {
-    outline: 2px $color-primary solid;
+    outline: 2px transparent solid;
   }
   .avatar:hover {
-    outline-color: $color-secondary;
+    outline-color: $color-button-outline;
   }
 }
 

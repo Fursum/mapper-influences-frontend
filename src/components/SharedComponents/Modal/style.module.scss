@@ -20,7 +20,7 @@
     max-width: 40rem;
     max-height: calc(100vh - 6rem);
     overflow: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
     padding: $spacing;
     height: fit-content;
     max-height: 100%;

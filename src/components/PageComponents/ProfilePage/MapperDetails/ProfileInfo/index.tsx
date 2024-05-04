@@ -1,43 +1,49 @@
-import { FC, useEffect, useMemo } from "react";
-import { useRouter } from "next/router";
 import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
 import { osuBaseUrl } from "@libs/consts/urls";
-import { UserBase } from "@libs/types/user";
-import AddUserButton from "../AddUserButton";
+import { useGetInfluences } from "@services/influence";
+import { useFullUser } from "@services/user";
 import AwesomeDebouncePromise from "awesome-debounce-promise";
+import { FC, useEffect, useMemo, useRef } from "react";
+
+import AddUserButton from "../AddUserButton";
 const textFit = require("textfit");
 
 import styles from "./style.module.scss";
 
 type Props = {
-  profileData: UserBase;
+  userId?: string | number;
 };
 
-const ProfileInfo: FC<Props> = ({ profileData }) => {
-  const router = useRouter();
-  const ownProfile = useMemo(() => {
-    return router.asPath === "/profile";
-  }, [router]);
+const ProfileInfo: FC<Props> = ({ userId }) => {
+  const ownProfile = !userId;
 
-  const runFitText = () =>
-    textFit(document.getElementsByClassName(styles.mapperName));
+  const { data: profileData, isLoading } = useFullUser(userId);
+  const { data: currentUserInfluences } = useGetInfluences();
+
+  const isAlreadyAdded = useMemo(() => {
+    if (!currentUserInfluences) return false;
+    return currentUserInfluences.some(
+      (influence) => influence.from_id.toString() === userId?.toString()
+    );
+  }, [currentUserInfluences, userId]);
+
+  const nameRef = useRef(null);
 
   // Fit text to card on resize and on mount
   useEffect(() => {
-    document.fonts.ready.then(() => runFitText());
+    if (!nameRef.current) return;
+    const runFitText = () => textFit(nameRef.current);
+    const debounceFitText = AwesomeDebouncePromise(runFitText, 50);
 
-    const debounceFitText = AwesomeDebouncePromise(
-      runFitText,
-      //Add random delay to updates
-      50 + Math.random() * 15
-    );
+    document.fonts.ready.then(() => runFitText());
     window.addEventListener("resize", debounceFitText);
     return () => {
       window.removeEventListener("resize", debounceFitText);
     };
-  }, []);
+  }, [nameRef, profileData]);
 
-  const renderGroup = () => {
+  /*
+  const UserGroup = () => {
     if (!profileData.groups?.length) return <></>;
     return (
       <div
@@ -48,34 +54,53 @@ const ProfileInfo: FC<Props> = ({ profileData }) => {
       </div>
     );
   };
+  */
+
+  if (isLoading)
+    return (
+      <div className={`${styles.skeleton} ${styles.profileInfo}`}>
+        <ProfilePhoto
+          loading={true}
+          size="xl"
+          circle
+          className={styles.avatar}
+        />
+        <div className={styles.rightSide}>
+          <div className={styles.mapperName}></div>
+          <div className={styles.title}></div>
+          {!ownProfile && <div className={styles.addUser}></div>}
+        </div>
+      </div>
+    );
+
   return (
     <div className={styles.profileInfo}>
       <a
-        href={`${osuBaseUrl}profile/${profileData.id}`}
+        href={`${osuBaseUrl}users/${profileData?.id}`}
         target="_blank"
-        rel="noreferrer"
-      >
+        rel="noreferrer">
         <ProfilePhoto
-          photoUrl={profileData.avatarUrl}
+          photoUrl={profileData?.profile_picture}
+          loading={isLoading}
           size="xl"
-          className={styles.avatar}
           circle
+          className={styles.avatar}
         />
       </a>
       <div className={styles.rightSide}>
         <a
-          href={`${osuBaseUrl}profile/${profileData.id}`}
+          href={`${osuBaseUrl}users/${profileData?.id}`}
           target="_blank"
-          rel="noreferrer"
-        >
-          <div className={styles.mapperName}>{profileData.username}</div>
+          rel="noreferrer">
+          <div className={styles.mapperName} ref={nameRef}>
+            {profileData?.user_name}
+          </div>
         </a>
-        {renderGroup()}
+        {/* <UserGroup /> */}
         {!ownProfile && (
           <AddUserButton
-            onClick={() => {
-              //TODO: Add service
-            }}
+            userId={userId!}
+            action={isAlreadyAdded ? "remove" : "add"}
           />
         )}
       </div>

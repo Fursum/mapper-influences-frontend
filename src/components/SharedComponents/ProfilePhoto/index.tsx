@@ -1,4 +1,5 @@
 import { FC } from "react";
+
 import styles from "./style.module.scss";
 
 type Props = {
@@ -6,16 +7,25 @@ type Props = {
   size: "md" | "lg" | "xl";
   className?: string;
   circle?: boolean;
+  loading?: boolean;
 };
 
-const ProfilePhoto: FC<Props> = ({ photoUrl, size, className, circle }) => {
+const ProfilePhoto: FC<Props> = ({
+  photoUrl,
+  size,
+  className,
+  circle,
+  loading,
+}) => {
   return (
     <div
       className={`${styles.wrapper} ${styles[size]} ${className} ${
         circle ? styles.circle : ""
-      }`}
+      } ${loading ? styles.loading : ""}`}
     >
-      <img src={photoUrl || "/defaultAvatar.png"} alt="Avatar Image" />
+      {!loading && (
+        <img src={photoUrl || "/defaultAvatar.png"} alt="Avatar Image" />
+      )}
     </div>
   );
 };

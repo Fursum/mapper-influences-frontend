@@ -1,0 +1,51 @@
+.tooltip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0.25em 0.5em;
+  border-radius: $border-radius;
+  max-width: 20rem;
+
+  font-size: 1rem;
+  font-weight: 400;
+  font-family: "Inter Variable";
+  text-align: center;
+
+  background-color: $color-background;
+  @extend %cardShadow;
+
+  opacity: 0;
+  transition: opacity 0.1s ease-out;
+
+  z-index: 2;
+  pointer-events: none;
+
+  &.active {
+    animation: popIn 0.2s both cubic-bezier(0.06, 0.67, 0.17, 1.42);
+  }
+  &:not(.active) {
+    animation: popOut 0.1s both ease-out;
+  }
+}
+
+// Pop animation
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    scale: 0.8;
+  }
+  100% {
+    scale: 1;
+  }
+}
+
+@keyframes popOut {
+  0% {
+    opacity: 1;
+    scale: 1;
+  }
+  100% {
+    scale: 0.8;
+    opacity: 0;
+  }
+}

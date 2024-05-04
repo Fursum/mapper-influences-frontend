@@ -1,47 +1,45 @@
-import { FC } from "react";
-import { MapInfo, UserBase, UserDetails } from "@libs/types/user";
+import MapCarousel from "@components/SharedComponents/MapCarousel/Slider";
+import { editUser, useFullUser } from "@services/user";
+import type { FC } from "react";
 
-import ProfileInfo from "./ProfileInfo";
 import EditableDescription from "../EditableDescription";
 import MapStats from "./MapStats";
-
+import ProfileInfo from "./ProfileInfo";
 import styles from "./style.module.scss";
-import MapCarousel from "@components/SharedComponents/MapCarousel";
 
 type Props = {
-  profileData: UserBase;
-  description: string;
-  mapList: MapInfo[];
-  details: UserDetails;
-  editable?: boolean;
+  userId?: number | string;
 };
 
-const MapperDetails: FC<Props> = ({
-  profileData,
-  description,
-  mapList,
-  details,
-  editable,
-}) => {
+const MapperDetails: FC<Props> = ({ userId }) => {
+  const { data: profileData, isLoading } = useFullUser(userId);
+  const editable = !userId;
+
   return (
     <div className={styles.mapperDetails}>
       <div className={styles.info}>
-        <ProfileInfo profileData={profileData} />
-        <MapStats details={details} />
+        <ProfileInfo userId={userId} />
+        <MapStats userId={userId} />
       </div>
-      <div className={styles.bio}>
+      <div className={`${styles.bio} ${isLoading ? styles.loading : ""}`}>
         <div className={styles.desc}>
           <EditableDescription
-            label={`Description textarea for ${profileData.username}`}
-            description={description}
+            label={`Description textarea for ${profileData?.user_name}`}
+            description={profileData?.bio || ""}
             placeholder={"Enter a description for your profile."}
             editable={editable}
+            onChange={(e) => editUser({ bio: e.target.value })}
+            statusText={{
+              loading: "Submitting your bio.",
+              error: "Could not submit your bio.",
+              success: "Updated your bio.",
+            }}
           />
         </div>
-        {mapList.length > 0 && (
+        {!!profileData?.featured_maps?.length && (
           <>
             <h4>Featured Maps</h4>
-            <MapCarousel mapList={mapList} />
+            <MapCarousel mapList={profileData?.featured_maps} />
           </>
         )}
       </div>

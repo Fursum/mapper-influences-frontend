@@ -26,6 +26,13 @@
     min-height: 100%;
     flex-grow: 1;
 
+    &.loading {
+      .desc {
+        @extend %skeleton;
+        color: transparent;
+      }
+    }
+
     > h4 {
       margin-block: $spacing/2;
       width: 100%;
@@ -40,7 +47,7 @@
   }
 
   @media screen and (max-width: ($responsive-breakpoint / 2)) {
-    .info{
+    .info {
       min-width: 15rem;
       flex-basis: 100%;
     }

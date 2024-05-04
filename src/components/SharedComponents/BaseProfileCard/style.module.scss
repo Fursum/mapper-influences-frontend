@@ -1,74 +1,146 @@
+$photoSize: 5rem;
+
 .cardWrapper {
-  display: flex;
   position: relative;
-  align-items: center;
+  isolation: isolate;
+  display: grid;
+  justify-items: center;
+  grid-template-columns: 1fr $photoSize 1fr;
+  grid-template-rows: 3.5rem auto;
+  gap: $spacing / 2;
 
   border-radius: $border-radius;
   width: $card-width;
   height: $card-height;
   min-width: $card-width;
-
-  cursor: pointer;
+  margin-top: $photoSize / 4;
+  padding-bottom: $spacing / 2;
 
   @extend %cardShadow;
 
-  .photo {
-    position: relative;
-    width: 4rem;
-    min-width: 3rem;
-    margin-left: $spacing/2;
-    margin-right: $spacing;
-    aspect-ratio: 1;
-    border-radius: 50rem;
-    overflow: hidden;
-    object-fit: contain;
+  .backgroundFill {
+    position: absolute;
+    inset: 0;
+    background-color: var(--bgColor-2);
+    z-index: -1;
+    border-radius: inherit;
   }
 
-  .rightSide {
-    position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    grid-row: 1;
+    grid-column: 1;
+    width: $photoSize;
+    height: $photoSize;
+    border-radius: 999rem;
+    margin-top: -$photoSize / 4;
+    z-index: -1;
+    box-shadow: var(--cardShadow);
+  }
+
+  &:hover::before {
+    box-shadow: var(--cardShadowHover);
+  }
+
+  .name {
+    grid-row: 2;
+    grid-column: span 3;
+    width: 100%;
+    height: 1.75rem;
+    padding-inline: $spacing / 2;
+
+    font-family: "Comfortaa Variable";
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .rankedStat,
+  .influencedStat {
+    width: 100%;
+    margin-top: 0.75rem;
+    font-size: 0.75rem;
+    opacity: 0.8;
+
+    > span {
+      font-size: 1rem;
+      display: block;
+    }
+  }
+
+  .influencedStat {
+    grid-column: 1;
+    grid-row: 1;
+    text-align: right;
+  }
+
+  .rankedStat {
+    grid-column: 3;
+    grid-row: 1;
+    text-align: left;
+  }
+
+  .flag {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     justify-content: center;
-    gap: $spacing / 2;
-    height: 100%;
 
-    flex-grow: 1;
+    grid-row: 3;
+    grid-column: 2;
+    width: 100%;
 
-    .name {
-      position: relative;
-      display: flex;
-      align-items: flex-end;
-      width: calc($card-width - 5rem);
-      padding-right: 0.5rem;
-      height: 1.75rem;
-      text-align: left;
+    padding: $spacing / 8;
+    margin-top: -0.6rem;
+    border-radius: 0.25rem;
+
+    > img {
+      height: 1rem;
+      border-radius: inherit;
+    }
+  }
+
+  .photoCell {
+    > img {
+      border-radius: 999rem;
+      height: $photoSize;
+      width: $photoSize;
+      margin-top: -$photoSize / 4;
+
+      // Transparent mask gradient for badges
+      mask-image: linear-gradient(
+        to top,
+        transparent 5%,
+        white 30%,
+        white 100%
+      );
     }
 
     .badges {
-      margin-top: 0.1rem;
+      margin-top: -1.5rem;
+      width: 100%;
       display: flex;
-      justify-content: flex-start;
-      padding-right: 0.5rem;
+      justify-content: center;
+
       .badge {
-        position: relative;
+        z-index: 1;
         display: flex;
         justify-content: center;
         align-items: center;
+
         background-color: $color-background-card;
-        padding: 0.15rem 0.35rem;
+        border: 1px solid;
+
+        padding: 0.1rem 0.3rem;
         padding-top: 0.25rem;
+
         border-radius: 50rem;
-
         font-size: 0.75rem;
-        font-weight: bold;
-        text-transform: capitalize;
-        line-height: 1; //This will properly center the badge
+        font-weight: 500;
 
-        .tooltip {
-          @extend %tooltip;
-          max-width: 10em;
-          width: max-content;
-        }
         &:hover {
           .tooltip {
             opacity: 1;
@@ -76,5 +148,64 @@
         }
       }
     }
+  }
+}
+
+.skeleton {
+  &:hover {
+    box-shadow: var(--cardShadow);
+  }
+
+  .rankedStat,
+  .influencedStat {
+    @extend %skeleton;
+    margin-block: $spacing / 2;
+    width: calc(100% - $spacing);
+  }
+  .name {
+    @extend %skeleton;
+    width: 50%;
+  }
+  .photoCell {
+    position: relative;
+    height: $photoSize;
+    width: $photoSize;
+    border-radius: 9999rem;
+    mask-image: linear-gradient(to top, transparent 5%, white 30%, white 100%);
+    margin-top: -$photoSize / 4;
+
+    // Centered square to simulate spinning border
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      width: 2rem;
+      margin: auto;
+
+      background: $color-button-outline;
+      filter: blur(1rem);
+      animation: spin 2s ease-in-out alternate infinite;
+    }
+
+    // Moved background to ::after to bypass mask size for border
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0.2rem; // inset to allow for border visibility
+      border-radius: inherit;
+      background-image: url("https://osu.ppy.sh/images/layout/avatar-guest.png");
+      background-size: cover;
+      filter: blur(2px);
+      border: 0.05rem solid $color-background;
+    }
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }

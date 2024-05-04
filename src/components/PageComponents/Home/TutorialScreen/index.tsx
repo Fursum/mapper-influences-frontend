@@ -3,10 +3,14 @@ import EditableDescription from "@components/PageComponents/ProfilePage/Editable
 import InfluenceType from "@components/PageComponents/ProfilePage/InfluenceList/InfluenceType";
 import AddUserButton from "@components/PageComponents/ProfilePage/MapperDetails/AddUserButton";
 import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
-import { Influence, InfluenceTypeEnum } from "@libs/types/influence";
-import { FC, ReactNode, useState } from "react";
+import { useCurrentUser } from "@hooks/useUser";
+import { InfluenceResponse } from "@services/influence";
+import { useGlobalTooltip } from "@states/globalTooltip";
+import { FC, ReactNode } from "react";
 
 import styles from "./style.module.scss";
+
+// TODO: Add featured map controls
 
 const TutorialStep: FC<{
   number: number;
@@ -23,42 +27,55 @@ const TutorialStep: FC<{
 
 type Props = { children?: ReactNode };
 const TutorialScreen: FC<Props> = ({ children }) => {
-  const [showTooltip, setShowTooltip] = useState(false);
+  const { activateTooltip } = useGlobalTooltip();
 
-  const toggleTooltip = () => {
-    setShowTooltip(true);
-    setTimeout(() => setShowTooltip(false), 3000);
+  const { user } = useCurrentUser();
+
+  const influenceData: InfluenceResponse = {
+    info: "Edit here to give details.",
+    modified_at: new Date().getDate(),
+    created_at: new Date().getDate(),
+    from_id: user?.id || 0,
+    to_id: user?.id || 0,
+    influence_level: 1,
   };
 
   return (
     <div className={styles.tutorialWrapper}>
-      <h1>Getting Started:</h1>
+      <h1>Getting Started</h1>
       <div className={styles.stepsWrapper}>
         <TutorialStep
           number={1}
-          title={"Look up someone who inspired your mapping"}
-        >
+          title={"Look up someone who inspired your mapping"}>
           <div className={styles.searchWrapper}>
             <SearchBar />
           </div>
         </TutorialStep>
-        <TutorialStep number={2} title={"Add the user to your influences list"}>
-          <AddUserButton onClick={toggleTooltip} />
-          {showTooltip && (
-            <span className={styles.addButtonTooltip}>
-              You need to click this inside a profile. <br />
-              Search someone first!
-            </span>
-          )}
+        <TutorialStep
+          number={2}
+          title={"Add the user to  your influences list"}>
+          <AddUserButton
+            userId={0}
+            action="add"
+            onClick={(e) => {
+              activateTooltip(
+                "You need to click this inside a profile. Search someone first!",
+                e.currentTarget
+              );
+            }}
+            dontShowForm
+          />
         </TutorialStep>
 
         <TutorialStep
           number={3}
-          title={"In your profile, describe how the mapper influenced you"}
-        >
+          title={"In your profile, describe how the mapper influenced you"}>
           <div className={styles.profileSide}>
-            <BaseProfileCard userData={influenceData.profileData} />
-            <InfluenceType editable />
+            <InfluenceType editable influenceData={influenceData} />
+            <BaseProfileCard
+              userId={influenceData.from_id}
+              className={styles.card}
+            />
           </div>
           <div className={styles.descriptionSide}>
             <EditableDescription
@@ -73,19 +90,6 @@ const TutorialScreen: FC<Props> = ({ children }) => {
       {children}
     </div>
   );
-};
-
-const influenceData: Influence = {
-  description: "Edit here to give details.",
-  lastUpdated: new Date().getDate(),
-  profileData: {
-    avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
-    username: "Fursum",
-    id: 1234,
-  },
-  maps: [],
-  strength: 1,
-  type: InfluenceTypeEnum.Respect,
 };
 
 export default TutorialScreen;

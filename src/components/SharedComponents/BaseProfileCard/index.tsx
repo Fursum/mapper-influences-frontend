@@ -1,50 +1,69 @@
+import { useBaseUser } from "@services/user";
+import { useGlobalTooltip } from "@states/globalTooltip";
 import Link from "next/link";
-import React, { FC, useEffect } from "react";
-import { UserBase } from "@libs/types/user";
-import Badge from "./Badge";
-import AwesomeDebouncePromise from "awesome-debounce-promise";
-const textFit = require("textfit");
+import type { FC } from "react";
 
+import Badge from "./Badge";
 import styles from "./style.module.scss";
 
-type Props = { userData: UserBase };
+type Props = { userId?: string | number; className?: string };
 
-const BaseProfileCard: FC<Props> = ({ userData }) => {
-  const runFitText = () =>
-    textFit(document.getElementsByClassName(styles.name));
+const BaseProfileCard: FC<Props> = ({ userId, className = "" }) => {
+  const { activateTooltip, deactivateTooltip } = useGlobalTooltip();
+  const { data: userData, isLoading } = useBaseUser(userId);
 
-  // Fit text to card on resize and on mount
-  useEffect(() => {
-    document.fonts.ready.then(() => runFitText());
-
-    const debounceFitText = AwesomeDebouncePromise(
-      runFitText,
-      //Add random delay to updates
-      50 + Math.random() * 15
-    );
-    window.addEventListener("resize", debounceFitText);
-    return () => {
-      window.removeEventListener("resize", debounceFitText);
-    };
-  }, []);
-
-  const Badges = userData.groups?.map((group) => (
+  /*
+  const badges = userData.groups?.map((group) => (
     <Badge key={group.id} group={group} />
   ));
+  */
+  const badges = [];
+
+  if (isLoading) {
+    return (
+      <div className={`${styles.skeleton} ${styles.cardWrapper} ${className}`}>
+        <div className={`${styles.photoCell}`} />
+        <div className={`${styles.name}`} />
+        <div className={`${styles.influencedStat}`} />
+        <div className={`${styles.rankedStat}`} />
+      </div>
+    );
+  }
 
   return (
-    <Link href={`/profile/${userData.id}`} passHref={true}>
-      <div className={styles.cardWrapper} tabIndex={0}>
+    <Link
+      href={`/profile/${userData?.id}`}
+      onClick={deactivateTooltip}
+      className={`${styles.cardWrapper} ${className}`}>
+      <div className={styles.backgroundFill} />
+      <div className={`${styles.photoCell}`}>
         <img
-          src={userData.avatarUrl}
+          src={userData?.profile_picture}
           alt="Profile photo"
           className={styles.photo}
         />
-        <div className={styles.rightSide}>
-          <div className={styles.name}>{userData.username}</div>
-          {Badges?.length && <div className={styles.badges}>{Badges}</div>}
-        </div>
+        {!!badges?.length && <div className={styles.badges}>{""}</div>}
       </div>
+      <div className={styles.name}>{userData?.user_name}</div>
+      <div className={styles.influencedStat}>
+        Influenced <span>1</span>
+      </div>
+      <div className={styles.rankedStat}>
+        Ranked Maps <span>15</span>
+      </div>
+      {userData?.flag && (
+        <div
+          className={styles.flag}
+          onMouseEnter={(e) =>
+            userData.flag &&
+            activateTooltip(userData.flag.name, e.currentTarget)
+          }>
+          <img
+            alt={userData.user_name + " is from " + userData.flag.name}
+            src={`https://flagcdn.com/${userData.flag.code.toLowerCase()}.svg`}
+          />
+        </div>
+      )}
     </Link>
   );
 };

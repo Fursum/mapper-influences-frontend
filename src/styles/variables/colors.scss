@@ -9,12 +9,18 @@ $color-button-outline: var(--buttonOutline);
 $color-button-text: var(--buttonText);
 
 $color-text: var(--textColor);
+$color-text-faded: var(--textColor-faded);
 $color-text-primary: var(--primaryTextColor);
 $color-text-secondary: var(--secondaryTextColor);
 $color-background: var(--bgColor-1);
-$color-background-content: var(--bgColor-2);
+$color-background-content: var(--bgColor-content);
 $color-background-card: var(--bgColor-3);
 $color-background-card-hover: var(--bgColor-3-hover);
+
+$color-reset: var(--reset);
+$color-reset-bg: var(--resetBg);
+$color-danger: var(--danger);
+$color-danger-bg: var(--dangerBg);
 
 $color-shadow: var(--shadowColor);
 $color-shadow-hover: var(--shadowColor);
