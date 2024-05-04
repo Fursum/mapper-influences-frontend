@@ -32,7 +32,7 @@ const CoolCards: FC = () => {
             <iframe
               width="100%"
               height="100%"
-              src={`https://www.youtube.com/embed/${item.video}?autoplay=1&controls=0&mute=1&loop=1`}
+              src={`https://www.youtube.com/embed/${item.video}?autoplay=1&controls=0&mute=1&loop=1&showinfo=0&rel=0&playlist=${item.video}`}
               frameBorder="0"
               allow="autoplay"
             />
