@@ -1,6 +1,3 @@
-let assetPrefix;
-if (process.env.NODE_ENV === "production") assetPrefix = "/assets";
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -13,7 +10,6 @@ const nextConfig = {
     @import "src/styles/mixins/index.scss";`,
   },
   reactStrictMode: true,
-  assetPrefix,
 };
 
 module.exports = nextConfig;
