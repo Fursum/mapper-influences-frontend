@@ -54,7 +54,7 @@
       }
 
       // Fit video to card
-      > iframe {
+      > video {
         position: absolute;
         inset: 0;
         width: 100%;
@@ -62,7 +62,7 @@
       }
 
       &:hover {
-        > iframe,
+        > video,
         .overlay {
           transform: translateX(-1rem) translateY(-1rem);
         }

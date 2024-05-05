@@ -5,37 +5,37 @@ import styles from "./style.module.scss";
 const CoolCards: FC = () => {
   const meta = [
     {
+      // Culprate - Impulse
       url: "https://osu.ppy.sh/beatmapsets/705788#osu/1492654",
-      video: "lH5Hyy-4s7U",
+      video: "https://fur.s-ul.eu/kwVKi0Ev",
     },
     {
+      // sakuraburst - SELF DESTRUCT
       url: "https://osu.ppy.sh/beatmapsets/1411188#osu/3844605",
-      video: "qbfpUjC6sZ0",
+      video: "https://fur.s-ul.eu/O7WPysYn",
     },
     {
+      // Chata - enn
       url: "https://osu.ppy.sh/beatmapsets/406217#osu/882812",
-      video: "eYDS1vdnGD4",
+      video: "https://fur.s-ul.eu/7S0ZC1Ni",
     },
   ];
 
   return (
     <div className={styles.positioner}>
       <div className={styles.cardWrapper}>
-        {meta.map((item, i) => (
+        {meta.map((item) => (
           <a
-            key={item.url + i}
+            key={item.url}
             href={item.url}
             target={"_blank"}
             rel="noreferrer"
             className={styles.card}
           >
-            <iframe
-              width="100%"
-              height="100%"
-              src={`https://www.youtube.com/embed/${item.video}?autoplay=1&controls=0&mute=1&loop=1&showinfo=0&rel=0&playlist=${item.video}`}
-              frameBorder="0"
-              allow="autoplay"
-            />
+            <video autoPlay muted loop>
+              <source src={item.video} type="video/webm" />
+              {/* add mp4 fallback later */}
+            </video>
             <div className={styles.overlay} />
             <div className={styles.shadow} />
           </a>
