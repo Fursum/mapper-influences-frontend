@@ -109,6 +109,6 @@ export function editUser(body: UserEditRequest) {
   // Mock data for dev
   if (process.env.NODE_ENV !== "production") return mockAxiosReject({}, 1000);
 
-  let searchUrl = `${process.env.API_URL}/api/v1/user/update`;
+  const searchUrl = `${process.env.API_URL}/api/v1/user/update`;
   return axios.post(searchUrl, body);
 }

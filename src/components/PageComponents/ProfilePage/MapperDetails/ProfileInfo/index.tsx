@@ -3,7 +3,7 @@ import { osuBaseUrl } from "@libs/consts/urls";
 import { useGetInfluences } from "@services/influence";
 import { useFullUser } from "@services/user";
 import AwesomeDebouncePromise from "awesome-debounce-promise";
-import { FC, useEffect, useMemo, useRef } from "react";
+import { type FC, useEffect, useMemo, useRef } from "react";
 
 import AddUserButton from "../AddUserButton";
 const textFit = require("textfit");

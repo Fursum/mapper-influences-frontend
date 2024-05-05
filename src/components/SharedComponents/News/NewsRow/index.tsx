@@ -1,6 +1,6 @@
 import Modal from "@components/SharedComponents/Modal";
-import { NewsType } from "@libs/types/influence";
-import { FC, lazy, Suspense,useState } from "react";
+import type { NewsType } from "@libs/types/influence";
+import { type FC, lazy, Suspense,useState } from "react";
 
 import styles from "./style.module.scss";
 

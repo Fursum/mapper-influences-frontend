@@ -1,8 +1,8 @@
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 import { MapInfo } from "@libs/types/user";
-import { FeaturedMapsResponse } from "@services/user";
-import { FC, useCallback, useEffect, useState } from "react";
+import type { FeaturedMapsResponse } from "@services/user";
+import { type FC, useCallback, useEffect, useState } from "react";
 import { Carousel } from "react-responsive-carousel";
 
 import MapCard from "../../MapCard";

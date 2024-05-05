@@ -1,12 +1,12 @@
 import Modal from "@components/SharedComponents/Modal";
 import { convertFromInfluence, InfluenceTypeEnum } from "@libs/enums";
 import {
-  AddInfluenceRequest,
+  type AddInfluenceRequest,
   useAddInfluenceMutation,
   useDeleteInfluenceMutation,
 } from "@services/influence";
 import { useGlobalTheme } from "@states/theme";
-import { FC, FormEvent, MouseEvent, useCallback, useState } from "react";
+import { type FC, type FormEvent, type MouseEvent, useCallback, useState } from "react";
 
 import EditableDescription from "../../EditableDescription";
 import InfluenceType from "../../InfluenceList/InfluenceType";

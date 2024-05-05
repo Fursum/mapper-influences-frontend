@@ -1,6 +1,6 @@
 import { Beams } from "@components/SvgComponents";
 import { useGlobalTheme } from "@states/theme";
-import React, { FC, useEffect, useState } from "react";
+import React, { type FC, useEffect, useState } from "react";
 
 import styles from "./style.module.scss";
 

@@ -4,7 +4,7 @@ import { convertFromInfluence } from "@libs/enums";
 import {
   editInfluenceInfo,
   editInfluenceLevel,
-  InfluenceResponse,
+  type InfluenceResponse,
 } from "@services/influence";
 import { forwardRef } from "react";
 

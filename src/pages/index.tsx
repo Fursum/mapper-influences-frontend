@@ -1,6 +1,6 @@
 import { LoginScreen } from "@components/PageComponents/Home";
 import { useCurrentUser } from "@hooks/useUser";
-import { NewsType } from "@libs/types/influence";
+import type { NewsType } from "@libs/types/influence";
 import { readFileSync } from "fs";
 import type { InferGetStaticPropsType, NextPage } from "next";
 import { useRouter } from "next/router";

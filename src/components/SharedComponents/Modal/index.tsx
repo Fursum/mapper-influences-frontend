@@ -1,4 +1,4 @@
-import { FC, ReactNode, useRef } from "react";
+import { type FC, type ReactNode, useRef } from "react";
 import { useOnClickOutside } from "usehooks-ts";
 
 import styles from "./style.module.scss";

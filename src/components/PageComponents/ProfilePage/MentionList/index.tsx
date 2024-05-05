@@ -1,6 +1,6 @@
 import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
-import { UserBaseResponse } from "@services/user";
-import { FC } from "react";
+import type { UserBaseResponse } from "@services/user";
+import type { FC } from "react";
 
 import styles from "./style.module.scss";
 

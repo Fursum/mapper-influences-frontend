@@ -22,11 +22,11 @@ export type CoversResponse = {
 
 //** Generated from api response */
 export enum BeatmapType {
-  Graveyard,
-  Loved,
+  Graveyard = 0,
+  Loved = 1,
   /// Includes Pending and WIP maps.
-  Pending,
-  Ranked,
-  Guest,
-  Nominated,
+  Pending = 2,
+  Ranked = 3,
+  Guest = 4,
+  Nominated = 5,
 }

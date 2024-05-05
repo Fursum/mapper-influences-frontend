@@ -1,6 +1,6 @@
 import { BeatmapType } from "@libs/types/user";
-import { InfluenceResponse } from "@services/influence";
-import { FeaturedMapsResponse, UserFullResponse } from "@services/user";
+import type { InfluenceResponse } from "@services/influence";
+import type { FeaturedMapsResponse, UserFullResponse } from "@services/user";
 
 const exampleMapList: FeaturedMapsResponse[] = [
   {

@@ -1,5 +1,5 @@
-import { NewsType } from "@libs/types/influence";
-import { FC } from "react";
+import type { NewsType } from "@libs/types/influence";
+import type { FC } from "react";
 
 import CreatePost from "./CreatePost";
 import NewsRow from "./NewsRow";

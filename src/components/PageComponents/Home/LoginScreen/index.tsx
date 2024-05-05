@@ -1,7 +1,7 @@
 import DarkModeToggle from "@components/Layout/Header/DarkModeToggle";
 import News from "@components/SharedComponents/News";
-import { LeaderboardType, NewsType } from "@libs/types/influence";
-import { FC } from "react";
+import type { LeaderboardType, NewsType } from "@libs/types/influence";
+import type { FC } from "react";
 import { useGlobalTooltip } from "src/states/globalTooltip";
 
 import ContributeButtons from "../../../SharedComponents/ContributeButtons";

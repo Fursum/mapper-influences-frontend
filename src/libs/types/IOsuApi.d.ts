@@ -37,9 +37,9 @@ export type RankStatus =
 
 export enum GamemodeEnum {
   osu = 0,
-  taiko,
-  fruits,
-  mania,
+  taiko = 1,
+  fruits = 2,
+  mania = 3,
 }
 
 export enum RankStatusEnum {

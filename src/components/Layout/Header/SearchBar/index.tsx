@@ -1,9 +1,9 @@
 import { Magnify } from "@components/SvgComponents";
 import { MaxNameLength } from "@libs/consts";
-import { UserBaseResponse } from "@services/user";
+import type { UserBaseResponse } from "@services/user";
 import AwesomeDebouncePromise from "awesome-debounce-promise";
 import { useRouter } from "next/router";
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { type FC, useCallback, useEffect, useRef, useState } from "react";
 import { useOnClickOutside } from "usehooks-ts";
 
 import Results from "./Results";

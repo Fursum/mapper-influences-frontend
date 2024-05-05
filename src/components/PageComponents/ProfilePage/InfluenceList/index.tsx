@@ -1,6 +1,6 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useGetInfluences } from "@services/influence";
-import { FC, useRef } from "react";
+import { type FC, useRef } from "react";
 import { useIntersectionObserver } from "usehooks-ts";
 
 import InfluenceElement from "./InfluenceElement";

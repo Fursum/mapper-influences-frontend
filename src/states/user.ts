@@ -1,4 +1,4 @@
-import { UserBaseResponse } from "@services/user";
+import type { UserBaseResponse } from "@services/user";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 

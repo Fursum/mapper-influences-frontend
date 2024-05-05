@@ -1,5 +1,5 @@
 import ProfilePage from "@components/PageComponents/ProfilePage";
-import { NextPage } from "next";
+import type { NextPage } from "next";
 
 const MapperPage: NextPage = () => {
   //if (error) return <h1>Error while fetching user: {error}</h1>;

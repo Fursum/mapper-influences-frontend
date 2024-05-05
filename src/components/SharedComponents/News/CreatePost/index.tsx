@@ -1,7 +1,7 @@
 import Modal from "@components/SharedComponents/Modal";
-import { NewsType } from "@libs/types/influence";
-import { FC, useState } from "react";
-import { SubmitHandler,useForm } from "react-hook-form";
+import type { NewsType } from "@libs/types/influence";
+import { type FC, useState } from "react";
+import { type SubmitHandler,useForm } from "react-hook-form";
 
 import NewsRow from "../NewsRow";
 import styles from "./style.module.scss";

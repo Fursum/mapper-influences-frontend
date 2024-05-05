@@ -5,11 +5,11 @@ import { convertToInfluence, InfluenceTypeEnum } from "@libs/enums";
 import {
   deleteInfluence,
   getInfluences,
-  InfluenceResponse,
+  type InfluenceResponse,
   useDeleteInfluenceMutation,
 } from "@services/influence";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { FC, useRef, useState } from "react";
+import { type FC, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useOnClickOutside } from "usehooks-ts";
 

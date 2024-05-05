@@ -4,9 +4,9 @@ import InfluenceType from "@components/PageComponents/ProfilePage/InfluenceList/
 import AddUserButton from "@components/PageComponents/ProfilePage/MapperDetails/AddUserButton";
 import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
 import { useCurrentUser } from "@hooks/useUser";
-import { InfluenceResponse } from "@services/influence";
+import type { InfluenceResponse } from "@services/influence";
 import { useGlobalTooltip } from "@states/globalTooltip";
-import { FC, ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 
 import styles from "./style.module.scss";
 

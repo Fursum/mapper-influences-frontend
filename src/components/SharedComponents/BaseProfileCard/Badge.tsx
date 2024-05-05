@@ -1,4 +1,4 @@
-import { Group } from "@libs/types/IOsuApi";
+import type { Group } from "@libs/types/IOsuApi";
 import type { FC } from "react";
 import { useGlobalTooltip } from "src/states/globalTooltip";
 

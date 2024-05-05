@@ -9,7 +9,7 @@ const Tooltip: FC = () => {
 
   const {
     text,
-    parent: parent,
+    parent,
     isActive,
     deactivateTooltip,
   } = useGlobalTooltip();

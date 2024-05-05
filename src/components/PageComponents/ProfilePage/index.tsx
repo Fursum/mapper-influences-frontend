@@ -2,7 +2,7 @@ import { useCurrentUser } from "@hooks/useUser";
 import { useGetInfluences } from "@services/influence";
 import { useFullUser } from "@services/user";
 import { useRouter } from "next/router";
-import { FC, useState } from "react";
+import { type FC, useState } from "react";
 
 import InfluenceList from "./InfluenceList";
 import MapperDetails from "./MapperDetails";

@@ -1,6 +1,6 @@
 import { useFullUser } from "@services/user";
 import { useGlobalTooltip } from "@states/globalTooltip";
-import { FC, MouseEventHandler, ReactNode, useMemo } from "react";
+import { type FC, type MouseEventHandler, type ReactNode, useMemo } from "react";
 
 import styles from "./style.module.scss";
 
@@ -39,7 +39,7 @@ const MapStats: FC<{
   } = profileData || {};
 
   const rankedTooltip = useMemo(() => {
-    let tooltip: string[] = [];
+    const tooltip: string[] = [];
     if (ranked_count && ranked_count > 0)
       tooltip.push(`${ranked_count} ranked`);
     if (nominated_count && nominated_count > 0)

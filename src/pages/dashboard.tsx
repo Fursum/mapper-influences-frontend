@@ -1,6 +1,6 @@
 import { useCurrentUser } from "@hooks/useUser";
 import { DUMMY_USER } from "@libs/consts/dummyUserData";
-import { NewsType } from "@libs/types/influence";
+import type { NewsType } from "@libs/types/influence";
 import { useGetInfluences } from "@services/influence";
 import { readFileSync } from "fs";
 import type { InferGetStaticPropsType, NextPage } from "next";
