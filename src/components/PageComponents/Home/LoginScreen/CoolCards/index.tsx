@@ -7,17 +7,17 @@ const CoolCards: FC = () => {
     {
       // Culprate - Impulse
       url: "https://osu.ppy.sh/beatmapsets/705788#osu/1492654",
-      video: "https://fur.s-ul.eu/kwVKi0Ev",
+      video: "https://fur.s-ul.eu/xSsbXlcy",
     },
     {
       // sakuraburst - SELF DESTRUCT
       url: "https://osu.ppy.sh/beatmapsets/1411188#osu/3844605",
-      video: "https://fur.s-ul.eu/O7WPysYn",
+      video: "https://fur.s-ul.eu/Ewuqs5bu",
     },
     {
       // Chata - enn
       url: "https://osu.ppy.sh/beatmapsets/406217#osu/882812",
-      video: "https://fur.s-ul.eu/7S0ZC1Ni",
+      video: "https://fur.s-ul.eu/zHBx0ywE",
     },
   ];
 
