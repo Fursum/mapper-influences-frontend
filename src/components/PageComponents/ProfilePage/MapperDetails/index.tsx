@@ -1,5 +1,4 @@
 import MapCarousel from "@components/SharedComponents/MapCarousel/Slider";
-import { editUser, useFullUser } from "@services/user";
 import type { FC } from "react";
 
 import EditableDescription from "../EditableDescription";
@@ -12,7 +11,7 @@ type Props = {
 };
 
 const MapperDetails: FC<Props> = ({ userId }) => {
-  const { data: profileData, isLoading } = useFullUser(userId);
+  const { profileData, isLoading } = {}; //useFullUser(userId);
   const editable = !userId;
 
   return (
@@ -28,7 +27,7 @@ const MapperDetails: FC<Props> = ({ userId }) => {
             description={profileData?.bio || ""}
             placeholder={"Enter a description for your profile."}
             editable={editable}
-            onChange={(e) => editUser({ bio: e.target.value })}
+            onChange={(e) => {}}
             statusText={{
               loading: "Submitting your bio.",
               error: "Could not submit your bio.",

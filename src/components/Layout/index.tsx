@@ -16,7 +16,7 @@ type Props = {
 };
 
 const Layout: FC<Props> = ({ children }) => {
-  const user = useCurrentUser(); // Just to fetch the user data
+  const { data: user } = useCurrentUser(); // Just to fetch the user data
 
   const { theme } = useGlobalTheme();
   return (
@@ -24,7 +24,7 @@ const Layout: FC<Props> = ({ children }) => {
       {<Header />}
       <main className={styles.contentCenterer}>{children}</main>
       <Tooltip />
-      <ToastContainer theme={theme as any} position="bottom-right"  />
+      <ToastContainer theme={theme as any} position="bottom-right" />
     </>
   );
 };

@@ -1,6 +1,11 @@
 import { useFullUser } from "@services/user";
 import { useGlobalTooltip } from "@states/globalTooltip";
-import { type FC, type MouseEventHandler, type ReactNode, useMemo } from "react";
+import {
+  type FC,
+  type MouseEventHandler,
+  type ReactNode,
+  useMemo,
+} from "react";
 
 import styles from "./style.module.scss";
 
@@ -28,7 +33,7 @@ const MapStats: FC<{
 }> = ({ userId }) => {
   const { activateTooltip, deactivateTooltip } = useGlobalTooltip();
 
-  const { data: profileData, isLoading } = useFullUser(userId);
+  const { data: profileData, isLoading } = {}; //useFullUser(userId);
 
   const {
     ranked_count = 0,

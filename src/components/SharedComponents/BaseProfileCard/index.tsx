@@ -1,4 +1,3 @@
-import { useBaseUser } from "@services/user";
 import { useGlobalTooltip } from "@states/globalTooltip";
 import Link from "next/link";
 import type { FC } from "react";
@@ -10,7 +9,7 @@ type Props = { userId?: string | number; className?: string };
 
 const BaseProfileCard: FC<Props> = ({ userId, className = "" }) => {
   const { activateTooltip, deactivateTooltip } = useGlobalTooltip();
-  const { data: userData, isLoading } = useBaseUser(userId);
+  const { data: userData, isLoading } = {}; //useBaseUser(userId);
 
   /*
   const badges = userData.groups?.map((group) => (
@@ -34,7 +33,8 @@ const BaseProfileCard: FC<Props> = ({ userId, className = "" }) => {
     <Link
       href={`/profile/${userData?.id}`}
       onClick={deactivateTooltip}
-      className={`${styles.cardWrapper} ${className}`}>
+      className={`${styles.cardWrapper} ${className}`}
+    >
       <div className={styles.backgroundFill} />
       <div className={`${styles.photoCell}`}>
         <img
@@ -57,7 +57,8 @@ const BaseProfileCard: FC<Props> = ({ userId, className = "" }) => {
           onMouseEnter={(e) =>
             userData.flag &&
             activateTooltip(userData.flag.name, e.currentTarget)
-          }>
+          }
+        >
           <img
             alt={userData.user_name + " is from " + userData.flag.name}
             src={`https://flagcdn.com/${userData.flag.code.toLowerCase()}.svg`}

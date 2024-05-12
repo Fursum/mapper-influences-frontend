@@ -17,7 +17,7 @@ type Props = {
 const ProfileInfo: FC<Props> = ({ userId }) => {
   const ownProfile = !userId;
 
-  const { data: profileData, isLoading } = useFullUser(userId);
+  const { data: profileData, isLoading } = {}; //useFullUser(userId);
   const { data: currentUserInfluences } = useGetInfluences();
 
   const isAlreadyAdded = useMemo(() => {
@@ -78,7 +78,8 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
       <a
         href={`${osuBaseUrl}users/${profileData?.id}`}
         target="_blank"
-        rel="noreferrer">
+        rel="noreferrer"
+      >
         <ProfilePhoto
           photoUrl={profileData?.profile_picture}
           loading={isLoading}
@@ -91,7 +92,8 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
         <a
           href={`${osuBaseUrl}users/${profileData?.id}`}
           target="_blank"
-          rel="noreferrer">
+          rel="noreferrer"
+        >
           <div className={styles.mapperName} ref={nameRef}>
             {profileData?.user_name}
           </div>

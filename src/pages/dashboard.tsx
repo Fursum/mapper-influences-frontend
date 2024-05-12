@@ -22,7 +22,7 @@ const Dashboard: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 }) => {
   const router = useRouter();
   const [screen, setScreen] = useState<"Tutorial" | "News">("News");
-  const { user, isLoading } = useCurrentUser();
+  const { data: user, isLoading } = useCurrentUser();
   const { data: influenceList } = useGetInfluences();
 
   const [isHydrated, setIsHydrated] = useState(false);

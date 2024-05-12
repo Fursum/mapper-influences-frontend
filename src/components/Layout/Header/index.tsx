@@ -1,19 +1,19 @@
 import DarkModeToggle from "@components/Layout/Header/DarkModeToggle";
 import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
 import { Influences } from "@components/SvgComponents";
-import type { UserBaseResponse } from "@services/user";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { type FC, useEffect, useState } from "react";
-import { useSessionStore } from "src/states/user";
 
 import styles from "../style.module.scss";
 import SearchBar from "./SearchBar";
+import type { CurrentUserResponse } from "@services/user";
+import { useCurrentUser } from "@hooks/useUser";
 
 export default function Header() {
   const router = useRouter();
-  const { user } = useSessionStore();
+  const { data: user } = useCurrentUser();
   const NoSSRProfile = dynamic(
     () => import(".").then((modules) => modules.ProfileLinkAvatar),
     { ssr: false }
@@ -41,13 +41,13 @@ export default function Header() {
   );
 }
 
-export const ProfileLinkAvatar: FC<{ user?: UserBaseResponse }> = ({
+export const ProfileLinkAvatar: FC<{ user?: CurrentUserResponse }> = ({
   user,
 }) => (
   <Link href={"/profile"}>
     <ProfilePhoto
       className={styles.avatar}
-      photoUrl={user?.profile_picture}
+      photoUrl={user?.avatar_url}
       size="md"
       circle
     />

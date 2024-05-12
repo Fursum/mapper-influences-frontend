@@ -12,12 +12,12 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   news,
 }) => {
   const router = useRouter();
-  const { user, isLoading } = useCurrentUser();
+  const { data: user, isLoading } = useCurrentUser();
 
   useEffect(() => {
     //if (!user && isLoading) toast.loading("Logging in...");
     if (user) router.push("/dashboard");
-  }, [user, router, isLoading]);
+  }, [user, router]);
 
   return <LoginScreen topList={leaderboard} newsList={news} />;
 };
