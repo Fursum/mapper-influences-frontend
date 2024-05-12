@@ -27,7 +27,8 @@ const LoginScreen: FC<Props> = ({ topList, newsList }) => {
     return (
       <a
         className={`${styles.login} ${styles.a}`}
-        href={"https://osu.ppy.sh/oauth/authorize?" + loginUrl.toString()}>
+        href={`https://osu.ppy.sh/oauth/authorize?${loginUrl.toString()}`}
+      >
         Log In
       </a>
     );
@@ -58,7 +59,8 @@ const LoginScreen: FC<Props> = ({ topList, newsList }) => {
             className={styles.a}
             onMouseEnter={(e) =>
               activateTooltip("Opens in new tab", e.currentTarget)
-            }>
+            }
+          >
             pishifat’s Mapper Influences
           </a>{" "}
           project.

@@ -29,7 +29,7 @@ export async function getUserBase(userId?: number | string) {
       1000
     );
 
-  let searchUrl = `${process.env.API_URL}/api/v1/user/get`;
+  let searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/get`;
   // Add query when using with an id
   if (userId) searchUrl += `/${userId}`;
 
@@ -83,7 +83,7 @@ export async function getUserFull(userId?: number | string) {
   if (process.env.NODE_ENV !== "production")
     return mockRequest<UserFullResponse>(DUMMY_USER, 1000);
 
-  let searchUrl = `${process.env.API_URL}/api/v1/user/get`;
+  let searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/get`;
 
   if (userId) searchUrl += `/${userId}/full`;
   else searchUrl += "/full";
@@ -109,6 +109,6 @@ export function editUser(body: UserEditRequest) {
   // Mock data for dev
   if (process.env.NODE_ENV !== "production") return mockAxiosReject({}, 1000);
 
-  const searchUrl = `${process.env.API_URL}/api/v1/user/update`;
+  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/update`;
   return axios.post(searchUrl, body);
 }

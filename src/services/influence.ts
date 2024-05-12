@@ -42,7 +42,7 @@ export async function addInfluence(body: AddInfluenceRequest) {
   // Mock data for dev
   if (process.env.NODE_ENV !== "production") return mockRequest({}, 1000);
 
-  const searchUrl = `${process.env.API_URL}/api/v1/influence/create`;
+  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/influence/create`;
   return await axios.post(searchUrl, body);
 }
 
@@ -78,7 +78,7 @@ export async function deleteInfluence(from_id: string | number) {
   // Mock data for dev
   if (process.env.NODE_ENV !== "production") return mockRequest({}, 1000);
 
-  const searchUrl = `${process.env.API_URL}/api/v1/influence/delete/${from_id}`;
+  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/influence/delete/${from_id}`;
   return await axios.delete(searchUrl);
 }
 
@@ -111,7 +111,7 @@ export async function editInfluenceInfo(body: EditInfluenceInfoRequest) {
   // Mock data for dev
   if (process.env.NODE_ENV !== "production") return mockRequest({}, 1000);
 
-  const searchUrl = `${process.env.API_URL}/api/v1/influence/update/info`;
+  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/influence/update/info`;
   return await axios.post(searchUrl, body);
 }
 
@@ -124,6 +124,6 @@ export async function editInfluenceLevel(body: EditInfluenceLevelRequest) {
   // Mock data for dev
   if (process.env.NODE_ENV !== "production") return mockAxiosReject({}, 1000);
 
-  const searchUrl = `${process.env.API_URL}/api/v1/influence/update/level`;
+  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/influence/update/level`;
   return await axios.post(searchUrl, body);
 }
