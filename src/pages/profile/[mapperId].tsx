@@ -1,11 +1,12 @@
 import ProfilePage from "@components/PageComponents/ProfilePage";
-import { useCurrentUser } from "@hooks/useUser";
-import { useFullUser } from "@services/user";
+import useAuth from "@hooks/useAuth";
+import { useCurrentUser, useFullUser } from "@hooks/useUser";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 const MapperPage: NextPage = () => {
+  useAuth();
   const router = useRouter();
   const { mapperId } = router.query;
 
@@ -14,11 +15,12 @@ const MapperPage: NextPage = () => {
     error,
     isLoading,
   } = useFullUser(mapperId?.toString());
-  const { user } = useCurrentUser();
+  const { data: currentUser } = useCurrentUser();
 
   useEffect(() => {
-    if (mapperId?.toString() === user?.id.toString()) router.replace("/profile");
-  }, [mapperId, user?.id, router]);
+    if (mapperId?.toString() === currentUser?.id.toString())
+      router.replace("/profile");
+  }, [mapperId, currentUser?.id, router]);
 
   if (error) return <h1>Error while fetching user: {JSON.stringify(error)}</h1>;
   if (fullUser || isLoading)

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "cross-env NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "export": "next build && next export -o ../pages",
     "start": "next start",
@@ -38,6 +38,7 @@
     "@types/node": "20.12.11",
     "@types/react": "18.3.2",
     "@types/react-dom": "18.3.0",
+    "cross-env": "^7.0.3",
     "typescript": "5.4.5"
   }
 }

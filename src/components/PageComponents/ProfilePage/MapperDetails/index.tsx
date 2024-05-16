@@ -5,14 +5,17 @@ import EditableDescription from "../EditableDescription";
 import MapStats from "./MapStats";
 import ProfileInfo from "./ProfileInfo";
 import styles from "./style.module.scss";
+import { useFullUser } from "@hooks/useUser";
 
 type Props = {
   userId?: number | string;
 };
 
 const MapperDetails: FC<Props> = ({ userId }) => {
-  const { profileData, isLoading } = {}; //useFullUser(userId);
+  const { data: osuData, isLoading } = useFullUser(userId?.toString());
   const editable = !userId;
+
+  const profileData = {} as any;
 
   return (
     <div className={styles.mapperDetails}>
@@ -23,7 +26,7 @@ const MapperDetails: FC<Props> = ({ userId }) => {
       <div className={`${styles.bio} ${isLoading ? styles.loading : ""}`}>
         <div className={styles.desc}>
           <EditableDescription
-            label={`Description textarea for ${profileData?.user_name}`}
+            label={`Description textarea for ${osuData?.username}`}
             description={profileData?.bio || ""}
             placeholder={"Enter a description for your profile."}
             editable={editable}

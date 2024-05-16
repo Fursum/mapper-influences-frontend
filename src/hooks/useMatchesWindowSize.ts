@@ -24,7 +24,7 @@ const useMatchesWindowSize = (width = "60rem") => {
         //Add random delay to updates
         50 + Math.random() * 15
       )(),
-    [width, setMatches]
+    [width, getMatches]
   );
 
   useEffect(() => {

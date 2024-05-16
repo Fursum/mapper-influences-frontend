@@ -1,36 +1,32 @@
-import { useOsuApi } from "@states/osuApi";
 import { useRouter } from "next/router";
 import { useCallback, useEffect } from "react";
-import { useCookies } from "react-cookie";
 import { useCurrentUser } from "./useUser";
 
 const REDIRECT_URL = "/";
 
 const useAuth = () => {
   const router = useRouter();
-  const { setOsuSdk, resetOsuSdk, osuSdk } = useOsuApi();
-
-  const [cookies, , removeCookie] = useCookies(["access_token"]);
+  const { data: user, isLoading } = useCurrentUser();
 
   // Manual logout
   const logout = useCallback(() => {
-    removeCookie("access_token");
-    resetOsuSdk();
-    router.push(REDIRECT_URL);
-  }, [removeCookie, router.push, resetOsuSdk]);
+    // Logout endpoint
+    router.push(REDIRECT_URL); // Wont work yet
+  }, [router.push]);
 
   // Kick user to home page if not logged in
   // or redirect to dashboard if logged in
   useEffect(() => {
-    if (!cookies.access_token && router.asPath !== REDIRECT_URL) logout();
-    else if (router.asPath === REDIRECT_URL && cookies.access_token)
+    if (isLoading) return;
+    if (router.asPath === REDIRECT_URL) {
+      if (!user) return;
       router.push("/dashboard");
-  }, [cookies.access_token, router.asPath, logout, router.push]);
+    }
 
-  // Initialize osu sdk
-  useEffect(() => {
-    if (cookies.access_token && !osuSdk) setOsuSdk(cookies.access_token);
-  }, [cookies.access_token, osuSdk, setOsuSdk]);
+    if (!user) {
+      router.push(REDIRECT_URL);
+    }
+  }, [isLoading, router, user]);
 
   return { logout };
 };
