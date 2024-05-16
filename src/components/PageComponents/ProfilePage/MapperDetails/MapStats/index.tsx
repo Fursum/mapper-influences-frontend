@@ -1,4 +1,3 @@
-import { useFullUser } from "@services/user";
 import { useGlobalTooltip } from "@states/globalTooltip";
 import {
   type FC,
@@ -8,6 +7,7 @@ import {
 } from "react";
 
 import styles from "./style.module.scss";
+import { useFullUser } from "@hooks/useUser";
 
 const SingleStat: FC<{
   count: number;
@@ -33,31 +33,35 @@ const MapStats: FC<{
 }> = ({ userId }) => {
   const { activateTooltip, deactivateTooltip } = useGlobalTooltip();
 
-  const { data: profileData, isLoading } = {}; //useFullUser(userId);
+  const { data: profileData, isLoading } = useFullUser(userId?.toString());
 
   const {
-    ranked_count = 0,
-    nominated_count = 0,
-    guest_count = 0,
-    loved_count = 0,
-    graveyard_count = 0,
+    ranked_and_approved_beatmapset_count = 0,
+    nominated_beatmapset_count = 0,
+    guest_beatmapset_count = 0,
+    loved_beatmapset_count = 0,
+    graveyard_beatmapset_count = 0,
+    pending_beatmapset_count = 0,
   } = profileData || {};
 
   const rankedTooltip = useMemo(() => {
     const tooltip: string[] = [];
-    if (ranked_count && ranked_count > 0)
-      tooltip.push(`${ranked_count} ranked`);
-    if (nominated_count && nominated_count > 0)
-      tooltip.push(`${nominated_count} nominated`);
-    if (guest_count && guest_count > 0)
-      tooltip.push(`${guest_count} guest diff`);
+    if (
+      ranked_and_approved_beatmapset_count &&
+      ranked_and_approved_beatmapset_count > 0
+    )
+      tooltip.push(`${ranked_and_approved_beatmapset_count} ranked`);
+    if (nominated_beatmapset_count && nominated_beatmapset_count > 0)
+      tooltip.push(`${nominated_beatmapset_count} nominated`);
+    if (guest_beatmapset_count && guest_beatmapset_count > 0)
+      tooltip.push(`${guest_beatmapset_count} guest diff`);
     return tooltip.join(", ");
   }, [profileData]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className={`${styles.wrapper} ${isLoading ? styles.loading : ""}`}>
       <SingleStat
-        count={ranked_count + nominated_count + guest_count}
+        count={ranked_and_approved_beatmapset_count + guest_beatmapset_count}
         onMouseEnter={(e) =>
           rankedTooltip && activateTooltip(rankedTooltip, e.currentTarget)
         }
@@ -65,9 +69,9 @@ const MapStats: FC<{
       >
         Ranked
       </SingleStat>
-      <SingleStat count={loved_count}>Loved</SingleStat>
-      <SingleStat count={graveyard_count}>Pending</SingleStat>
-      <SingleStat count={graveyard_count}>Graved</SingleStat>
+      <SingleStat count={loved_beatmapset_count}>Loved</SingleStat>
+      <SingleStat count={pending_beatmapset_count}>Pending</SingleStat>
+      <SingleStat count={graveyard_beatmapset_count}>Graved</SingleStat>
     </div>
   );
 };
