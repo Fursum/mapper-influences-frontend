@@ -1,23 +1,14 @@
 import { LoginScreen } from "@components/PageComponents/Home";
-import { useCurrentUser } from "@hooks/useUser";
 import type { NewsType } from "@libs/types/influence";
-import { readFileSync } from "fs";
+import { readFileSync } from "node:fs";
 import type { InferGetStaticPropsType, NextPage } from "next";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
-import { toast } from "react-toastify";
+import useAuth from "@hooks/useAuth";
 
 const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   leaderboard,
   news,
 }) => {
-  const router = useRouter();
-  const { data: user, isLoading } = useCurrentUser();
-
-  useEffect(() => {
-    //if (!user && isLoading) toast.loading("Logging in...");
-    if (user) router.push("/dashboard");
-  }, [user, router]);
+  useAuth();
 
   return <LoginScreen topList={leaderboard} newsList={news} />;
 };

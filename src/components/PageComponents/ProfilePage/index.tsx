@@ -1,6 +1,3 @@
-import { useCurrentUser } from "@hooks/useUser";
-import { useGetInfluences } from "@services/influence";
-import { useFullUser } from "@services/user";
 import { useRouter } from "next/router";
 import { type FC, useState } from "react";
 
@@ -8,16 +5,17 @@ import InfluenceList from "./InfluenceList";
 import MapperDetails from "./MapperDetails";
 import MentionList from "./MentionList";
 import styles from "./style.module.scss";
+import useAuth from "@hooks/useAuth";
 
 type Props = { userId?: number | string };
 
 const ProfilePage: FC<Props> = ({ userId }) => {
-  const { logout } = useCurrentUser();
+  const { logout } = useAuth();
   const router = useRouter();
   const [selectedTab, setSelectedTab] = useState<"influences" | "mentions">(
     "influences"
   );
-  
+
   const isUser = router.asPath === "/profile";
 
   return (
@@ -27,12 +25,14 @@ const ProfilePage: FC<Props> = ({ userId }) => {
       <div className={styles.buttons}>
         <button
           className={selectedTab === "influences" ? styles.selected : ""}
-          onClick={() => setSelectedTab("influences")}>
+          onClick={() => setSelectedTab("influences")}
+        >
           Influences
         </button>
         <button
           className={selectedTab === "mentions" ? styles.selected : ""}
-          onClick={() => setSelectedTab("mentions")}>
+          onClick={() => setSelectedTab("mentions")}
+        >
           Mentions
         </button>
       </div>

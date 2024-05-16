@@ -1,6 +1,7 @@
 import "../styles/globals.scss";
 
 import Layout from "@components/Layout";
+import useAuth from "@hooks/useAuth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { AppProps } from "next/app";
 import Head from "next/head";

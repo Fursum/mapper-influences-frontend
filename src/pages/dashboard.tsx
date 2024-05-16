@@ -1,8 +1,9 @@
+import useAuth from "@hooks/useAuth";
 import { useCurrentUser } from "@hooks/useUser";
 import { DUMMY_USER } from "@libs/consts/dummyUserData";
 import type { NewsType } from "@libs/types/influence";
 import { useGetInfluences } from "@services/influence";
-import { readFileSync } from "fs";
+import { readFileSync } from "node:fs";
 import type { InferGetStaticPropsType, NextPage } from "next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -20,6 +21,8 @@ const Dashboard: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   leaderboard,
   news,
 }) => {
+  useAuth();
+
   const router = useRouter();
   const [screen, setScreen] = useState<"Tutorial" | "News">("News");
   const { data: user, isLoading } = useCurrentUser();
