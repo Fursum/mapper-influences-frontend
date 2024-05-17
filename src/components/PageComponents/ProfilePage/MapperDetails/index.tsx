@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 
 import MapCarousel from '@components/SharedComponents/MapCarousel/Slider';
-import { useFullUser } from '@services/user';
+import { useFullUser, useUpdateUserBio, useUserBio } from '@services/user';
 
 import EditableDescription from '../EditableDescription';
 import MapStats from './MapStats';
@@ -17,7 +17,9 @@ const MapperDetails: FC<Props> = ({ userId }) => {
   const { data: osuData, isLoading } = useFullUser(userId?.toString());
   const editable = !userId;
 
-  const profileData = {} as any;
+  const { data: profileData } = useUserBio(userId?.toString());
+
+  const { mutateAsync } = useUpdateUserBio();
 
   return (
     <div className={styles.mapperDetails}>
@@ -32,13 +34,7 @@ const MapperDetails: FC<Props> = ({ userId }) => {
             description={profileData?.bio || ''}
             placeholder={'Enter a description for your profile.'}
             editable={editable}
-            onChange={(_e) => {
-              return new Promise((r) => {
-                setTimeout(() => {
-                  r('Updated your bio.');
-                }, 1000);
-              });
-            }}
+            onChange={(e) => mutateAsync(e.target.value)}
             statusText={{
               loading: 'Submitting your bio.',
               error: 'Could not submit your bio.',
@@ -46,12 +42,14 @@ const MapperDetails: FC<Props> = ({ userId }) => {
             }}
           />
         </div>
-        {!!profileData?.featured_maps?.length && (
-          <>
-            <h4>Featured Maps</h4>
-            <MapCarousel mapList={profileData?.featured_maps} />
-          </>
-        )}
+        {
+          /* !!profileData?.featured_maps?.length */ false && (
+            <>
+              <h4>Featured Maps</h4>
+              <MapCarousel mapList={/* profileData?.featured_maps */ []} />
+            </>
+          )
+        }
       </div>
     </div>
   );
