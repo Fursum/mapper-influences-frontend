@@ -1,8 +1,10 @@
-import { useRouter } from "next/router";
-import { useCallback, useEffect } from "react";
-import { useCurrentUser } from "./useUser";
+import { useCallback, useEffect } from 'react';
 
-const REDIRECT_URL = "/";
+import { useRouter } from 'next/router';
+
+import { useCurrentUser } from './useUser';
+
+const REDIRECT_URL = '/';
 
 const useAuth = () => {
   const router = useRouter();
@@ -20,7 +22,7 @@ const useAuth = () => {
     if (isLoading) return;
     if (router.asPath === REDIRECT_URL) {
       if (!user) return;
-      router.push("/dashboard");
+      router.push('/dashboard');
     }
 
     if (!user) {

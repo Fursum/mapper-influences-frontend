@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 
-import { useWindowSize } from 'usehooks-ts';
+import { useIsClient, useWindowSize } from 'usehooks-ts';
 
 import styles from './style.module.scss';
 
@@ -27,11 +27,13 @@ const meta = [
 
 const CoolCards: FC = () => {
   const { width } = useWindowSize();
+  const isClient = useIsClient();
 
   return (
     <div className={styles.positioner}>
       <div className={styles.cardWrapper}>
         {width > 700 &&
+          isClient &&
           meta.map((item) => (
             <a
               key={item.url}
@@ -59,4 +61,5 @@ const CoolCards: FC = () => {
     </div>
   );
 };
+
 export default CoolCards;
