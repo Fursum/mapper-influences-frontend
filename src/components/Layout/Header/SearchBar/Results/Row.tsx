@@ -1,5 +1,5 @@
 type Props = {};
-const Row = (props: Props) => {
+const Row = (_props: Props) => {
   return <div>Row</div>;
 };
 export default Row;

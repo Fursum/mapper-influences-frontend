@@ -1,8 +1,6 @@
 import type { Group } from "@libs/types/IOsuApi";
 import type { FC } from "react";
 import { useGlobalTooltip } from "src/states/globalTooltip";
-
-import Tooltip from "../Tooltip";
 import styles from "./style.module.scss";
 
 type Props = { group: Group };

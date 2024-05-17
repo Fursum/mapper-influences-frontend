@@ -1,14 +1,11 @@
 import Modal from "@components/SharedComponents/Modal";
 import Arrow from "@components/SvgComponents/Arrow";
-import { useCurrentUser } from "@hooks/useUser";
 import { convertToInfluence, InfluenceTypeEnum } from "@libs/enums";
 import {
   deleteInfluence,
-  getInfluences,
   type InfluenceResponse,
   useDeleteInfluenceMutation,
 } from "@services/influence";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { type FC, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useOnClickOutside } from "usehooks-ts";
@@ -59,7 +56,7 @@ const InfluenceType: FC<Props> = ({
 
   const handleChange = (newType: InfluenceTypeEnum) => {
     setSelectedType(newType);
-    noSubmitOnChange && noSubmitOnChange(newType);
+    noSubmitOnChange?.(newType);
     if (onChange) {
       setIsLoading(true);
       onChange(newType)

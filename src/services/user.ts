@@ -1,3 +1,5 @@
+import { useCurrentUser } from "@hooks/useUser";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import type { UserExtended } from "osu-web.js";
 
@@ -25,3 +27,21 @@ export function getFullUser(userId: string) {
     withCredentials: true,
   });
 }
+
+export const useFullUser = (userId: string | undefined) => {
+  const { data: currentUser, isLoading } = useCurrentUser();
+
+  return useQuery({
+    queryKey: ["fullUser", userId],
+    enabled: !isLoading,
+    queryFn: () => {
+      const id = userId || currentUser?.id.toString();
+
+      if (!id) throw new Error("No user id provided and no current user found");
+
+      return getFullUser(id).then((res) => {
+        return res.data;
+      });
+    },
+  });
+};

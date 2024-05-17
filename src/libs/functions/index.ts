@@ -8,7 +8,7 @@ export function mockRequest<T>(returnValue: T, timeout: number): Promise<T> {
 
 // Parameters are the same as above to quickly test for rejection
 export async function mockAxiosReject<T>(
-  returnValue: T,
+  _returnValue: T,
   timeout = 0
 ): Promise<AxiosResponse<T>> {
   await new Promise((r) => setTimeout(r, timeout));

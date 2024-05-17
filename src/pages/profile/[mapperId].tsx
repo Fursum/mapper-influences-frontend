@@ -1,9 +1,10 @@
-import ProfilePage from "@components/PageComponents/ProfilePage";
-import useAuth from "@hooks/useAuth";
-import { useCurrentUser, useFullUser } from "@hooks/useUser";
-import type { NextPage } from "next";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect } from 'react';
+
+import ProfilePage from '@components/PageComponents/ProfilePage';
+import useAuth from '@hooks/useAuth';
+import { useCurrentUser } from '@hooks/useUser';
+import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
 
 const MapperPage: NextPage = () => {
   useAuth();
@@ -14,7 +15,7 @@ const MapperPage: NextPage = () => {
 
   useEffect(() => {
     if (currentUser && mapperId?.toString() === currentUser?.id.toString())
-      router.replace("/profile");
+      router.replace('/profile');
   }, [mapperId, currentUser?.id, router]);
 
   return <ProfilePage userId={mapperId?.toString()} />;

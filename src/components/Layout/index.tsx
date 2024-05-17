@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Tooltip from "@components/SharedComponents/Tooltip";
 import { useCurrentUser } from "@hooks/useUser";
 import { useGlobalTheme } from "@states/theme";
-import React, { type FC, type ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 import { ToastContainer } from "react-toastify";
 
 import Header from "./Header";

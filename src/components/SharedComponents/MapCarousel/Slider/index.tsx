@@ -1,17 +1,15 @@
-import MapCard from "@components/SharedComponents/MapCard";
-import type { FeaturedMapsResponse } from "@services/user";
-import useEmblaCarousel from "embla-carousel-react";
-import { type FC, useCallback, useEffect, useState } from "react";
+import type { FC, } from 'react';
 
-import styles from "./style.module.scss";
+import MapCard from '@components/SharedComponents/MapCard';
+import useEmblaCarousel from 'embla-carousel-react';
 
-const SliderCarousel: FC<{ mapList: FeaturedMapsResponse[] }> = ({
-  mapList,
-}) => {
-  const [emblaRef, embla] = useEmblaCarousel({
+import styles from './style.module.scss';
+
+const SliderCarousel: FC<{ mapList: any[] }> = ({ mapList }) => {
+  const [emblaRef, _embla] = useEmblaCarousel({
     skipSnaps: true,
     inViewThreshold: 1,
-    align: "start",
+    align: 'start',
   });
 
   return (

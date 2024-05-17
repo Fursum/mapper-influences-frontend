@@ -9,6 +9,8 @@
   // Singular stat
   .stat {
     display: flex;
+    cursor: default;
+
     .text {
       text-align: right;
       height: 100%;

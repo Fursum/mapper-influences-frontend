@@ -1,13 +1,14 @@
-import { useGlobalTooltip } from "@states/globalTooltip";
 import {
   type FC,
   type MouseEventHandler,
   type ReactNode,
   useMemo,
-} from "react";
+} from 'react';
 
-import styles from "./style.module.scss";
-import { useFullUser } from "@hooks/useUser";
+import { useFullUser } from '@services/user';
+import { useGlobalTooltip } from '@states/globalTooltip';
+
+import styles from './style.module.scss';
 
 const SingleStat: FC<{
   count: number;
@@ -55,11 +56,11 @@ const MapStats: FC<{
       tooltip.push(`${nominated_beatmapset_count} nominated`);
     if (guest_beatmapset_count && guest_beatmapset_count > 0)
       tooltip.push(`${guest_beatmapset_count} guest diff`);
-    return tooltip.join(", ");
+    return tooltip.join(', ');
   }, [profileData]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className={`${styles.wrapper} ${isLoading ? styles.loading : ""}`}>
+    <div className={`${styles.wrapper} ${isLoading ? styles.loading : ''}`}>
       <SingleStat
         count={ranked_and_approved_beatmapset_count + guest_beatmapset_count}
         onMouseEnter={(e) =>

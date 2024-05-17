@@ -47,7 +47,7 @@ const AddUserButton: FC<Props> = ({
 
   const handleClick = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => {
-      onClick && onClick(e); // Used in tutorial
+      onClick?.(e); // Used in tutorial
       if (action === "add" && !dontShowForm) {
         setShowForm(true);
       }
@@ -128,7 +128,7 @@ const AddUserButton: FC<Props> = ({
       </Modal>
       <button
         className={`${
-          action === "add" ? styles.addUser : styles.removeUser + " danger"
+          action === "add" ? styles.addUser : `${styles.removeUser} danger`
         } ${theme === "dark" ? styles.dark : styles.light}`}
         disabled={isLoading}
         onClick={handleClick}>

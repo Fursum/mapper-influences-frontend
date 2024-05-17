@@ -1,18 +1,16 @@
-import "react-responsive-carousel/lib/styles/carousel.min.css";
+import type { FC, } from 'react';
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
 
-import { MapInfo } from "@libs/types/user";
-import type { FeaturedMapsResponse } from "@services/user";
-import { type FC, useCallback, useEffect, useState } from "react";
-import { Carousel } from "react-responsive-carousel";
+import MapCard from '../../MapCard';
 
-import MapCard from "../../MapCard";
-import styles from "./style.module.scss";
+import styles from './style.module.scss';
 
 const SingleItemCarousel: FC<{
-  mapList: FeaturedMapsResponse[];
+  mapList: any[];
   className?: string;
   editable?: boolean;
-}> = ({ mapList, editable, className = "" }) => {
+}> = ({ mapList, editable, className = '' }) => {
   return (
     <Carousel
       className={`${styles.carousel} ${className}`}

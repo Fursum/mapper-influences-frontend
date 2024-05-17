@@ -1,13 +1,11 @@
-import type { UserBaseResponse } from "@services/user";
-
 export type ProfileInfoIcons =
-  | "Followers"
-  | "Subscribers"
-  | "Influences"
-  | "Ranked"
-  | "Loved"
-  | "Pending"
-  | "Graved";
+  | 'Followers'
+  | 'Subscribers'
+  | 'Influences'
+  | 'Ranked'
+  | 'Loved'
+  | 'Pending'
+  | 'Graved';
 
 export type NewsType = {
   fullText: string;
@@ -17,6 +15,6 @@ export type NewsType = {
 };
 
 export type LeaderboardType = {
-  user: UserBaseResponse;
+  user: any;
   number: number;
 };

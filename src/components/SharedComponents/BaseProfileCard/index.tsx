@@ -1,8 +1,6 @@
 import { useGlobalTooltip } from "@states/globalTooltip";
 import Link from "next/link";
 import type { FC } from "react";
-
-import Badge from "./Badge";
 import styles from "./style.module.scss";
 
 type Props = { userId?: string | number; className?: string };
@@ -60,7 +58,7 @@ const BaseProfileCard: FC<Props> = ({ userId, className = "" }) => {
           }
         >
           <img
-            alt={userData.user_name + " is from " + userData.flag.name}
+            alt={`${userData.user_name} is from ${userData.flag.name}`}
             src={`https://flagcdn.com/${userData.flag.code.toLowerCase()}.svg`}
           />
         </div>

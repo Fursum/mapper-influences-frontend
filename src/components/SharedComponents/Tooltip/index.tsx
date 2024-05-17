@@ -31,13 +31,13 @@ const Tooltip: FC = () => {
 
     // X axis
     if (element.clientWidth / 2 + e.pageX + deadzone > window.innerWidth)
-      element.style.left = e.pageX - element.clientWidth - padding + "px";
-    else element.style.left = e.pageX - element.clientWidth / 2 + "px";
+      element.style.left = `${e.pageX - element.clientWidth - padding}px`;
+    else element.style.left = `${e.pageX - element.clientWidth / 2}px`;
 
     // Y axis
     if (e.clientY - element.clientHeight - deadzone <= 0)
-      element.style.top = e.pageY + padding + "px";
-    else element.style.top = e.pageY - element.clientHeight - padding + "px";
+      element.style.top = `${e.pageY + padding}px`;
+    else element.style.top = `${e.pageY - element.clientHeight - padding}px`;
   }
 
   useEffect(() => {

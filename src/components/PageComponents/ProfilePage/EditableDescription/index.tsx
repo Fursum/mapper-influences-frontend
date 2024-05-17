@@ -1,8 +1,9 @@
-import AwesomeDebouncePromise from "awesome-debounce-promise";
-import type { ChangeEvent, ChangeEventHandler, FC } from "react";
-import { toast } from "react-toastify";
+import type { ChangeEvent, ChangeEventHandler, FC } from 'react';
+import { toast } from 'react-toastify';
 
-import styles from "./style.module.scss";
+import AwesomeDebouncePromise from 'awesome-debounce-promise';
+
+import styles from './style.module.scss';
 
 type Props = {
   className?: string;
@@ -25,9 +26,9 @@ const EditableDescription: FC<Props> = ({
   label,
   placeholder,
   statusText = {
-    error: "Could not submit.",
-    success: "Successfully submitted.",
-    loading: "Submitting.",
+    error: 'Could not submit.',
+    success: 'Successfully submitted.',
+    loading: 'Submitting.',
   },
   onChange,
   noSubmitOnChange,
@@ -40,7 +41,7 @@ const EditableDescription: FC<Props> = ({
           .then(() => {
             toast.update(loadingToast, {
               render: statusText?.success,
-              type: toast.TYPE.SUCCESS,
+              type: 'success',
               isLoading: false,
               autoClose: 5000,
             });
@@ -48,14 +49,14 @@ const EditableDescription: FC<Props> = ({
           .catch(() =>
             toast.update(loadingToast, {
               render: statusText?.error,
-              type: toast.TYPE.ERROR,
+              type: 'error',
               isLoading: false,
               autoClose: 5000,
-            })
+            }),
           );
       }
     },
-    500
+    500,
   );
 
   return (
@@ -63,14 +64,14 @@ const EditableDescription: FC<Props> = ({
       <textarea
         aria-label={label}
         className={`${className} ${styles.description} ${
-          editable ? styles.editable : ""
+          editable ? styles.editable : ''
         }`}
         onChange={(e) => {
-          noSubmitOnChange && noSubmitOnChange(e);
+          noSubmitOnChange?.(e);
           debouncedSubmit(e);
         }}
         defaultValue={description}
-        placeholder={editable ? placeholder : ""}
+        placeholder={editable ? placeholder : ''}
         readOnly={!editable}
         disabled={!editable}
       />

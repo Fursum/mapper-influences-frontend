@@ -39,7 +39,7 @@ const InfluenceElement = forwardRef<HTMLDivElement, Props>(
         </div>
         <EditableDescription
           className={styles.description}
-          label={`Description textarea`}
+          label={"Description textarea"}
           description={influenceData.info || ""}
           editable={editable}
           placeholder={"Describe your influence here."}

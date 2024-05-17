@@ -1,6 +1,5 @@
 import useAuth from "@hooks/useAuth";
 import { useCurrentUser } from "@hooks/useUser";
-import { DUMMY_USER } from "@libs/consts/dummyUserData";
 import type { NewsType } from "@libs/types/influence";
 import { useGetInfluences } from "@services/influence";
 import { readFileSync } from "node:fs";
