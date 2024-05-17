@@ -16,7 +16,7 @@ const BaseProfileCard: FC<Props> = ({ userId, className = '' }) => {
 
   const userGroups = userData?.groups;
 
-  if (isLoading) {
+  if (isLoading || !userId) {
     return (
       <div className={`${styles.skeleton} ${styles.cardWrapper} ${className}`}>
         <div className={`${styles.photoCell}`} />

@@ -1,29 +1,42 @@
-import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
-import type { LeaderboardType } from "@libs/types/influence";
-import type { FC } from "react";
+import type { FC } from 'react';
 
-import styles from "./style.module.scss";
+import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
+import { useGetLeaderboards } from '@services/leaderboard';
 
-const Leaderboard: FC<{ topList: LeaderboardType[]; className?: string }> = ({
-  topList,
-  className,
-}) => {
+import styles from './style.module.scss';
+
+const Leaderboard: FC<{ className?: string }> = ({ className }) => {
+  const { data: leaderboards } = useGetLeaderboards();
+
   return (
     <div className={`${styles.wrapper} ${className}`}>
       <h2>Top Influencers</h2>
       <div className={styles.list}>
-        {topList.map((rowData) => (
-          <div key={rowData.user.id} className={styles.row}>
-            <BaseProfileCard userId={rowData.user.id} />
+        {leaderboards?.map((user) => (
+          <div key={user.id} className={styles.row}>
+            <BaseProfileCard userId={user.id} />
             <div className={styles.number}>
-              <span>{rowData.number}</span>
-              <span>{`Mention${rowData.number !== 1 ? "s" : ""}`}</span>
+              <span>{user.influence_count}</span>
+              <span>{`Mention${user.influence_count !== 1 ? 's' : ''}`}</span>
             </div>
           </div>
         ))}
+        {leaderboards?.length === 0 && <MockList />}
       </div>
     </div>
   );
 };
 
 export default Leaderboard;
+
+const MockList = () => {
+  return Array.from({ length: 5 }).map((_, index) => (
+    <div key={index} className={styles.row}>
+      <BaseProfileCard />
+      <div className={styles.number}>
+        <span>..</span>
+        <span>...</span>
+      </div>
+    </div>
+  ));
+};
