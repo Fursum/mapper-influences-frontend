@@ -1,10 +1,11 @@
-import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
-import type { UserBaseResponse } from "@services/user";
-import type { FC } from "react";
+import type { FC } from 'react';
 
-import styles from "./style.module.scss";
+import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
+import type { UserExtended } from 'osu-web.js';
 
-const Results: FC<{ results: UserBaseResponse[]; length?: number }> = ({
+import styles from './style.module.scss';
+
+const Results: FC<{ results: UserExtended[]; length?: number }> = ({
   results,
   length = 3,
 }) => {

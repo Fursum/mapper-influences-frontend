@@ -32,7 +32,13 @@ const MapperDetails: FC<Props> = ({ userId }) => {
             description={profileData?.bio || ''}
             placeholder={'Enter a description for your profile.'}
             editable={editable}
-            onChange={(_e) => {}}
+            onChange={(_e) => {
+              return new Promise((r) => {
+                setTimeout(() => {
+                  r('Updated your bio.');
+                }, 1000);
+              });
+            }}
             statusText={{
               loading: 'Submitting your bio.',
               error: 'Could not submit your bio.',

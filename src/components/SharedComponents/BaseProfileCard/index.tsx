@@ -1,20 +1,20 @@
-import { useGlobalTooltip } from "@states/globalTooltip";
-import Link from "next/link";
-import type { FC } from "react";
-import styles from "./style.module.scss";
+import type { FC } from 'react';
+
+import { useFullUser } from '@services/user';
+import { useGlobalTooltip } from '@states/globalTooltip';
+import Link from 'next/link';
+
+import Badge from './Badge';
+
+import styles from './style.module.scss';
 
 type Props = { userId?: string | number; className?: string };
 
-const BaseProfileCard: FC<Props> = ({ userId, className = "" }) => {
+const BaseProfileCard: FC<Props> = ({ userId, className = '' }) => {
   const { activateTooltip, deactivateTooltip } = useGlobalTooltip();
-  const { data: userData, isLoading } = {}; //useBaseUser(userId);
+  const { data: userData, isLoading } = useFullUser(userId?.toString());
 
-  /*
-  const badges = userData.groups?.map((group) => (
-    <Badge key={group.id} group={group} />
-  ));
-  */
-  const badges = [];
+  const userGroups = userData?.groups;
 
   if (isLoading) {
     return (
@@ -36,30 +36,36 @@ const BaseProfileCard: FC<Props> = ({ userId, className = "" }) => {
       <div className={styles.backgroundFill} />
       <div className={`${styles.photoCell}`}>
         <img
-          src={userData?.profile_picture}
-          alt="Profile photo"
+          src={userData?.avatar_url || '/images/default_avatar.png'}
+          alt={`${userData?.username} avatar`}
           className={styles.photo}
         />
-        {!!badges?.length && <div className={styles.badges}>{""}</div>}
+        {!!userGroups?.length && (
+          <div className={styles.badges}>
+            {userData?.groups?.map((group) => (
+              <Badge key={group.id} group={group} />
+            ))}
+          </div>
+        )}
       </div>
-      <div className={styles.name}>{userData?.user_name}</div>
+      <div className={styles.name}>{userData?.username}</div>
       <div className={styles.influencedStat}>
         Influenced <span>1</span>
       </div>
       <div className={styles.rankedStat}>
         Ranked Maps <span>15</span>
       </div>
-      {userData?.flag && (
+      {userData?.country && (
         <div
           className={styles.flag}
           onMouseEnter={(e) =>
-            userData.flag &&
-            activateTooltip(userData.flag.name, e.currentTarget)
+            userData.country &&
+            activateTooltip(userData.country.name, e.currentTarget)
           }
         >
           <img
-            alt={`${userData.user_name} is from ${userData.flag.name}`}
-            src={`https://flagcdn.com/${userData.flag.code.toLowerCase()}.svg`}
+            alt={`${userData.username} is from ${userData.country.name}`}
+            src={`https://flagcdn.com/${userData.country.code.toLowerCase()}.svg`}
           />
         </div>
       )}

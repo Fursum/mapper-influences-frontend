@@ -1,14 +1,16 @@
-import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
-import { osuBaseUrl } from "@libs/consts/urls";
-import { useGetInfluences } from "@services/influence";
-import AwesomeDebouncePromise from "awesome-debounce-promise";
-import { type FC, useEffect, useMemo, useRef } from "react";
+import { type FC, useEffect, useMemo, useRef } from 'react';
 
-import AddUserButton from "../AddUserButton";
-const textFit = require("textfit");
+import ProfilePhoto from '@components/SharedComponents/ProfilePhoto';
+import { osuBaseUrl } from '@libs/consts/urls';
+import { useGetInfluences } from '@services/influence';
+import { useFullUser } from '@services/user';
+import AwesomeDebouncePromise from 'awesome-debounce-promise';
 
-import styles from "./style.module.scss";
-import { useFullUser } from "@hooks/useUser";
+import AddUserButton from '../AddUserButton';
+
+import styles from './style.module.scss';
+
+const textFit = require('textfit');
 
 type Props = {
   userId?: string | number;
@@ -25,22 +27,23 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
   const isAlreadyAdded = useMemo(() => {
     if (!currentUserInfluences) return false;
     return currentUserInfluences.some(
-      (influence) => influence.from_id.toString() === userId?.toString()
+      (influence) => influence.from_id.toString() === userId?.toString(),
     );
   }, [currentUserInfluences, userId]);
 
   const nameRef = useRef(null);
 
   // Fit text to card on resize and on mount
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <ref changes on data>
   useEffect(() => {
     if (!nameRef.current) return;
     const runFitText = () => textFit(nameRef.current);
     const debounceFitText = AwesomeDebouncePromise(runFitText, 50);
 
     document.fonts.ready.then(() => runFitText());
-    window.addEventListener("resize", debounceFitText);
+    window.addEventListener('resize', debounceFitText);
     return () => {
-      window.removeEventListener("resize", debounceFitText);
+      window.removeEventListener('resize', debounceFitText);
     };
   }, [profileData]);
 
@@ -104,7 +107,7 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
         {!ownProfile && (
           <AddUserButton
             userId={userId}
-            action={isAlreadyAdded ? "remove" : "add"}
+            action={isAlreadyAdded ? 'remove' : 'add'}
           />
         )}
       </div>
