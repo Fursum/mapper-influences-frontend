@@ -16,8 +16,7 @@ export type InfluenceResponse = {
 };
 
 export async function getInfluences(userId: string | number) {
-  if (process.env.NODE_ENV !== 'production')
-    return mockRequest(DUMMY_INFLUENCES, 1000);
+  if (process.env.NODE_ENV !== 'production') return mockRequest([], 1000);
 
   const searchUrl = `/api/v1/influence/get/${userId}`;
   return axios.get<InfluenceResponse[]>(searchUrl).then((res) => res.data);

@@ -6,13 +6,7 @@ import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 
 const MapperPage: NextPage = () => {
-  const router = useRouter();
-
   useAuth();
-
-  useEffect(() => {
-    router.prefetch('/dashboard');
-  }, []);
 
   return <ProfilePage />;
 };
