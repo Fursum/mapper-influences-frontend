@@ -1,17 +1,18 @@
-import { Discord,Github } from "@components/SvgComponents";
-import type { FC } from "react";
+import type { FC } from 'react';
 
-import styles from "./style.module.scss";
+import { Discord, Github } from '@components/SvgComponents';
+
+import styles from './style.module.scss';
 
 export const ReportBug: FC = () => {
   return (
     <a
       className={styles.button}
-      href={"https://github.com/boraarslan/mapper-influence/issues"}
+      href={'https://github.com/Fursum/mapper-influences-frontend/issues'}
       target="_blank"
       rel="noreferrer"
     >
-      <Github className={styles.icon} color={"var(--buttonText-alt)"} />
+      <Github className={styles.icon} color={'var(--buttonText-alt)'} />
     </a>
   );
 };
@@ -20,11 +21,11 @@ export const SendFeedback: FC = () => {
   return (
     <a
       className={styles.button}
-      href={"https://discord.gg/SAwxBDe3Rf"}
+      href={'https://discord.gg/SAwxBDe3Rf'}
       target="_blank"
       rel="noreferrer"
     >
-      <Discord className={styles.icon} color={"var(--buttonText-alt)"} />
+      <Discord className={styles.icon} color={'var(--buttonText-alt)'} />
     </a>
   );
 };
