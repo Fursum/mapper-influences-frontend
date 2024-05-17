@@ -53,7 +53,8 @@ const BaseProfileCard: FC<Props> = ({ userId, className = '' }) => {
         Influenced <span>1</span>
       </div>
       <div className={styles.rankedStat}>
-        Ranked Maps <span>15</span>
+        Ranked Maps{' '}
+        <span>{userData?.ranked_and_approved_beatmapset_count || 0}</span>
       </div>
       {userData?.country && (
         <div
