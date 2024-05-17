@@ -1,7 +1,7 @@
 import { type FC, useEffect, useMemo, useRef } from 'react';
 
 import ProfilePhoto from '@components/SharedComponents/ProfilePhoto';
-import { osuBaseUrl } from '@libs/consts/urls';
+import { OSU_BASE_URL } from '@libs/consts/urls';
 import { useGetInfluences } from '@services/influence';
 import { useFullUser } from '@services/user';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
@@ -84,7 +84,7 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
   return (
     <div className={styles.profileInfo}>
       <a
-        href={`${osuBaseUrl}users/${osuData?.id}`}
+        href={`${OSU_BASE_URL}users/${osuData?.id}`}
         target="_blank"
         rel="noreferrer"
       >
@@ -98,7 +98,7 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
       </a>
       <div className={styles.rightSide}>
         <a
-          href={`${osuBaseUrl}users/${osuData?.id}`}
+          href={`${OSU_BASE_URL}users/${osuData?.id}`}
           target="_blank"
           rel="noreferrer"
         >

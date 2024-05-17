@@ -10,7 +10,10 @@ function getMapData({ id, isSet }: { isSet?: boolean; id: string | number }) {
         withCredentials: true,
       },
     )
-    .then((res) => res.data);
+    .then((res) => {
+      if ((res as any).data.error) throw new Error((res as any).data.error);
+      return res.data;
+    });
 }
 
 export const useMapData = (mapId?: string | number, type?: 'set' | 'diff') =>
@@ -18,4 +21,5 @@ export const useMapData = (mapId?: string | number, type?: 'set' | 'diff') =>
     enabled: !!mapId,
     queryKey: [type, mapId?.toString()],
     queryFn: () => getMapData({ id: mapId || 0, isSet: type === 'set' }),
+    retry: 0,
   });
