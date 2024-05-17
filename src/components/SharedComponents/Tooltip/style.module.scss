@@ -8,7 +8,7 @@
 
   font-size: 1rem;
   font-weight: 400;
-  font-family: "Inter Variable";
+  font-family: 'Inter Variable';
   text-align: center;
 
   background-color: $color-background;
@@ -17,7 +17,7 @@
   opacity: 0;
   transition: opacity 0.1s ease-out;
 
-  z-index: 2;
+  z-index: 10;
   pointer-events: none;
 
   &.active {

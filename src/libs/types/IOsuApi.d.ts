@@ -10,4 +10,8 @@ export type BeatmapResponse = Beatmapset & {
     version: string;
     // Fill rest later
   }[];
+  related_users: {
+    username: string;
+    avatar_url: string;
+  }[];
 };

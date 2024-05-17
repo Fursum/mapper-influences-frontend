@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { DetailedHTMLProps, FC, HTMLAttributes } from 'react';
 
 import styles from './style.module.scss';
 
@@ -8,6 +8,10 @@ type Props = {
   className?: string;
   circle?: boolean;
   loading?: boolean;
+  parentProps?: DetailedHTMLProps<
+    HTMLAttributes<HTMLDivElement>,
+    HTMLDivElement
+  >;
 };
 
 const ProfilePhoto: FC<Props> = ({
@@ -16,9 +20,11 @@ const ProfilePhoto: FC<Props> = ({
   className,
   circle,
   loading,
+  parentProps,
 }) => {
   return (
     <div
+      {...parentProps}
       className={`${styles.wrapper} ${styles[size]} ${className} ${
         circle ? styles.circle : ''
       } ${loading ? styles.loading : ''}`}

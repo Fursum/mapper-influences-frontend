@@ -26,10 +26,14 @@
   }
 
   // Text line
-  > div {
+  .songInfo,
+  .title,
+  .artist,
+  .diff {
     position: relative;
     max-width: $card-width;
     text-overflow: ellipsis;
+    text-align: left;
     white-space: nowrap;
     font-size: 1rem;
 
@@ -50,10 +54,38 @@
     }
   }
 
+  .artist {
+    font-size: 0.75rem;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .diff {
+    margin-top: auto;
+  }
+
+  .ownerAvatar {
+    position: absolute;
+    bottom: $spacing / 2;
+    right: $spacing / 2;
+    margin-left: auto;
+    z-index: 2;
+    box-shadow:
+      0 0 0 0.1rem $color-primary,
+      0 0 0 0.2rem $white;
+  }
+
+  .diff {
+    max-width: $card-width - 2rem - $spacing * 1.5;
+  }
+
   svg {
     aspect-ratio: 1/1;
     width: 0.8rem;
     height: 0.8rem;
     margin-right: $spacing / 4;
+    transform: translateY(0.05rem);
   }
 }
