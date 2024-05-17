@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import MapCard from '@components/SharedComponents/MapCard';
 import MapCarousel from '@components/SharedComponents/MapCarousel/Slider';
 import Modal from '@components/SharedComponents/Modal';
+import { isNumber } from '@libs/functions';
 import { useMapData } from '@services/maps';
 import { useUserBio } from '@services/user';
 import { useGlobalTooltip } from '@states/globalTooltip';
@@ -68,9 +69,9 @@ const AddMapModalContents: FC<{ closeForm: () => void }> = ({ closeForm }) => {
   const setId = watch('set');
 
   const getValidMapInfo = () => {
-    if (diffId && !formState.errors.diff) return [diffId, 'diff'];
+    if (diffId && isNumber(diffId)) return [diffId, 'diff'];
 
-    if (setId && !formState.errors.set) return [setId, 'set'];
+    if (setId && isNumber(setId)) return [setId, 'set'];
 
     return [];
   };
