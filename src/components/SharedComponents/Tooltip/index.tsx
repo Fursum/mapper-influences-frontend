@@ -1,25 +1,22 @@
-import { type FC, useEffect, useRef } from "react";
-import { useGlobalTooltip } from "src/states/globalTooltip";
+import { type FC, useEffect, useRef } from 'react';
 
-import styles from "./style.module.scss";
+import { useGlobalTooltip } from 'src/states/globalTooltip';
+
+import styles from './style.module.scss';
 
 const Tooltip: FC = () => {
-  const ref = useRef<HTMLSpanElement>(null);
+  const ref = useRef<HTMLElement>(null);
   const element = ref.current;
 
-  const {
-    text,
-    parent,
-    isActive,
-    deactivateTooltip,
-  } = useGlobalTooltip();
+  const { text, parent, isActive, deactivateTooltip } = useGlobalTooltip();
 
   useEffect(() => {
     if (!isActive || !element || !parent) return;
 
-    element.style.opacity = "1";
+    element.style.opacity = '1';
+    // Spans work but buttons dont with this 🤷‍♀️
     parent.onmouseleave = () => {
-      element.style.opacity = "0";
+      element.style.opacity = '0';
       deactivateTooltip();
     };
   }, [ref, isActive, deactivateTooltip, parent, element]);
@@ -41,16 +38,17 @@ const Tooltip: FC = () => {
   }
 
   useEffect(() => {
-    document.addEventListener("mousemove", handleMouse);
+    document.addEventListener('mousemove', handleMouse);
     return () => {
-      document.removeEventListener("mousemove", handleMouse);
+      document.removeEventListener('mousemove', handleMouse);
     };
   });
 
   return (
     <span
-      className={`${styles.tooltip} ${isActive ? styles.active : ""}`}
-      ref={ref}>
+      className={`${styles.tooltip} ${isActive ? styles.active : ''}`}
+      ref={ref}
+    >
       {text}
     </span>
   );

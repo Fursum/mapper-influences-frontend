@@ -3,7 +3,8 @@
   flex-direction: column;
   position: relative;
   align-items: flex-start;
-  justify-content: space-between;
+
+  gap: $spacing;
 
   padding: $spacing/2;
 
@@ -16,7 +17,7 @@
   // Fade for readability
   &::after,
   > div::after {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
     background-color: black;
@@ -30,7 +31,7 @@
     max-width: $card-width;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 0.9rem;
+    font-size: 1rem;
 
     color: $white;
 

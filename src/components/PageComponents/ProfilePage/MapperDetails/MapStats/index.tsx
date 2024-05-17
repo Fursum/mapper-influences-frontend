@@ -57,7 +57,7 @@ const MapStats: FC<{
     if (guest_beatmapset_count && guest_beatmapset_count > 0)
       tooltip.push(`${guest_beatmapset_count} guest diff`);
     return tooltip.join(', ');
-  }, [profileData]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [profileData]);
 
   return (
     <div className={`${styles.wrapper} ${isLoading ? styles.loading : ''}`}>

@@ -1,9 +1,9 @@
 import type { FC } from 'react';
 
-import MapCarousel from '@components/SharedComponents/MapCarousel/Slider';
 import { useFullUser, useUpdateUserBio, useUserBio } from '@services/user';
 
 import EditableDescription from '../EditableDescription';
+import FeaturedMaps from './FeaturedMaps';
 import MapStats from './MapStats';
 import ProfileInfo from './ProfileInfo';
 
@@ -42,14 +42,7 @@ const MapperDetails: FC<Props> = ({ userId }) => {
             }}
           />
         </div>
-        {
-          /* !!profileData?.featured_maps?.length */ false && (
-            <>
-              <h4>Featured Maps</h4>
-              <MapCarousel mapList={/* profileData?.featured_maps */ []} />
-            </>
-          )
-        }
+        <FeaturedMaps />
       </div>
     </div>
   );

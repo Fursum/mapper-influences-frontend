@@ -1,12 +1,14 @@
-import Modal from "@components/SharedComponents/Modal";
-import type { NewsType } from "@libs/types/influence";
-import { type FC, useState } from "react";
-import { type SubmitHandler,useForm } from "react-hook-form";
+import { type FC, useState } from 'react';
+import { type SubmitHandler, useForm } from 'react-hook-form';
 
-import NewsRow from "../NewsRow";
-import styles from "./style.module.scss";
+import Modal from '@components/SharedComponents/Modal';
+import type { NewsType } from '@libs/types/influence';
 
-const CreatePost: FC = ({}) => {
+import NewsRow from '../NewsRow';
+
+import styles from './style.module.scss';
+
+const CreatePost: FC = () => {
   const [showModal, setShowModal] = useState(false);
   const { register, handleSubmit, watch } = useForm<NewsType>();
 
@@ -20,10 +22,10 @@ const CreatePost: FC = ({}) => {
       <Modal showModal={showModal} setShowModal={setShowModal} keepOpen>
         <h2 className={styles.title}>Create Post</h2>
         <NewsRow
-          title={watch("title")}
-          desc={watch("desc")}
-          date={watch("date")}
-          fullText={watch("fullText")}
+          title={watch('title')}
+          desc={watch('desc')}
+          date={watch('date')}
+          fullText={watch('fullText')}
         />
         <button
           className={styles.closePost}
@@ -34,19 +36,19 @@ const CreatePost: FC = ({}) => {
         <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
           <label>
             Post Title:
-            <input {...register("title")} />
+            <input {...register('title')} />
           </label>
           <label>
             Post Date:
-            <input {...register("date")} />
+            <input {...register('date')} />
           </label>
           <label>
             Short Description:
-            <input {...register("desc")} />
+            <input {...register('desc')} />
           </label>
           <label>
             Full Post:
-            <textarea {...register("fullText")} />
+            <textarea {...register('fullText')} />
           </label>
           <button>Create</button>
         </form>

@@ -1,27 +1,30 @@
 import type { FC } from 'react';
 
+import type { BeatmapResponse } from '@libs/types/IOsuApi';
+
 import styles from './style.module.scss';
 
-const MapCard: FC<{ map: any }> = ({ map }) => {
-  const mapUrl = `https://osu.ppy.sh/beatmapsets/${map.beatmapset.id}${
-    map.featured_map_id ? `#osu/${map.featured_map_id}` : ''
+const MapCard: FC<{ map: BeatmapResponse; diffId?: string | number }> = ({
+  map,
+  diffId,
+}) => {
+  const diff = map.beatmaps.find((b) => b.id === Number(diffId));
+
+  const mapUrl = `https://osu.ppy.sh/beatmaps/${map.id}${
+    diff ? `#${diff.mode}/${diffId}` : ''
   }`;
-  const { artist, title } = map.beatmapset.names;
-  const diff = map.beatmapset.beatmaps.find(
-    (b: any) => b.id === map.featured_map_id,
-  );
 
   return (
     <a
       href={mapUrl}
       target={'_blank'}
       rel="noreferrer"
-      style={{ background: `url(${map.beatmapset.covers.cover})` }}
+      style={{ background: `url(${map.covers.cover})` }}
       className={styles.card}
     >
-      <div>{artist}</div>
-      <div>{title}</div>
-      {diff && <div>{diff.name}</div>}
+      <div>{map.artist}</div>
+      <div>{map.title}</div>
+      {diff && <div>{diff.version}</div>}
     </a>
   );
 };
