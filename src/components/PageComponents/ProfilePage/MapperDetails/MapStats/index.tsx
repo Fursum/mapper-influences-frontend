@@ -52,10 +52,29 @@ const MapStats: FC<{
       ranked_and_approved_beatmapset_count > 0
     )
       tooltip.push(`${ranked_and_approved_beatmapset_count} ranked`);
-    if (nominated_beatmapset_count && nominated_beatmapset_count > 0)
+    if (nominated_beatmapset_count)
       tooltip.push(`${nominated_beatmapset_count} nominated`);
-    if (guest_beatmapset_count && guest_beatmapset_count > 0)
-      tooltip.push(`${guest_beatmapset_count} guest diff`);
+    if (guest_beatmapset_count) tooltip.push(`${guest_beatmapset_count} guest`);
+    return tooltip.join(', ');
+  }, [profileData]);
+
+  const totalCount =
+    ranked_and_approved_beatmapset_count +
+    loved_beatmapset_count +
+    graveyard_beatmapset_count +
+    pending_beatmapset_count +
+    guest_beatmapset_count;
+
+  const totalTooltip = useMemo(() => {
+    const tooltip: string[] = [];
+    if (ranked_and_approved_beatmapset_count)
+      tooltip.push(`${ranked_and_approved_beatmapset_count} ranked`);
+    if (guest_beatmapset_count) tooltip.push(`${guest_beatmapset_count} guest`);
+    if (loved_beatmapset_count) tooltip.push(`${loved_beatmapset_count} loved`);
+    if (graveyard_beatmapset_count)
+      tooltip.push(`${graveyard_beatmapset_count} graved`);
+    if (pending_beatmapset_count)
+      tooltip.push(`${pending_beatmapset_count} pending`);
     return tooltip.join(', ');
   }, [profileData]);
 
@@ -71,8 +90,16 @@ const MapStats: FC<{
         Ranked
       </SingleStat>
       <SingleStat count={loved_beatmapset_count}>Loved</SingleStat>
-      <SingleStat count={pending_beatmapset_count}>Pending</SingleStat>
-      <SingleStat count={graveyard_beatmapset_count}>Graved</SingleStat>
+      <SingleStat count={nominated_beatmapset_count}>Nominated</SingleStat>
+      <SingleStat
+        count={totalCount}
+        onMouseEnter={(e) =>
+          totalTooltip && activateTooltip(totalTooltip, e.currentTarget)
+        }
+        onMouseLeave={() => deactivateTooltip()}
+      >
+        Total
+      </SingleStat>
     </div>
   );
 };

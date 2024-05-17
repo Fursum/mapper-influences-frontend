@@ -2,7 +2,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: $spacing;
+  gap: $spacing / 2;
   margin-top: $spacing * 2;
   width: 100%;
 
@@ -14,8 +14,8 @@
     .text {
       text-align: right;
       height: 100%;
-      width: 7rem;
-      font-size: 1.5rem;
+      width: 8rem;
+      font-size: 1.25rem;
       // "maps" text
       > span {
         display: block;
@@ -24,7 +24,7 @@
       margin-right: $spacing / 2;
     }
     .number {
-      font-size: 3rem;
+      font-size: 2.75rem;
       width: 3ch;
       line-height: 110%;
     }
