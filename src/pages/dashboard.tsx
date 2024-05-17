@@ -2,20 +2,18 @@ import { useEffect, useState } from 'react';
 
 import { NewsScreen, TutorialScreen } from '@components/PageComponents/Home';
 import useAuth from '@hooks/useAuth';
-import { useCurrentUser } from '@hooks/useUser';
 import type { NewsType } from '@libs/types/influence';
 import { useGetInfluences } from '@services/influence';
 import type { InferGetStaticPropsType, NextPage } from 'next';
-import { useRouter } from 'next/router';
 import { readFileSync } from 'node:fs';
 
 const Dashboard: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   news,
 }) => {
   useAuth();
+  const { data: influenceList } = useGetInfluences();
 
   const [screen, setScreen] = useState<'Tutorial' | 'News'>('News');
-  const { data: influenceList } = useGetInfluences();
 
   useEffect(() => {
     if (influenceList && influenceList.length === 0) setScreen('Tutorial');
@@ -48,7 +46,6 @@ export const getStaticProps = async () => {
   return {
     props: {
       news: exampleNews,
-      leaderboard: [],
     },
   };
 };
