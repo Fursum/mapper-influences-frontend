@@ -1,30 +1,33 @@
-import DarkModeToggle from "@components/Layout/Header/DarkModeToggle";
-import News from "@components/SharedComponents/News";
-import type { LeaderboardType, NewsType } from "@libs/types/influence";
-import { useState, type FC } from "react";
-import { useGlobalTooltip } from "src/states/globalTooltip";
+import { type FC, useState } from 'react';
 
-import ContributeButtons from "../../../SharedComponents/ContributeButtons";
-import Leaderboard from "../../../SharedComponents/Leaderboard";
-import CoolCards from "./CoolCards";
-import styles from "./style.module.scss";
-import Modal from "@components/SharedComponents/Modal";
+import DarkModeToggle from '@components/Layout/Header/DarkModeToggle';
+import Modal from '@components/SharedComponents/Modal';
+import News from '@components/SharedComponents/News';
+import type { NewsType } from '@libs/types/influence';
 
-type Props = { newsList: NewsType[]; topList: LeaderboardType[] };
-const LoginScreen: FC<Props> = ({ topList, newsList }) => {
+import { useGlobalTooltip } from 'src/states/globalTooltip';
+
+import ContributeButtons from '../../../SharedComponents/ContributeButtons';
+import Leaderboard from '../../../SharedComponents/Leaderboard';
+import CoolCards from './CoolCards';
+
+import styles from './style.module.scss';
+
+type Props = { newsList: NewsType[] };
+const LoginScreen: FC<Props> = ({ newsList }) => {
   const { activateTooltip } = useGlobalTooltip();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const LoginButton = () => {
     const loginUrl = new URLSearchParams();
 
-    loginUrl.append("response_type", "code");
-    loginUrl.append("client_id", process.env.NEXT_PUBLIC_OSU_CLIENT_ID || "");
+    loginUrl.append('response_type', 'code');
+    loginUrl.append('client_id', process.env.NEXT_PUBLIC_OSU_CLIENT_ID || '');
     loginUrl.append(
-      "redirect_uri",
-      process.env.NEXT_PUBLIC_OSU_REDIRECT_URI || ""
+      'redirect_uri',
+      process.env.NEXT_PUBLIC_OSU_REDIRECT_URI || '',
     );
-    loginUrl.append("scope", "public identify");
+    loginUrl.append('scope', 'public identify');
 
     return (
       <a
@@ -60,18 +63,18 @@ const LoginScreen: FC<Props> = ({ topList, newsList }) => {
         <section>
           <h2>What is this site?</h2>
           <p>
-            This site is meant to be a more interactive version of{" "}
+            This site is meant to be a more interactive version of{' '}
             <a
               href="https://pishifat.github.io/"
-              target={"_blank"}
-              rel={"noreferrer"}
+              target={'_blank'}
+              rel={'noreferrer'}
               className={styles.a}
               onMouseEnter={(e) =>
-                activateTooltip("Opens in new tab", e.currentTarget)
+                activateTooltip('Opens in new tab', e.currentTarget)
               }
             >
               pishifat’s Mapper Influences
-            </a>{" "}
+            </a>{' '}
             project.
             <br />
             Naming is a coincidence though.
@@ -88,7 +91,7 @@ const LoginScreen: FC<Props> = ({ topList, newsList }) => {
           </p>
         </section>
         <section className={styles.fullSection}>
-          <Leaderboard topList={topList} />
+          <Leaderboard />
           <News newsList={newsList} className={styles.news} />
         </section>
         <ContributeButtons />
