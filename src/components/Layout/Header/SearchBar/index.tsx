@@ -32,17 +32,26 @@ const SearchBar: FC<Props> = ({ className }) => {
   }, [router.asPath]);
 
   const searchUser = useCallback((query: string) => {
-    getSearchResults(query).then((res) => {
-      // Show max 5 results
-      setResults(res.slice(0, 5));
-    });
+    if (!query) {
+      setResults([]);
+      setShowResults(false);
+    }
+
+    getSearchResults(query)
+      .then((res) => {
+        // Show max 5 results
+        setShowResults(true);
+        setResults(res.slice(0, 5));
+      })
+      .catch(() => {
+        setResults([]);
+        setShowResults(false);
+      });
   }, []);
 
-  const debouncedSearch = AwesomeDebouncePromise(searchUser, 500);
+  const debouncedSearch = AwesomeDebouncePromise(searchUser, 300);
 
   const handleChange = (query: string) => {
-    // Hide results element if query is empty
-    setShowResults(!!query);
     // TODO: Display loading indicator
 
     debouncedSearch(query);
