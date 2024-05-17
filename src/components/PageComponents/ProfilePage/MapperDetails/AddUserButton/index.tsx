@@ -70,9 +70,9 @@ const AddUserButton: FC<Props> = ({
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       const body: AddInfluenceRequest = {
-        from_id: Number(userId),
-        level: convertFromInfluence(type),
-        info: description,
+        influenced_to: Number(userId),
+        type: convertFromInfluence(type),
+        description,
       };
 
       addInfluence(body, {
@@ -106,14 +106,16 @@ const AddUserButton: FC<Props> = ({
           <EditableDescription
             description=""
             placeholder="Add a description for your influence."
-            editable
+            editable={!isAddLoading}
             noSubmitOnChange={(e) => setDescription(e.target.value)}
           />
           <div className={styles.buttons}>
             <button type="button" className="cancel" onClick={resetForm}>
               Cancel
             </button>
-            <button className="submit">Add</button>
+            <button className="submit" disabled={isAddLoading}>
+              {isAddLoading ? 'Adding...' : 'Add'}
+            </button>
           </div>
         </form>
       </Modal>

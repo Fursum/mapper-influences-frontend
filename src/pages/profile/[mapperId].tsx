@@ -16,7 +16,7 @@ const MapperPage: NextPage = () => {
   useEffect(() => {
     if (currentUser && mapperId?.toString() === currentUser?.id.toString())
       router.replace('/profile');
-  }, [mapperId, currentUser?.id, router]);
+  }, [mapperId, currentUser, router]);
 
   return <ProfilePage userId={mapperId?.toString()} />;
 };

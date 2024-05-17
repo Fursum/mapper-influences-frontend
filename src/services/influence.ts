@@ -34,17 +34,18 @@ export const useGetInfluences = (userId?: string | number) => {
 };
 
 export type AddInfluenceRequest = {
-  from_id: number;
-  level: number;
-  info?: string;
+  influenced_to: number;
+  type: number;
+  description: string;
+  beatmaps?: {
+    is_beatmapset: boolean;
+    id: number;
+  }[];
 };
 
 export async function addInfluence(body: AddInfluenceRequest) {
-  // Mock data for dev
-  if (process.env.NODE_ENV !== 'production') return mockRequest({}, 1000);
-
-  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/influence/create`;
-  return await axios.post(searchUrl, body);
+  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/`;
+  return await axios.post(searchUrl, body, { withCredentials: true });
 }
 
 export const useAddInfluenceMutation = () => {
@@ -61,9 +62,8 @@ export const useAddInfluenceMutation = () => {
       queryClient.setQueryData(key, (old: InfluenceResponse[] | undefined) => {
         const newInfluence = {
           from_id: user?.id || 0,
-          to_id: variables.from_id,
-          influence_level: variables.level,
-          info: variables.info,
+          influence_level: variables.type,
+          info: variables.description,
           created_at: new Date(),
           modified_at: new Date(),
         };
