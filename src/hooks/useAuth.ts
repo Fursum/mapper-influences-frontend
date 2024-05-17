@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
 
+import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useIsClient } from 'usehooks-ts';
 
@@ -20,7 +21,13 @@ const useAuth = () => {
   }, [router.push]);
 
   useEffect(() => {
-    if (error && errorUpdatedAt && isClient && router.asPath === '/')
+    if (
+      axios.isAxiosError(error) &&
+      error.response?.status === 500 &&
+      errorUpdatedAt &&
+      isClient &&
+      router.asPath === '/'
+    )
       toast.error('Failed to log in.');
   }, [errorUpdatedAt]);
 
