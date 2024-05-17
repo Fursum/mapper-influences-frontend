@@ -53,9 +53,11 @@ const CreatePost: FC = () => {
           <button>Create</button>
         </form>
       </Modal>
+      {/*
       <button className={styles.createPost} onClick={() => setShowModal(true)}>
         Create Post
       </button>
+       */}
     </>
   );
 };
