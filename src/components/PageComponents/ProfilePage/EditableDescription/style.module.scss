@@ -27,7 +27,11 @@
   }
 
   &::placeholder {
-    font-family: "Inter Variable";
+    font-family: 'Inter Variable';
     color: $color-text-faded;
+  }
+
+  @media screen and (max-width: $responsive-breakpoint) {
+    max-width: 30rem;
   }
 }

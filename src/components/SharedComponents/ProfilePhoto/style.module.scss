@@ -1,6 +1,6 @@
 $md-size: 2rem;
 $lg-size: calc($md-size * 3);
-$xl-size: calc($md-size * 6);
+$xl-size: calc($md-size * 5);
 
 .wrapper {
   overflow: hidden;
@@ -18,7 +18,7 @@ $xl-size: calc($md-size * 6);
 .loading {
   &::before,
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
     filter: blur(1px);
@@ -45,7 +45,7 @@ $xl-size: calc($md-size * 6);
   &::after {
     inset: 0.2rem; // inset to allow for border visibility
     border-radius: inherit;
-    background-image: url("https://osu.ppy.sh/images/layout/avatar-guest.png");
+    background-image: url('https://osu.ppy.sh/images/layout/avatar-guest.png');
     background-size: cover;
     border: 0.05rem solid $color-background;
   }

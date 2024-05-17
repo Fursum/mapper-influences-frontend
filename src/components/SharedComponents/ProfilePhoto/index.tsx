@@ -1,10 +1,10 @@
-import type { FC } from "react";
+import type { FC } from 'react';
 
-import styles from "./style.module.scss";
+import styles from './style.module.scss';
 
 type Props = {
   photoUrl?: string;
-  size: "md" | "lg" | "xl";
+  size: 'md' | 'lg' | 'xl';
   className?: string;
   circle?: boolean;
   loading?: boolean;
@@ -20,12 +20,10 @@ const ProfilePhoto: FC<Props> = ({
   return (
     <div
       className={`${styles.wrapper} ${styles[size]} ${className} ${
-        circle ? styles.circle : ""
-      } ${loading ? styles.loading : ""}`}
+        circle ? styles.circle : ''
+      } ${loading ? styles.loading : ''}`}
     >
-      {!loading && (
-        <img src={photoUrl || "/defaultAvatar.png"} alt="Avatar Image" />
-      )}
+      {!loading && <img src={photoUrl || '/defaultAvatar.png'} alt="avatar" />}
     </div>
   );
 };

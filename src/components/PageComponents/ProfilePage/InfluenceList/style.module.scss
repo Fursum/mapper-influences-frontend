@@ -40,7 +40,7 @@
 
       // Line separator
       &:not(:first-of-type)::after {
-        content: "";
+        content: '';
         position: absolute;
         left: 0;
         right: $spacing / 2;
