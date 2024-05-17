@@ -27,7 +27,7 @@ $photoSize: 5rem;
   }
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     grid-row: 1;
     grid-column: 1;
@@ -50,7 +50,7 @@ $photoSize: 5rem;
     height: 1.75rem;
     padding-inline: $spacing / 2;
 
-    font-family: "Comfortaa Variable";
+    font-family: 'Comfortaa Variable';
     font-size: 1.5rem;
     font-weight: 700;
     text-align: center;
@@ -124,6 +124,7 @@ $photoSize: 5rem;
       width: 100%;
       display: flex;
       justify-content: center;
+      gap: $spacing / 4;
 
       .badge {
         z-index: 1;
@@ -135,7 +136,7 @@ $photoSize: 5rem;
         border: 1px solid;
 
         padding: 0.1rem 0.3rem;
-        padding-top: 0.25rem;
+        padding-top: $spacing / 4;
 
         border-radius: 50rem;
         font-size: 0.75rem;
@@ -176,7 +177,7 @@ $photoSize: 5rem;
 
     // Centered square to simulate spinning border
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       inset: 0;
       width: 2rem;
@@ -189,11 +190,11 @@ $photoSize: 5rem;
 
     // Moved background to ::after to bypass mask size for border
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       inset: 0.2rem; // inset to allow for border visibility
       border-radius: inherit;
-      background-image: url("https://osu.ppy.sh/images/layout/avatar-guest.png");
+      background-image: url('https://osu.ppy.sh/images/layout/avatar-guest.png');
       background-size: cover;
       filter: blur(2px);
       border: 0.05rem solid $color-background;
