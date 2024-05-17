@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import ProfilePage from '@components/PageComponents/ProfilePage';
 import useAuth from '@hooks/useAuth';
 import { useCurrentUser } from '@hooks/useUser';
+import { useFullUser } from '@services/user';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 
@@ -12,6 +13,11 @@ const MapperPage: NextPage = () => {
   const { mapperId } = router.query;
 
   const { data: currentUser } = useCurrentUser();
+  const { error } = useFullUser(mapperId?.toString());
+
+  if (error && mapperId) {
+    router.push('/404');
+  }
 
   useEffect(() => {
     if (currentUser && mapperId?.toString() === currentUser?.id.toString())
