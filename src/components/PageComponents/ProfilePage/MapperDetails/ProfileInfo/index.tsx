@@ -47,19 +47,22 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
     };
   }, [profileData]);
 
-  /*
   const UserGroup = () => {
-    if (!profileData.groups?.length) return <></>;
+    if (!osuData?.groups?.length) return <></>;
+
+    // If the name ends with an 's', cut it off
+    let name = osuData.groups[0].name;
+    if (name.endsWith('s')) name = name.slice(0, -1);
+
     return (
       <div
         className={styles.title}
-        style={{ color: profileData.groups[0].colour }}
+        style={{ color: osuData.groups[0].colour || 'inherit' }}
       >
-        {profileData.groups[0].name}
+        {name}
       </div>
     );
   };
-  */
 
   if (isLoading)
     return (
@@ -103,7 +106,7 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
             {osuData?.username}
           </div>
         </a>
-        {/* <UserGroup /> */}
+        <UserGroup />
         {!ownProfile && (
           <AddUserButton
             userId={userId}

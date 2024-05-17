@@ -13,13 +13,18 @@
     gap: $spacing / 2;
     margin-left: $spacing;
 
+    .title {
+      margin-top: -$spacing / 4;
+      margin-bottom: $spacing / 4;
+    }
+
     .mapperName {
       position: relative;
       display: flex;
       width: 21rem;
       height: 3rem;
 
-      font-family: "Comfortaa Variable";
+      font-family: 'Comfortaa Variable';
       font-weight: 800;
       font-size: 4rem;
       line-height: 75%;
@@ -68,7 +73,7 @@
       width: 10rem;
       height: 1rem;
     }
-    .addUser{
+    .addUser {
       @extend %skeleton;
       width: 14rem;
       height: 3.5rem;
