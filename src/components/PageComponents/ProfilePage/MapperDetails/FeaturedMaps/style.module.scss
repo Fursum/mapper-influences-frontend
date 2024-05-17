@@ -1,3 +1,5 @@
+@import '/src/styles/variables/fonts';
+
 .featuredMaps {
   min-width: 100%;
   display: flex;
@@ -9,10 +11,9 @@
 
     // Add button
     > button {
-      padding: 0;
       width: 1rem;
       height: 1rem;
-      padding: 0.1rem;
+      padding: 0rem;
       margin-left: $spacing / 4;
       font-size: 0.75rem;
       transform: translateY(-0.25rem);
@@ -34,6 +35,12 @@
       justify-content: center;
       align-items: center;
       margin-bottom: $spacing;
+
+      .error {
+        color: $color-danger;
+        font-family: $inter;
+        font-weight: 400;
+      }
     }
 
     .buttons {

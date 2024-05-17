@@ -1,20 +1,7 @@
 @import './mixins/index';
 @import './variables/sizes';
 @import './variables/toggledVariables';
-
-$fallback-font:
-  'Comfortaa Variable',
-  -apple-system,
-  BlinkMacSystemFont,
-  Segoe UI,
-  Roboto,
-  Oxygen,
-  Ubuntu,
-  Cantarell,
-  Fira Sans,
-  Droid Sans,
-  Helvetica Neue,
-  sans-serif;
+@import './variables/fonts';
 
 html,
 body {
@@ -133,6 +120,7 @@ button {
   border: none;
   padding: $spacing / 2;
   border-radius: $border-radius;
+  font-family: $inter;
 }
 
 .danger {

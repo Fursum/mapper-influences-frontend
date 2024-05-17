@@ -42,9 +42,10 @@ const AddButton: FC<{ userId?: string | number }> = ({ userId }) => {
         className={styles.modal}
         keepOpen
       >
-        <AddMapModalContents />
+        <AddMapModalContents closeForm={() => setModalOpen(false)} />
       </Modal>
       <button
+        aria-label="Add maps to your profile"
         onClick={() => setModalOpen(true)}
         onMouseEnter={(e) =>
           activateTooltip('Add maps to your profile', {} as any)
@@ -57,7 +58,7 @@ const AddButton: FC<{ userId?: string | number }> = ({ userId }) => {
   );
 };
 
-const AddMapModalContents: FC = () => {
+const AddMapModalContents: FC<{ closeForm: () => void }> = ({ closeForm }) => {
   const { register, watch, formState, handleSubmit, trigger } = useForm<{
     diff: string;
     set: string;
@@ -74,7 +75,7 @@ const AddMapModalContents: FC = () => {
     return [];
   };
 
-  const { data: mapData } = useMapData(...getValidMapInfo());
+  const { data: mapData, error } = useMapData(...getValidMapInfo());
 
   return (
     <>
@@ -111,10 +112,11 @@ const AddMapModalContents: FC = () => {
       <h4>Map preview</h4>
       <div className={styles.preview}>
         {mapData && <MapCard map={mapData} diffId={diffId} />}
+        {error && <div className={styles.error}>{error.message}</div>}
       </div>
 
       <div className={styles.buttons}>
-        <button className={'cancel'} type="button">
+        <button className={'cancel'} type="button" onClick={closeForm}>
           Close
         </button>
         <button disabled={!mapData} type="submit">
