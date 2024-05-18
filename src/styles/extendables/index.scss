@@ -1,4 +1,4 @@
-@import "../variables/index";
+@import '../variables/index';
 
 %cardShadow {
   box-shadow: var(--cardShadow);
@@ -55,7 +55,6 @@
   background-color: $color-background-content;
   box-shadow: var(--contentShadow);
   border-radius: $border-radius;
-  backdrop-filter: blur(0.1rem);
 }
 
 %button {
@@ -87,7 +86,7 @@
   &::before,
   &::after {
     border-radius: inherit;
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
     z-index: -1;
@@ -107,7 +106,7 @@
   }
   // Only used for background color
   &::before {
-    content: "";
+    content: '';
     background-color: $color-primary-bg;
     z-index: -2;
   }
