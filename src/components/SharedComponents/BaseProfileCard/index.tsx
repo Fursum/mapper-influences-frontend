@@ -56,7 +56,7 @@ const BaseProfileCard: FC<Props> = ({
           src={
             userData?.avatar_url ||
             offlineData?.avatar_url ||
-            '/images/default_avatar.png'
+            'https://osu.ppy.sh/images/layout/avatar-guest.png'
           }
           alt={`${userData?.username || offlineData?.avatar_url} avatar`}
           className={styles.photo}
