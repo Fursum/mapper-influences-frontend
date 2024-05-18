@@ -10,7 +10,7 @@ const REDIRECT_URL = '/';
 const useAuth = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { data: user, isLoading } = useCurrentUser();
+  const { data: user, isLoading, error } = useCurrentUser();
 
   // Manual logout
   const logout = useCallback(() => {
@@ -31,14 +31,14 @@ const useAuth = () => {
   useEffect(() => {
     if (isLoading) return;
     if (router.asPath === REDIRECT_URL) {
-      if (!user) return;
+      if (!user || error) return;
       router.push('/dashboard');
     }
 
-    if (!user) {
+    if (!user || error) {
       router.push(REDIRECT_URL);
     }
-  }, [isLoading, router, user]);
+  }, [isLoading, router, user, error]);
 
   return { logout };
 };
