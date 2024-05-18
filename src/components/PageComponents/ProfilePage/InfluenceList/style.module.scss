@@ -93,4 +93,7 @@
       }
     }
   }
+  @media screen and (max-width: $responsive-breakpoint) {
+    max-width: none;
+  }
 }

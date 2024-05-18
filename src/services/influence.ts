@@ -76,9 +76,7 @@ export const useAddInfluenceMutation = () => {
         if (!old) return [newInfluence];
         return [...old, newInfluence];
       });
-      toast.success('Influence added successfully.');
     },
-    onError: () => toast.error('Failed to add influence.'),
     onSettled: () =>
       queryClient.invalidateQueries({
         queryKey: key,
