@@ -2,10 +2,12 @@ import type { FC } from 'react';
 
 import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
 import { useGetLeaderboards } from '@services/leaderboard';
+import { useCurrentUser } from '@services/user';
 
 import styles from './style.module.scss';
 
 const Leaderboard: FC<{ className?: string }> = ({ className }) => {
+  const { data: currentUser } = useCurrentUser();
   const { data: leaderboards } = useGetLeaderboards();
 
   return (
@@ -14,7 +16,7 @@ const Leaderboard: FC<{ className?: string }> = ({ className }) => {
       <div className={styles.list}>
         {leaderboards?.map((user) => (
           <div key={user.id} className={styles.row}>
-            <BaseProfileCard userId={user.id} />
+            <BaseProfileCard userId={user.id} offlineData={user} />
             <div className={styles.number}>
               <span>{user.influence_count}</span>
               <span>{`Mention${user.influence_count !== 1 ? 's' : ''}`}</span>

@@ -143,7 +143,7 @@ export const AddMapModalContents: FC<{
           <button className={'cancel'} type="button" onClick={closeForm}>
             Close
           </button>
-          <button disabled={!mapData} type="submit">
+          <button disabled={!mapData || loading} type="submit">
             {loading ? 'Adding...' : 'Add'}
           </button>
         </div>

@@ -6,26 +6,40 @@ import type { BeatmapId } from '@services/influence';
 
 import MapCard from '../../MapCard';
 
+import emblaStyles from '../Slider/style.module.scss';
 import styles from './style.module.scss';
+
+const LIMIT = 5;
 
 const SingleItemCarousel: FC<{
   mapList: BeatmapId[];
   className?: string;
   editable?: boolean;
 }> = ({ mapList, editable, className = '' }) => {
+  const Cards = mapList.map((item) => (
+    <div key={item.id} className={styles.slide}>
+      <MapCard map={item} />
+    </div>
+  ));
+
+  if (mapList.length < LIMIT && editable)
+    Cards.push(
+      <div key={'slot'} className={`${emblaStyles.slot}`}>
+        <span>
+          Map slots {mapList.length} / {LIMIT}
+        </span>
+      </div>,
+    );
+
   return (
     <Carousel
       className={`${styles.carousel} ${className}`}
       showStatus={false}
-      showArrows={false}
-      transitionTime={0}
+      showArrows={true}
       showThumbs={false}
+      transitionTime={0}
     >
-      {mapList.map((item) => (
-        <div key={item.id} className={styles.slide}>
-          <MapCard map={item} />
-        </div>
-      ))}
+      {Cards}
     </Carousel>
   );
 };

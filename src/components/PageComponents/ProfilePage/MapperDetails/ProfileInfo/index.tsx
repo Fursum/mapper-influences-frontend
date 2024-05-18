@@ -1,6 +1,7 @@
 import { type FC, useEffect, useMemo, useRef } from 'react';
 
 import ProfilePhoto from '@components/SharedComponents/ProfilePhoto';
+import useAuth from '@hooks/useAuth';
 import { OSU_BASE_URL } from '@libs/consts/urls';
 import { useGetInfluences } from '@services/influence';
 import { useFullUser } from '@services/user';
@@ -17,6 +18,7 @@ type Props = {
 };
 
 const ProfileInfo: FC<Props> = ({ userId }) => {
+  const { logout } = useAuth();
   const ownProfile = !userId;
 
   const { data: osuData, isLoading } = useFullUser(userId?.toString());
@@ -104,6 +106,7 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
             {osuData?.username}
           </div>
         </a>
+        {ownProfile && <button onClick={logout}>Sign out</button>}
         <UserGroup />
         {!ownProfile && (
           <AddUserButton

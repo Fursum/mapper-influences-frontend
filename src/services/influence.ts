@@ -106,6 +106,7 @@ export const useDeleteInfluenceMutation = () => {
         return old.filter((influence) => influence.influenced_to !== variables);
       });
       toast.success('Influence removed.');
+      queryClient.invalidateQueries({ queryKey: ['leaderboards'] });
     },
     onError: () => toast.error('Failed to remove influence.'),
     onSettled: () =>
