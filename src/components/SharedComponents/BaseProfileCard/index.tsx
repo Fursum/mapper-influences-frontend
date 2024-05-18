@@ -50,7 +50,14 @@ const BaseProfileCard: FC<Props> = ({ userId, className = '' }) => {
       </div>
       <div className={styles.name}>{userData?.username}</div>
       <div className={styles.influencedStat}>
-        Influenced <span>1</span>
+        Influenced{' '}
+        <span
+          onMouseEnter={(e) =>
+            activateTooltip('Work in progress!', e.currentTarget)
+          }
+        >
+          ...
+        </span>
       </div>
       <div className={styles.rankedStat}>
         Ranked Maps{' '}
