@@ -1,3 +1,5 @@
+@import '/src/styles/variables/fonts';
+
 .tutorialWrapper {
   display: flex;
   flex-direction: column;
@@ -11,7 +13,7 @@
     position: relative;
     padding-inline: $spacing / 2;
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       bottom: -0.25rem;
       left: 0;
@@ -52,7 +54,7 @@
         position: absolute;
         z-index: 1;
 
-        font-family: "Inter Variable";
+        font-family: $inter;
         padding-block: $spacing;
         background-color: $color-background-content;
         animation: fadeIn 0.1s ease-out;
@@ -65,7 +67,7 @@
             bottom: 15%;
           }
         }
-        z-index: 1; // fix for search results
+        z-index: 2; // fix for search results
         // apparently backdrop-filter messes up stacking context
       }
 

@@ -6,7 +6,7 @@
   z-index: 2;
 
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
     border-radius: inherit;
@@ -24,7 +24,7 @@
   }
 }
 
-:global(html[data-theme="light"]) .searchBar {
+:global(html[data-theme='light']) .searchBar {
   background-color: transparent;
   &:focus-within {
     background-color: $color-background;
