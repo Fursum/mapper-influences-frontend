@@ -17,7 +17,8 @@ const MentionList: FC<Props> = ({ mentions, open }) => {
           <BaseProfileCard key={user.id} userId={user.id} />
         ))}
       </div>
-      {mentions.length === 0 && <span>{'No mentions :('}</span>}
+      <span>This feature is work in progress!</span>
+      {/* mentions.length === 0 && <span>{'No mentions :('}</span> */}
     </div>
   );
 };
