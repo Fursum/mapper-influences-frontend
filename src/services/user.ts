@@ -13,6 +13,12 @@ export type CurrentUserResponse = {
   beatmaps: BeatmapId[];
 };
 
+export function logoutRequest() {
+  return axios.get(`${process.env.NEXT_PUBLIC_API_URL}/oauth/logout`, {
+    withCredentials: true,
+  });
+}
+
 export function getCurrentUser() {
   return axios
     .get<CurrentUserResponse>(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {

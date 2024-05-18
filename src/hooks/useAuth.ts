@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
-import { useCurrentUser } from '@services/user';
+import { logoutRequest, useCurrentUser } from '@services/user';
 import { useRouter } from 'next/router';
 
 const REDIRECT_URL = '/';
@@ -11,8 +12,13 @@ const useAuth = () => {
 
   // Manual logout
   const logout = useCallback(() => {
-    // Logout endpoint
-    router.push(REDIRECT_URL); // Wont work yet
+    logoutRequest()
+      .then(() => {
+        router.push(REDIRECT_URL); // Wont work yet
+      })
+      .catch(() => {
+        toast.error('Failed to logout. 🤔');
+      });
   }, [router.push]);
 
   // Kick user to home page if not logged in
