@@ -5,6 +5,9 @@
   position: relative;
   align-items: flex-start;
 
+  background-size: cover;
+  background-position: center;
+
   width: $card-width;
   min-width: $card-width;
   height: $card-height;

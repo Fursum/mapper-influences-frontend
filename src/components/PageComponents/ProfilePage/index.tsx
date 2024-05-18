@@ -1,8 +1,5 @@
 import { type FC, useState } from 'react';
 
-import useAuth from '@hooks/useAuth';
-import { useRouter } from 'next/router';
-
 import InfluenceList from './InfluenceList';
 import MapperDetails from './MapperDetails';
 import MentionList from './MentionList';
@@ -12,13 +9,9 @@ import styles from './style.module.scss';
 type Props = { userId?: number | string };
 
 const ProfilePage: FC<Props> = ({ userId }) => {
-  const { logout } = useAuth();
-  const router = useRouter();
   const [selectedTab, setSelectedTab] = useState<'influences' | 'mentions'>(
     'influences',
   );
-
-  const isUser = router.asPath === '/profile';
 
   return (
     <div className={styles.profilePage}>
@@ -41,7 +34,6 @@ const ProfilePage: FC<Props> = ({ userId }) => {
         <MentionList mentions={[]} open={selectedTab === 'mentions'} />
         <InfluenceList userId={userId} open={selectedTab === 'influences'} />
       </div>
-      {isUser && <button onClick={logout}>Sign out</button>}
     </div>
   );
 };

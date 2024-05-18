@@ -1,18 +1,22 @@
-import { forwardRef } from 'react';
+import { type FC, forwardRef, useCallback, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
 import MapCarousel from '@components/SharedComponents/MapCarousel/SingleItem';
+import Modal from '@components/SharedComponents/Modal';
 import { convertFromInfluence } from '@libs/enums';
 import {
   type InfluenceResponse,
   useAddInfluenceMutation,
 } from '@services/influence';
+import { useGlobalTooltip } from '@states/globalTooltip';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 
 import EditableDescription from '../EditableDescription';
+import { AddMapModalContents } from '../MapperDetails/FeaturedMaps';
 import InfluenceType from './InfluenceType';
 
+import featuredMapsStyles from '../MapperDetails/FeaturedMaps/style.module.scss';
 import styles from './style.module.scss';
 
 type Props = {
@@ -69,10 +73,16 @@ const InfluenceElement = forwardRef<HTMLDivElement, Props>(
               success: 'Influence description updated.',
             }}
           />
-          {false && (
+          {(editable || influenceData.beatmaps) && (
             <div className={styles.maps}>
-              <h4>Featured Maps</h4>
-              <MapCarousel mapList={influenceData.beatmaps} />
+              <h4>
+                Featured Maps{' '}
+                <AddButton influenceData={influenceData} editable={editable} />
+              </h4>
+              <MapCarousel
+                mapList={influenceData.beatmaps || []}
+                editable={editable}
+              />
             </div>
           )}
         </div>
@@ -84,3 +94,58 @@ const InfluenceElement = forwardRef<HTMLDivElement, Props>(
 InfluenceElement.displayName = 'InfluenceElement';
 
 export default InfluenceElement;
+
+const AddButton: FC<{
+  influenceData: InfluenceResponse;
+  editable?: boolean;
+}> = ({ influenceData, editable }) => {
+  const { activateTooltip, deactivateTooltip } = useGlobalTooltip();
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const { mutateAsync: updateInfluence, isPending } = useAddInfluenceMutation();
+  const onSubmit = useCallback(
+    (values: { diff: string; set: string }) => {
+      updateInfluence({
+        ...influenceData,
+        beatmaps: [
+          ...(influenceData.beatmaps || []),
+          {
+            id: Number(values.diff || values.set),
+            is_beatmapset: !!values.set,
+          },
+        ],
+      }).then(() => setModalOpen(false));
+    },
+    [updateInfluence, influenceData],
+  );
+
+  if (!editable) return <></>;
+  return (
+    <>
+      <Modal
+        showModal={modalOpen}
+        setShowModal={setModalOpen}
+        className={featuredMapsStyles.modal}
+        keepOpen
+      >
+        <AddMapModalContents
+          closeForm={() => setModalOpen(false)}
+          onSubmit={onSubmit}
+          loading={isPending}
+        />
+      </Modal>
+      <button
+        className={styles.addButton}
+        aria-label={'Add maps to this influence'}
+        onClick={() => setModalOpen(true)}
+        onMouseEnter={() =>
+          // biome-ignore lint/suspicious/noExplicitAny: <hack to display the tooltip on buttons>
+          activateTooltip('Add maps to this influence', {} as any)
+        }
+        onMouseLeave={deactivateTooltip}
+      >
+        +
+      </button>
+    </>
+  );
+};
