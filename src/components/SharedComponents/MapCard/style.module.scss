@@ -1,18 +1,19 @@
 .card {
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   position: relative;
   align-items: flex-start;
 
+  width: $card-width;
+  min-width: $card-width;
+  height: $card-height;
   gap: $spacing;
-
   padding: $spacing/2;
 
   border-radius: $border-radius;
-  width: $card-width;
-  height: $card-height;
-  min-width: $card-width;
-  isolation: isolate;
+
+  user-select: none;
 
   // Fade for readability
   &::after,

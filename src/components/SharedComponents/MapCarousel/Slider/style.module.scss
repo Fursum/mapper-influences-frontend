@@ -1,6 +1,5 @@
 .embla {
   width: 100%;
-  max-width: $card-width * 2 + $spacing;
 
   .viewport {
     position: relative;
@@ -33,14 +32,16 @@
       .slot {
         width: $card-width;
         height: $card-height;
+        border-radius: $border-radius;
 
-        border: 2px solid $color-text;
         display: flex;
         justify-content: center;
         align-items: center;
-        border-radius: $border-radius;
 
+        border: 2px solid $color-text;
         opacity: 0.5;
+
+        user-select: none;
       }
     }
   }
