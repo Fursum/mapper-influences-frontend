@@ -14,14 +14,14 @@ import styles from './style.module.scss';
 const FeaturedMaps: FC<{ userId?: string | number }> = ({ userId }) => {
   const { data: profileData } = useUserBio(userId?.toString());
 
+  const beatmapCount = profileData?.beatmaps.length || 0;
+
   // Dont show anything if featured maps dont exist
-  if (userId && profileData?.beatmaps?.length) return <></>;
+  if (userId && beatmapCount) return <></>;
 
   return (
     <div className={styles.featuredMaps}>
-      <h3>
-        Featured Maps <AddButton userId={userId} />
-      </h3>
+      <h3>Featured Maps {beatmapCount < 5 && <AddButton userId={userId} />}</h3>
       <MapCarousel mapList={profileData?.beatmaps || []} />
     </div>
   );
@@ -137,7 +137,7 @@ const AddMapModalContents: FC<{ closeForm: () => void }> = ({ closeForm }) => {
           <button className={'cancel'} type="button" onClick={closeForm}>
             Close
           </button>
-          <button disabled={!mapData || !formState.isValid} type="submit">
+          <button disabled={!mapData} type="submit">
             {isPending ? 'Adding...' : 'Add'}
           </button>
         </div>

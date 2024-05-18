@@ -8,11 +8,12 @@ import { useRouter } from 'next/router';
 
 import styles from './style.module.scss';
 
+const LIMIT = 5;
+
 const SliderCarousel: FC<{ mapList: BeatmapId[] }> = ({ mapList }) => {
   const router = useRouter();
   const [emblaRef, _embla] = useEmblaCarousel({
-    skipSnaps: true,
-    inViewThreshold: 1,
+    dragFree: true,
     align: 'start',
   });
 
@@ -21,19 +22,28 @@ const SliderCarousel: FC<{ mapList: BeatmapId[] }> = ({ mapList }) => {
   const { mutateAsync: deleteMap, isPending } = useDeleteMapFromSelfMutation();
 
   return (
-    <div ref={emblaRef} className={styles.viewport}>
-      <div>
-        {mapList.map((item) => (
-          <div key={item.id} className={styles.slide}>
-            <MapCard
-              map={item}
-              deleteFn={isEditable ? deleteMap : undefined}
-              loading={isPending}
-            />
-          </div>
-        ))}
+    <section className={styles.embla}>
+      <div ref={emblaRef} className={styles.viewport}>
+        <div>
+          {mapList.map((item) => (
+            <div key={item.id} className={styles.slide}>
+              <MapCard
+                map={item}
+                deleteFn={isEditable ? deleteMap : undefined}
+                loading={isPending}
+              />
+            </div>
+          ))}
+          {mapList.length < LIMIT && (
+            <div className={`${styles.slot} ${styles.slide}`}>
+              <span>
+                Map slots {mapList.length} / {LIMIT}
+              </span>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 

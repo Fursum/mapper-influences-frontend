@@ -1,29 +1,46 @@
-.viewport {
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  height: max-content;
-
-  overflow: hidden;
+.embla {
   width: 100%;
+  max-width: $card-width * 2 + $spacing;
 
-  // Embla container
-  > div {
-    display: flex;
-    user-select: none;
+  .viewport {
+    position: relative;
+    height: max-content;
 
-    transition: transform 0.1s ease-out;
+    overflow: hidden;
 
-    // Wrapper for every card
-    .slide {
-      position: relative;
-      padding-left: $spacing/2;
+    // Embla container
+    > div {
+      display: flex;
+      touch-action: pan-y pinch-zoom;
 
-      &:nth-child(1) {
-        padding-left: 0;
+      transition: transform 0.1s ease-out;
+
+      // Wrapper for every card
+      .slide {
+        position: relative;
+        margin-left: $spacing / 2;
+
+        flex: 0 0 $card-width;
+
+        &:nth-child(1) {
+          margin-left: 0;
+        }
+        //Card
+        > a {
+        }
       }
-      //Card
-      > a {
+
+      .slot {
+        width: $card-width;
+        height: $card-height;
+
+        border: 2px solid $color-text;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: $border-radius;
+
+        opacity: 0.5;
       }
     }
   }
