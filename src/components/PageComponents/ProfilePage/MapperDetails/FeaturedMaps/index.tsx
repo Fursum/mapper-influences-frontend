@@ -127,7 +127,6 @@ const AddMapModalContents: FC<{ closeForm: () => void }> = ({ closeForm }) => {
                 id: Number(mapInfo[0]),
                 is_beatmapset: mapInfo[1] === 'set',
               }}
-              diffId={diffId}
             />
           )}
           {error && <div className={styles.error}>{error.message}</div>}

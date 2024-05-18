@@ -16,10 +16,9 @@ import styles from './style.module.scss';
 
 const MapCard: FC<{
   map?: BeatmapId;
-  diffId?: string | number;
   deleteFn?: (map: BeatmapId) => void;
   loading?: boolean;
-}> = ({ map, diffId, deleteFn, loading }) => {
+}> = ({ map, deleteFn, loading }) => {
   const { activateTooltip } = useGlobalTooltip();
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
 
@@ -30,10 +29,12 @@ const MapCard: FC<{
 
   if (!mapData || !map?.id) return <></>;
 
-  const diff = mapData.beatmaps?.find((b) => b.id === Number(diffId));
+  const diff = !map.is_beatmapset
+    ? mapData.beatmaps?.find((b) => b.id === Number(map.id))
+    : undefined;
 
   const mapUrl = `https://osu.ppy.sh/beatmaps/${mapData.id}${
-    diff ? `#${diff.mode}/${diffId}` : ''
+    diff ? `#${diff.mode}/${map.id}` : ''
   }`;
 
   const mapOwner = mapData.creator;
