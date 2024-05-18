@@ -12,12 +12,7 @@ export type LeaderboardResponse = {
 
 function getLeaderboards() {
   return axios
-    .get<LeaderboardResponse>(
-      `${process.env.NEXT_PUBLIC_API_URL}/leaderboard/`,
-      {
-        withCredentials: true,
-      },
-    )
+    .get<LeaderboardResponse>(`${process.env.NEXT_PUBLIC_API_URL}/leaderboard`)
     .then((res) => res.data);
 }
 
