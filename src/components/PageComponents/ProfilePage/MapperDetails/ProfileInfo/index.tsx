@@ -106,7 +106,6 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
             {osuData?.username}
           </div>
         </a>
-        {ownProfile && <button onClick={logout}>Sign out</button>}
         <UserGroup />
         {!ownProfile && (
           <AddUserButton
@@ -114,6 +113,7 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
             action={isAlreadyAdded ? 'remove' : 'add'}
           />
         )}
+        {ownProfile && <button onClick={logout}>Sign out</button>}
       </div>
     </div>
   );
