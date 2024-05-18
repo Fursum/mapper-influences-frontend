@@ -20,7 +20,7 @@ const FeaturedMaps: FC<{ userId?: string | number }> = ({ userId }) => {
   return (
     <div className={styles.featuredMaps}>
       <h3>
-        Featured Maps <AddButton />
+        Featured Maps <AddButton userId={userId} />
       </h3>
       <MapCarousel mapList={profileData?.beatmaps || []} />
     </div>
