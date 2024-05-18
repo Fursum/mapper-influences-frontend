@@ -49,8 +49,6 @@ const MapStats: FC<{
     const tooltip: string[] = [];
     if (ranked_and_approved_beatmapset_count)
       tooltip.push(`${ranked_and_approved_beatmapset_count} ranked`);
-    if (nominated_beatmapset_count)
-      tooltip.push(`${nominated_beatmapset_count} nominated`);
     if (guest_beatmapset_count) tooltip.push(`${guest_beatmapset_count} guest`);
     return tooltip.join(', ');
   }, [profileData]);
@@ -65,7 +63,7 @@ const MapStats: FC<{
   const totalTooltip = useMemo(() => {
     const tooltip: string[] = [];
     if (ranked_and_approved_beatmapset_count)
-      tooltip.push(`${ranked_and_approved_beatmapset_count} own`);
+      tooltip.push(`${ranked_and_approved_beatmapset_count} ranked`);
     if (guest_beatmapset_count) tooltip.push(`${guest_beatmapset_count} guest`);
     if (loved_beatmapset_count) tooltip.push(`${loved_beatmapset_count} loved`);
     if (graveyard_beatmapset_count)
