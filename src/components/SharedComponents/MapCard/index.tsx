@@ -49,7 +49,7 @@ const MapCard: FC<{
       target={'_blank'}
       rel="noreferrer"
       style={{
-        background: `url(${mapData.covers.cover})`,
+        backgroundImage: `url(${mapData.covers.cover})`,
         // only allow hover if loading
         pointerEvents: loading ? 'none' : 'auto',
       }}
