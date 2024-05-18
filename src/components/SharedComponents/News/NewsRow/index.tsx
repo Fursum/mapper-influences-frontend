@@ -1,13 +1,25 @@
-import Modal from "@components/SharedComponents/Modal";
-import type { NewsType } from "@libs/types/influence";
-import { type FC, lazy, Suspense,useState } from "react";
+import { type FC, Suspense, lazy, useState } from 'react';
 
-import styles from "./style.module.scss";
+import Modal from '@components/SharedComponents/Modal';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
-const LazyMarkdown = lazy(() => import("./RenderMarkdown"));
+import type { NewsType } from '..';
 
-const NewsRow: FC<NewsType> = ({ fullText, title, date, desc }) => {
+import styles from './style.module.scss';
+
+const LazyMarkdown = lazy(() => import('./RenderMarkdown'));
+
+const useNewsText = (url: string) =>
+  useQuery({
+    queryKey: ['news', url],
+    queryFn: () => axios.get(url).then((res) => res.data),
+  });
+
+const NewsRow: FC<NewsType> = ({ url, title, date, desc }) => {
   const [showModal, setShowModal] = useState(false);
+
+  const { data: fullText } = useNewsText(url);
 
   return (
     <>
@@ -18,7 +30,15 @@ const NewsRow: FC<NewsType> = ({ fullText, title, date, desc }) => {
           </Suspense>
         </Modal>
       )}
-      <div className={styles.newsRow} onClick={() => setShowModal(true)}>
+      <div
+        className={styles.newsRow}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            setShowModal(true);
+          }
+        }}
+        onClick={() => setShowModal(true)}
+      >
         <span className={styles.type}>{date}</span>
         <h4>{title}</h4>
         <p>{desc}</p>

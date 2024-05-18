@@ -32,6 +32,7 @@ export const useGetInfluences = (userId?: string | number) => {
   const id = userId || user?.id || 0;
   return useQuery({
     queryKey: ['influences', id],
+    enabled: !!id,
     queryFn: () => getInfluences(id),
     staleTime: 60 * 1000,
   });

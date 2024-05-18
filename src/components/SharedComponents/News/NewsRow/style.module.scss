@@ -30,7 +30,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    content: "";
+    content: '';
     background-color: $color-secondary;
     border-radius: 100vmax;
     transition: transform ease-out 0.1s;
@@ -66,5 +66,22 @@
     width: 70%;
     margin: 0;
     font-size: 0.75rem;
+  }
+}
+
+.markdown {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: $color-button-outline;
+
+    border-bottom: $color-button-outline 1px solid;
+
+    * {
+      color: inherit;
+    }
   }
 }

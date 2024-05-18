@@ -14,7 +14,7 @@ import styles from './style.module.scss';
 const FeaturedMaps: FC<{ userId?: string | number }> = ({ userId }) => {
   const { data: profileData } = useUserBio(userId?.toString());
 
-  const beatmapCount = profileData?.beatmaps.length || 0;
+  const beatmapCount = profileData?.beatmaps?.length || 0;
 
   // Dont show anything if featured maps dont exist
   if (userId && beatmapCount) return <></>;
@@ -33,6 +33,17 @@ const AddButton: FC<{ userId?: string | number }> = ({ userId }) => {
   const { activateTooltip, deactivateTooltip } = useGlobalTooltip();
   const [modalOpen, setModalOpen] = useState(false);
 
+  const { mutateAsync: addMap, isPending } = useAddMapToSelfMutation();
+  const onSubmit = useCallback(
+    (values: { diff: string; set: string }) => {
+      addMap({
+        mapId: Number(values.diff || values.set),
+        isSet: !!values.set,
+      }).then(() => setModalOpen(false));
+    },
+    [addMap],
+  );
+
   // No userid means the user is viewing their own profile
   if (userId) return <></>;
   return (
@@ -43,7 +54,11 @@ const AddButton: FC<{ userId?: string | number }> = ({ userId }) => {
         className={styles.modal}
         keepOpen
       >
-        <AddMapModalContents closeForm={() => setModalOpen(false)} />
+        <AddMapModalContents
+          closeForm={() => setModalOpen(false)}
+          onSubmit={onSubmit}
+          loading={isPending}
+        />
       </Modal>
       <button
         aria-label="Add maps to your profile"
@@ -60,9 +75,11 @@ const AddButton: FC<{ userId?: string | number }> = ({ userId }) => {
   );
 };
 
-const AddMapModalContents: FC<{ closeForm: () => void }> = ({ closeForm }) => {
-  const { mutateAsync: addMap, isPending } = useAddMapToSelfMutation();
-
+export const AddMapModalContents: FC<{
+  closeForm: () => void;
+  onSubmit: (values: { diff: string; set: string }) => void;
+  loading: boolean;
+}> = ({ closeForm, loading, onSubmit }) => {
   const { register, watch, formState, handleSubmit, trigger } = useForm<{
     diff: string;
     set: string;
@@ -82,16 +99,6 @@ const AddMapModalContents: FC<{ closeForm: () => void }> = ({ closeForm }) => {
   const mapInfo = getValidMapInfo();
 
   const { data: mapData, error } = useMapData(...mapInfo);
-
-  const onSubmit = useCallback(
-    (values: { diff: string; set: string }) => {
-      addMap({
-        mapId: Number(values.diff || values.set),
-        isSet: !!values.set,
-      }).then(closeForm);
-    },
-    [addMap, closeForm],
-  );
 
   return (
     <>
@@ -137,7 +144,7 @@ const AddMapModalContents: FC<{ closeForm: () => void }> = ({ closeForm }) => {
             Close
           </button>
           <button disabled={!mapData} type="submit">
-            {isPending ? 'Adding...' : 'Add'}
+            {loading ? 'Adding...' : 'Add'}
           </button>
         </div>
       </form>

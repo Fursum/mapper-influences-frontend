@@ -3,7 +3,6 @@ import { type FC, useState } from 'react';
 import DarkModeToggle from '@components/Layout/Header/DarkModeToggle';
 import Modal from '@components/SharedComponents/Modal';
 import News from '@components/SharedComponents/News';
-import type { NewsType } from '@libs/types/influence';
 
 import { useGlobalTooltip } from 'src/states/globalTooltip';
 
@@ -13,8 +12,7 @@ import CoolCards from './CoolCards';
 
 import styles from './style.module.scss';
 
-type Props = { newsList: NewsType[] };
-const LoginScreen: FC<Props> = ({ newsList }) => {
+const LoginScreen: FC = () => {
   const { activateTooltip } = useGlobalTooltip();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
@@ -92,7 +90,7 @@ const LoginScreen: FC<Props> = ({ newsList }) => {
         </section>
         <section className={styles.fullSection}>
           <Leaderboard />
-          <News newsList={newsList} className={styles.news} />
+          <News className={styles.news} />
         </section>
         <ContributeButtons />
       </div>
