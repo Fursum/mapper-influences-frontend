@@ -28,21 +28,21 @@
         > a {
         }
       }
-
-      .slot {
-        width: $card-width;
-        height: $card-height;
-        border-radius: $border-radius;
-
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        border: 2px solid $color-text;
-        opacity: 0.5;
-
-        user-select: none;
-      }
     }
   }
+}
+
+.slot {
+  width: $card-width;
+  height: $card-height;
+  border-radius: $border-radius;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border: 2px solid $color-text;
+  opacity: 0.5;
+
+  user-select: none;
 }

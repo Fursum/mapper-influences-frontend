@@ -19,7 +19,7 @@ const useAuth = () => {
         queryClient.invalidateQueries({
           queryKey: ['currentUser'],
         });
-        router.push(REDIRECT_URL); // Wont work yet
+        router.push(REDIRECT_URL);
       })
       .catch(() => {
         toast.error('Failed to logout. 🤔');
