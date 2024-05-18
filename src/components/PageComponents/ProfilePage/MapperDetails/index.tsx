@@ -51,7 +51,7 @@ const MapperDetails: FC<Props> = ({ userId }) => {
             }}
           />
         </div>
-        <FeaturedMaps />
+        <FeaturedMaps userId={userId} />
       </div>
     </div>
   );
