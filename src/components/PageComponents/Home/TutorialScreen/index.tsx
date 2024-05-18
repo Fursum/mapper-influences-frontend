@@ -78,7 +78,7 @@ const TutorialScreen: FC<Props> = ({ children }) => {
           <div className={styles.profileSide}>
             <InfluenceType editable influenceData={influenceData} />
             <BaseProfileCard
-              userId={influenceData.influenced_by}
+              userId={influenceData.influenced_to}
               className={styles.card}
             />
           </div>

@@ -6,7 +6,6 @@ import Arrow from '@components/SvgComponents/Arrow';
 import { InfluenceTypeEnum, convertToInfluence } from '@libs/enums';
 import {
   type InfluenceResponse,
-  deleteInfluence,
   useDeleteInfluenceMutation,
 } from '@services/influence';
 import { useOnClickOutside } from 'usehooks-ts';
@@ -46,13 +45,12 @@ const InfluenceType: FC<Props> = ({
 
   const onRemove = () => {
     setIsLoading(true);
-    removeInfluence(influenceData?.influenced_by || 0, {
+    removeInfluence(influenceData?.influenced_to || 0, {
       onSettled: () => {
         setIsLoading(false);
         setIsModalOpen(false);
       },
     });
-    return deleteInfluence(influenceData?.influenced_by || 0).finally(() => {});
   };
 
   const handleChange = (newType: InfluenceTypeEnum) => {

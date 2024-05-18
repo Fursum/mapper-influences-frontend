@@ -25,7 +25,7 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
   const isAlreadyAdded = useMemo(() => {
     if (!currentUserInfluences) return false;
     return currentUserInfluences.some(
-      (influence) => influence.influenced_by.toString() === userId?.toString(),
+      (influence) => influence.influenced_to.toString() === userId?.toString(),
     );
   }, [currentUserInfluences, userId]);
 

@@ -104,7 +104,7 @@ export const useDeleteInfluenceMutation = () => {
       });
       queryClient.setQueryData(key, (old: InfluenceResponse[] | undefined) => {
         if (!old) return [];
-        return old.filter((influence) => influence.influenced_by !== variables);
+        return old.filter((influence) => influence.influenced_to !== variables);
       });
       toast.success('Influence removed.');
     },

@@ -45,7 +45,7 @@ const InfluenceElement = forwardRef<HTMLDivElement, Props>(
               }
             />
             <BaseProfileCard
-              userId={influenceData.influenced_by}
+              userId={influenceData.influenced_to}
               className={`${editable ? styles.editable : ''}`}
             />
           </div>

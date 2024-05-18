@@ -19,7 +19,7 @@ const Tooltip: FC = () => {
       element.style.opacity = '0';
       deactivateTooltip();
     };
-  }, [ref, isActive, deactivateTooltip, parent, element]);
+  }, [isActive, deactivateTooltip, parent, element]);
 
   useEffect(() => {
     function handleMouse(e: MouseEvent) {
