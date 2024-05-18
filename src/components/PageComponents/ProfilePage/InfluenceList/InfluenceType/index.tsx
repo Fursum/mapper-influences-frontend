@@ -15,6 +15,7 @@ import styles from './style.module.scss';
 type Props = {
   className?: string;
   editable?: boolean;
+  loading?: boolean;
   influenceData?: InfluenceResponse;
   hideRemove?: boolean;
   onChange?: (type: InfluenceTypeEnum) => Promise<unknown>;
@@ -24,6 +25,7 @@ type Props = {
 const InfluenceType: FC<Props> = ({
   className,
   editable,
+  loading,
   influenceData,
   hideRemove,
   onChange,
@@ -41,7 +43,7 @@ const InfluenceType: FC<Props> = ({
     if (isOpen) setIsOpen(false);
   });
 
-  const { mutate: removeInfluence } = useDeleteInfluenceMutation();
+  const { mutate: removeInfluence, isPending } = useDeleteInfluenceMutation();
 
   const onRemove = () => {
     setIsLoading(true);
@@ -68,8 +70,9 @@ const InfluenceType: FC<Props> = ({
   };
 
   const dropdownClass = `${styles.dropdown} ${isOpen ? styles.open : ''} ${
-    isLoading ? styles.disabled : ''
+    isLoading || loading ? styles.disabled : ''
   }`;
+
   if (editable)
     return (
       <>
@@ -105,7 +108,7 @@ const InfluenceType: FC<Props> = ({
             <Arrow className={styles.arrow} color="var(--textColor)" />
           </span>
 
-          {isOpen && (
+          {isOpen && !isPending && (
             <div className={styles.optionsCont}>
               {DROPDOWN_OPTIONS.map((option) => (
                 <button
@@ -113,7 +116,7 @@ const InfluenceType: FC<Props> = ({
                   onClick={() => handleChange(option.label)}
                   disabled={option.label === selectedType}
                 >
-                  {option.label}
+                  {isPending ? '...' : option.label}
                 </button>
               ))}
               {!hideRemove && (

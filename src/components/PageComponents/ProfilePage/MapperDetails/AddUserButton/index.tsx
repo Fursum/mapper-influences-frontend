@@ -5,6 +5,7 @@ import {
   useCallback,
   useState,
 } from 'react';
+import { toast } from 'react-toastify';
 
 import Modal from '@components/SharedComponents/Modal';
 import { InfluenceTypeEnum, convertFromInfluence } from '@libs/enums';
@@ -76,7 +77,10 @@ const AddUserButton: FC<Props> = ({
       };
 
       addInfluence(body, {
-        onSuccess: () => setShowForm(false),
+        onSuccess: () => {
+          setShowForm(false);
+          toast.success('Influence added.');
+        },
       });
     },
     [userId, type, description, addInfluence],
@@ -107,7 +111,7 @@ const AddUserButton: FC<Props> = ({
             description=""
             placeholder="Add a description for your influence."
             editable={!isAddLoading}
-            noSubmitOnChange={(e) => setDescription(e.target.value)}
+            noSubmitOnChange={(e) => setDescription(e)}
           />
           <div className={styles.buttons}>
             <button type="button" className="cancel" onClick={resetForm}>

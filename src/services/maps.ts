@@ -78,7 +78,7 @@ export const useAddMapToSelfMutation = () => {
       );
       queryClient.setQueryData<UserBioResponse>(['currentUser'], updater);
 
-      toast.success('Successfully added map');
+      toast.success('New map added.');
     },
     onError: () => {
       queryClient.refetchQueries({ queryKey: ['currentUser'] });
@@ -121,7 +121,7 @@ export const useDeleteMapFromSelfMutation = () => {
       );
       queryClient.setQueryData<UserBioResponse>(['currentUser'], updater);
 
-      toast.success('Successfully deleted map');
+      toast.success('Map deleted.');
     },
     onError: () => {
       queryClient.refetchQueries({ queryKey: ['currentUser'] });

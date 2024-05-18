@@ -1,4 +1,4 @@
-import type { ChangeEvent, ChangeEventHandler, FC } from 'react';
+import type { FC } from 'react';
 import { toast } from 'react-toastify';
 
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
@@ -16,8 +16,8 @@ type Props = {
     success?: string;
     error?: string;
   };
-  onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => Promise<any>;
-  noSubmitOnChange?: ChangeEventHandler<HTMLTextAreaElement>;
+  onChange?: (value: string) => Promise<unknown>;
+  noSubmitOnChange?: (value: string) => void;
 };
 const EditableDescription: FC<Props> = ({
   className,
@@ -27,37 +27,34 @@ const EditableDescription: FC<Props> = ({
   placeholder,
   statusText = {
     error: 'Could not submit.',
-    success: 'Successfully submitted.',
+    success: 'Submitted successfully.',
     loading: 'Submitting.',
   },
   onChange,
   noSubmitOnChange,
 }) => {
-  const debouncedSubmit = AwesomeDebouncePromise(
-    (e: ChangeEvent<HTMLTextAreaElement>) => {
-      if (onChange) {
-        const loadingToast = toast.loading(statusText?.loading);
-        onChange(e)
-          .then(() => {
-            toast.update(loadingToast, {
-              render: statusText?.success,
-              type: 'success',
-              isLoading: false,
-              autoClose: 5000,
-            });
-          })
-          .catch(() =>
-            toast.update(loadingToast, {
-              render: statusText?.error,
-              type: 'error',
-              isLoading: false,
-              autoClose: 5000,
-            }),
-          );
-      }
-    },
-    1000,
-  );
+  const debouncedSubmit = AwesomeDebouncePromise((value: string) => {
+    if (onChange) {
+      const loadingToast = toast.loading(statusText?.loading);
+      onChange(value)
+        .then(() => {
+          toast.update(loadingToast, {
+            render: statusText?.success,
+            type: 'success',
+            isLoading: false,
+            autoClose: 5000,
+          });
+        })
+        .catch(() =>
+          toast.update(loadingToast, {
+            render: statusText?.error,
+            type: 'error',
+            isLoading: false,
+            autoClose: 5000,
+          }),
+        );
+    }
+  }, 1000);
 
   return (
     <>
@@ -67,8 +64,8 @@ const EditableDescription: FC<Props> = ({
           editable ? styles.editable : ''
         }`}
         onChange={(e) => {
-          noSubmitOnChange?.(e);
-          debouncedSubmit(e);
+          noSubmitOnChange?.(e.currentTarget.value);
+          debouncedSubmit(e.currentTarget.value);
         }}
         defaultValue={description}
         placeholder={editable ? placeholder : ''}

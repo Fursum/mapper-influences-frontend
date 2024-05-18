@@ -22,7 +22,8 @@ type Props = {
 
 const InfluenceElement = forwardRef<HTMLDivElement, Props>(
   ({ influenceData, editable }, ref) => {
-    const { mutateAsync: updateInfluence } = useAddInfluenceMutation();
+    const { mutateAsync: updateInfluence, isPending } =
+      useAddInfluenceMutation();
 
     // Debounce the description update
     const updateInfluenceDebounce = AwesomeDebouncePromise(
@@ -36,6 +37,7 @@ const InfluenceElement = forwardRef<HTMLDivElement, Props>(
           <div className={styles.cardWrapper}>
             <InfluenceType
               editable={editable}
+              loading={isPending}
               influenceData={influenceData}
               onChange={(type) =>
                 updateInfluence({
@@ -53,20 +55,18 @@ const InfluenceElement = forwardRef<HTMLDivElement, Props>(
             className={styles.description}
             label={'Description textarea'}
             description={influenceData.description || ''}
-            editable={editable}
+            editable={editable && !isPending}
             placeholder={'Describe your influence here.'}
             onChange={(e) =>
               updateInfluenceDebounce({
                 ...influenceData,
-                description: e.currentTarget.value,
-              }).then(() => {
-                toast.success('Updated influence description.');
+                description: e,
               })
             }
             statusText={{
               loading: 'Submitting influence description.',
               error: 'Could not update influence description.',
-              success: 'Updated influence description.',
+              success: 'Influence description updated.',
             }}
           />
           {false && (
