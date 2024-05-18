@@ -86,7 +86,7 @@ export const useAddInfluenceMutation = () => {
 
 export async function deleteInfluence(from_id: string | number) {
   const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/remove_influence/${from_id}`;
-  return await axios.post(searchUrl);
+  return await axios.delete(searchUrl);
 }
 
 export const useDeleteInfluenceMutation = () => {
