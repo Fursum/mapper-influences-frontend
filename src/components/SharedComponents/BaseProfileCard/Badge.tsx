@@ -1,14 +1,25 @@
-import { Group } from "@libs/types/IOsuApi";
-import { FC } from "react";
+import type { FC } from 'react';
 
-import styles from "./style.module.scss";
+import type { UserGroup } from 'osu-web.js';
 
-type Props = { group: Group };
+import { useGlobalTooltip } from 'src/states/globalTooltip';
+
+import styles from './style.module.scss';
+
+type Props = { group: UserGroup };
 const Badge: FC<Props> = ({ group }) => {
+  const { activateTooltip } = useGlobalTooltip();
+
   return (
-    <span className={styles.badge} style={{ color: group.colour }}>
+    <span
+      className={styles.badge}
+      style={{
+        color: group.colour || 'black',
+        borderColor: group.colour || 'black',
+      }}
+      onMouseEnter={(e) => activateTooltip(group.name, e.currentTarget)}
+    >
       {group.short_name}
-      <span className={styles.tooltip}>{group.name}</span>
     </span>
   );
 };

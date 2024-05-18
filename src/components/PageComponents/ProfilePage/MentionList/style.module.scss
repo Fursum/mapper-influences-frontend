@@ -1,13 +1,18 @@
 .mentionList {
-  height: 100%;
+  @extend %contentBox;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  max-width: max-content;
-  padding: $spacing;
-  padding-top: 0;
+  flex-direction: column;
 
-  background-color: $color-background-content;
+  height: var(--height);
+  max-width: var(--max-width);
+
+  margin-inline: auto;
+  padding: $spacing;
+
+  > span {
+    margin-top: 0.5rem;
+  }
 
   > h2 {
     text-align: center;

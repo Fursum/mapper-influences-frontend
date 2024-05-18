@@ -1,27 +1,27 @@
+import Beams from "./Beams";
+import Discord from "./Discord";
 import Followers from "./Followers";
+import Github from "./Github";
 import Graved from "./Graved";
+import Influences from "./Influences";
+import LinkIcon from "./LinkIcon";
 import Loved from "./Loved";
+import Magnify from "./Magnify";
 import Pending from "./Pending";
 import Ranked from "./Ranked";
 import Subscribers from "./Subscribers";
-import Influences from "./Influences";
-import Magnify from "./Magnify";
-import LinkIcon from "./LinkIcon";
-import Discord from "./Discord";
-import Github from "./Github";
-import Beams from "./Beams";
 
 export {
+  Beams,
+  Discord,
   Followers,
+  Github,
   Graved,
+  Influences,
+  LinkIcon,
   Loved,
+  Magnify,
   Pending,
   Ranked,
   Subscribers,
-  Influences,
-  Magnify,
-  LinkIcon,
-  Discord,
-  Github,
-  Beams,
 };

@@ -1,41 +1,86 @@
-import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
-import React, { FC } from "react";
-import { Influence } from "@libs/types/influence";
-import EditableDescription from "../EditableDescription";
-import InfluenceType from "./InfluenceType";
-import MapCarousel from "@components/SharedComponents/MapCarousel";
+import { forwardRef } from 'react';
+import { toast } from 'react-toastify';
 
-import styles from "./style.module.scss";
+import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
+import MapCarousel from '@components/SharedComponents/MapCarousel/SingleItem';
+import { convertFromInfluence } from '@libs/enums';
+import {
+  type InfluenceResponse,
+  useAddInfluenceMutation,
+} from '@services/influence';
+import AwesomeDebouncePromise from 'awesome-debounce-promise';
 
-const InfluenceElement: FC<{
-  influenceData: Influence;
+import EditableDescription from '../EditableDescription';
+import InfluenceType from './InfluenceType';
+
+import styles from './style.module.scss';
+
+type Props = {
+  influenceData: InfluenceResponse;
   editable?: boolean;
-}> = ({ influenceData, editable }) => {
-  return (
-    <>
-      <div className={styles.influenceRow}>
-        <div className={styles.top}>
-          <div className={styles.cardSide}>
-            <BaseProfileCard userData={influenceData.profileData} />
-            <InfluenceType editable influenceType={influenceData.type} />
-          </div>
-          <div className={styles.descriptionSide}>
-            <div className={styles.desc}>
-              <EditableDescription
-                label={`Description textarea for ${influenceData.profileData.username}`}
-                description={influenceData.description}
-                editable={editable}
-                placeholder={"Describe your influence here."}
-              />
-            </div>
-          </div>
-        </div>
-        <div className={styles.maps}>
-          <MapCarousel mapList={influenceData.maps || []} />
-        </div>
-      </div>
-    </>
-  );
 };
+
+const InfluenceElement = forwardRef<HTMLDivElement, Props>(
+  ({ influenceData, editable }, ref) => {
+    const { mutateAsync: updateInfluence, isPending } =
+      useAddInfluenceMutation();
+
+    // Debounce the description update
+    const updateInfluenceDebounce = AwesomeDebouncePromise(
+      updateInfluence,
+      500,
+    );
+
+    return (
+      <>
+        <div className={styles.influenceRow} ref={ref}>
+          <div className={styles.cardWrapper}>
+            <InfluenceType
+              editable={editable}
+              loading={isPending}
+              influenceData={influenceData}
+              onChange={(type) =>
+                updateInfluence({
+                  ...influenceData,
+                  type: convertFromInfluence(type),
+                }).then(() => toast.success('Updated influence type.'))
+              }
+            />
+            <BaseProfileCard
+              userId={influenceData.influenced_to}
+              className={`${editable ? styles.editable : ''}`}
+            />
+          </div>
+          <EditableDescription
+            className={styles.description}
+            label={'Description textarea'}
+            description={influenceData.description || ''}
+            editable={editable && !isPending}
+            placeholder={'Describe your influence here.'}
+            onChange={(e) =>
+              updateInfluenceDebounce({
+                ...influenceData,
+                description: e,
+              })
+            }
+            statusText={{
+              loading: 'Submitting influence description.',
+              error: 'Could not update influence description.',
+              success: 'Influence description updated.',
+            }}
+          />
+          {false && (
+            <div className={styles.maps}>
+              <h4>Featured Maps</h4>
+              <MapCarousel mapList={influenceData.beatmaps} />
+            </div>
+          )}
+        </div>
+      </>
+    );
+  },
+);
+
+InfluenceElement.displayName = 'InfluenceElement';
 
 export default InfluenceElement;

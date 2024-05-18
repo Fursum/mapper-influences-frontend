@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 
 type Props = { color?: string; className?: string };
 const Arrow: FC<Props> = ({ color = "var(--textColor)", className }) => {

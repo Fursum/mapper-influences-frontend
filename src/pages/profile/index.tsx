@@ -1,32 +1,23 @@
-import { NextPage } from "next";
-import ProfilePage from "@components/PageComponents/ProfilePage";
-import { User } from "@libs/types/user";
-
+import ProfilePage from '@components/PageComponents/ProfilePage';
+import useAuth from '@hooks/useAuth';
+import { useCurrentUser } from '@services/user';
+import type { NextPage } from 'next';
+import Head from 'next/head';
 
 const MapperPage: NextPage = () => {
+  useAuth();
+
+  const { data: currentUser } = useCurrentUser();
+
   return (
     <>
-      <ProfilePage userData={userData} editable />
+      <Head>
+        <meta name="description" content={'Your own profile page.'} />
+        <title>{`${currentUser?.username} - Mapper Influences`}</title>
+      </Head>
+      <ProfilePage />
     </>
   );
 };
 
 export default MapperPage;
-
-const userData: User = {
-    description: "",
-    details: {
-      followerCount: 1,
-      graveyardCount: 1,
-      lovedCount: 0,
-      pendingCount: 1,
-      rankedCount: 0,
-      subCount: 2,
-    },
-    id: 12345,
-    influences: [],
-    maps: [],
-    mentions: [],
-    username: "Skytuna",
-    avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
-  };

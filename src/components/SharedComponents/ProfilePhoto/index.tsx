@@ -1,21 +1,35 @@
-import { FC } from "react";
-import styles from "./style.module.scss";
+import type { DetailedHTMLProps, FC, HTMLAttributes } from 'react';
+
+import styles from './style.module.scss';
 
 type Props = {
   photoUrl?: string;
-  size: "md" | "lg" | "xl";
+  size: 'md' | 'lg' | 'xl';
   className?: string;
   circle?: boolean;
+  loading?: boolean;
+  parentProps?: DetailedHTMLProps<
+    HTMLAttributes<HTMLDivElement>,
+    HTMLDivElement
+  >;
 };
 
-const ProfilePhoto: FC<Props> = ({ photoUrl, size, className, circle }) => {
+const ProfilePhoto: FC<Props> = ({
+  photoUrl,
+  size,
+  className,
+  circle,
+  loading,
+  parentProps,
+}) => {
   return (
     <div
+      {...parentProps}
       className={`${styles.wrapper} ${styles[size]} ${className} ${
-        circle ? styles.circle : ""
-      }`}
+        circle ? styles.circle : ''
+      } ${loading ? styles.loading : ''}`}
     >
-      <img src={photoUrl || "/defaultAvatar.png"} alt="Avatar Image" />
+      {!loading && <img src={photoUrl || '/defaultAvatar.png'} alt="avatar" />}
     </div>
   );
 };

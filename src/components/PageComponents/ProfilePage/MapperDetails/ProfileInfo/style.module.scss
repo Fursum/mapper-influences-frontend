@@ -13,24 +13,28 @@
     gap: $spacing / 2;
     margin-left: $spacing;
 
+    .title {
+      margin-top: -$spacing / 4;
+      margin-bottom: $spacing / 4;
+    }
+
     .mapperName {
       position: relative;
       display: flex;
-      height: 4rem;
-      font-weight: 700;
+      width: 21rem;
+      height: 3rem;
+
+      font-family: 'Comfortaa Variable';
+      font-weight: 800;
       font-size: 4rem;
+      line-height: 75%;
+
       margin-left: -0.25rem;
       margin-top: 0.5rem;
-      line-height: 75%;
-      width: 21rem;
     }
 
     .mapperName:hover {
       text-decoration: underline;
-    }
-
-    .title {
-      text-align: center;
     }
   }
 
@@ -53,6 +57,26 @@
         justify-content: center;
         margin-top: $spacing;
       }
+    }
+  }
+}
+
+.skeleton {
+  .rightSide {
+    .mapperName {
+      @extend %skeleton;
+      width: 15rem;
+      margin-left: 0;
+    }
+    .title {
+      @extend %skeleton;
+      width: 10rem;
+      height: 1rem;
+    }
+    .addUser {
+      @extend %skeleton;
+      width: 14rem;
+      height: 3.5rem;
     }
   }
 }

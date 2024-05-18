@@ -1,0 +1,57 @@
+@import '/src/styles/variables/fonts';
+
+.featuredMaps {
+  min-width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  > h3 {
+    text-align: center;
+    margin-bottom: $spacing / 2;
+
+    // Add button
+    > button {
+      width: 1rem;
+      height: 1rem;
+      padding: 0rem;
+      margin-left: $spacing / 4;
+      font-size: 0.75rem;
+      transform: translateY(-0.25rem);
+    }
+  }
+}
+
+.modal {
+  > h2 {
+    font-size: 1.5rem;
+    margin-top: 0;
+  }
+
+  h4 {
+    margin-bottom: 0;
+  }
+
+  .preview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .error {
+      color: $color-danger;
+      font-family: $inter;
+      font-weight: 400;
+    }
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: $spacing;
+    gap: $spacing;
+
+    > button {
+      width: 5rem;
+    }
+  }
+}

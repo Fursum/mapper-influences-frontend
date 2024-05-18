@@ -10,15 +10,28 @@
   padding: $spacing;
   resize: vertical;
 
+  box-shadow: var(--contentShadow);
+
   &.editable {
     &:focus-within,
     &:focus-visible,
     &:focus {
       outline: 0.1rem solid $color-primary;
     }
+    box-shadow: var(--cardShadow);
   }
 
   &.editable:hover {
     background-color: $color-background-card-hover;
+    box-shadow: var(--cardShadowHover);
+  }
+
+  &::placeholder {
+    font-family: 'Inter Variable';
+    color: $color-text-faded;
+  }
+
+  @media screen and (max-width: $responsive-breakpoint) {
+    max-width: 30rem;
   }
 }

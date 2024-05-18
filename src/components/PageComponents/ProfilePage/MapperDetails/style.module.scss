@@ -3,7 +3,6 @@
   flex-wrap: wrap;
   justify-content: space-around;
   gap: $spacing;
-  width: 100%;
 
   > div {
     flex-basis: 0%;
@@ -11,8 +10,8 @@
   }
 
   .info {
-    max-width: 35rem;
-    min-width: 35rem;
+    max-width: 32rem;
+    min-width: 32rem;
   }
 
   .bio {
@@ -22,9 +21,17 @@
     display: flex;
     flex-direction: column;
     min-width: 25rem;
+    width: $card-width * 1.5 + $spacing / 2;
     max-width: calc($card-width * 3 + $spacing);
     min-height: 100%;
     flex-grow: 1;
+
+    &.loading {
+      .desc {
+        @extend %skeleton;
+        color: transparent;
+      }
+    }
 
     > h4 {
       margin-block: $spacing/2;
@@ -36,11 +43,16 @@
       flex-grow: 1;
       flex-shrink: 1;
       min-height: 10rem;
+
+      @media screen and (max-width: $responsive-breakpoint) {
+        display: flex;
+        justify-content: center;
+      }
     }
   }
 
   @media screen and (max-width: ($responsive-breakpoint / 2)) {
-    .info{
+    .info {
       min-width: 15rem;
       flex-basis: 100%;
     }

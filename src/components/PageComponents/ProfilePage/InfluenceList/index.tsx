@@ -1,29 +1,39 @@
-import React, { FC } from "react";
-import { Influence } from "@libs/types/influence";
+import type { FC } from 'react';
 
-import styles from "./style.module.scss";
-import InfluenceElement from "./InfluenceElement";
+import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { useGetInfluences } from '@services/influence';
 
-const InfluenceList: FC<{ influences: Influence[]; editable?: boolean }> = ({
-  influences,
-  editable,
-}) => {
-  const InfluenceCards = influences.map((influence) => (
+import InfluenceElement from './InfluenceElement';
+
+import styles from './style.module.scss';
+
+const InfluenceList: FC<{
+  userId?: string | number;
+  open?: boolean;
+}> = ({ userId, open }) => {
+  const editable = !userId;
+
+  const { data: influences } = useGetInfluences(userId);
+  const [animateRef] = useAutoAnimate({ easing: 'ease-out', duration: 200 });
+
+  const InfluenceCards = influences?.map((influence) => (
     <InfluenceElement
-      key={influence.profileData.id}
+      key={influence.influenced_to}
       influenceData={influence}
       editable={editable}
     />
   ));
 
   return (
-    <div className={styles.mapperInfluences}>
-      <h2>Influenced By</h2>
-      <div className={styles.scrollWrapper}>
+    <div
+      className={styles.mapperInfluences}
+      style={!open ? { display: 'none' } : {}}
+    >
+      <div className={styles.scrollWrapper} ref={animateRef}>
         {InfluenceCards}
-        {influences.length === 0 && (
+        {!influences?.length && (
           <span>
-            {`This person is unique!`}
+            {'This person is unique!'}
             <br />
             {`...Or they haven't added anyone yet.`}
           </span>

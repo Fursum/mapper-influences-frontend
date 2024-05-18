@@ -1,37 +1,134 @@
-.addUser {
+.addUser,
+.removeUser {
   .icon {
     width: 2rem;
     height: 2rem;
   }
 
-  isolation: isolate;
+  // Fix for default behavior
+  &:hover:not(:disabled) {
+    background-color: transparent;
+  }
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: $spacing;
 
-  background: linear-gradient(to right, $color-secondary, $color-primary);
-
   outline: none;
-
-  border-radius: $border-radius;
+  border-radius: $border-radius * 2;
   padding-inline: $spacing * 2;
   padding-block: $spacing;
 
   > span {
     font-size: 1.5rem;
+    line-height: 100%;
     font-weight: 700;
-    z-index: 1;
+  }
+}
+
+.addUser {
+  background: linear-gradient(to right, $color-secondary-bg, $color-primary-bg);
+  // use text gradient
+
+  // Gradient border
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -0.2rem;
+    border-radius: $border-radius * 3;
+    padding: 0.25rem;
+    background: linear-gradient(to right, $color-secondary, $color-primary);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
+  &.light > span {
+    background: linear-gradient(to right, $color-secondary, $color-primary);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  > span {
     color: $white;
   }
 
-  &::after {
-    position: absolute;
-    content: "";
-    inset: $spacing / 8;
-    border-radius: $border-radius / 2;
-    background-color: $color-background;
-    opacity: 0.05;
+  &:hover {
+    background: linear-gradient(to right, $color-secondary, $color-primary);
+    > span {
+      background-clip: unset;
+      background: unset;
+      -webkit-text-fill-color: unset;
+    }
+  }
+}
+
+.removeUser {
+  color: $color-danger;
+  background-color: $color-danger-bg;
+  outline: 0.25rem solid $color-danger;
+
+  &:hover,
+  &:focus,
+  &:focus-within,
+  &:focus-visible {
+    &:not(:disabled) {
+      background-color: $color-danger;
+      color: $color-background;
+    }
+  }
+}
+
+.modal {
+  > form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing;
+    width: 30rem;
+
+    .influenceType,
+    > textarea,
+    .buttons {
+      animation: slideIn 0.3s ease-out both;
+    }
+
+    .influenceType {
+      top: $spacing;
+      left: 0;
+      right: 0;
+      margin: 0;
+      margin-inline: auto;
+      animation-delay: 0.1s;
+    }
+
+    > textarea {
+      margin-top: 1.5rem + $spacing * 2;
+      height: 10rem;
+      animation-delay: 0.15s;
+    }
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: $spacing;
+    animation-delay: 0.2s;
+
+    > button {
+      width: 6rem;
+    }
+  }
+}
+
+@keyframes slideIn {
+  0% {
+    transform: translateY(-1rem);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
   }
 }

@@ -1,21 +1,24 @@
-import { FC } from "react";
-import { UserBase } from "@libs/types/user";
-import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
+import type { FC } from 'react';
 
-import styles from "./style.module.scss";
+import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
+import type { UserExtended } from 'osu-web.js';
 
-type Props = { mentions: UserBase[] };
-const MentionList: FC<Props> = ({ mentions }) => {
+import styles from './style.module.scss';
+
+type Props = { mentions: UserExtended[]; open?: boolean };
+const MentionList: FC<Props> = ({ mentions, open }) => {
   return (
-    <div className={styles.mentionList}>
-      <h2>Mentioned In</h2>
-
+    <div
+      className={styles.mentionList}
+      style={!open ? { display: 'none' } : {}}
+    >
       <div className={styles.mentionGrid}>
         {mentions.map((user) => (
-          <BaseProfileCard key={user.id} userData={user} />
+          <BaseProfileCard key={user.id} userId={user.id} />
         ))}
       </div>
-      {mentions.length === 0 && <span>{"No mentions :("}</span>}
+      <span>This feature is work in progress!</span>
+      {/* mentions.length === 0 && <span>{'No mentions :('}</span> */}
     </div>
   );
 };

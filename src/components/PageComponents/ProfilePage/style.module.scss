@@ -3,26 +3,84 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: $spacing * 2;
 
-  .doubleCol {
+  // Used in the wrapper under the buttons as well: "./InfluenceList/style.module.scss"
+  --max-width: 55rem;
+
+  .buttons {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    justify-content: space-around;
     width: 100%;
-    gap: $spacing;
+    max-width: var(--max-width);
 
-    > div {
-      @extend %contentBox;
-      height: 40rem;
-      flex-grow: 1;
-      flex-basis: 0;
+    margin-top: $spacing * 2;
+
+    > button {
+      position: relative;
+      font-size: 2rem;
+
+      border: none;
+      outline: none;
+      background-color: transparent;
+      color: $color-text-faded;
+
+      transition: color ease-in 100ms;
+
+      &:hover,
+      &:focus-visible {
+        background-color: transparent;
+        color: $color-text;
+
+        &::after {
+          transform: scaleX(0.1);
+        }
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        bottom: 0.1rem;
+        top: auto;
+        background-color: $color-primary;
+        height: 0.25rem;
+        transition: transform ease-in 100ms;
+        transform: scaleX(0);
+
+        border-radius: 999rem;
+      }
     }
+
+    .selected {
+      color: $color-text;
+
+      &::after {
+        transform: scaleX(1);
+      }
+
+      &:hover,
+      &:focus-visible {
+        &::after {
+          transform: scaleX(1);
+        }
+      }
+    }
+  }
+
+  .content {
+    margin-block: $spacing / 2;
+
+    --height: 40rem;
+    width: 100%;
+    min-height: var(--height);
   }
 }
 
-@media screen and (max-width: $responsive-breakpoint) {
-  .profilePage .doubleCol > div {
-    flex-basis: 100%;
+@keyframes barWidth {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
   }
 }

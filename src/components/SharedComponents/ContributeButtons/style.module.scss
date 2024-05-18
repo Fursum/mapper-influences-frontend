@@ -1,0 +1,44 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: spacing;
+}
+
+.buttons {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $spacing;
+  gap: 2px; // to match the outline overlap
+}
+
+.button {
+  padding: $spacing;
+  border-radius: $border-radius;
+  outline: 2px solid $color-button-outline;
+  background-color: var(--buttonBg-alt);
+
+  &:not(:first-of-type) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  &:first-of-type {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .icon {
+    width: 5rem;
+    height: 5rem;
+  }
+
+  &:hover,
+  &:focus {
+    --buttonText-alt: var(--bgColor-1);
+    background-color: $color-button-outline;
+  }
+}

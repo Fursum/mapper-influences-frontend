@@ -1,10 +1,11 @@
-import { FC } from "react";
-import { UserBase } from "@libs/types/user";
+import type { FC } from 'react';
 
-import styles from "./style.module.scss";
-import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
+import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
+import type { UserCompact } from 'osu-web.js';
 
-const Results: FC<{ results: UserBase[]; length?: number }> = ({
+import styles from './style.module.scss';
+
+const Results: FC<{ results: UserCompact[]; length?: number }> = ({
   results,
   length = 3,
 }) => {
@@ -13,7 +14,7 @@ const Results: FC<{ results: UserBase[]; length?: number }> = ({
       {!!results.length && <h4>Matching users:</h4>}
       {!results.length && <h4>No users found.</h4>}
       {results.slice(0, length).map((user) => (
-        <BaseProfileCard userData={user} key={user.id} />
+        <BaseProfileCard userId={user.id} key={user.id} />
       ))}
     </div>
   );

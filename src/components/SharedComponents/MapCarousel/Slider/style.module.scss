@@ -1,0 +1,48 @@
+.embla {
+  width: 100%;
+
+  .viewport {
+    position: relative;
+    height: max-content;
+
+    overflow: hidden;
+
+    // Embla container
+    > div {
+      display: flex;
+      touch-action: pan-y pinch-zoom;
+
+      transition: transform 0.1s ease-out;
+
+      // Wrapper for every card
+      .slide {
+        position: relative;
+        margin-left: $spacing / 2;
+
+        flex: 0 0 $card-width;
+
+        &:nth-child(1) {
+          margin-left: 0;
+        }
+        //Card
+        > a {
+        }
+      }
+
+      .slot {
+        width: $card-width;
+        height: $card-height;
+        border-radius: $border-radius;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        border: 2px solid $color-text;
+        opacity: 0.5;
+
+        user-select: none;
+      }
+    }
+  }
+}

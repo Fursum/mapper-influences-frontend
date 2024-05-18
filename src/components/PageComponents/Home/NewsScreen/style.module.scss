@@ -1,5 +1,4 @@
 .newsScreen {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -7,7 +6,6 @@
   gap: $spacing;
 
   .double {
-    position: relative;
     display: flex;
     gap: inherit;
     height: 100%;

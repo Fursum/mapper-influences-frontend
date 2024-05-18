@@ -1,81 +1,114 @@
-import { FC, useEffect, useMemo } from "react";
-import { useRouter } from "next/router";
-import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
-import { osuBaseUrl } from "@libs/consts/urls";
-import { UserBase } from "@libs/types/user";
-import AddUserButton from "../AddUserButton";
-import AwesomeDebouncePromise from "awesome-debounce-promise";
-const textFit = require("textfit");
+import { type FC, useEffect, useMemo, useRef } from 'react';
 
-import styles from "./style.module.scss";
+import ProfilePhoto from '@components/SharedComponents/ProfilePhoto';
+import { OSU_BASE_URL } from '@libs/consts/urls';
+import { useGetInfluences } from '@services/influence';
+import { useFullUser } from '@services/user';
+import AwesomeDebouncePromise from 'awesome-debounce-promise';
+
+import AddUserButton from '../AddUserButton';
+
+import styles from './style.module.scss';
+
+const textFit = require('textfit');
 
 type Props = {
-  profileData: UserBase;
+  userId?: string | number;
 };
 
-const ProfileInfo: FC<Props> = ({ profileData }) => {
-  const router = useRouter();
-  const ownProfile = useMemo(() => {
-    return router.asPath === "/profile";
-  }, [router]);
+const ProfileInfo: FC<Props> = ({ userId }) => {
+  const ownProfile = !userId;
 
-  const runFitText = () =>
-    textFit(document.getElementsByClassName(styles.mapperName));
+  const { data: osuData, isLoading } = useFullUser(userId?.toString());
+  const { data: currentUserInfluences } = useGetInfluences();
+
+  const isAlreadyAdded = useMemo(() => {
+    if (!currentUserInfluences) return false;
+    return currentUserInfluences.some(
+      (influence) => influence.influenced_to.toString() === userId?.toString(),
+    );
+  }, [currentUserInfluences, userId]);
+
+  const nameRef = useRef(null);
 
   // Fit text to card on resize and on mount
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <ref changes on data>
   useEffect(() => {
+    if (!nameRef.current) return;
+    const runFitText = () => textFit(nameRef.current);
+    const debounceFitText = AwesomeDebouncePromise(runFitText, 50);
+
     document.fonts.ready.then(() => runFitText());
-
-    const debounceFitText = AwesomeDebouncePromise(
-      runFitText,
-      //Add random delay to updates
-      50 + Math.random() * 15
-    );
-    window.addEventListener("resize", debounceFitText);
+    window.addEventListener('resize', debounceFitText);
     return () => {
-      window.removeEventListener("resize", debounceFitText);
+      window.removeEventListener('resize', debounceFitText);
     };
-  }, []);
+  }, [osuData]);
 
-  const renderGroup = () => {
-    if (!profileData.groups?.length) return <></>;
+  const UserGroup = () => {
+    if (!osuData?.groups?.length) return <></>;
+
+    // If the name ends with an 's', cut it off
+    let name = osuData.groups[0].name;
+    if (name.endsWith('s')) name = name.slice(0, -1);
+
     return (
       <div
         className={styles.title}
-        style={{ color: profileData.groups[0].colour }}
+        style={{ color: osuData.groups[0].colour || 'inherit' }}
       >
-        {profileData.groups[0].name}
+        {name}
       </div>
     );
   };
+
+  if (isLoading)
+    return (
+      <div className={`${styles.skeleton} ${styles.profileInfo}`}>
+        <ProfilePhoto
+          loading={true}
+          size="xl"
+          circle
+          className={styles.avatar}
+        />
+        <div className={styles.rightSide}>
+          <div className={styles.mapperName} ref={nameRef} />
+          <div className={styles.title} />
+          {!ownProfile && <div className={styles.addUser} />}
+        </div>
+      </div>
+    );
+
   return (
     <div className={styles.profileInfo}>
       <a
-        href={`${osuBaseUrl}profile/${profileData.id}`}
+        href={`${OSU_BASE_URL}users/${osuData?.id}`}
         target="_blank"
         rel="noreferrer"
       >
         <ProfilePhoto
-          photoUrl={profileData.avatarUrl}
+          photoUrl={osuData?.avatar_url}
+          loading={isLoading}
           size="xl"
-          className={styles.avatar}
           circle
+          className={styles.avatar}
         />
       </a>
       <div className={styles.rightSide}>
         <a
-          href={`${osuBaseUrl}profile/${profileData.id}`}
+          href={`${OSU_BASE_URL}users/${osuData?.id}`}
           target="_blank"
           rel="noreferrer"
         >
-          <div className={styles.mapperName}>{profileData.username}</div>
+          <div className={styles.mapperName} ref={nameRef}>
+            {osuData?.username}
+          </div>
         </a>
-        {renderGroup()}
+        <UserGroup />
         {!ownProfile && (
           <AddUserButton
-            onClick={() => {
-              //TODO: Add service
-            }}
+            userId={userId}
+            action={isAlreadyAdded ? 'remove' : 'add'}
           />
         )}
       </div>

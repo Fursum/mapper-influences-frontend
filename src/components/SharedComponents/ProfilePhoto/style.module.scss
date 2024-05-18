@@ -7,9 +7,47 @@ $xl-size: calc($md-size * 6);
   position: relative;
   aspect-ratio: 1;
   > img {
+    width: 100%;
+    height: 100%;
     max-width: 100%;
     max-height: 100%;
-    object-fit: contain;
+    object-fit: cover;
+  }
+}
+
+.loading {
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    filter: blur(1px);
+  }
+
+  // Centered square to simulate spinning border
+  &::before {
+    width: 2rem;
+    margin: auto;
+    background: $color-button-outline;
+    animation: spin 2s ease-in-out alternate infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  // Moved background to ::after to bypass mask size for border
+  &::after {
+    inset: 0.2rem; // inset to allow for border visibility
+    border-radius: inherit;
+    background-image: url('https://osu.ppy.sh/images/layout/avatar-guest.png');
+    background-size: cover;
+    border: 0.05rem solid $color-background;
   }
 }
 
@@ -21,16 +59,40 @@ $xl-size: calc($md-size * 6);
   min-height: $md-size;
   max-height: $md-size;
   min-width: $md-size;
+
+  &::before {
+    width: 2rem;
+  }
+
+  &::after {
+    filter: blur(2px);
+  }
 }
 
 .lg {
   min-height: $lg-size;
   max-height: $lg-size;
   min-width: $lg-size;
+
+  &::before {
+    width: 3rem;
+  }
+
+  &::after {
+    filter: blur(3px);
+  }
 }
 
 .xl {
   min-height: $xl-size;
   max-height: $xl-size;
   min-width: $xl-size;
+
+  &::before {
+    width: 4rem;
+  }
+
+  &::after {
+    filter: blur(4px);
+  }
 }
