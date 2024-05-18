@@ -18,7 +18,7 @@ const InfluenceList: FC<{
 
   const InfluenceCards = influences?.map((influence) => (
     <InfluenceElement
-      key={influence.from_id}
+      key={influence.influenced_by}
       influenceData={influence}
       editable={editable}
     />

@@ -1,20 +1,32 @@
-import { useCurrentUser } from '@hooks/useUser';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import type { UserExtended } from 'osu-web.js';
+
+import type { BeatmapId } from './influence';
 
 export type CurrentUserResponse = {
   id: number;
   username: string;
   avatar_url: string;
+  have_ranked_map: boolean;
+  bio: string;
+  beatmaps: BeatmapId[];
 };
 
 export function getCurrentUser() {
-  return axios.get<CurrentUserResponse>(
-    `${process.env.NEXT_PUBLIC_API_URL}/users/me`,
-    { withCredentials: true },
-  );
+  return axios
+    .get<CurrentUserResponse>(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
+      withCredentials: true,
+    })
+    .then((res) => res.data);
 }
+
+export const useCurrentUser = () =>
+  useQuery({
+    queryKey: ['currentUser'],
+    queryFn: getCurrentUser,
+    retry: 1,
+  });
 
 export function getFullUser(userId: string) {
   return axios.get<
@@ -46,19 +58,16 @@ export const useFullUser = (userId?: string) => {
   });
 };
 
-type UserBioResponse = {
-  id: number;
-  username: string;
-  avatar_url: string;
-  bio: string;
-};
-
-export const getUserBio = (userId: string) => {
-  return axios.get<UserBioResponse>(
-    `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`,
-    { withCredentials: true },
-  );
-};
+export function getUserBio(userId: string) {
+  return axios
+    .get<CurrentUserResponse>(
+      `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`,
+      {
+        withCredentials: true,
+      },
+    )
+    .then((res) => res.data);
+}
 
 export const useUserBio = (userId?: string) => {
   const { data: currentUser, isLoading } = useCurrentUser();
@@ -69,28 +78,35 @@ export const useUserBio = (userId?: string) => {
     queryKey: ['userBio', userId],
     enabled: !isLoading,
     queryFn: () => {
-      if (!id) throw new Error('No user id provided and no current user found');
+      if (!id) return currentUser;
 
-      return getUserBio(id).then((res) => res.data);
+      return getUserBio(id);
     },
   });
 };
 
-export const updateUserBio = (bio: string) => {
+export function updateUserDescription(bio: string) {
   return axios.post(
     `${process.env.NEXT_PUBLIC_API_URL}/users/bio`,
     { bio },
-    { withCredentials: true },
+    {
+      withCredentials: true,
+    },
   );
-};
+}
 
-export const useUpdateUserBio = () => {
+export const useDescriptionMutation = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: updateUserBio,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userBio', undefined] });
+    mutationFn: updateUserDescription,
+    onSuccess: (_, variables) => {
+      queryClient.setQueryData<CurrentUserResponse>(['currentUser'], (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          bio: variables,
+        };
+      });
     },
   });
 };

@@ -5,8 +5,8 @@ import EditableDescription from '@components/PageComponents/ProfilePage/Editable
 import InfluenceType from '@components/PageComponents/ProfilePage/InfluenceList/InfluenceType';
 import AddUserButton from '@components/PageComponents/ProfilePage/MapperDetails/AddUserButton';
 import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
-import { useCurrentUser } from '@hooks/useUser';
 import type { InfluenceResponse } from '@services/influence';
+import { useCurrentUser } from '@services/user';
 import { useGlobalTooltip } from '@states/globalTooltip';
 
 import styles from './style.module.scss';
@@ -33,12 +33,13 @@ const TutorialScreen: FC<Props> = ({ children }) => {
   const { data: user } = useCurrentUser();
 
   const influenceData: InfluenceResponse = {
-    info: 'Edit here to give details.',
-    modified_at: new Date().getDate(),
-    created_at: new Date().getDate(),
-    from_id: user?.id || 0,
-    to_id: user?.id || 0,
-    influence_level: 1,
+    description: 'Edit here to give details.',
+    modified_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+    influenced_by: user?.id || 0,
+    influenced_to: user?.id || 0,
+    type: 1,
+    beatmaps: [],
   };
 
   return (
@@ -77,7 +78,7 @@ const TutorialScreen: FC<Props> = ({ children }) => {
           <div className={styles.profileSide}>
             <InfluenceType editable influenceData={influenceData} />
             <BaseProfileCard
-              userId={influenceData.from_id}
+              userId={influenceData.influenced_by}
               className={styles.card}
             />
           </div>

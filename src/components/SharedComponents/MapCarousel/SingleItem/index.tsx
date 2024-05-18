@@ -1,13 +1,16 @@
-import type { FC, } from 'react';
+import type { FC } from 'react';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
+
+import type { BeatmapId } from '@services/influence';
+import { useMapData } from '@services/maps';
 
 import MapCard from '../../MapCard';
 
 import styles from './style.module.scss';
 
 const SingleItemCarousel: FC<{
-  mapList: any[];
+  mapList: BeatmapId[];
   className?: string;
   editable?: boolean;
 }> = ({ mapList, editable, className = '' }) => {
@@ -20,8 +23,8 @@ const SingleItemCarousel: FC<{
       showThumbs={false}
     >
       {mapList.map((item) => (
-        <div key={item.beatmapset.id} className={styles.slide}>
-          <MapCard map={item} />
+        <div key={item.id} className={styles.slide}>
+          <MapCardWrapper id={item.id} isSet={item.is_beatmapset} />
         </div>
       ))}
     </Carousel>
@@ -29,3 +32,12 @@ const SingleItemCarousel: FC<{
 };
 
 export default SingleItemCarousel;
+
+const MapCardWrapper: FC<{ id: number | string; isSet: boolean }> = ({
+  id,
+  isSet,
+}) => {
+  const { data: map } = useMapData(id, isSet ? 'set' : 'diff');
+
+  return <MapCard map={map} />;
+};

@@ -22,12 +22,10 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
   const { data: osuData, isLoading } = useFullUser(userId?.toString());
   const { data: currentUserInfluences } = useGetInfluences();
 
-  const profileData = {} as any;
-
   const isAlreadyAdded = useMemo(() => {
     if (!currentUserInfluences) return false;
     return currentUserInfluences.some(
-      (influence) => influence.from_id.toString() === userId?.toString(),
+      (influence) => influence.influenced_by.toString() === userId?.toString(),
     );
   }, [currentUserInfluences, userId]);
 
@@ -45,7 +43,7 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
     return () => {
       window.removeEventListener('resize', debounceFitText);
     };
-  }, [profileData]);
+  }, [osuData]);
 
   const UserGroup = () => {
     if (!osuData?.groups?.length) return <></>;

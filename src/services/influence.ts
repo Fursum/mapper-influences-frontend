@@ -1,25 +1,30 @@
 import { toast } from 'react-toastify';
 
-import { useCurrentUser } from '@hooks/useUser';
-import { DUMMY_INFLUENCES } from '@libs/consts/dummyUserData';
-import { mockAxiosReject, mockRequest } from '@libs/functions';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
+import { useCurrentUser } from './user';
+
+export type BeatmapId = {
+  id: number;
+  is_beatmapset: boolean;
+};
+
 export type InfluenceResponse = {
-  from_id: number;
-  to_id: number;
-  influence_level: number;
-  info?: string;
-  created_at: any;
-  modified_at: any;
+  influenced_by: number;
+  influenced_to: number;
+  created_at: string;
+  modified_at: string;
+  type: number;
+  description: string;
+  beatmaps: BeatmapId[];
 };
 
 export async function getInfluences(userId: string | number) {
-  if (process.env.NODE_ENV !== 'production') return mockRequest([], 1000);
-
-  const searchUrl = `/api/v1/influence/get/${userId}`;
-  return axios.get<InfluenceResponse[]>(searchUrl).then((res) => res.data);
+  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/get_influences/${userId}`;
+  return axios
+    .get<InfluenceResponse[]>(searchUrl, { withCredentials: true })
+    .then((res) => res.data);
 }
 
 export const useGetInfluences = (userId?: string | number) => {
@@ -58,13 +63,15 @@ export const useAddInfluenceMutation = () => {
       queryClient.cancelQueries({
         queryKey: key,
       });
-      queryClient.setQueryData(key, (old: InfluenceResponse[] | undefined) => {
-        const newInfluence = {
-          from_id: user?.id || 0,
-          influence_level: variables.type,
-          info: variables.description,
-          created_at: new Date(),
-          modified_at: new Date(),
+      queryClient.setQueryData<InfluenceResponse[]>(key, (old) => {
+        const newInfluence: InfluenceResponse = {
+          influenced_by: user?.id || 0,
+          influenced_to: user?.id || 0,
+          type: variables.type,
+          description: variables.description,
+          created_at: new Date().toISOString(),
+          modified_at: new Date().toISOString(),
+          beatmaps: [],
         };
         if (!old) return [newInfluence];
         return [...old, newInfluence];
@@ -80,11 +87,8 @@ export const useAddInfluenceMutation = () => {
 };
 
 export async function deleteInfluence(from_id: string | number) {
-  // Mock data for dev
-  if (process.env.NODE_ENV !== 'production') return mockRequest({}, 1000);
-
-  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/influence/delete/${from_id}`;
-  return await axios.delete(searchUrl);
+  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/remove_influence/${from_id}`;
+  return await axios.post(searchUrl);
 }
 
 export const useDeleteInfluenceMutation = () => {
@@ -100,9 +104,9 @@ export const useDeleteInfluenceMutation = () => {
       });
       queryClient.setQueryData(key, (old: InfluenceResponse[] | undefined) => {
         if (!old) return [];
-        return old.filter((influence) => influence.from_id !== variables);
+        return old.filter((influence) => influence.influenced_by !== variables);
       });
-      toast.success('Influence removed successfully.');
+      toast.success('Influence removed.');
     },
     onError: () => toast.error('Failed to remove influence.'),
     onSettled: () =>
@@ -111,29 +115,3 @@ export const useDeleteInfluenceMutation = () => {
       }),
   });
 };
-
-export type EditInfluenceInfoRequest = {
-  from_id: number;
-  info?: string;
-};
-
-export async function editInfluenceInfo(body: EditInfluenceInfoRequest) {
-  // Mock data for dev
-  if (process.env.NODE_ENV !== 'production') return mockRequest({}, 1000);
-
-  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/influence/update/info`;
-  return await axios.post(searchUrl, body);
-}
-
-export type EditInfluenceLevelRequest = {
-  from_id: number;
-  level: number;
-};
-
-export async function editInfluenceLevel(body: EditInfluenceLevelRequest) {
-  // Mock data for dev
-  if (process.env.NODE_ENV !== 'production') return mockAxiosReject({}, 1000);
-
-  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/influence/update/level`;
-  return await axios.post(searchUrl, body);
-}

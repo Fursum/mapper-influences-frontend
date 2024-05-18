@@ -2,8 +2,7 @@ import { useEffect } from 'react';
 
 import ProfilePage from '@components/PageComponents/ProfilePage';
 import useAuth from '@hooks/useAuth';
-import { useCurrentUser } from '@hooks/useUser';
-import { useFullUser } from '@services/user';
+import { useCurrentUser, useFullUser } from '@services/user';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -38,7 +37,7 @@ const MapperPage: NextPage = () => {
       )}
       {!mapperId && (
         <Head>
-          <meta name="description" content={`Your own profile page.`} />
+          <meta name="description" content={'Your own profile page.'} />
           <title>{`${currentUser?.username} - Mapper Influences`}</title>
         </Head>
       )}

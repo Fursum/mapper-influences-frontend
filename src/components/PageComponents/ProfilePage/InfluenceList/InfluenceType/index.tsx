@@ -1,23 +1,24 @@
-import Modal from "@components/SharedComponents/Modal";
-import Arrow from "@components/SvgComponents/Arrow";
-import { convertToInfluence, InfluenceTypeEnum } from "@libs/enums";
-import {
-  deleteInfluence,
-  type InfluenceResponse,
-  useDeleteInfluenceMutation,
-} from "@services/influence";
-import { type FC, useRef, useState } from "react";
-import { toast } from "react-toastify";
-import { useOnClickOutside } from "usehooks-ts";
+import { type FC, useRef, useState } from 'react';
+import { toast } from 'react-toastify';
 
-import styles from "./style.module.scss";
+import Modal from '@components/SharedComponents/Modal';
+import Arrow from '@components/SvgComponents/Arrow';
+import { InfluenceTypeEnum, convertToInfluence } from '@libs/enums';
+import {
+  type InfluenceResponse,
+  deleteInfluence,
+  useDeleteInfluenceMutation,
+} from '@services/influence';
+import { useOnClickOutside } from 'usehooks-ts';
+
+import styles from './style.module.scss';
 
 type Props = {
   className?: string;
   editable?: boolean;
   influenceData?: InfluenceResponse;
   hideRemove?: boolean;
-  onChange?: (type: InfluenceTypeEnum) => Promise<any>;
+  onChange?: (type: InfluenceTypeEnum) => Promise<unknown>;
   noSubmitOnChange?: (type: InfluenceTypeEnum) => void;
 };
 
@@ -33,7 +34,7 @@ const InfluenceType: FC<Props> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<InfluenceTypeEnum>(
-    convertToInfluence(influenceData?.influence_level || 1)
+    convertToInfluence(influenceData?.type || 1),
   );
 
   const ref = useRef(null);
@@ -45,13 +46,13 @@ const InfluenceType: FC<Props> = ({
 
   const onRemove = () => {
     setIsLoading(true);
-    removeInfluence(influenceData?.from_id || 0, {
+    removeInfluence(influenceData?.influenced_by || 0, {
       onSettled: () => {
         setIsLoading(false);
         setIsModalOpen(false);
       },
     });
-    return deleteInfluence(influenceData?.from_id || 0).finally(() => {});
+    return deleteInfluence(influenceData?.influenced_by || 0).finally(() => {});
   };
 
   const handleChange = (newType: InfluenceTypeEnum) => {
@@ -62,14 +63,14 @@ const InfluenceType: FC<Props> = ({
       onChange(newType)
         .catch(() => {
           setSelectedType(selectedType);
-          toast.error("Failed to update influence level.");
+          toast.error('Failed to update influence level.');
         })
         .finally(() => setIsLoading(false));
     }
   };
 
-  const dropdownClass = `${styles.dropdown} ${isOpen ? styles.open : ""} ${
-    isLoading ? styles.disabled : ""
+  const dropdownClass = `${styles.dropdown} ${isOpen ? styles.open : ''} ${
+    isLoading ? styles.disabled : ''
   }`;
   if (editable)
     return (
@@ -77,13 +78,15 @@ const InfluenceType: FC<Props> = ({
         <Modal
           setShowModal={setIsModalOpen}
           showModal={isModalOpen}
-          className={`${styles.modal}`}>
+          className={`${styles.modal}`}
+        >
           <h4>Are you sure you want to delete this influence?</h4>
           <div>
             <button
               className="cancel"
               disabled={isLoading}
-              onClick={() => setIsModalOpen(false)}>
+              onClick={() => setIsModalOpen(false)}
+            >
               Cancel
             </button>
             <button className="danger" disabled={isLoading} onClick={onRemove}>
@@ -94,9 +97,13 @@ const InfluenceType: FC<Props> = ({
         <div
           className={`${dropdownClass} ${className}`}
           ref={ref}
-          onClick={() => !isLoading && setIsOpen((t) => !t)}>
+          onClick={() => !isLoading && setIsOpen((t) => !t)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') setIsOpen((t) => !t);
+          }}
+        >
           <span>
-            {selectedType}{" "}
+            {selectedType}{' '}
             <Arrow className={styles.arrow} color="var(--textColor)" />
           </span>
 
@@ -106,17 +113,19 @@ const InfluenceType: FC<Props> = ({
                 <button
                   key={option.value}
                   onClick={() => handleChange(option.label)}
-                  disabled={option.label === selectedType}>
+                  disabled={option.label === selectedType}
+                >
                   {option.label}
                 </button>
               ))}
               {!hideRemove && (
                 <button
-                  style={{ color: "red" }}
+                  style={{ color: 'red' }}
                   onClick={() => {
                     setIsOpen(false);
                     setIsModalOpen(true);
-                  }}>
+                  }}
+                >
                   Remove
                 </button>
               )}

@@ -5,7 +5,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import Tooltip from '@components/SharedComponents/Tooltip';
 import '@fontsource-variable/comfortaa';
 import '@fontsource-variable/inter';
-import { useCurrentUser } from '@hooks/useUser';
 import { useGlobalTheme } from '@states/theme';
 
 import Header from './Header';
@@ -17,8 +16,6 @@ type Props = {
 };
 
 const Layout: FC<Props> = ({ children }) => {
-  const { data: user } = useCurrentUser(); // Just to fetch the user data
-
   const { theme } = useGlobalTheme();
   return (
     <>

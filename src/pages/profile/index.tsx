@@ -1,8 +1,6 @@
-import { useEffect } from 'react';
-
 import ProfilePage from '@components/PageComponents/ProfilePage';
 import useAuth from '@hooks/useAuth';
-import { useCurrentUser } from '@hooks/useUser';
+import { useCurrentUser } from '@services/user';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 
@@ -14,7 +12,7 @@ const MapperPage: NextPage = () => {
   return (
     <>
       <Head>
-        <meta name="description" content={`Your own profile page.`} />
+        <meta name="description" content={'Your own profile page.'} />
         <title>{`${currentUser?.username} - Mapper Influences`}</title>
       </Head>
       <ProfilePage />
