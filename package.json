@@ -15,6 +15,7 @@
     "@fontsource-variable/inter": "^5.0.18",
     "@formkit/auto-animate": "^0.8.2",
     "@tanstack/react-query": "^5.36.2",
+    "@tanstack/react-query-devtools": "^5.36.2",
     "awesome-debounce-promise": "^2.1.0",
     "axios": "^1.6.8",
     "embla-carousel-react": "^8.0.4",

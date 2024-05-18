@@ -1,8 +1,16 @@
+import { toast } from 'react-toastify';
+
 import type { BeatmapResponse } from '@libs/types/IOsuApi';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  type Updater,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import axios from 'axios';
 
-import type { CurrentUserResponse } from './user';
+import type { BeatmapId } from './influence';
+import { type UserBioResponse, useCurrentUser } from './user';
 
 function getMapData({ id, isSet }: { isSet?: boolean; id: string | number }) {
   return axios
@@ -36,29 +44,92 @@ export function addMapToSelf({
 }) {
   return axios.post(
     `${process.env.NEXT_PUBLIC_API_URL}/users/add_beatmap`,
-    { mapId, is_beatmapset: isSet },
+    { id: mapId, is_beatmapset: isSet },
     { withCredentials: true },
   );
 }
 
 export const useAddMapToSelfMutation = () => {
+  const { data: currentUser } = useCurrentUser();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: addMapToSelf,
     onSuccess: (_, variables) => {
-      queryClient.setQueryData<CurrentUserResponse>(['currentUser'], (old) => {
+      const updater: Updater<
+        UserBioResponse | undefined,
+        UserBioResponse | undefined
+      > = (old) => {
         if (!old) return old;
         return {
           ...old,
           beatmaps: [
             ...old.beatmaps,
             {
-              id: Number(variables.mapId),
+              id: variables.mapId,
               is_beatmapset: !!variables.isSet,
             },
           ],
         };
+      };
+
+      queryClient.setQueryData<UserBioResponse>(
+        ['userBio', currentUser?.id.toString()],
+        updater,
+      );
+      queryClient.setQueryData<UserBioResponse>(['currentUser'], updater);
+
+      toast.success('Successfully added map');
+    },
+    onError: () => {
+      queryClient.refetchQueries({ queryKey: ['currentUser'] });
+      queryClient.refetchQueries({
+        queryKey: ['userBio', currentUser?.id.toString()],
       });
+
+      toast.error('Failed to add map');
+    },
+  });
+};
+
+export function deleteMapFromSelf(map: BeatmapId) {
+  return axios.delete(
+    `${process.env.NEXT_PUBLIC_API_URL}/users/remove_beatmap/${map.is_beatmapset ? 'set' : 'diff'}/${map.id}`,
+    { withCredentials: true },
+  );
+}
+
+export const useDeleteMapFromSelfMutation = () => {
+  const { data: currentUser } = useCurrentUser();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteMapFromSelf,
+    onSuccess: (_, variables) => {
+      const updater: Updater<
+        UserBioResponse | undefined,
+        UserBioResponse | undefined
+      > = (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          beatmaps: old.beatmaps.filter((b) => b.id !== variables.id),
+        };
+      };
+
+      queryClient.setQueryData<UserBioResponse>(
+        ['userBio', currentUser?.id.toString()],
+        updater,
+      );
+      queryClient.setQueryData<UserBioResponse>(['currentUser'], updater);
+
+      toast.success('Successfully deleted map');
+    },
+    onError: () => {
+      queryClient.refetchQueries({ queryKey: ['currentUser'] });
+      queryClient.refetchQueries({
+        queryKey: ['userBio', currentUser?.id.toString()],
+      });
+
+      toast.error('Failed to delete map');
     },
   });
 };

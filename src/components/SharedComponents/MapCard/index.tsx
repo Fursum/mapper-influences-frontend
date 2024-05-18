@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import { type FC, useState } from 'react';
 
 import {
   CatchIcon,
@@ -6,43 +6,57 @@ import {
   OsuIcon,
   TaikoIcon,
 } from '@components/SvgComponents/ModeIcons';
-import type { BeatmapResponse } from '@libs/types/IOsuApi';
+import type { BeatmapId } from '@services/influence';
+import { useMapData } from '@services/maps';
 import { useGlobalTooltip } from '@states/globalTooltip';
 
 import ProfilePhoto from '../ProfilePhoto';
 
 import styles from './style.module.scss';
 
-const MapCard: FC<{ map?: BeatmapResponse; diffId?: string | number }> = ({
-  map,
-  diffId,
-}) => {
+const MapCard: FC<{
+  map?: BeatmapId;
+  diffId?: string | number;
+  deleteFn?: (map: BeatmapId) => void;
+  loading?: boolean;
+}> = ({ map, diffId, deleteFn, loading }) => {
   const { activateTooltip } = useGlobalTooltip();
+  const [deleteConfirmation, setDeleteConfirmation] = useState(false);
 
-  if (!map) return <></>;
+  const { data: mapData } = useMapData(
+    map?.id,
+    map?.is_beatmapset ? 'set' : 'diff',
+  );
 
-  const diff = map.beatmaps?.find((b) => b.id === Number(diffId));
+  if (!mapData || !map?.id) return <></>;
 
-  const mapUrl = `https://osu.ppy.sh/beatmaps/${map.id}${
+  const diff = mapData.beatmaps?.find((b) => b.id === Number(diffId));
+
+  const mapUrl = `https://osu.ppy.sh/beatmaps/${mapData.id}${
     diff ? `#${diff.mode}/${diffId}` : ''
   }`;
 
-  const mapOwner = map.creator;
-  const ownerAvatar = map.related_users.find(
+  const mapOwner = mapData.creator;
+  const ownerAvatar = mapData.related_users.find(
     (user) => user.username === mapOwner,
   )?.avatar_url;
+  const canDelete = !!deleteFn;
 
   return (
     <a
       href={mapUrl}
       target={'_blank'}
       rel="noreferrer"
-      style={{ background: `url(${map.covers.cover})` }}
+      style={{
+        background: `url(${mapData.covers.cover})`,
+        // only allow hover if loading
+        pointerEvents: loading ? 'none' : 'auto',
+      }}
       className={styles.card}
     >
       <div className={styles.songInfo}>
-        <div className={styles.title}>{map.title}</div>
-        <div className={styles.artist}>{map.artist}</div>
+        <div className={styles.title}>{mapData.title}</div>
+        <div className={styles.artist}>{mapData.artist}</div>
       </div>
 
       {diff && (
@@ -60,6 +74,27 @@ const MapCard: FC<{ map?: BeatmapResponse; diffId?: string | number }> = ({
           onMouseEnter: (e) => activateTooltip(mapOwner, e.currentTarget),
         }}
       />
+      {canDelete && (
+        <button
+          className={`danger ${styles.delete}`}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!deleteConfirmation) {
+              setDeleteConfirmation(true);
+              setTimeout(() => setDeleteConfirmation(false), 3000);
+            } else deleteFn(map);
+          }}
+        >
+          x
+        </button>
+      )}
+      {deleteConfirmation && (
+        <div className={styles.confirmation}>
+          <span>Are you sure?</span>
+        </div>
+      )}
+      {loading && <div className={styles.loading} />}
     </a>
   );
 };

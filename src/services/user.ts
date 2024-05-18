@@ -4,7 +4,7 @@ import type { UserExtended } from 'osu-web.js';
 
 import type { BeatmapId } from './influence';
 
-export type CurrentUserResponse = {
+export type UserBioResponse = {
   id: number;
   username: string;
   avatar_url: string;
@@ -21,7 +21,7 @@ export function logoutRequest() {
 
 export function getCurrentUser() {
   return axios
-    .get<CurrentUserResponse>(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
+    .get<UserBioResponse>(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
       withCredentials: true,
     })
     .then((res) => res.data);
@@ -52,8 +52,8 @@ export const useFullUser = (userId?: string) => {
   const id = userId || currentUser?.id.toString();
 
   return useQuery({
-    queryKey: ['fullUser', userId],
-    enabled: !isLoading,
+    queryKey: ['fullUser', id],
+    enabled: !isLoading && !!id,
     queryFn: () => {
       if (!id) throw new Error('No user id provided and no current user found');
 
@@ -66,7 +66,7 @@ export const useFullUser = (userId?: string) => {
 
 export function getUserBio(userId: string) {
   return axios
-    .get<CurrentUserResponse>(
+    .get<UserBioResponse>(
       `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`,
       {
         withCredentials: true,
@@ -81,8 +81,8 @@ export const useUserBio = (userId?: string) => {
   const id = userId || currentUser?.id.toString();
 
   return useQuery({
-    queryKey: ['userBio', userId],
-    enabled: !isLoading,
+    queryKey: ['userBio', id],
+    enabled: !isLoading && !!id,
     queryFn: () => {
       if (!id) return currentUser;
 
@@ -106,7 +106,7 @@ export const useDescriptionMutation = () => {
   return useMutation({
     mutationFn: updateUserDescription,
     onSuccess: (_, variables) => {
-      queryClient.setQueryData<CurrentUserResponse>(['currentUser'], (old) => {
+      queryClient.setQueryData<UserBioResponse>(['currentUser'], (old) => {
         if (!old) return old;
         return {
           ...old,

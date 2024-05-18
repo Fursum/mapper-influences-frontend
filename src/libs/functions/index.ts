@@ -21,12 +21,16 @@ export async function mockAxiosReject<T>(
   throw error;
 }
 
-export function isNumber(value: string | number) {
-  if (typeof value === 'number' && !isNaN(value)) {
+export function isNumber(value: string | number, canBeEmpty = false) {
+  if (canBeEmpty && (value === '' || value === null)) {
+    return true;
+  }
+
+  if (typeof value === 'number' && !Number.isNaN(value)) {
     return true;
   }
   if (typeof value === 'string' && value.trim() !== '') {
-    return !isNaN(Number(value));
+    return !Number.isNaN(Number(value));
   }
   return false;
 }

@@ -26,15 +26,14 @@
       margin-top: 0;
     }
 
-    > h4 {
-      margin-bottom: $spacing / 2;
+    h4 {
+      margin-bottom: 0;
     }
 
     .preview {
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-bottom: $spacing;
 
       .error {
         color: $color-danger;
