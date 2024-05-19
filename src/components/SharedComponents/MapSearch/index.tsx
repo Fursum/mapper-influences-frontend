@@ -39,6 +39,11 @@ export const AddMapModalContents: FC<{
     if (mapResults.length) {
       setVisibleResults(mapResults.slice(0, 5));
     }
+
+    // Scroll up when new results are loaded
+    if (parentRef.current) {
+      parentRef.current.scrollTop = 0;
+    }
   }, [mapResults]);
 
   return (
