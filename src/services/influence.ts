@@ -77,6 +77,7 @@ export const useAddInfluenceMutation = () => {
         if (!old) return [newInfluence];
         return [...old, newInfluence];
       });
+      queryClient.invalidateQueries({ queryKey: ['leaderboards'] });
     },
     onSettled: () =>
       queryClient.invalidateQueries({
