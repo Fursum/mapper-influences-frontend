@@ -33,12 +33,14 @@ const InfluenceElement: FC<Props> = ({ influenceData, editable }) => {
   // Debounce the description update
   const updateInfluenceDebounce = AwesomeDebouncePromise(updateInfluence, 500);
 
-  const onDelete = (map: BeatmapId) => {
-    updateInfluence({
-      ...influenceData,
-      beatmaps: influenceData.beatmaps?.filter((b) => b.id !== map.id),
-    });
-  };
+  const onDelete = editable
+    ? (map: BeatmapId) => {
+        updateInfluence({
+          ...influenceData,
+          beatmaps: influenceData.beatmaps?.filter((b) => b.id !== map.id),
+        });
+      }
+    : undefined;
 
   return (
     <>
