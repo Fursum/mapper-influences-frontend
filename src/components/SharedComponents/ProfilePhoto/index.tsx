@@ -1,5 +1,7 @@
 import type { DetailedHTMLProps, FC, HTMLAttributes } from 'react';
 
+import { DEFAULT_AVATAR } from '@libs/consts';
+
 import styles from './style.module.scss';
 
 type Props = {
@@ -29,7 +31,7 @@ const ProfilePhoto: FC<Props> = ({
         circle ? styles.circle : ''
       } ${loading ? styles.loading : ''}`}
     >
-      {!loading && <img src={photoUrl || '/defaultAvatar.png'} alt="avatar" />}
+      {!loading && <img src={photoUrl || DEFAULT_AVATAR} alt="avatar" />}
     </div>
   );
 };
