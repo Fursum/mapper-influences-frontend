@@ -75,14 +75,19 @@ export const useAddInfluenceMutation = () => {
           beatmaps: [],
         };
         if (!old) return [newInfluence];
-        return [
-          ...old.filter(
-            (inf) =>
-              inf.influenced_to !== newInfluence.influenced_to &&
-              inf.influenced_by !== newInfluence.influenced_by,
-          ),
-          newInfluence,
-        ];
+
+        // If the influence exists, replace it
+        if (
+          old.some((inf) => inf.influenced_to === newInfluence.influenced_to)
+        ) {
+          return old.map((inf) =>
+            inf.influenced_to === newInfluence.influenced_to
+              ? newInfluence
+              : inf,
+          );
+        }
+
+        return [...old, newInfluence];
       });
       queryClient.invalidateQueries({ queryKey: ['leaderboards'] });
     },
