@@ -11,6 +11,7 @@
   width: $card-width;
   min-width: $card-width;
   height: $card-height;
+  min-height: $card-height;
   gap: $spacing;
   padding: $spacing/2;
 
@@ -58,6 +59,10 @@
       transform: translateX(-$spacing/4);
       backdrop-filter: blur(5px);
     }
+  }
+
+  .songInfo {
+    max-width: $card-width - $spacing / 2;
   }
 
   .artist {
