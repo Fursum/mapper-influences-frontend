@@ -67,7 +67,7 @@ export const useAddInfluenceMutation = () => {
       queryClient.setQueryData<InfluenceResponse[]>(key, (old) => {
         const newInfluence: InfluenceResponse = {
           influenced_by: user?.id || 0,
-          influenced_to: user?.id || 0,
+          influenced_to: variables.influenced_to || 0,
           type: variables.type,
           description: variables.description,
           created_at: new Date().toISOString(),
@@ -75,7 +75,14 @@ export const useAddInfluenceMutation = () => {
           beatmaps: [],
         };
         if (!old) return [newInfluence];
-        return [...old, newInfluence];
+        return [
+          ...old.filter(
+            (inf) =>
+              inf.influenced_to !== newInfluence.influenced_to &&
+              inf.influenced_by !== newInfluence.influenced_by,
+          ),
+          newInfluence,
+        ];
       });
       queryClient.invalidateQueries({ queryKey: ['leaderboards'] });
     },
