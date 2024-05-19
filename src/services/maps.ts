@@ -42,6 +42,7 @@ export function addMapToSelf({
   mapId: number;
   isSet?: boolean;
 }) {
+  if (!mapId) throw new Error('No map id provided');
   return axios.post(
     `${process.env.NEXT_PUBLIC_API_URL}/users/add_beatmap`,
     { id: mapId, is_beatmapset: isSet },
@@ -59,11 +60,11 @@ export const useAddMapToSelfMutation = () => {
         UserBioResponse | undefined,
         UserBioResponse | undefined
       > = (old) => {
-        if (!old) return old;
+        if (!old || !variables.mapId) return old;
         return {
           ...old,
           beatmaps: [
-            ...old.beatmaps,
+            ...(old.beatmaps || []),
             {
               id: variables.mapId,
               is_beatmapset: !!variables.isSet,
@@ -73,7 +74,7 @@ export const useAddMapToSelfMutation = () => {
       };
 
       queryClient.setQueryData<UserBioResponse>(
-        ['userBio', currentUser?.id.toString()],
+        ['userBio', currentUser?.id],
         updater,
       );
       queryClient.setQueryData<UserBioResponse>(['currentUser'], updater);
@@ -83,7 +84,7 @@ export const useAddMapToSelfMutation = () => {
     onError: () => {
       queryClient.refetchQueries({ queryKey: ['currentUser'] });
       queryClient.refetchQueries({
-        queryKey: ['userBio', currentUser?.id.toString()],
+        queryKey: ['userBio', currentUser?.id],
       });
 
       toast.error('Failed to add map');
@@ -116,7 +117,7 @@ export const useDeleteMapFromSelfMutation = () => {
       };
 
       queryClient.setQueryData<UserBioResponse>(
-        ['userBio', currentUser?.id.toString()],
+        ['userBio', currentUser?.id],
         updater,
       );
       queryClient.setQueryData<UserBioResponse>(['currentUser'], updater);
@@ -126,7 +127,7 @@ export const useDeleteMapFromSelfMutation = () => {
     onError: () => {
       queryClient.refetchQueries({ queryKey: ['currentUser'] });
       queryClient.refetchQueries({
-        queryKey: ['userBio', currentUser?.id.toString()],
+        queryKey: ['userBio', currentUser?.id],
       });
 
       toast.error('Failed to delete map');

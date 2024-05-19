@@ -79,7 +79,7 @@ export function getUserBio(userId: string | number) {
 export const useUserBio = (userId?: string | number) => {
   const { data: currentUser, isLoading } = useCurrentUser();
 
-  const id = userId || currentUser?.id.toString();
+  const id = userId || currentUser?.id;
 
   return useQuery({
     queryKey: ['userBio', Number(id)],
