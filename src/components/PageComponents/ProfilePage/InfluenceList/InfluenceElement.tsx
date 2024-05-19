@@ -78,21 +78,30 @@ const InfluenceElement: FC<Props> = ({ influenceData, editable }) => {
             success: 'Influence description updated.',
           }}
         />
-        {(editable || influenceData.beatmaps) && (
-          <div className={styles.maps}>
-            <h4>
-              Featured Maps{' '}
-              {influenceData.beatmaps?.length < LIMIT && (
-                <AddButton influenceData={influenceData} editable={editable} />
-              )}
-            </h4>
-            <MapCarousel
-              mapList={influenceData.beatmaps || []}
-              editable={editable}
-              onDelete={onDelete}
-            />
-          </div>
-        )}
+        <div className={styles.maps}>
+          {editable || !!influenceData.beatmaps.length ? (
+            <>
+              <h4>
+                Featured Maps{' '}
+                {influenceData.beatmaps?.length < LIMIT && (
+                  <AddButton
+                    influenceData={influenceData}
+                    editable={editable}
+                  />
+                )}
+              </h4>
+              <MapCarousel
+                mapList={influenceData.beatmaps || []}
+                editable={editable}
+                onDelete={onDelete}
+              />
+            </>
+          ) : (
+            <div className={styles.placeholder}>
+              <span>{'No maps added :('}</span>
+            </div>
+          )}
+        </div>
       </div>
     </>
   );

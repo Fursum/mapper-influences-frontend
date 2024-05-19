@@ -62,10 +62,19 @@
       }
 
       .maps {
+        min-width: $card-width + $spacing;
         > h4 {
           width: 100%;
           text-align: center;
           margin-block: $spacing/2;
+        }
+
+        .placeholder {
+          opacity: 0.5;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
       }
     }
