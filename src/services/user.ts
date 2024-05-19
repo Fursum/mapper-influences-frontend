@@ -50,10 +50,10 @@ export function getFullUser(userId: string | number) {
 export const useFullUser = (userId?: string | number) => {
   const { data: currentUser, isLoading } = useCurrentUser();
 
-  const id = userId || currentUser?.id;
+  const id = userId || currentUser?.id || 0;
 
   return useQuery({
-    queryKey: ['fullUser', Number(id)],
+    queryKey: ['fullUser', id?.toString()],
     enabled: !isLoading && !!id,
     queryFn: () => {
       if (!id) throw new Error('No user id provided and no current user found');
@@ -79,10 +79,10 @@ export function getUserBio(userId: string | number) {
 export const useUserBio = (userId?: string | number) => {
   const { data: currentUser, isLoading } = useCurrentUser();
 
-  const id = userId || currentUser?.id;
+  const id = userId || currentUser?.id || 0;
 
   return useQuery({
-    queryKey: ['userBio', Number(id)],
+    queryKey: ['userBio', id?.toString()],
     enabled: !isLoading && !!id,
     queryFn: () => {
       if (!id) return currentUser;

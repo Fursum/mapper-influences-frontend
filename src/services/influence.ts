@@ -31,7 +31,7 @@ export const useGetInfluences = (userId?: string | number) => {
   const { data: user } = useCurrentUser();
   const id = userId || user?.id || 0;
   return useQuery({
-    queryKey: ['influences', Number(id)],
+    queryKey: ['influences', id.toString()],
     enabled: !!id,
     queryFn: () => getInfluences(id),
   });
@@ -59,14 +59,11 @@ export function addInfluence(body: AddInfluenceRequest) {
 export const useAddInfluenceMutation = () => {
   const queryClient = useQueryClient();
   const { data: user } = useCurrentUser();
-  const key = ['influences', user?.id];
+  const key = ['influences', user?.id.toString()];
 
   return useMutation({
     mutationFn: addInfluence,
     onSuccess: (_, variables) => {
-      queryClient.cancelQueries({
-        queryKey: key,
-      });
       queryClient.setQueryData<InfluenceResponse[]>(key, (old) => {
         const newInfluence: InfluenceResponse = {
           influenced_by: user?.id || 0,
@@ -84,19 +81,24 @@ export const useAddInfluenceMutation = () => {
           (inf) => inf.influenced_to === newInfluence.influenced_to,
         );
 
-        if (influenceIndex !== -1) {
-          old[influenceIndex] = newInfluence;
-          return [...old];
-        }
+        const newObject = old.map((influence) => {
+          if (influence.influenced_to === newInfluence.influenced_to) {
+            return newInfluence;
+          }
+          return influence;
+        });
 
-        return [...old, newInfluence];
+        if (influenceIndex !== -1) return newObject;
+
+        newObject.push(newInfluence);
+        return newObject;
       });
       queryClient.invalidateQueries({ queryKey: ['leaderboards'] });
       queryClient.invalidateQueries({
-        queryKey: ['userBio', Number(variables.influenced_to)],
+        queryKey: ['userBio', variables.influenced_to.toString()],
       });
       queryClient.invalidateQueries({
-        queryKey: ['mentions', Number(variables.influenced_to)],
+        queryKey: ['mentions', variables.influenced_to.toString()],
       });
     },
     onError: () =>
@@ -114,7 +116,7 @@ export async function deleteInfluence(from_id: string | number) {
 export const useDeleteInfluenceMutation = () => {
   const queryClient = useQueryClient();
   const { data: user } = useCurrentUser();
-  const key = ['influences', Number(user?.id)];
+  const key = ['influences', user?.id.toString()];
 
   return useMutation({
     mutationFn: deleteInfluence,
@@ -129,17 +131,18 @@ export const useDeleteInfluenceMutation = () => {
       toast.success('Influence removed.');
       queryClient.invalidateQueries({ queryKey: ['leaderboards'] });
       queryClient.invalidateQueries({
-        queryKey: ['userBio', Number(variables)],
+        queryKey: ['userBio', variables.toString()],
       });
       queryClient.invalidateQueries({
-        queryKey: ['mentions', Number(variables)],
+        queryKey: ['mentions', variables.toString()],
       });
     },
-    onError: () => toast.error('Failed to remove influence.'),
-    onSettled: () =>
+    onError: () => {
+      toast.error('Failed to remove influence.');
       queryClient.invalidateQueries({
         queryKey: key,
-      }),
+      });
+    },
   });
 };
 
@@ -154,7 +157,7 @@ export const useGetMentions = (userId?: string | number) => {
   const { data: user } = useCurrentUser();
   const id = userId || user?.id || 0;
   return useQuery({
-    queryKey: ['mentions', Number(id)],
+    queryKey: ['mentions', id.toString()],
     enabled: !!id,
     queryFn: () => getMentions(id),
   });

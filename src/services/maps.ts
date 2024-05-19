@@ -74,7 +74,7 @@ export const useAddMapToSelfMutation = () => {
       };
 
       queryClient.setQueryData<UserBioResponse>(
-        ['userBio', currentUser?.id],
+        ['userBio', currentUser?.id.toString()],
         updater,
       );
       queryClient.setQueryData<UserBioResponse>(['currentUser'], updater);
@@ -84,7 +84,7 @@ export const useAddMapToSelfMutation = () => {
     onError: () => {
       queryClient.refetchQueries({ queryKey: ['currentUser'] });
       queryClient.refetchQueries({
-        queryKey: ['userBio', currentUser?.id],
+        queryKey: ['userBio', currentUser?.id.toString()],
       });
 
       toast.error('Failed to add map');
@@ -117,7 +117,7 @@ export const useDeleteMapFromSelfMutation = () => {
       };
 
       queryClient.setQueryData<UserBioResponse>(
-        ['userBio', currentUser?.id],
+        ['userBio', currentUser?.id.toString()],
         updater,
       );
       queryClient.setQueryData<UserBioResponse>(['currentUser'], updater);
@@ -127,7 +127,7 @@ export const useDeleteMapFromSelfMutation = () => {
     onError: () => {
       queryClient.refetchQueries({ queryKey: ['currentUser'] });
       queryClient.refetchQueries({
-        queryKey: ['userBio', currentUser?.id],
+        queryKey: ['userBio', currentUser?.id.toString()],
       });
 
       toast.error('Failed to delete map');

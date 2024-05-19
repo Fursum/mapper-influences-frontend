@@ -14,15 +14,8 @@ const InfluenceList: FC<{
   const editable = !userId;
 
   const { data: influences } = useGetInfluences(userId);
-  const [animateRef] = useAutoAnimate({ easing: 'ease-out', duration: 200 });
 
-  const InfluenceCards = influences?.map((influence) => (
-    <InfluenceElement
-      key={influence.influenced_to}
-      influenceData={influence}
-      editable={editable}
-    />
-  ));
+  const [animateRef] = useAutoAnimate({ easing: 'ease-out', duration: 200 });
 
   return (
     <div
@@ -30,7 +23,13 @@ const InfluenceList: FC<{
       style={!open ? { display: 'none' } : {}}
     >
       <div className={styles.scrollWrapper} ref={animateRef}>
-        {InfluenceCards}
+        {influences?.map((influence) => (
+          <InfluenceElement
+            key={influence.influenced_to}
+            influenceData={influence}
+            editable={editable}
+          />
+        ))}
         {!influences?.length && (
           <span>
             {'This person is unique!'}
