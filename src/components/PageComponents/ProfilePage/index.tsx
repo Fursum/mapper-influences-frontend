@@ -1,5 +1,8 @@
 import { type FC, useState } from 'react';
 
+import { useGetInfluences, useGetMentions } from '@services/influence';
+import { useGlobalTooltip } from '@states/globalTooltip';
+
 import InfluenceList from './InfluenceList';
 import MapperDetails from './MapperDetails';
 import MentionList from './MentionList';
@@ -20,6 +23,10 @@ const ProfilePage: FC<Props> = ({ userId }) => {
 export default ProfilePage;
 
 const TabContainer: FC<{ userId?: number | string }> = ({ userId }) => {
+  const { activateTooltip, deactivateTooltip } = useGlobalTooltip();
+  const { data: influences } = useGetInfluences(userId);
+  const { data: mentions } = useGetMentions(userId);
+
   const [selectedTab, setSelectedTab] = useState<'influences' | 'mentions'>(
     'influences',
   );
@@ -30,12 +37,24 @@ const TabContainer: FC<{ userId?: number | string }> = ({ userId }) => {
         <button
           className={selectedTab === 'influences' ? styles.selected : ''}
           onClick={() => setSelectedTab('influences')}
+          onMouseEnter={() =>
+            activateTooltip(
+              `${influences?.length} influence${influences?.length === 1 ? '' : 's'}`,
+            )
+          }
+          onMouseLeave={deactivateTooltip}
         >
           Influences
         </button>
         <button
           className={selectedTab === 'mentions' ? styles.selected : ''}
           onClick={() => setSelectedTab('mentions')}
+          onMouseEnter={() =>
+            activateTooltip(
+              `${mentions?.length} mention${mentions?.length === 1 ? '' : 's'}`,
+            )
+          }
+          onMouseLeave={deactivateTooltip}
         >
           Mentions
         </button>
