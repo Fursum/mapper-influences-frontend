@@ -84,7 +84,7 @@ const BaseProfileCard: FC<Props> = ({
         {userData?.username || offlineData?.username}
       </div>
       <div className={styles.influencedStat}>
-        Influenced <span>{influenceText}</span>
+        Mentioned In <span>{influenceText}</span>
       </div>
       <div className={styles.rankedStat}>
         Ranked Maps{' '}
