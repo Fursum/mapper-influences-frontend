@@ -19,6 +19,8 @@ import InfluenceType from './InfluenceType';
 import featuredMapsStyles from '../MapperDetails/FeaturedMaps/style.module.scss';
 import styles from './style.module.scss';
 
+const LIMIT = 5;
+
 type Props = {
   influenceData: InfluenceResponse;
   editable?: boolean;
@@ -77,7 +79,12 @@ const InfluenceElement = forwardRef<HTMLDivElement, Props>(
             <div className={styles.maps}>
               <h4>
                 Featured Maps{' '}
-                <AddButton influenceData={influenceData} editable={editable} />
+                {influenceData.beatmaps?.length < LIMIT && (
+                  <AddButton
+                    influenceData={influenceData}
+                    editable={editable}
+                  />
+                )}
               </h4>
               <MapCarousel
                 mapList={influenceData.beatmaps || []}
