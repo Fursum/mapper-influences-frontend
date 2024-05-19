@@ -1,4 +1,4 @@
-import { type FC, useState } from 'react';
+import { type FC, useMemo, useState } from 'react';
 
 import {
   CatchIcon,
@@ -6,6 +6,7 @@ import {
   OsuIcon,
   TaikoIcon,
 } from '@components/SvgComponents/ModeIcons';
+import { getDiffColor } from '@libs/functions/colors';
 import type { BeatmapId } from '@services/influence';
 import { useMapData } from '@services/maps';
 import { useGlobalTooltip } from '@states/globalTooltip';
@@ -51,6 +52,14 @@ const MapCard: FC<{
   )?.avatar_url;
   const canDelete = !!deleteFn;
 
+  const diffColor = useMemo(
+    () =>
+      diff?.difficulty_rating
+        ? getDiffColor(diff.difficulty_rating)
+        : undefined,
+    [diff?.difficulty_rating],
+  );
+
   return (
     <a
       href={mapUrl}
@@ -70,7 +79,13 @@ const MapCard: FC<{
 
       {diff && (
         <div className={styles.diff}>
-          <ModeIcon mode={diff?.mode} />
+          <ModeIcon
+            mode={diff?.mode}
+            color={diffColor}
+            onMouseEnter={(e) =>
+              activateTooltip(`${diff.difficulty_rating}*`, e.currentTarget)
+            }
+          />
           {diff.version}
         </div>
       )}
