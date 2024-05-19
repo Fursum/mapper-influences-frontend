@@ -38,7 +38,9 @@ const InfluenceElement: FC<Props> = ({ influenceData, editable }) => {
         updateInfluence({
           ...influenceData,
           beatmaps: influenceData.beatmaps?.filter((b) => b.id !== map.id),
-        });
+        })
+          .then(() => toast.success('Map removed from influence.'))
+          .catch(() => toast.error('Could not remove map from influence.'));
       }
     : undefined;
 
