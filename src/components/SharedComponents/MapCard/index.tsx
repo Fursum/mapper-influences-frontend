@@ -28,6 +28,18 @@ const MapCard: FC<{
     map?.is_beatmapset ? 'set' : 'diff',
   );
 
+  const diff = !map?.is_beatmapset
+    ? mapData?.beatmaps?.find((b) => b.id === Number(map?.id))
+    : undefined;
+
+  const diffColor = useMemo(
+    () =>
+      diff?.difficulty_rating
+        ? getDiffColor(diff.difficulty_rating)
+        : undefined,
+    [diff?.difficulty_rating],
+  );
+
   if (isLoading || !mapData || !map?.id)
     return (
       <div className={`${styles.skeleton}`}>
@@ -36,10 +48,6 @@ const MapCard: FC<{
         <div className={styles.ownerAvatar} />
       </div>
     );
-
-  const diff = !map.is_beatmapset
-    ? mapData.beatmaps?.find((b) => b.id === Number(map.id))
-    : undefined;
 
   const setUrl = `https://osu.ppy.sh/beatmapsets/${map.id}`;
   const diffUrl = `https://osu.ppy.sh/beatmaps/${map.id}`;
@@ -51,14 +59,6 @@ const MapCard: FC<{
     (user) => user.username === mapOwner,
   )?.avatar_url;
   const canDelete = !!deleteFn;
-
-  const diffColor = useMemo(
-    () =>
-      diff?.difficulty_rating
-        ? getDiffColor(diff.difficulty_rating)
-        : undefined,
-    [diff?.difficulty_rating],
-  );
 
   return (
     <a
