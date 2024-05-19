@@ -33,9 +33,10 @@ const MapCard: FC<{
     ? mapData.beatmaps?.find((b) => b.id === Number(map.id))
     : undefined;
 
-  const mapUrl = `https://osu.ppy.sh/beatmaps/${mapData.id}${
-    diff ? `#${diff.mode}/${map.id}` : ''
-  }`;
+  const setUrl = `https://osu.ppy.sh/beatmapsets/${map.id}`;
+  const diffUrl = `https://osu.ppy.sh/beatmaps/${map.id}`;
+
+  const mapUrl = map.is_beatmapset ? setUrl : diffUrl;
 
   const mapOwner = mapData.creator;
   const ownerAvatar = mapData.related_users.find(
@@ -102,16 +103,22 @@ const MapCard: FC<{
 
 export default MapCard;
 
-const ModeIcon = ({ mode }: { mode?: string }) => {
+export const ModeIcon = ({
+  mode,
+  color,
+}: {
+  mode?: string;
+  color?: string;
+}) => {
   switch (mode) {
     case 'osu':
-      return <OsuIcon color="var(--white)" />;
+      return <OsuIcon color={color || 'var(--white)'} />;
     case 'taiko':
-      return <TaikoIcon color="var(--white)" />;
+      return <TaikoIcon color={color || 'var(--white)'} />;
     case 'fruits':
-      return <CatchIcon color="var(--white)" />;
+      return <CatchIcon color={color || 'var(--white)'} />;
     case 'mania':
-      return <ManiaIcon color="var(--white)" />;
+      return <ManiaIcon color={color || 'var(--white)'} />;
     default:
       return <></>;
   }

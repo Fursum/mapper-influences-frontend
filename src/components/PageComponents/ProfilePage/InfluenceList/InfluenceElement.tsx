@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 
 import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
 import MapCarousel from '@components/SharedComponents/MapCarousel/SingleItem';
+import { AddMapModalContents } from '@components/SharedComponents/MapSearch';
 import Modal from '@components/SharedComponents/Modal';
 import { convertFromInfluence } from '@libs/enums';
 import {
@@ -13,7 +14,6 @@ import { useGlobalTooltip } from '@states/globalTooltip';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 
 import EditableDescription from '../EditableDescription';
-import { AddMapModalContents } from '../MapperDetails/FeaturedMaps';
 import InfluenceType from './InfluenceType';
 
 import featuredMapsStyles from '../MapperDetails/FeaturedMaps/style.module.scss';
@@ -132,6 +132,7 @@ const AddButton: FC<{
           closeForm={() => setModalOpen(false)}
           onSubmit={onSubmit}
           loading={isPending}
+          suggestionUserId={influenceData.influenced_to}
         />
       </Modal>
       <button

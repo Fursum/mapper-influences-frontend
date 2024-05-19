@@ -1,0 +1,102 @@
+.form {
+  > h2 {
+    font-size: 1.5rem;
+    margin-top: 0;
+  }
+
+  h4 {
+    margin-bottom: 0;
+  }
+
+  label > span {
+    flex-shrink: 0;
+    width: max-content;
+  }
+
+  .previousNames {
+    text-align: left;
+    opacity: 0.5;
+  }
+
+  input {
+    width: 100%;
+  }
+
+  .results {
+    overflow-y: auto;
+    max-height: $card-height * 3 + $spacing * 3;
+    height: $card-height * 3 + $spacing * 3;
+
+    // Infinite scroll wrapper
+    > div {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing * 1.5;
+    }
+
+    .row {
+      display: flex;
+      gap: $spacing / 2;
+      margin-right: $spacing / 2;
+
+      @media screen and (max-width: $responsive-breakpoint) {
+        flex-direction: column;
+        gap: $spacing;
+        align-items: center;
+
+        .diffs {
+          width: 100%;
+        }
+      }
+
+      .diffs {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing / 2;
+        overflow-y: auto;
+        text-align: left;
+        outline: 0.1px solid transparent;
+
+        width: 25rem;
+        max-height: $card-height;
+
+        .selected {
+          background-color: $color-button-outline;
+          color: $color-button-text;
+          outline-color: $color-button-outline;
+        }
+
+        > div {
+          flex-shrink: 0;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          border-radius: $border-radius;
+
+          margin-right: $spacing / 2;
+
+          cursor: pointer;
+        }
+
+        svg {
+          width: 1rem;
+          height: 1rem;
+          margin-right: $spacing / 2;
+          margin-left: $spacing / 4;
+          transform: translateY(0.1rem);
+        }
+      }
+    }
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: $spacing;
+    gap: $spacing;
+
+    > button {
+      width: 5rem;
+    }
+  }
+}
