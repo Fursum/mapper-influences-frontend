@@ -44,6 +44,11 @@ const BaseProfileCard: FC<Props> = ({
     (userData?.country.name || offlineData?.country) &&
     offlineData?.country !== 'XX';
 
+  const influenceText =
+    bioLoading && !offlineData?.mention_count
+      ? '...'
+      : userBio?.mention_count || offlineData?.mention_count || 0;
+
   return (
     <ConditionalLink
       disabled={!userData}
@@ -79,8 +84,7 @@ const BaseProfileCard: FC<Props> = ({
         {userData?.username || offlineData?.username}
       </div>
       <div className={styles.influencedStat}>
-        Influenced{' '}
-        <span>{bioLoading ? '...' : userBio?.mention_count || 0}</span>
+        Influenced <span>{influenceText}</span>
       </div>
       <div className={styles.rankedStat}>
         Ranked Maps{' '}
