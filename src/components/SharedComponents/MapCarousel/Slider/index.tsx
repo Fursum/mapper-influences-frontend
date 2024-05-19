@@ -34,7 +34,7 @@ const SliderCarousel: FC<{ mapList: BeatmapId[] }> = ({ mapList }) => {
               />
             </div>
           ))}
-          {mapList.length < LIMIT && (
+          {mapList.length < LIMIT && isEditable && (
             <div className={`${styles.slot} ${styles.slide}`}>
               <span>
                 Map slots {mapList.length} / {LIMIT}
