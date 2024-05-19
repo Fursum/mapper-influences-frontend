@@ -50,7 +50,11 @@ export type AddInfluenceRequest = {
 
 export async function addInfluence(body: AddInfluenceRequest) {
   const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence`;
-  return await axios.post(searchUrl, body, { withCredentials: true });
+  return await axios.post(
+    searchUrl,
+    { beatmaps: [], ...body },
+    { withCredentials: true },
+  );
 }
 
 export const useAddInfluenceMutation = () => {
