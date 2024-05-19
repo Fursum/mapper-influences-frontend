@@ -64,10 +64,6 @@ const MapStats: FC<{
   // biome-ignore lint/correctness/useExhaustiveDependencies: <data contains the values>
   const totalTooltip = useMemo(() => {
     const tooltip: string[] = [];
-    if (ranked_and_approved_beatmapset_count)
-      tooltip.push(`${ranked_and_approved_beatmapset_count} ranked`);
-    if (guest_beatmapset_count) tooltip.push(`${guest_beatmapset_count} guest`);
-    if (loved_beatmapset_count) tooltip.push(`${loved_beatmapset_count} loved`);
     if (graveyard_beatmapset_count)
       tooltip.push(`${graveyard_beatmapset_count} graved`);
     if (pending_beatmapset_count)
