@@ -1,3 +1,5 @@
+@import '/src/styles/variables/fonts';
+
 .contentCenterer {
   display: flex;
   flex-direction: column;
@@ -26,7 +28,7 @@
 
   &::after {
     position: absolute;
-    content: "";
+    content: '';
     width: 100vw;
     bottom: 0;
     left: 0;
@@ -66,6 +68,10 @@
   .avatar:hover {
     outline-color: $color-button-outline;
   }
+}
+
+.toast {
+  --toastify-font-family: $inter;
 }
 
 @media screen and (max-width: $responsive-breakpoint) {

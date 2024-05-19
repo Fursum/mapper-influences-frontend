@@ -22,7 +22,11 @@ const Layout: FC<Props> = ({ children }) => {
       {<Header />}
       <main className={styles.contentCenterer}>{children}</main>
       <Tooltip />
-      <ToastContainer theme={theme} position="bottom-right" />
+      <ToastContainer
+        theme={theme}
+        className={styles.toast}
+        position="bottom-right"
+      />
     </>
   );
 };
