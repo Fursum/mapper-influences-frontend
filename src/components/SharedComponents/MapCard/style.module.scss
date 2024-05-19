@@ -139,3 +139,47 @@
     }
   }
 }
+
+.skeleton {
+  @extend %skeleton;
+  position: relative;
+
+  width: $card-width;
+  min-width: $card-width;
+  height: $card-height;
+  min-height: $card-height;
+
+  padding: $spacing/2;
+
+  display: flex;
+  flex-direction: column;
+  gap: $spacing / 4;
+
+  .artist,
+  .title,
+  .ownerAvatar {
+    background-color: $color-background;
+  }
+
+  .title {
+    width: 90%;
+    height: 1.35rem;
+  }
+  .artist {
+    width: 50%;
+    height: 0.85rem;
+  }
+
+  .ownerAvatar {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 999rem;
+
+    position: absolute;
+    bottom: $spacing / 2;
+    right: $spacing / 2;
+    box-shadow:
+      0 0 0 0.1rem $color-primary,
+      0 0 0 0.2rem $white;
+  }
+}

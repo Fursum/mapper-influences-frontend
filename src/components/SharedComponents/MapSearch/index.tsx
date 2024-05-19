@@ -36,7 +36,7 @@ export const AddMapModalContents: FC<{
     if (mapResults.length) {
       setVisibleResults(mapResults.slice(0, 5));
     }
-  });
+  }, [mapResults]);
 
   return (
     <>

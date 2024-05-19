@@ -22,12 +22,19 @@ const MapCard: FC<{
   const { activateTooltip } = useGlobalTooltip();
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
 
-  const { data: mapData } = useMapData(
+  const { data: mapData, isLoading } = useMapData(
     map?.id,
     map?.is_beatmapset ? 'set' : 'diff',
   );
 
-  if (!mapData || !map?.id) return <></>;
+  if (isLoading || !mapData || !map?.id)
+    return (
+      <div className={`${styles.skeleton}`}>
+        <div className={styles.title} />
+        <div className={styles.artist} />
+        <div className={styles.ownerAvatar} />
+      </div>
+    );
 
   const diff = !map.is_beatmapset
     ? mapData.beatmaps?.find((b) => b.id === Number(map.id))
