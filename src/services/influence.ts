@@ -108,8 +108,8 @@ export const useAddInfluenceMutation = () => {
   });
 };
 
-export async function deleteInfluence(from_id: string | number) {
-  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/remove_influence/${from_id}`;
+export async function deleteInfluence(target: string | number) {
+  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/remove_influence/${target}`;
   return await axios.delete(searchUrl, { withCredentials: true });
 }
 
@@ -126,7 +126,10 @@ export const useDeleteInfluenceMutation = () => {
       });
       queryClient.setQueryData(key, (old: InfluenceResponse[] | undefined) => {
         if (!old) return [];
-        return old.filter((influence) => influence.influenced_to !== variables);
+        return old.filter(
+          (influence) =>
+            influence.influenced_to.toString() !== variables.toString(),
+        );
       });
       toast.success('Influence removed.');
       queryClient.invalidateQueries({ queryKey: ['leaderboards'] });
