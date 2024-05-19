@@ -36,6 +36,10 @@ const BaseProfileCard: FC<Props> = ({
     );
   }
 
+  const displayFlag =
+    (userData?.country.name || offlineData?.country) &&
+    offlineData?.country !== 'XX';
+
   return (
     <ConditionalLink
       disabled={!userData}
@@ -103,7 +107,7 @@ const BaseProfileCard: FC<Props> = ({
           </span>
         )}
       </div>
-      {(userData?.country || offlineData?.country) && (
+      {displayFlag && (
         <div
           className={styles.flag}
           onMouseEnter={(e) =>
@@ -113,7 +117,7 @@ const BaseProfileCard: FC<Props> = ({
         >
           <img
             alt={`${userData?.username || offlineData?.username} is from ${userData?.country.name || offlineData?.country}`}
-            src={`https://flagcdn.com/${userData?.country.code.toLowerCase() || offlineData?.country.toLowerCase()}.svg`}
+            src={`https://flagcdn.com/${userData?.country.code.toLowerCase() || offlineData?.country?.toLowerCase()}.svg`}
           />
         </div>
       )}
