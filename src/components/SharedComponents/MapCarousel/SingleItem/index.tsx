@@ -38,6 +38,7 @@ const SingleItemCarousel: FC<{
       showStatus={false}
       showArrows={true}
       showThumbs={false}
+      showIndicators={mapList.length + (editable ? 1 : 0) > 1}
       transitionTime={0}
     >
       {Cards}
