@@ -15,10 +15,11 @@ const SingleItemCarousel: FC<{
   mapList: BeatmapId[];
   className?: string;
   editable?: boolean;
-}> = ({ mapList, editable, className = '' }) => {
+  onDelete?: (map: BeatmapId) => void;
+}> = ({ mapList, editable, onDelete, className = '' }) => {
   const Cards = mapList.map((item) => (
     <div key={item.id} className={styles.slide}>
-      <MapCard map={item} />
+      <MapCard map={item} deleteFn={onDelete} />
     </div>
   ));
 

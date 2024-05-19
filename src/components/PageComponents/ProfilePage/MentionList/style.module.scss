@@ -20,10 +20,11 @@
   }
 
   .mentionGrid {
-    display: flex;
-    flex-wrap: wrap;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax($card-width, 1fr));
+    justify-items: center;
     gap: $spacing;
-    width: $card-width * 2 + $spacing;
   }
 
   @media screen and (max-width: $responsive-breakpoint) {

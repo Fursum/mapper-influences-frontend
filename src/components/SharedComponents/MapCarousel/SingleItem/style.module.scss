@@ -26,4 +26,32 @@
       width: $card-width;
     }
   }
+
+  :global(.control-arrow) {
+    height: 2rem;
+    top: unset !important;
+    bottom: -2.35rem !important;
+    font-size: 2rem !important;
+    padding: 0.25rem !important;
+  }
+
+  :global(.control-dots) {
+    margin: 0.5rem 0 !important;
+  }
+
+  :global(.control-next)::before {
+    transform: translateY(-0.6rem) translateX(0.05rem);
+    border-top: 0.5rem solid transparent !important;
+    border-bottom: 0.5rem solid transparent !important;
+    border-left: 0.75rem solid $color-text !important;
+    margin: 0 0.25rem !important;
+  }
+
+  :global(.control-prev)::before {
+    transform: translateY(-0.6rem) translateX(-0.05rem);
+    border-top: 0.5rem solid transparent !important;
+    border-bottom: 0.5rem solid transparent !important;
+    border-right: 0.75rem solid $color-text !important;
+    margin: 0 0.25rem !important;
+  }
 }

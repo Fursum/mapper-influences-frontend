@@ -11,6 +11,7 @@ export type UserBioResponse = {
   have_ranked_map: boolean;
   bio: string;
   beatmaps: BeatmapId[];
+  mention_count: number;
 };
 
 export function logoutRequest() {
@@ -34,7 +35,7 @@ export const useCurrentUser = () =>
     retry: 1,
   });
 
-export function getFullUser(userId: string) {
+export function getFullUser(userId: string | number) {
   return axios.get<
     UserExtended & {
       nominated_beatmapset_count: number;
@@ -46,13 +47,13 @@ export function getFullUser(userId: string) {
   });
 }
 
-export const useFullUser = (userId?: string) => {
+export const useFullUser = (userId?: string | number) => {
   const { data: currentUser, isLoading } = useCurrentUser();
 
-  const id = userId || currentUser?.id.toString();
+  const id = userId || currentUser?.id || 0;
 
   return useQuery({
-    queryKey: ['fullUser', id],
+    queryKey: ['fullUser', id?.toString()],
     enabled: !isLoading && !!id,
     queryFn: () => {
       if (!id) throw new Error('No user id provided and no current user found');
@@ -64,7 +65,7 @@ export const useFullUser = (userId?: string) => {
   });
 };
 
-export function getUserBio(userId: string) {
+export function getUserBio(userId: string | number) {
   return axios
     .get<UserBioResponse>(
       `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`,
@@ -75,13 +76,13 @@ export function getUserBio(userId: string) {
     .then((res) => res.data);
 }
 
-export const useUserBio = (userId?: string) => {
+export const useUserBio = (userId?: string | number) => {
   const { data: currentUser, isLoading } = useCurrentUser();
 
-  const id = userId || currentUser?.id.toString();
+  const id = userId || currentUser?.id || 0;
 
   return useQuery({
-    queryKey: ['userBio', id],
+    queryKey: ['userBio', id?.toString()],
     enabled: !isLoading && !!id,
     queryFn: () => {
       if (!id) return currentUser;

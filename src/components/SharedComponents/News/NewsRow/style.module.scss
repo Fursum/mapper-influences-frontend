@@ -84,4 +84,9 @@
       color: inherit;
     }
   }
+  img {
+    margin-block: $spacing / 2;
+    max-width: 100%;
+    height: auto;
+  }
 }

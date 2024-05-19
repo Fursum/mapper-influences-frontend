@@ -1,24 +1,29 @@
 import type { FC } from 'react';
 
 import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
-import type { UserExtended } from 'osu-web.js';
+import { useGetMentions } from '@services/influence';
 
 import styles from './style.module.scss';
 
-type Props = { mentions: UserExtended[]; open?: boolean };
-const MentionList: FC<Props> = ({ mentions, open }) => {
+type Props = { open?: boolean; userId?: number | string };
+const MentionList: FC<Props> = ({ open, userId }) => {
+  const { data: mentions } = useGetMentions(userId);
+
   return (
     <div
       className={styles.mentionList}
       style={!open ? { display: 'none' } : {}}
     >
       <div className={styles.mentionGrid}>
-        {mentions.map((user) => (
-          <BaseProfileCard key={user.id} userId={user.id} />
+        {mentions?.map((mention) => (
+          <BaseProfileCard
+            key={mention.influenced_by}
+            userId={mention.influenced_by}
+          />
         ))}
       </div>
-      <span>This feature is work in progress!</span>
-      {/* mentions.length === 0 && <span>{'No mentions :('}</span> */}
+
+      {!mentions?.length && <span>{'No mentions :('}</span>}
     </div>
   );
 };

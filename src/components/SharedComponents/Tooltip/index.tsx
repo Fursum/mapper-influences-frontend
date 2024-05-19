@@ -11,14 +11,15 @@ const Tooltip: FC = () => {
   const { text, parent, isActive, deactivateTooltip } = useGlobalTooltip();
 
   useEffect(() => {
-    if (!isActive || !element || !parent) return;
+    if (!isActive || !element) return;
 
     element.style.opacity = '1';
     // Spans work but buttons dont with this 🤷‍♀️
-    parent.onmouseleave = () => {
-      element.style.opacity = '0';
-      deactivateTooltip();
-    };
+    if (parent)
+      parent.onmouseleave = () => {
+        element.style.opacity = '0';
+        deactivateTooltip();
+      };
   }, [isActive, deactivateTooltip, parent, element]);
 
   useEffect(() => {

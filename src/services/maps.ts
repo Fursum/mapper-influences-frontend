@@ -42,6 +42,7 @@ export function addMapToSelf({
   mapId: number;
   isSet?: boolean;
 }) {
+  if (!mapId) throw new Error('No map id provided');
   return axios.post(
     `${process.env.NEXT_PUBLIC_API_URL}/users/add_beatmap`,
     { id: mapId, is_beatmapset: isSet },
@@ -59,11 +60,11 @@ export const useAddMapToSelfMutation = () => {
         UserBioResponse | undefined,
         UserBioResponse | undefined
       > = (old) => {
-        if (!old) return old;
+        if (!old || !variables.mapId) return old;
         return {
           ...old,
           beatmaps: [
-            ...old.beatmaps,
+            ...(old.beatmaps || []),
             {
               id: variables.mapId,
               is_beatmapset: !!variables.isSet,

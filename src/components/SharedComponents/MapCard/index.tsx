@@ -22,20 +22,28 @@ const MapCard: FC<{
   const { activateTooltip } = useGlobalTooltip();
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
 
-  const { data: mapData } = useMapData(
+  const { data: mapData, isLoading } = useMapData(
     map?.id,
     map?.is_beatmapset ? 'set' : 'diff',
   );
 
-  if (!mapData || !map?.id) return <></>;
+  if (isLoading || !mapData || !map?.id)
+    return (
+      <div className={`${styles.skeleton}`}>
+        <div className={styles.title} />
+        <div className={styles.artist} />
+        <div className={styles.ownerAvatar} />
+      </div>
+    );
 
   const diff = !map.is_beatmapset
     ? mapData.beatmaps?.find((b) => b.id === Number(map.id))
     : undefined;
 
-  const mapUrl = `https://osu.ppy.sh/beatmaps/${mapData.id}${
-    diff ? `#${diff.mode}/${map.id}` : ''
-  }`;
+  const setUrl = `https://osu.ppy.sh/beatmapsets/${map.id}`;
+  const diffUrl = `https://osu.ppy.sh/beatmaps/${map.id}`;
+
+  const mapUrl = map.is_beatmapset ? setUrl : diffUrl;
 
   const mapOwner = mapData.creator;
   const ownerAvatar = mapData.related_users.find(
@@ -102,17 +110,32 @@ const MapCard: FC<{
 
 export default MapCard;
 
-const ModeIcon = ({ mode }: { mode?: string }) => {
+export const ModeIcon = ({
+  mode,
+  color,
+  onMouseEnter,
+}: {
+  mode?: string;
+  color?: string;
+  onMouseEnter?: (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => void;
+}) => {
+  let Component = OsuIcon;
   switch (mode) {
     case 'osu':
-      return <OsuIcon color="var(--white)" />;
+      Component = OsuIcon;
+      break;
     case 'taiko':
-      return <TaikoIcon color="var(--white)" />;
+      Component = TaikoIcon;
+      break;
     case 'fruits':
-      return <CatchIcon color="var(--white)" />;
+      Component = CatchIcon;
+      break;
     case 'mania':
-      return <ManiaIcon color="var(--white)" />;
-    default:
-      return <></>;
+      Component = ManiaIcon;
+      break;
   }
+
+  return (
+    <Component color={color || 'var(--white)'} onMouseEnter={onMouseEnter} />
+  );
 };

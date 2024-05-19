@@ -1,7 +1,8 @@
-import { type FC, type ReactNode, useRef } from "react";
-import { useOnClickOutside } from "usehooks-ts";
+import { type FC, type ReactNode, useEffect, useRef } from 'react';
 
-import styles from "./style.module.scss";
+import { useOnClickOutside } from 'usehooks-ts';
+
+import styles from './style.module.scss';
 
 const Modal: FC<{
   className?: string;
@@ -12,6 +13,17 @@ const Modal: FC<{
 }> = ({ className, children, showModal, setShowModal, keepOpen }) => {
   const modalRef = useRef(null);
   useOnClickOutside(modalRef, () => keepOpen || setShowModal(false));
+
+  // Escape closes the modal
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') setShowModal(false);
+    }
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  });
+
   if (!showModal) return null;
   return (
     <dialog className={styles.modalBg} open>

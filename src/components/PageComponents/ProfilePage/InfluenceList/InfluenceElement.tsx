@@ -1,11 +1,13 @@
-import { type FC, forwardRef, useCallback, useState } from 'react';
+import { type FC, useCallback, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
 import MapCarousel from '@components/SharedComponents/MapCarousel/SingleItem';
+import { AddMapModalContents } from '@components/SharedComponents/MapSearch';
 import Modal from '@components/SharedComponents/Modal';
 import { convertFromInfluence } from '@libs/enums';
 import {
+  type BeatmapId,
   type InfluenceResponse,
   useAddInfluenceMutation,
 } from '@services/influence';
@@ -13,83 +15,88 @@ import { useGlobalTooltip } from '@states/globalTooltip';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 
 import EditableDescription from '../EditableDescription';
-import { AddMapModalContents } from '../MapperDetails/FeaturedMaps';
 import InfluenceType from './InfluenceType';
 
 import featuredMapsStyles from '../MapperDetails/FeaturedMaps/style.module.scss';
 import styles from './style.module.scss';
+
+const LIMIT = 5;
 
 type Props = {
   influenceData: InfluenceResponse;
   editable?: boolean;
 };
 
-const InfluenceElement = forwardRef<HTMLDivElement, Props>(
-  ({ influenceData, editable }, ref) => {
-    const { mutateAsync: updateInfluence, isPending } =
-      useAddInfluenceMutation();
+const InfluenceElement: FC<Props> = ({ influenceData, editable }) => {
+  const { mutateAsync: updateInfluence, isPending } = useAddInfluenceMutation();
 
-    // Debounce the description update
-    const updateInfluenceDebounce = AwesomeDebouncePromise(
-      updateInfluence,
-      500,
-    );
+  // Debounce the description update
+  const updateInfluenceDebounce = AwesomeDebouncePromise(updateInfluence, 500);
 
-    return (
-      <>
-        <div className={styles.influenceRow} ref={ref}>
-          <div className={styles.cardWrapper}>
-            <InfluenceType
+  const onDelete = (map: BeatmapId) => {
+    updateInfluence({
+      ...influenceData,
+      beatmaps: influenceData.beatmaps?.filter((b) => b.id !== map.id),
+    });
+  };
+
+  return (
+    <>
+      <div className={styles.influenceRow}>
+        <div className={styles.cardWrapper}>
+          <InfluenceType
+            editable={editable}
+            loading={isPending}
+            influenceData={influenceData}
+            onChange={(type) =>
+              updateInfluence({
+                ...influenceData,
+                type: convertFromInfluence(type),
+              }).then(() => toast.success('Updated influence type.'))
+            }
+          />
+          <BaseProfileCard
+            userId={influenceData.influenced_to}
+            className={`${editable ? styles.editable : ''}`}
+          />
+        </div>
+        <EditableDescription
+          className={styles.description}
+          label={'Description textarea'}
+          description={influenceData.description || ''}
+          editable={editable && !isPending}
+          placeholder={'Describe your influence here.'}
+          onChange={(e) =>
+            updateInfluenceDebounce({
+              ...influenceData,
+              description: e,
+            })
+          }
+          statusText={{
+            loading: 'Submitting influence description.',
+            error: 'Could not update influence description.',
+            success: 'Influence description updated.',
+          }}
+        />
+        {(editable || influenceData.beatmaps) && (
+          <div className={styles.maps}>
+            <h4>
+              Featured Maps{' '}
+              {influenceData.beatmaps?.length < LIMIT && (
+                <AddButton influenceData={influenceData} editable={editable} />
+              )}
+            </h4>
+            <MapCarousel
+              mapList={influenceData.beatmaps || []}
               editable={editable}
-              loading={isPending}
-              influenceData={influenceData}
-              onChange={(type) =>
-                updateInfluence({
-                  ...influenceData,
-                  type: convertFromInfluence(type),
-                }).then(() => toast.success('Updated influence type.'))
-              }
-            />
-            <BaseProfileCard
-              userId={influenceData.influenced_to}
-              className={`${editable ? styles.editable : ''}`}
+              onDelete={onDelete}
             />
           </div>
-          <EditableDescription
-            className={styles.description}
-            label={'Description textarea'}
-            description={influenceData.description || ''}
-            editable={editable && !isPending}
-            placeholder={'Describe your influence here.'}
-            onChange={(e) =>
-              updateInfluenceDebounce({
-                ...influenceData,
-                description: e,
-              })
-            }
-            statusText={{
-              loading: 'Submitting influence description.',
-              error: 'Could not update influence description.',
-              success: 'Influence description updated.',
-            }}
-          />
-          {(editable || influenceData.beatmaps) && (
-            <div className={styles.maps}>
-              <h4>
-                Featured Maps{' '}
-                <AddButton influenceData={influenceData} editable={editable} />
-              </h4>
-              <MapCarousel
-                mapList={influenceData.beatmaps || []}
-                editable={editable}
-              />
-            </div>
-          )}
-        </div>
-      </>
-    );
-  },
-);
+        )}
+      </div>
+    </>
+  );
+};
 
 InfluenceElement.displayName = 'InfluenceElement';
 
@@ -104,17 +111,20 @@ const AddButton: FC<{
 
   const { mutateAsync: updateInfluence, isPending } = useAddInfluenceMutation();
   const onSubmit = useCallback(
-    (values: { diff: string; set: string }) => {
+    (diff: number) => {
       updateInfluence({
         ...influenceData,
         beatmaps: [
           ...(influenceData.beatmaps || []),
           {
-            id: Number(values.diff || values.set),
-            is_beatmapset: !!values.set,
+            id: diff,
+            is_beatmapset: false,
           },
         ],
-      }).then(() => setModalOpen(false));
+      }).then(() => {
+        toast.success('New map added to influence.');
+        setModalOpen(false);
+      });
     },
     [updateInfluence, influenceData],
   );
@@ -132,6 +142,7 @@ const AddButton: FC<{
           closeForm={() => setModalOpen(false)}
           onSubmit={onSubmit}
           loading={isPending}
+          suggestionUserId={influenceData.influenced_to}
         />
       </Modal>
       <button

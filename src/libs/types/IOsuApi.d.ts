@@ -8,6 +8,7 @@ export type BeatmapResponse = Beatmapset & {
     mode: string;
     url: string;
     version: string;
+    difficulty_rating: number;
     // Fill rest later
   }[];
   related_users: {

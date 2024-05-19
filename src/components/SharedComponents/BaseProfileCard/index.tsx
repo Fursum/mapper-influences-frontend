@@ -1,7 +1,8 @@
 import type { ComponentProps, FC } from 'react';
 
+import { DEFAULT_AVATAR } from '@libs/consts';
 import type { LeaderboardResponse } from '@services/leaderboard';
-import { useFullUser } from '@services/user';
+import { useFullUser, useUserBio } from '@services/user';
 import { useGlobalTooltip } from '@states/globalTooltip';
 import Link from 'next/link';
 
@@ -22,6 +23,9 @@ const BaseProfileCard: FC<Props> = ({
 }) => {
   const { activateTooltip, deactivateTooltip } = useGlobalTooltip();
   const { data: userData, isLoading } = useFullUser(userId?.toString());
+  const { data: userBio, isLoading: bioLoading } = useUserBio(
+    userId?.toString(),
+  );
 
   const userGroups = userData?.groups;
 
@@ -48,7 +52,7 @@ const BaseProfileCard: FC<Props> = ({
         userData
           ? deactivateTooltip
           : () => {
-              activateTooltip('Log in to see their profile!', {} as any);
+              activateTooltip('Log in to see their profile!');
               setTimeout(deactivateTooltip, 3000);
             }
       }
@@ -58,9 +62,7 @@ const BaseProfileCard: FC<Props> = ({
       <div className={`${styles.photoCell}`}>
         <img
           src={
-            userData?.avatar_url ||
-            offlineData?.avatar_url ||
-            'https://osu.ppy.sh/images/layout/avatar-guest.png'
+            userData?.avatar_url || offlineData?.avatar_url || DEFAULT_AVATAR
           }
           alt={`${userData?.username || offlineData?.avatar_url} avatar`}
           className={styles.photo}
@@ -78,13 +80,7 @@ const BaseProfileCard: FC<Props> = ({
       </div>
       <div className={styles.influencedStat}>
         Influenced{' '}
-        <span
-          onMouseEnter={(e) =>
-            activateTooltip('Work in progress!', e.currentTarget)
-          }
-        >
-          ...
-        </span>
+        <span>{bioLoading ? '...' : userBio?.mention_count || 0}</span>
       </div>
       <div className={styles.rankedStat}>
         Ranked Maps{' '}
@@ -132,6 +128,7 @@ const ConditionalLink: FC<
     disabled?: boolean;
   }
 > = ({ href, children, disabled, ...props }) => {
+  // biome-ignore lint/suspicious/noExplicitAny: <TODO>
   if (disabled) return <div {...(props as any)}>{children}</div>;
   return (
     <Link href={href} {...props}>
