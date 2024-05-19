@@ -7,6 +7,8 @@
 
   .double {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: inherit;
     height: 100%;
   }
