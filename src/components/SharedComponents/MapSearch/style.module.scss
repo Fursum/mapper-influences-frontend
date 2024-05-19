@@ -54,7 +54,6 @@
         flex-direction: column;
         gap: $spacing / 2;
         overflow-y: auto;
-        text-align: left;
         outline: 0.1px solid transparent;
 
         width: 25rem;
@@ -62,11 +61,19 @@
 
         .selected {
           background-color: $color-button-outline;
-          color: $color-button-text;
           outline-color: $color-button-outline;
+
+          // Light mode behaves a little off
+          --textColor: var(--bgColor-1);
         }
 
         > div {
+          @extend %resetButtonDefaults;
+
+          padding: 0;
+
+          text-align: left;
+
           flex-shrink: 0;
           text-overflow: ellipsis;
           white-space: nowrap;

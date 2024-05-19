@@ -11,7 +11,7 @@ import styles from './style.module.scss';
 
 export const AddMapModalContents: FC<{
   closeForm: () => void;
-  onSubmit: (values: { diff: string; set: string }) => void;
+  onSubmit: (selectedDiff: number) => void;
   suggestionUserId?: number | string;
   loading: boolean;
 }> = ({ closeForm, loading, onSubmit, suggestionUserId }) => {
@@ -40,7 +40,13 @@ export const AddMapModalContents: FC<{
 
   return (
     <>
-      <form className={styles.form}>
+      <form
+        className={styles.form}
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (selectedMap) onSubmit(selectedMap);
+        }}
+      >
         <h2>Add a map</h2>
         <label>
           <span>Search maps</span>
@@ -99,11 +105,7 @@ export const AddMapModalContents: FC<{
                             {' '}
                             <ModeIcon
                               mode={row.mode}
-                              color={
-                                selectedMap === row.id
-                                  ? 'var(--buttonText)'
-                                  : undefined
-                              }
+                              color="var(--textColor)"
                             />
                             ({row.difficulty_rating}*) {row.version}
                           </div>
@@ -123,7 +125,6 @@ export const AddMapModalContents: FC<{
           <button
             className="submit"
             role="button"
-            onClick={() => onSubmit({ diff: '', set: '' })}
             disabled={loading || !selectedMap}
           >
             {loading ? 'Adding...' : 'Add'}

@@ -6,6 +6,7 @@ import Modal from '@components/SharedComponents/Modal';
 import { useAddMapToSelfMutation } from '@services/maps';
 import { useUserBio } from '@services/user';
 import { useGlobalTooltip } from '@states/globalTooltip';
+import { useIsClient } from 'usehooks-ts';
 
 import styles from './style.module.scss';
 
@@ -14,8 +15,12 @@ const FeaturedMaps: FC<{ userId?: string | number }> = ({ userId }) => {
 
   const beatmapCount = profileData?.beatmaps?.length || 0;
 
+  const isClient = useIsClient();
+
+  if (!isClient) return null;
+
   // Dont show anything if featured maps dont exist
-  if (userId && beatmapCount) return <></>;
+  if (userId && !beatmapCount) return <></>;
 
   return (
     <div className={styles.featuredMaps}>
@@ -33,10 +38,10 @@ const AddButton: FC<{ userId?: string | number }> = ({ userId }) => {
 
   const { mutateAsync: addMap, isPending } = useAddMapToSelfMutation();
   const onSubmit = useCallback(
-    (values: { diff: string; set: string }) => {
+    (selectedDiff: number) => {
       addMap({
-        mapId: Number(values.diff || values.set),
-        isSet: !!values.set,
+        mapId: selectedDiff,
+        isSet: false,
       }).then(() => setModalOpen(false));
     },
     [addMap],
