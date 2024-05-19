@@ -104,17 +104,20 @@ const AddButton: FC<{
 
   const { mutateAsync: updateInfluence, isPending } = useAddInfluenceMutation();
   const onSubmit = useCallback(
-    (values: { diff: string; set: string }) => {
+    (diff: number) => {
       updateInfluence({
         ...influenceData,
         beatmaps: [
           ...(influenceData.beatmaps || []),
           {
-            id: Number(values.diff || values.set),
-            is_beatmapset: !!values.set,
+            id: diff,
+            is_beatmapset: false,
           },
         ],
-      }).then(() => setModalOpen(false));
+      }).then(() => {
+        toast.success('New map added to influence.');
+        setModalOpen(false);
+      });
     },
     [updateInfluence, influenceData],
   );

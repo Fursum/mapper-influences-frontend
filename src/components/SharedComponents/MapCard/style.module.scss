@@ -1,3 +1,5 @@
+@import '/src/styles/variables/fonts';
+
 .card {
   isolation: isolate;
   display: flex;
@@ -67,6 +69,9 @@
 
   .artist {
     font-size: 0.75rem;
+    font-family: $inter;
+    font-weight: 400;
+    margin-left: 0.05rem;
   }
 
   .title {

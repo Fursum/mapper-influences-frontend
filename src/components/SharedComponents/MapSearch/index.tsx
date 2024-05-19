@@ -2,9 +2,11 @@ import { type FC, useEffect, useRef, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import MapCard, { ModeIcon } from '@components/SharedComponents/MapCard';
+import { getDiffColor } from '@libs/functions/colors';
 import type { BeatmapResponse } from '@libs/types/IOsuApi';
 import { searchMaps } from '@services/search';
 import { useFullUser } from '@services/user';
+import { useGlobalTooltip } from '@states/globalTooltip';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 
 import styles from './style.module.scss';
@@ -15,6 +17,7 @@ export const AddMapModalContents: FC<{
   suggestionUserId?: number | string;
   loading: boolean;
 }> = ({ closeForm, loading, onSubmit, suggestionUserId }) => {
+  const { activateTooltip } = useGlobalTooltip();
   const { data: suggestedUser } = useFullUser(suggestionUserId?.toString());
 
   const [mapResults, setMapResults] = useState<BeatmapResponse[]>([]);
@@ -102,12 +105,17 @@ export const AddMapModalContents: FC<{
                               }
                             }}
                           >
-                            {' '}
                             <ModeIcon
                               mode={row.mode}
-                              color="var(--textColor)"
-                            />
-                            ({row.difficulty_rating}*) {row.version}
+                              color={getDiffColor(row.difficulty_rating)}
+                              onMouseEnter={(e) =>
+                                activateTooltip(
+                                  `${row.difficulty_rating}*`,
+                                  e.currentTarget,
+                                )
+                              }
+                            />{' '}
+                            {row.version}
                           </div>
                         );
                       })}

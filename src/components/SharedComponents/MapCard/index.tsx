@@ -113,20 +113,29 @@ export default MapCard;
 export const ModeIcon = ({
   mode,
   color,
+  onMouseEnter,
 }: {
   mode?: string;
   color?: string;
+  onMouseEnter?: (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => void;
 }) => {
+  let Component = OsuIcon;
   switch (mode) {
     case 'osu':
-      return <OsuIcon color={color || 'var(--white)'} />;
+      Component = OsuIcon;
+      break;
     case 'taiko':
-      return <TaikoIcon color={color || 'var(--white)'} />;
+      Component = TaikoIcon;
+      break;
     case 'fruits':
-      return <CatchIcon color={color || 'var(--white)'} />;
+      Component = CatchIcon;
+      break;
     case 'mania':
-      return <ManiaIcon color={color || 'var(--white)'} />;
-    default:
-      return <></>;
+      Component = ManiaIcon;
+      break;
   }
+
+  return (
+    <Component color={color || 'var(--white)'} onMouseEnter={onMouseEnter} />
+  );
 };

@@ -47,9 +47,9 @@ export type AddInfluenceRequest = {
   }[];
 };
 
-export async function addInfluence(body: AddInfluenceRequest) {
+export function addInfluence(body: AddInfluenceRequest) {
   const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence`;
-  return await axios.post(
+  return axios.post(
     searchUrl,
     { beatmaps: [], ...body },
     { withCredentials: true },
@@ -59,7 +59,7 @@ export async function addInfluence(body: AddInfluenceRequest) {
 export const useAddInfluenceMutation = () => {
   const queryClient = useQueryClient();
   const { data: user } = useCurrentUser();
-  const key = ['influences', Number(user?.id)];
+  const key = ['influences', user?.id];
 
   return useMutation({
     mutationFn: addInfluence,
@@ -75,19 +75,18 @@ export const useAddInfluenceMutation = () => {
           description: variables.description,
           created_at: new Date().toISOString(),
           modified_at: new Date().toISOString(),
-          beatmaps: [],
+          beatmaps: variables.beatmaps || [],
         };
         if (!old) return [newInfluence];
 
         // If the influence exists, replace it
-        if (
-          old.some((inf) => inf.influenced_to === newInfluence.influenced_to)
-        ) {
-          return old.map((inf) =>
-            inf.influenced_to === newInfluence.influenced_to
-              ? newInfluence
-              : inf,
-          );
+        const influenceIndex = old.findIndex(
+          (inf) => inf.influenced_to === newInfluence.influenced_to,
+        );
+
+        if (influenceIndex !== -1) {
+          old[influenceIndex] = newInfluence;
+          return [...old];
         }
 
         return [...old, newInfluence];

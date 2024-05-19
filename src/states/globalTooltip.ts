@@ -4,8 +4,8 @@ import { devtools } from 'zustand/middleware';
 type SessionStore = {
   isActive: boolean;
   text: string;
-  parent: HTMLElement | null;
-  activateTooltip: (text: string, parent?: HTMLElement) => void;
+  parent: HTMLElement | SVGSVGElement | null;
+  activateTooltip: (text: string, parent?: HTMLElement | SVGSVGElement) => void;
   deactivateTooltip: () => void;
 };
 
