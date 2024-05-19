@@ -96,6 +96,9 @@ export const useAddInfluenceMutation = () => {
       queryClient.invalidateQueries({
         queryKey: ['userBio', Number(variables.influenced_to)],
       });
+      queryClient.invalidateQueries({
+        queryKey: ['mentions', Number(variables.influenced_to)],
+      });
     },
     onError: () =>
       queryClient.invalidateQueries({
@@ -129,11 +132,31 @@ export const useDeleteInfluenceMutation = () => {
       queryClient.invalidateQueries({
         queryKey: ['userBio', Number(variables)],
       });
+      queryClient.invalidateQueries({
+        queryKey: ['mentions', Number(variables)],
+      });
     },
     onError: () => toast.error('Failed to remove influence.'),
     onSettled: () =>
       queryClient.invalidateQueries({
         queryKey: key,
       }),
+  });
+};
+
+export function getMentions(userId: string | number) {
+  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/get_mentions/${userId}`;
+  return axios
+    .get<InfluenceResponse[]>(searchUrl, { withCredentials: true })
+    .then((res) => res.data);
+}
+
+export const useGetMentions = (userId?: string | number) => {
+  const { data: user } = useCurrentUser();
+  const id = userId || user?.id || 0;
+  return useQuery({
+    queryKey: ['mentions', Number(id)],
+    enabled: !!id,
+    queryFn: () => getMentions(id),
   });
 };
