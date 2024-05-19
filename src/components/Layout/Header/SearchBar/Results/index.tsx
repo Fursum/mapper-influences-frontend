@@ -14,7 +14,18 @@ const Results: FC<{ results: UserCompact[]; length?: number }> = ({
       {!!results.length && <h4>Matching users:</h4>}
       {!results.length && <h4>No users found.</h4>}
       {results.slice(0, length).map((user) => (
-        <BaseProfileCard userId={user.id} key={user.id} />
+        <BaseProfileCard
+          userId={user.id}
+          key={user.id}
+          offlineData={{
+            avatar_url: user.avatar_url,
+            country: user.country_code,
+            bio: '',
+            id: user.id,
+            username: user.username,
+            influence_count: 0,
+          }}
+        />
       ))}
     </div>
   );
