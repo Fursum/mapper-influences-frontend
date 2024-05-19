@@ -31,10 +31,9 @@ export const useGetInfluences = (userId?: string | number) => {
   const { data: user } = useCurrentUser();
   const id = userId || user?.id || 0;
   return useQuery({
-    queryKey: ['influences', id],
+    queryKey: ['influences', Number(id)],
     enabled: !!id,
     queryFn: () => getInfluences(id),
-    staleTime: 60 * 1000,
   });
 };
 
@@ -60,7 +59,7 @@ export async function addInfluence(body: AddInfluenceRequest) {
 export const useAddInfluenceMutation = () => {
   const queryClient = useQueryClient();
   const { data: user } = useCurrentUser();
-  const key = ['influences', user?.id];
+  const key = ['influences', Number(user?.id)];
 
   return useMutation({
     mutationFn: addInfluence,
@@ -94,8 +93,11 @@ export const useAddInfluenceMutation = () => {
         return [...old, newInfluence];
       });
       queryClient.invalidateQueries({ queryKey: ['leaderboards'] });
+      queryClient.invalidateQueries({
+        queryKey: ['userBio', Number(variables.influenced_to)],
+      });
     },
-    onSettled: () =>
+    onError: () =>
       queryClient.invalidateQueries({
         queryKey: key,
       }),
@@ -110,7 +112,7 @@ export async function deleteInfluence(from_id: string | number) {
 export const useDeleteInfluenceMutation = () => {
   const queryClient = useQueryClient();
   const { data: user } = useCurrentUser();
-  const key = ['influences', user?.id];
+  const key = ['influences', Number(user?.id)];
 
   return useMutation({
     mutationFn: deleteInfluence,
@@ -124,6 +126,9 @@ export const useDeleteInfluenceMutation = () => {
       });
       toast.success('Influence removed.');
       queryClient.invalidateQueries({ queryKey: ['leaderboards'] });
+      queryClient.invalidateQueries({
+        queryKey: ['userBio', Number(variables)],
+      });
     },
     onError: () => toast.error('Failed to remove influence.'),
     onSettled: () =>

@@ -45,6 +45,7 @@ const MapStats: FC<{
     pending_beatmapset_count = 0,
   } = profileData || {};
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <data contains the values>
   const rankedTooltip = useMemo(() => {
     const tooltip: string[] = [];
     if (ranked_and_approved_beatmapset_count)
@@ -60,6 +61,7 @@ const MapStats: FC<{
     pending_beatmapset_count +
     guest_beatmapset_count;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <data contains the values>
   const totalTooltip = useMemo(() => {
     const tooltip: string[] = [];
     if (ranked_and_approved_beatmapset_count)
@@ -80,7 +82,7 @@ const MapStats: FC<{
         onMouseEnter={(e) =>
           rankedTooltip && activateTooltip(rankedTooltip, e.currentTarget)
         }
-        onMouseLeave={() => deactivateTooltip()}
+        onMouseLeave={() => rankedTooltip && deactivateTooltip()}
       >
         Ranked
       </SingleStat>
@@ -91,7 +93,7 @@ const MapStats: FC<{
         onMouseEnter={(e) =>
           totalTooltip && activateTooltip(totalTooltip, e.currentTarget)
         }
-        onMouseLeave={() => deactivateTooltip()}
+        onMouseLeave={() => totalTooltip && deactivateTooltip()}
       >
         Total
       </SingleStat>
