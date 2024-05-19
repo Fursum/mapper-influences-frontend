@@ -128,6 +128,7 @@ const ConditionalLink: FC<
     disabled?: boolean;
   }
 > = ({ href, children, disabled, ...props }) => {
+  // biome-ignore lint/suspicious/noExplicitAny: <TODO>
   if (disabled) return <div {...(props as any)}>{children}</div>;
   return (
     <Link href={href} {...props}>
