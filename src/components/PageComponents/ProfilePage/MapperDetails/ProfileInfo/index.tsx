@@ -113,7 +113,7 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
             action={isAlreadyAdded ? 'remove' : 'add'}
           />
         )}
-        {ownProfile && <button onClick={logout}>Sign out</button>}
+        {ownProfile && <button onClick={logout}>Sign Out</button>}
       </div>
     </div>
   );
