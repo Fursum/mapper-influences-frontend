@@ -21,6 +21,8 @@
     max-height: 22rem;
     overflow-y: auto;
 
+    scrollbar-gutter: stable;
+
     .row {
       display: flex;
       align-items: center;

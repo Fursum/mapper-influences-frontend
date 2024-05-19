@@ -2,12 +2,10 @@ import type { FC } from 'react';
 
 import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
 import { useGetLeaderboards } from '@services/leaderboard';
-import { useCurrentUser } from '@services/user';
 
 import styles from './style.module.scss';
 
 const Leaderboard: FC<{ className?: string }> = ({ className }) => {
-  const { data: currentUser } = useCurrentUser();
   const { data: leaderboards } = useGetLeaderboards();
 
   return (
