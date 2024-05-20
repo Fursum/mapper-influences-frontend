@@ -81,6 +81,7 @@ const AddUserButton: FC<Props> = ({
           setShowForm(false);
           toast.success('Influence added.');
         },
+        onError: () => toast.error('Could not add influence.'),
       });
     },
     [userId, type, description, addInfluence],
