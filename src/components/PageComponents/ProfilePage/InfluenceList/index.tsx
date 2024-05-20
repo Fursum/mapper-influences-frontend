@@ -48,7 +48,6 @@ const InfluenceList: FC<{
         <InfiniteScroll
           initialLoad={true}
           loadMore={() => {
-            debugger;
             influences
               ? setVisibleInfluences(
                   influences?.slice(0, (visibleInfluences?.length || 0) + 5),
