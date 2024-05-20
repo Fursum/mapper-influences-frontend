@@ -66,12 +66,12 @@ const MapCard: FC<{
       target={'_blank'}
       rel="noreferrer"
       style={{
-        backgroundImage: `url(${mapData.covers.cover})`,
         // only allow hover if loading
         pointerEvents: loading ? 'none' : 'auto',
       }}
       className={styles.card}
     >
+      <img src={mapData.covers.cover} alt="cover" loading="lazy" />
       <div className={styles.songInfo}>
         <div className={styles.title}>{mapData.title}</div>
         <div className={styles.artist}>{mapData.artist}</div>

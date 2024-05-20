@@ -5,9 +5,6 @@
   position: relative;
   align-items: flex-start;
 
-  background-size: cover;
-  background-position: center;
-
   width: $card-width;
   min-width: $card-width;
   height: $card-height;
@@ -18,6 +15,15 @@
   border-radius: $border-radius;
 
   user-select: none;
+
+  > img {
+    width: $card-width;
+    height: $card-height;
+    border-radius: $border-radius;
+
+    position: absolute;
+    inset: 0;
+  }
 
   // Fade for readability
   &::after,
