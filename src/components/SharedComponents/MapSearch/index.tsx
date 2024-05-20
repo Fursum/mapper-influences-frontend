@@ -31,7 +31,7 @@ export const AddMapModalContents: FC<{
   // biome-ignore lint/correctness/useExhaustiveDependencies: <this is meant to only run once>
   useEffect(() => {
     if (suggestedUser) {
-      searchMaps(`creator:${suggestedUser?.username}`).then(setMapResults);
+      searchMaps(`"${suggestedUser?.username}"`).then(setMapResults);
     }
   }, []);
 
@@ -62,7 +62,7 @@ export const AddMapModalContents: FC<{
             onChange={(e) =>
               debouncedSearch(e.target.value).then(setMapResults)
             }
-            defaultValue={`creator:${suggestedUser?.username}`}
+            defaultValue={`"${suggestedUser?.username}"`}
           />
         </label>
         {!!suggestedUser?.previous_usernames.length && (
