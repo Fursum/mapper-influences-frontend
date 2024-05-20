@@ -50,10 +50,12 @@ const BaseProfileCard: FC<Props> = ({
       ? '...'
       : userBio?.mention_count || offlineData?.mention_count || 0;
 
+  const validId = userData?.id || offlineData?.id || userBio?.id;
+
   return (
     <ConditionalLink
       disabled={!userData && !offlineData && !userBio}
-      href={`${userData ? `/profile/${userData?.id.toString() || !userBio?.id.toString()}` : '/'}`}
+      href={`${validId ? `/profile/${validId.toString()}` : '/'}`}
       onClick={
         !currentUser
           ? deactivateTooltip
