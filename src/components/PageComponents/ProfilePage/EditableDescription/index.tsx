@@ -71,6 +71,7 @@ const EditableDescription: FC<Props> = ({
         placeholder={editable ? placeholder : ''}
         readOnly={!editable}
         disabled={!editable}
+        maxLength={500}
       />
     </>
   );
