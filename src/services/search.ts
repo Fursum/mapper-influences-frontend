@@ -14,7 +14,7 @@ export function getSearchResults(query: string) {
 export function searchMaps(query: string) {
   return axios
     .get<BeatmapResponse[]>(
-      `${process.env.NEXT_PUBLIC_API_URL}/osu_api/search_map?q=${query}&s=any`,
+      `${process.env.NEXT_PUBLIC_API_URL}/osu_api/search_map?q=${query}&s=any&nsfw=true`,
       {
         withCredentials: true,
       },
