@@ -23,7 +23,10 @@ const ProfilePage: FC<Props> = ({ userId }) => {
 export default ProfilePage;
 
 const TabContainer: FC<{ userId?: number | string }> = ({ userId }) => {
-  const { activateTooltip, deactivateTooltip } = useGlobalTooltip();
+  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
+  const deactivateTooltip = useGlobalTooltip(
+    (state) => state.deactivateTooltip,
+  );
   const { data: influences } = useGetInfluences(userId);
   const { data: mentions } = useGetMentions(userId);
 

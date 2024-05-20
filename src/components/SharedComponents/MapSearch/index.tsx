@@ -17,7 +17,7 @@ export const AddMapModalContents: FC<{
   suggestionUserId?: number | string;
   loading: boolean;
 }> = ({ closeForm, loading, onSubmit, suggestionUserId }) => {
-  const { activateTooltip } = useGlobalTooltip();
+  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
   const { data: suggestedUser } = useFullUser(suggestionUserId?.toString());
 
   const [mapResults, setMapResults] = useState<BeatmapResponse[]>([]);

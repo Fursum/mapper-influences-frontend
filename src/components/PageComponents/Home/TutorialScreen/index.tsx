@@ -28,7 +28,7 @@ const TutorialStep: FC<{
 
 type Props = { children?: ReactNode };
 const TutorialScreen: FC<Props> = ({ children }) => {
-  const { activateTooltip } = useGlobalTooltip();
+  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
 
   const { data: user } = useCurrentUser();
 

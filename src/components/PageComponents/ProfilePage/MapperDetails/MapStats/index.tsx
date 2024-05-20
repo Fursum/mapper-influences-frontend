@@ -32,7 +32,10 @@ const SingleStat: FC<{
 const MapStats: FC<{
   userId?: string | number;
 }> = ({ userId }) => {
-  const { activateTooltip, deactivateTooltip } = useGlobalTooltip();
+  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
+  const deactivateTooltip = useGlobalTooltip(
+    (state) => state.deactivateTooltip,
+  );
 
   const { data: profileData, isLoading } = useFullUser(userId?.toString());
 

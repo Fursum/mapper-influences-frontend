@@ -33,7 +33,10 @@ const FeaturedMaps: FC<{ userId?: string | number }> = ({ userId }) => {
 export default FeaturedMaps;
 
 const AddButton: FC<{ userId?: string | number }> = ({ userId }) => {
-  const { activateTooltip, deactivateTooltip } = useGlobalTooltip();
+  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
+  const deactivateTooltip = useGlobalTooltip(
+    (state) => state.deactivateTooltip,
+  );
   const [modalOpen, setModalOpen] = useState(false);
 
   const { mutateAsync: addMap, isPending } = useAddMapToSelfMutation();

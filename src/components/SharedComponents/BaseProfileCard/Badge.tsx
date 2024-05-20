@@ -8,7 +8,7 @@ import styles from './style.module.scss';
 
 type Props = { group: UserGroup };
 const Badge: FC<Props> = ({ group }) => {
-  const { activateTooltip } = useGlobalTooltip();
+  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
 
   return (
     <span

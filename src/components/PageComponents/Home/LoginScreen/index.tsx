@@ -13,7 +13,7 @@ import CoolCards from './CoolCards';
 import styles from './style.module.scss';
 
 const LoginScreen: FC = () => {
-  const { activateTooltip } = useGlobalTooltip();
+  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const LoginButton = () => {

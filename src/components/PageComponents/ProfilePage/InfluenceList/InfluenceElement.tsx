@@ -119,7 +119,10 @@ const AddButton: FC<{
   influenceData: InfluenceResponse;
   editable?: boolean;
 }> = ({ influenceData, editable }) => {
-  const { activateTooltip, deactivateTooltip } = useGlobalTooltip();
+  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
+  const deactivateTooltip = useGlobalTooltip(
+    (state) => state.deactivateTooltip,
+  );
   const [modalOpen, setModalOpen] = useState(false);
 
   const { mutateAsync: updateInfluence, isPending } = useAddInfluenceMutation();

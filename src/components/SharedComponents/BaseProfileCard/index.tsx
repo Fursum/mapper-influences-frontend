@@ -21,7 +21,10 @@ const BaseProfileCard: FC<Props> = ({
   className = '',
   offlineData,
 }) => {
-  const { activateTooltip, deactivateTooltip } = useGlobalTooltip();
+  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
+  const deactivateTooltip = useGlobalTooltip(
+    (state) => state.deactivateTooltip,
+  );
   const { data: currentUser } = useCurrentUser();
   const { data: userData, isLoading } = useFullUser(userId?.toString());
   const { data: userBio, isLoading: bioLoading } = useUserBio(

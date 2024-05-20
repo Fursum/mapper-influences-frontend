@@ -20,7 +20,7 @@ const MapCard: FC<{
   deleteFn?: (map: BeatmapId) => void;
   loading?: boolean;
 }> = ({ map, deleteFn, loading }) => {
-  const { activateTooltip } = useGlobalTooltip();
+  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
 
   const { data: mapData, isLoading } = useMapData(
