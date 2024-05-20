@@ -4,7 +4,7 @@ import ProfilePhoto from '@components/SharedComponents/ProfilePhoto';
 import useAuth from '@hooks/useAuth';
 import { OSU_BASE_URL } from '@libs/consts/urls';
 import { useGetInfluences } from '@services/influence';
-import { useFullUser } from '@services/user';
+import { useFullUser, useUserBio } from '@services/user';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 
 import AddUserButton from '../AddUserButton';
@@ -22,6 +22,9 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
   const ownProfile = !userId;
 
   const { data: osuData, isLoading } = useFullUser(userId?.toString());
+  const { data: userBio, isLoading: bioLoading } = useUserBio(
+    userId?.toString(),
+  );
   const { data: currentUserInfluences } = useGetInfluences();
 
   const isAlreadyAdded = useMemo(() => {
@@ -64,7 +67,7 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
     );
   };
 
-  if (isLoading)
+  if (isLoading || bioLoading)
     return (
       <div className={`${styles.skeleton} ${styles.profileInfo}`}>
         <ProfilePhoto
@@ -89,7 +92,7 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
         rel="noreferrer"
       >
         <ProfilePhoto
-          photoUrl={osuData?.avatar_url}
+          photoUrl={userBio?.avatar_url}
           loading={isLoading}
           size="xl"
           circle
@@ -103,11 +106,11 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
           rel="noreferrer"
         >
           <div className={styles.mapperName} ref={nameRef}>
-            {osuData?.username}
+            {userBio?.username}
           </div>
         </a>
         <UserGroup />
-        {!ownProfile && (
+        {!ownProfile && osuData && (
           <AddUserButton
             userId={userId}
             action={isAlreadyAdded ? 'remove' : 'add'}
