@@ -39,6 +39,8 @@
       padding-block: $spacing / 2;
       padding-inline: $spacing;
 
+      isolation: isolate;
+
       @extend %contentBox;
 
       .centerer {
@@ -65,7 +67,7 @@
             bottom: 15%;
           }
         }
-        z-index: 2; // fix for search results
+        z-index: 1; // fix for search results
         // apparently backdrop-filter messes up stacking context
       }
 
