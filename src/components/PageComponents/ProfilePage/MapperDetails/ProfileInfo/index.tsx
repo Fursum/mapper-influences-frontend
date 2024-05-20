@@ -27,6 +27,8 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
   );
   const { data: currentUserInfluences } = useGetInfluences();
 
+  const mapperName = userBio?.username ?? osuData?.username ?? '';
+
   const isAlreadyAdded = useMemo(() => {
     if (!currentUserInfluences) return false;
     return currentUserInfluences.some(
@@ -48,7 +50,14 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
     return () => {
       window.removeEventListener('resize', debounceFitText);
     };
-  }, [osuData]);
+  }, [mapperName]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <Name change effects the element>
+  useEffect(() => {
+    // Run fit text on name change
+    if (!nameRef.current) return;
+    textFit(nameRef.current);
+  }, [mapperName]);
 
   const UserGroup = () => {
     if (!osuData?.groups?.length) return <></>;
