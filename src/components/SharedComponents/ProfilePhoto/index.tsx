@@ -31,7 +31,9 @@ const ProfilePhoto: FC<Props> = ({
         circle ? styles.circle : ''
       } ${loading ? styles.loading : ''}`}
     >
-      {!loading && <img src={photoUrl || DEFAULT_AVATAR} alt="avatar" />}
+      {!loading && (
+        <img src={photoUrl || DEFAULT_AVATAR} alt="avatar" loading="lazy" />
+      )}
     </div>
   );
 };

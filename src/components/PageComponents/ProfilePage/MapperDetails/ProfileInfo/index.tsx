@@ -92,7 +92,7 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
         rel="noreferrer"
       >
         <ProfilePhoto
-          photoUrl={userBio?.avatar_url}
+          photoUrl={userBio?.avatar_url ?? osuData?.avatar_url}
           loading={isLoading}
           size="xl"
           circle
@@ -106,7 +106,7 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
           rel="noreferrer"
         >
           <div className={styles.mapperName} ref={nameRef}>
-            {userBio?.username}
+            {userBio?.username ?? osuData?.username ?? ''}
           </div>
         </a>
         <UserGroup />
