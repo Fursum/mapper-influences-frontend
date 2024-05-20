@@ -54,7 +54,7 @@ const EditableDescription: FC<Props> = ({
           }),
         );
     }
-  }, 1000);
+  }, 3000);
 
   return (
     <>
