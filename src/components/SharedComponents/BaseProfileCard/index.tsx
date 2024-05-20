@@ -54,7 +54,7 @@ const BaseProfileCard: FC<Props> = ({
 
   return (
     <ConditionalLink
-      disabled={!userData && !offlineData && !userBio}
+      disabled={!currentUser}
       href={`${validId ? `/profile/${validId.toString()}` : '/'}`}
       onClick={
         !currentUser
@@ -102,8 +102,9 @@ const BaseProfileCard: FC<Props> = ({
         )}
         {!userData && offlineData && (
           <span
+            style={{ userSelect: 'none' }}
             onMouseEnter={(e) =>
-              currentUser &&
+              !currentUser &&
               activateTooltip(
                 'Log in to see more information!',
                 e.currentTarget,
