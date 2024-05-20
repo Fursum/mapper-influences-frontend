@@ -39,7 +39,7 @@ const AddUserButton: FC<Props> = ({
   const [showConfirm, setShowConfirm] = useState(false);
   const [description, setDescription] = useState('');
   const [type, setType] = useState<InfluenceTypeEnum>(
-    InfluenceTypeEnum.Fascination,
+    InfluenceTypeEnum.Respect,
   );
 
   const { mutate: addInfluence, isPending: isAddLoading } =
