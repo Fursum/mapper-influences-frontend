@@ -53,7 +53,7 @@ const BaseProfileCard: FC<Props> = ({
   return (
     <ConditionalLink
       disabled={!userData && !offlineData && !userBio}
-      href={`${userData ? `/profile/${userData?.id || !userBio?.id}` : '/'}`}
+      href={`${userData ? `/profile/${userData?.id ?? !userBio?.id}` : '/'}`}
       onClick={
         !currentUser
           ? deactivateTooltip
