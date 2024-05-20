@@ -5,23 +5,21 @@ import type { UserCompact } from 'osu-web.js';
 
 export function getSearchResults(query: string) {
   return axios
-    .get<{
-      user: { data: UserCompact[] };
-    }>(`${process.env.NEXT_PUBLIC_API_URL}/osu_api/search/${query}`, {
-      withCredentials: true,
-    })
-    .then((res) => res.data.user.data);
+    .get<
+      UserCompact[]
+    >(`${process.env.NEXT_PUBLIC_API_URL}/osu_api/search/${query}`, { withCredentials: true })
+    .then((res) => res.data);
 }
 
 export function searchMaps(query: string) {
   return axios
-    .get<{ beatmapsets: BeatmapResponse[] }>(
+    .get<BeatmapResponse[]>(
       `${process.env.NEXT_PUBLIC_API_URL}/osu_api/search_map?q=${query}&s=any`,
       {
         withCredentials: true,
       },
     )
-    .then((res) => res.data.beatmapsets);
+    .then((res) => res.data);
 }
 
 export const useMapSearch = (query: string) => {
