@@ -36,7 +36,7 @@ export const AddMapModalContents: FC<{
   }, []);
 
   useEffect(() => {
-    if (mapResults.length) {
+    if (mapResults?.length) {
       setVisibleResults(mapResults.slice(0, 5));
     }
 
