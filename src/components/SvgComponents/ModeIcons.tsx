@@ -20,8 +20,8 @@ export const OsuIcon: FC<Props> = ({
       fill="none"
       onMouseEnter={onMouseEnter}
     >
-      <g clip-path="url(#clip0_4188_3248)">
-        <g clip-path="url(#clip1_4188_3248)">
+      <g clipPath="url(#clip0_4188_3248)">
+        <g clipPath="url(#clip1_4188_3248)">
           <path
             fillRule="evenodd"
             clipRule="evenodd"
@@ -57,8 +57,8 @@ export const TaikoIcon: FC<Props> = ({
       fill="none"
       onMouseEnter={onMouseEnter}
     >
-      <g clip-path="url(#clip0_4188_3249)">
-        <g clip-path="url(#clip1_4188_3249)">
+      <g clipPath="url(#clip0_4188_3249)">
+        <g clipPath="url(#clip1_4188_3249)">
           <path
             fillRule="evenodd"
             clipRule="evenodd"
@@ -94,8 +94,8 @@ export const ManiaIcon: FC<Props> = ({
       fill="none"
       onMouseEnter={onMouseEnter}
     >
-      <g clip-path="url(#clip0_4188_3251)">
-        <g clip-path="url(#clip1_4188_3251)">
+      <g clipPath="url(#clip0_4188_3251)">
+        <g clipPath="url(#clip1_4188_3251)">
           <path
             fillRule="evenodd"
             clipRule="evenodd"
@@ -131,8 +131,8 @@ export const CatchIcon: FC<Props> = ({
       fill="none"
       onMouseEnter={onMouseEnter}
     >
-      <g clip-path="url(#clip0_4188_3250)">
-        <g clip-path="url(#clip1_4188_3250)">
+      <g clipPath="url(#clip0_4188_3250)">
+        <g clipPath="url(#clip1_4188_3250)">
           <path
             fillRule="evenodd"
             clipRule="evenodd"
