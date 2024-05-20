@@ -1,7 +1,7 @@
 import { type FC, useCallback, useEffect, useRef, useState } from 'react';
 
 import { Magnify } from '@components/SvgComponents';
-import { MaxNameLength } from '@libs/consts';
+import { MAX_NAME_LENGTH } from '@libs/consts';
 import { getSearchResults } from '@services/search';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 import { useRouter } from 'next/router';
@@ -65,7 +65,7 @@ const SearchBar: FC<Props> = ({ className }) => {
         <input
           onChange={(e) => handleChange(e.target.value)}
           placeholder={'Search User'}
-          maxLength={MaxNameLength}
+          maxLength={MAX_NAME_LENGTH}
           ref={inputRef}
         />
         <button className={styles.magnifyButton}>
