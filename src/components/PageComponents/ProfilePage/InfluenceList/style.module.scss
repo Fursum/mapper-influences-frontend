@@ -19,85 +19,91 @@
     width: 100%;
     height: 100%;
     overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: $spacing * 2;
 
-    > span {
-      margin-top: 1rem;
-      text-align: center;
-    }
-
-    .influenceRow {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: $spacing;
+    // Infinite scroll
+    > div {
       width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: $spacing * 2;
 
-      padding: $spacing / 2;
-
-      // Line separator
-      &:not(:first-of-type)::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        right: $spacing / 2;
-        top: -$spacing + 0.1rem;
-        height: 0.2rem;
-        background-color: $color-background-card;
+      > span {
+        margin-top: 1rem;
+        text-align: center;
       }
 
-      .cardWrapper {
-        position: relative;
-        .editable {
-          margin-top: $spacing * 5;
-        }
-      }
-
-      .description {
-        min-height: 100%;
-        max-width: 50ch;
-      }
-
-      .maps {
-        min-width: $card-width + $spacing;
-        > h4 {
-          width: 100%;
-          text-align: center;
-          margin-block: $spacing/2;
-        }
-
-        .placeholder {
-          opacity: 0.5;
-          width: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-      }
-    }
-
-    @media screen and (max-width: $responsive-breakpoint) {
       .influenceRow {
-        height: auto;
-        flex-wrap: wrap;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: $spacing;
+        width: 100%;
 
-        &:not(:last-child) {
-          margin-bottom: $spacing;
+        padding: $spacing / 2;
+
+        // Line separator
+        &:not(:first-of-type)::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          right: $spacing / 2;
+          top: -$spacing + 0.1rem;
+          height: 0.2rem;
+          background-color: $color-background-card;
+        }
+
+        .cardWrapper {
+          position: relative;
+          .editable {
+            margin-top: $spacing * 5;
+          }
         }
 
         .description {
-          order: 3;
-          min-height: 11rem;
-          height: 10rem;
-          flex-basis: 100%;
-          margin-right: $spacing/2;
+          min-height: 100%;
+          max-width: 50ch;
         }
 
         .maps {
-          order: 2;
+          min-width: $card-width + $spacing;
+          > h4 {
+            width: 100%;
+            text-align: center;
+            margin-block: $spacing/2;
+          }
+
+          .placeholder {
+            opacity: 0.5;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+        }
+      }
+
+      @media screen and (max-width: $responsive-breakpoint) {
+        .influenceRow {
+          height: auto;
+          flex-wrap: wrap;
+
+          &:not(:last-child) {
+            margin-bottom: $spacing;
+          }
+
+          .description {
+            order: 3;
+            min-height: 11rem;
+            height: 10rem;
+            flex-basis: 100%;
+            margin-right: $spacing/2;
+          }
+
+          .maps {
+            order: 2;
+          }
         }
       }
     }
