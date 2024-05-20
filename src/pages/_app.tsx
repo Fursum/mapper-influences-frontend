@@ -25,6 +25,7 @@ function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
+        <title>Mapper Influences</title>
         <meta
           name="description"
           content="Track and share your osu! mapping influences."
@@ -38,7 +39,6 @@ function App({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/svg/Influences.svg" />
         <link rel="shortcut icon" href="/svg/Influences.svg" />
         <link rel="mask-icon" href="/svg/Influences.svg" color="#000000" />
-        <title>Mapper Influences</title>
       </Head>
 
       <QueryClientProvider client={queryClient}>
