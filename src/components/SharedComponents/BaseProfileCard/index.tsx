@@ -2,7 +2,7 @@ import type { ComponentProps, FC } from 'react';
 
 import { DEFAULT_AVATAR } from '@libs/consts';
 import type { LeaderboardResponse } from '@services/leaderboard';
-import { useFullUser, useUserBio } from '@services/user';
+import { useCurrentUser, useFullUser, useUserBio } from '@services/user';
 import { useGlobalTooltip } from '@states/globalTooltip';
 import Link from 'next/link';
 
@@ -22,6 +22,7 @@ const BaseProfileCard: FC<Props> = ({
   offlineData,
 }) => {
   const { activateTooltip, deactivateTooltip } = useGlobalTooltip();
+  const { data: currentUser } = useCurrentUser();
   const { data: userData, isLoading } = useFullUser(userId?.toString());
   const { data: userBio, isLoading: bioLoading } = useUserBio(
     userId?.toString(),
@@ -51,10 +52,10 @@ const BaseProfileCard: FC<Props> = ({
 
   return (
     <ConditionalLink
-      disabled={!userData}
-      href={`${userData ? `/profile/${userData?.id}` : '/'}`}
+      disabled={!userData && !offlineData && !userBio}
+      href={`${userData ? `/profile/${userData?.id || !userBio?.id}` : '/'}`}
       onClick={
-        userData
+        !currentUser
           ? deactivateTooltip
           : () => {
               activateTooltip('Log in to see their profile!');
@@ -67,9 +68,12 @@ const BaseProfileCard: FC<Props> = ({
       <div className={`${styles.photoCell}`}>
         <img
           src={
-            userData?.avatar_url || offlineData?.avatar_url || DEFAULT_AVATAR
+            userData?.avatar_url ||
+            offlineData?.avatar_url ||
+            userBio?.avatar_url ||
+            DEFAULT_AVATAR
           }
-          alt={`${userData?.username || offlineData?.avatar_url} avatar`}
+          alt={`${userData?.username || offlineData?.avatar_url || userBio?.avatar_url} avatar`}
           className={styles.photo}
         />
         {!!userGroups?.length && (
@@ -81,7 +85,7 @@ const BaseProfileCard: FC<Props> = ({
         )}
       </div>
       <div className={styles.name}>
-        {userData?.username || offlineData?.username}
+        {userData?.username || offlineData?.username || userBio?.username}
       </div>
       <div className={styles.influencedStat}>
         Mentioned In <span>{influenceText}</span>
@@ -97,6 +101,7 @@ const BaseProfileCard: FC<Props> = ({
         {!userData && offlineData && (
           <span
             onMouseEnter={(e) =>
+              currentUser &&
               activateTooltip(
                 'Log in to see more information!',
                 e.currentTarget,
