@@ -58,6 +58,8 @@ export default MapperPage;
 export const getServerSideProps = async (
   context: GetServerSidePropsContext,
 ) => {
+  if (!context.preview) return { props: {} };
+
   let userBio: UserBioResponse | undefined;
 
   try {
