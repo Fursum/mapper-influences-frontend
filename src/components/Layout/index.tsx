@@ -26,6 +26,7 @@ const Layout: FC<Props> = ({ children }) => {
         theme={theme}
         className={styles.toast}
         position="bottom-right"
+        autoClose={3000}
       />
     </>
   );
