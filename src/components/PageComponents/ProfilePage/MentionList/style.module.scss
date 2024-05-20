@@ -26,6 +26,7 @@
     justify-items: center;
     gap: $spacing;
     overflow-y: auto;
+    padding-bottom: $spacing;
   }
 
   @media screen and (max-width: $responsive-breakpoint) {
