@@ -41,7 +41,7 @@ const BaseProfileCard: FC<Props> = ({
   }
 
   const displayFlag =
-    (userData?.country.name || offlineData?.country) &&
+    (userData?.country?.name || offlineData?.country) &&
     offlineData?.country !== 'XX';
 
   const influenceText =
@@ -112,12 +112,12 @@ const BaseProfileCard: FC<Props> = ({
           className={styles.flag}
           onMouseEnter={(e) =>
             userData?.country &&
-            activateTooltip(userData.country.name, e.currentTarget)
+            activateTooltip(userData.country?.name, e.currentTarget)
           }
         >
           <img
             alt={`${userData?.username || offlineData?.username} is from ${userData?.country.name || offlineData?.country}`}
-            src={`https://flagcdn.com/${userData?.country.code.toLowerCase() || offlineData?.country?.toLowerCase()}.svg`}
+            src={`https://flagcdn.com/${userData?.country?.code.toLowerCase() || offlineData?.country?.toLowerCase()}.svg`}
           />
         </div>
       )}
