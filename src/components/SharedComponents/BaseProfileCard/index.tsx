@@ -58,11 +58,11 @@ const BaseProfileCard: FC<Props> = ({
       href={`${validId ? `/profile/${validId.toString()}` : '/'}`}
       onClick={
         !currentUser
-          ? deactivateTooltip
-          : () => {
+          ? () => {
               activateTooltip('Log in to see their profile!');
               setTimeout(deactivateTooltip, 3000);
             }
+          : deactivateTooltip
       }
       className={`${styles.cardWrapper} ${className}`}
     >
