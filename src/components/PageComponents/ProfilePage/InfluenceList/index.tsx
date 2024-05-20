@@ -35,9 +35,10 @@ const InfluenceList: FC<{
     });
   }, [influences]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <intended for initial load>
   useEffect(() => {
     setVisibleInfluences(sortedInfluences?.slice(0, 5) || []);
-  }, [sortedInfluences]);
+  }, [influences]);
 
   return (
     <div
