@@ -25,6 +25,7 @@
     grid-template-columns: repeat(auto-fit, minmax($card-width, 1fr));
     justify-items: center;
     gap: $spacing;
+    overflow-y: auto;
   }
 
   @media screen and (max-width: $responsive-breakpoint) {
