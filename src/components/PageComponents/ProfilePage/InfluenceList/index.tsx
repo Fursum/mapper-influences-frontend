@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import { type FC, useMemo } from 'react';
 
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useGetInfluences } from '@services/influence';
@@ -17,13 +17,25 @@ const InfluenceList: FC<{
 
   const [animateRef] = useAutoAnimate({ easing: 'ease-out', duration: 200 });
 
+  const sortedInfluences = useMemo(() => {
+    // Sort by influence level first, then by date
+    return influences?.sort((a, b) => {
+      if (a.type === b.type)
+        return (
+          new Date(b.modified_at).getTime() - new Date(a.modified_at).getTime()
+        );
+
+      return b.type - a.type;
+    });
+  }, [influences]);
+
   return (
     <div
       className={styles.mapperInfluences}
       style={!open ? { display: 'none' } : {}}
     >
       <div className={styles.scrollWrapper} ref={animateRef}>
-        {influences?.map((influence) => (
+        {sortedInfluences?.map((influence) => (
           <InfluenceElement
             key={influence.influenced_to}
             influenceData={influence}
