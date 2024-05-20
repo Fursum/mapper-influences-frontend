@@ -71,7 +71,7 @@ export const AddMapModalContents: FC<{
           </span>
         )}
 
-        {!!mapResults.length && (
+        {!!mapResults?.length && (
           <div className={styles.results} ref={parentRef}>
             <InfiniteScroll
               initialLoad={true}
