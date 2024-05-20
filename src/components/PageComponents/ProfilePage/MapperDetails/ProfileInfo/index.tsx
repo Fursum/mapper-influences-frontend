@@ -54,10 +54,10 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <Name change effects the element>
   useEffect(() => {
-    // Run fit text on name change
+    // Run fit text on name and loading change
     if (!nameRef.current) return;
     textFit(nameRef.current);
-  }, [mapperName]);
+  }, [mapperName, isLoading, bioLoading]);
 
   const UserGroup = () => {
     if (!osuData?.groups?.length) return <></>;
