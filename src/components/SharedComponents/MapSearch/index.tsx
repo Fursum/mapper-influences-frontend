@@ -63,6 +63,9 @@ export const AddMapModalContents: FC<{
               debouncedSearch(e.target.value).then(setMapResults)
             }
             defaultValue={`"${suggestedUser?.username}"`}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') e.preventDefault();
+            }}
           />
         </label>
         {!!suggestedUser?.previous_usernames.length && (
