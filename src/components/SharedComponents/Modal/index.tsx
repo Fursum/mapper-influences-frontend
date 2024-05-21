@@ -20,9 +20,11 @@ const Modal: FC<{
       if (e.key === 'Escape') setShowModal(false);
     }
 
-    document.addEventListener('keydown', handleKeyDown);
+    if (showModal) document.addEventListener('keydown', handleKeyDown);
+    if (!showModal) document.removeEventListener('keydown', handleKeyDown);
+
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [setShowModal]);
+  }, [showModal, setShowModal]);
 
   if (!showModal) return null;
   return (
