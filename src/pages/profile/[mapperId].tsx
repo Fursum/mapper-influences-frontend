@@ -58,7 +58,7 @@ export default MapperPage;
 export const getServerSideProps: GetServerSideProps<{
   cachedBio?: UserBioResponse;
 }> = async (context) => {
-  if (!context.preview) return { props: {}, notFound: true };
+  if (!context.preview) return { props: {} };
 
   let userBio: UserBioResponse | undefined;
 
