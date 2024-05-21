@@ -14,6 +14,7 @@ const MentionList: FC<Props> = ({ open, userId }) => {
       className={styles.mentionList}
       style={!open ? { display: 'none' } : {}}
     >
+      {!mentions?.length && <span>{'No mentions :('}</span>}
       <div className={styles.mentionGrid}>
         {mentions?.map((mention) => (
           <BaseProfileCard
@@ -22,8 +23,6 @@ const MentionList: FC<Props> = ({ open, userId }) => {
           />
         ))}
       </div>
-
-      {!mentions?.length && <span>{'No mentions :('}</span>}
     </div>
   );
 };

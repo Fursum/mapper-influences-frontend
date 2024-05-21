@@ -4,7 +4,7 @@
   align-items: center;
   flex-direction: column;
 
-  height: var(--height);
+  min-height: 10rem;
   max-width: var(--max-width);
 
   margin-inline: auto;

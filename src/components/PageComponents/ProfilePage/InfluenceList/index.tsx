@@ -1,4 +1,4 @@
-import { type FC, useEffect, useMemo, useRef, useState } from 'react';
+import { type FC, useEffect, useMemo, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import { type InfluenceResponse, useGetInfluences } from '@services/influence';
@@ -14,10 +14,6 @@ const InfluenceList: FC<{
   const editable = !userId;
 
   const { data: influences } = useGetInfluences(userId);
-
-  //const [animateRef] = useAutoAnimate({ easing: 'ease-out', duration: 200 });
-
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   const [visibleInfluences, setVisibleInfluences] = useState<
     InfluenceResponse[]
@@ -44,38 +40,40 @@ const InfluenceList: FC<{
       className={styles.mapperInfluences}
       style={!open ? { display: 'none' } : {}}
     >
-      <div className={styles.scrollWrapper} ref={scrollRef}>
-        <InfiniteScroll
-          initialLoad={true}
-          loadMore={() => {
-            influences
-              ? setVisibleInfluences(
-                  influences?.slice(0, (visibleInfluences?.length || 0) + 5),
-                )
-              : [];
-          }}
-          hasMore={influences && influences.length > visibleInfluences.length}
-          useWindow={false}
-          getScrollParent={() => scrollRef.current}
-          loader={<div>...</div>}
-        >
-          {visibleInfluences?.map((influence) => (
-            <InfluenceElement
-              key={influence.influenced_to}
-              influenceData={influence}
-              editable={editable}
-            />
-          ))}
-        </InfiniteScroll>
-
-        {!influences?.length && (
-          <span>
-            {'This person is unique!'}
-            <br />
-            {`...Or they haven't added anyone yet.`}
-          </span>
-        )}
-      </div>
+      {!influences?.length && (
+        <span>
+          {'This person is unique!'}
+          <br />
+          {`...Or they haven't added anyone yet.`}
+        </span>
+      )}
+      <InfiniteScroll
+        initialLoad={true}
+        loadMore={() => {
+          influences
+            ? setVisibleInfluences(
+                influences?.slice(0, (visibleInfluences?.length || 0) + 5),
+              )
+            : [];
+        }}
+        hasMore={influences && influences.length > visibleInfluences.length}
+        useWindow={true}
+        loader={
+          (sortedInfluences?.length || 0) < (influences?.length || 0) ? (
+            <div>...</div>
+          ) : (
+            <></>
+          )
+        }
+      >
+        {visibleInfluences?.map((influence) => (
+          <InfluenceElement
+            key={influence.influenced_to}
+            influenceData={influence}
+            editable={editable}
+          />
+        ))}
+      </InfiniteScroll>
     </div>
   );
 };
