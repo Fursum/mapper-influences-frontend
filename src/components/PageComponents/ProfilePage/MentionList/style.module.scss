@@ -25,7 +25,6 @@
     grid-template-columns: repeat(auto-fit, minmax($card-width, 1fr));
     justify-items: center;
     gap: $spacing;
-    overflow-y: auto;
     padding-bottom: $spacing;
   }
 
