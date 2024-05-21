@@ -55,7 +55,7 @@ export const AddMapModalContents: FC<{
           if (selectedMap) onSubmit(selectedMap);
         }}
       >
-        <h2>Add a map</h2>
+        <h2>Select a difficulty</h2>
         <label>
           <span>Search maps</span>
           <input
