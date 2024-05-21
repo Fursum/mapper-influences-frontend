@@ -9,6 +9,7 @@ import {
 import { getDiffColor } from '@libs/functions/colors';
 import type { BeatmapId } from '@services/influence';
 import { useMapData } from '@services/maps';
+import { useFullUser } from '@services/user';
 import { useGlobalTooltip } from '@states/globalTooltip';
 
 import ProfilePhoto from '../ProfilePhoto';
@@ -27,6 +28,8 @@ const MapCard: FC<{
     map?.id,
     map?.is_beatmapset ? 'set' : 'diff',
   );
+
+  const { data: osuData } = useFullUser(mapData?.user_id);
 
   const diff = !map?.is_beatmapset
     ? mapData?.beatmaps?.find((b) => b.id === Number(map?.id))
@@ -54,10 +57,6 @@ const MapCard: FC<{
 
   const mapUrl = map.is_beatmapset ? setUrl : diffUrl;
 
-  const mapOwner = mapData.creator;
-  const ownerAvatar = mapData.related_users.find(
-    (user) => user.username === mapOwner,
-  )?.avatar_url;
   const canDelete = !!deleteFn;
 
   return (
@@ -91,11 +90,13 @@ const MapCard: FC<{
       )}
       <ProfilePhoto
         className={styles.ownerAvatar}
-        photoUrl={ownerAvatar}
+        photoUrl={osuData?.avatar_url}
         size="md"
         circle
         parentProps={{
-          onMouseEnter: (e) => activateTooltip(mapOwner, e.currentTarget),
+          onMouseEnter: (e) =>
+            osuData?.username &&
+            activateTooltip(osuData?.username, e.currentTarget),
         }}
       />
       {canDelete && (
