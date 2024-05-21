@@ -9,7 +9,7 @@ import {
   useFullUser,
 } from '@services/user';
 import type {
-  GetServerSidePropsContext,
+  GetServerSideProps,
   InferGetServerSidePropsType,
   NextPage,
 } from 'next';
@@ -55,10 +55,10 @@ export default MapperPage;
 
 // get user bio from dynamic values with types
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext,
-) => {
-  if (!context.preview) return { props: {} };
+export const getServerSideProps: GetServerSideProps<{
+  cachedBio?: UserBioResponse;
+}> = async (context) => {
+  if (!context.preview) return { props: {}, notFound: true };
 
   let userBio: UserBioResponse | undefined;
 
