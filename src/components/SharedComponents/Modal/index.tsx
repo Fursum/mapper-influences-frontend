@@ -22,7 +22,7 @@ const Modal: FC<{
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  });
+  }, [setShowModal]);
 
   if (!showModal) return null;
   return (
