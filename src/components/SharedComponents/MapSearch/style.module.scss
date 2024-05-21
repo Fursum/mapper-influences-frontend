@@ -26,8 +26,7 @@
 
   .results {
     overflow-y: auto;
-    max-height: $card-height * 3 + $spacing * 3;
-    height: $card-height * 3 + $spacing * 3;
+    max-height: min($card-height * 7 + $spacing * 5, calc(100dvh - 18rem));
 
     // Infinite scroll wrapper
     > div {

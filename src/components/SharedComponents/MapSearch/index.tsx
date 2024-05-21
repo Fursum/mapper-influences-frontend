@@ -83,7 +83,13 @@ export const AddMapModalContents: FC<{
               hasMore={mapResults.length > visibleResults.length}
               useWindow={false}
               getScrollParent={() => parentRef.current}
-              loader={<div>...</div>}
+              loader={
+                visibleResults.length < mapResults.length ? (
+                  <div>...</div>
+                ) : (
+                  <></>
+                )
+              }
             >
               {visibleResults.map((map) => (
                 <div key={map.id} className={styles.row}>
