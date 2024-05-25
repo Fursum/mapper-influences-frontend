@@ -124,8 +124,11 @@ button {
 
 .danger {
   color: $color-danger;
-  background-color: $color-danger-bg;
   outline-color: $color-danger;
+}
+
+button.danger {
+  background-color: $color-danger-bg;
 
   &:hover,
   &:focus,

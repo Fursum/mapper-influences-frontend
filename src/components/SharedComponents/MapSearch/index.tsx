@@ -1,50 +1,55 @@
-import { type FC, useEffect, useRef, useState } from 'react';
-import InfiniteScroll from 'react-infinite-scroller';
+import { type FC, useEffect, useState } from 'react';
 
-import MapCard, { ModeIcon } from '@components/SharedComponents/MapCard';
-import { getDiffColor } from '@libs/functions/colors';
 import type { BeatmapResponse } from '@libs/types/IOsuApi';
 import { searchMaps } from '@services/search';
 import { useFullUser } from '@services/user';
-import { useGlobalTooltip } from '@states/globalTooltip';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
+
+import AdvancedFilters from './AdvancedFilters';
+import SearchResults from './SearchResults';
+import { useFilterStore } from './useFilterStore';
 
 import styles from './style.module.scss';
 
 export const AddMapModalContents: FC<{
   closeForm: () => void;
-  onSubmit: (selectedDiff: number) => void;
+  onSubmit: (selectedDiffs: number[]) => void;
+  mapLimit: number;
   suggestionUserId?: number | string;
   loading: boolean;
-}> = ({ closeForm, loading, onSubmit, suggestionUserId }) => {
-  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
+}> = ({ closeForm, loading, onSubmit, suggestionUserId, mapLimit }) => {
   const { data: suggestedUser } = useFullUser(suggestionUserId?.toString());
 
+  const getFiltersQuery = useFilterStore((state) => state.getQueryString);
+
   const [mapResults, setMapResults] = useState<BeatmapResponse[]>([]);
-  const [visibleResults, setVisibleResults] = useState<BeatmapResponse[]>([]);
-  const [selectedMap, setSelectedMap] = useState<number | null>(null);
+  const [selectedTab, setSelectedTab] = useState<'search' | 'advanced'>(
+    'search',
+  );
+  const [selectedMaps, setSelectedMaps] = useState<number[]>([]);
+  const [searchInput, setSearchInput] = useState(
+    suggestedUser ? `"${suggestedUser?.username}"` : '',
+  );
 
-  const parentRef = useRef<HTMLDivElement>(null);
+  const debouncedSearch = AwesomeDebouncePromise((query: string) => {
+    searchMaps(query + getFiltersQuery()).then(setMapResults);
+  }, 300);
 
-  const debouncedSearch = AwesomeDebouncePromise(searchMaps, 300);
+  const toggleMap = (id: number) => {
+    setSelectedMaps((old) => {
+      if (old.includes(id)) return old.filter((i) => i !== id);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <this is meant to only run once>
+      return [...old, id];
+    });
+  };
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <This should only trigger on tab change>
   useEffect(() => {
-    if (suggestedUser) {
-      searchMaps(`"${suggestedUser?.username}"`).then(setMapResults);
-    }
-  }, []);
+    if (selectedTab === 'search')
+      searchMaps(`${searchInput}${getFiltersQuery()}`).then(setMapResults);
+  }, [selectedTab]);
 
-  useEffect(() => {
-    if (mapResults?.length) {
-      setVisibleResults(mapResults.slice(0, 5));
-    }
-
-    // Scroll up when new results are loaded
-    if (parentRef.current) {
-      parentRef.current.scrollTop = 0;
-    }
-  }, [mapResults]);
+  const limitExceeded = mapLimit < selectedMaps.length;
 
   return (
     <>
@@ -52,17 +57,37 @@ export const AddMapModalContents: FC<{
         className={styles.form}
         onSubmit={(e) => {
           e.preventDefault();
-          if (selectedMap) onSubmit(selectedMap);
+          if (selectedMaps.length) onSubmit(selectedMaps);
         }}
       >
+        <div className={styles.widthMaxxing} />
+
         <h2>Select a difficulty</h2>
+
+        <div className={styles.tabs}>
+          <button
+            onClick={() => setSelectedTab('search')}
+            className={selectedTab === 'search' ? styles.active : ''}
+          >
+            Search
+          </button>
+          <button
+            onClick={() => setSelectedTab('advanced')}
+            className={selectedTab === 'advanced' ? styles.active : ''}
+          >
+            Advanced
+          </button>
+        </div>
+
         <label>
           <span>Search maps</span>
           <input
-            onChange={(e) =>
-              debouncedSearch(e.target.value).then(setMapResults)
-            }
+            onChange={(e) => {
+              setSearchInput(e.target.value);
+              debouncedSearch(e.target.value);
+            }}
             defaultValue={`"${suggestedUser?.username}"`}
+            value={searchInput}
             onKeyDown={(e) => {
               if (e.key === 'Enter') e.preventDefault();
             }}
@@ -74,80 +99,30 @@ export const AddMapModalContents: FC<{
           </span>
         )}
 
-        {!!mapResults?.length && (
-          <div className={styles.results} ref={parentRef}>
-            <InfiniteScroll
-              initialLoad={true}
-              loadMore={() => {
-                setVisibleResults(
-                  mapResults.slice(0, visibleResults.length + 5),
-                );
-              }}
-              hasMore={mapResults.length > visibleResults.length}
-              useWindow={false}
-              getScrollParent={() => parentRef.current}
-              loader={
-                visibleResults.length < mapResults.length ? (
-                  <div>...</div>
-                ) : (
-                  <></>
-                )
-              }
-            >
-              {visibleResults.map((map) => (
-                <div key={map.id} className={styles.row}>
-                  <MapCard
-                    map={{
-                      id: map.id,
-                      is_beatmapset: true,
-                    }}
-                  />
-                  <div className={styles.diffs}>
-                    {map.beatmaps
-                      .sort((a, b) => b.difficulty_rating - a.difficulty_rating)
-                      .map((row) => {
-                        return (
-                          <div
-                            key={row.id}
-                            className={
-                              selectedMap === row.id ? styles.selected : ''
-                            }
-                            onClick={() => setSelectedMap(row.id)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                setSelectedMap(row.id);
-                              }
-                            }}
-                          >
-                            <ModeIcon
-                              mode={row.mode}
-                              color={getDiffColor(row.difficulty_rating)}
-                              onMouseEnter={(e) =>
-                                activateTooltip(
-                                  `${row.difficulty_rating}*`,
-                                  e.currentTarget,
-                                )
-                              }
-                            />{' '}
-                            {row.version}
-                          </div>
-                        );
-                      })}
-                  </div>
-                </div>
-              ))}
-            </InfiniteScroll>
-          </div>
+        {selectedTab === 'search' && (
+          <SearchResults
+            selectedMaps={selectedMaps}
+            toggleMap={toggleMap}
+            results={mapResults}
+            disabled={mapLimit <= selectedMaps.length}
+          />
+        )}
+
+        {selectedTab === 'advanced' && (
+          <AdvancedFilters selectedMaps={selectedMaps} toggleMap={toggleMap} />
         )}
 
         <div className={styles.buttons}>
           <button className="cancel" role="button" onClick={closeForm}>
             Cancel
           </button>
+          <span
+            className={limitExceeded ? 'danger' : ''}
+          >{`${selectedMaps.length} / ${mapLimit}`}</span>
           <button
             className="submit"
             role="button"
-            disabled={loading || !selectedMap}
+            disabled={loading || !selectedMaps.length || limitExceeded}
           >
             {loading ? 'Adding...' : 'Add'}
           </button>
