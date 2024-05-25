@@ -10,16 +10,17 @@ import styles from './style.module.scss';
 
 const LazyMarkdown = lazy(() => import('./RenderMarkdown'));
 
-const useNewsText = (url: string) =>
+const useNewsText = (url: string, enabled: boolean) =>
   useQuery({
     queryKey: ['news', url],
     queryFn: () => axios.get(url).then((res) => res.data),
+    enabled,
   });
 
 const NewsRow: FC<NewsType> = ({ url, title, date, desc }) => {
   const [showModal, setShowModal] = useState(false);
 
-  const { data: fullText } = useNewsText(url);
+  const { data: fullText } = useNewsText(url, showModal);
 
   return (
     <>
