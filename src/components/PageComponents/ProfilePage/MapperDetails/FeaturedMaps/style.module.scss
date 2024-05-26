@@ -12,10 +12,24 @@
     > button {
       width: 1rem;
       height: 1rem;
-      padding: 0rem;
+      padding: 0;
       margin-left: $spacing / 4;
       font-size: 0.75rem;
-      transform: translateY(-0.25rem);
+      transform: translateY(0.1rem);
+
+      > svg {
+        transform: translateY(-0.1rem);
+        scale: 0.6;
+        > path {
+          fill: $color-button-outline;
+        }
+      }
+
+      &:hover {
+        > svg > path {
+          fill: $color-button-text;
+        }
+      }
     }
   }
 }

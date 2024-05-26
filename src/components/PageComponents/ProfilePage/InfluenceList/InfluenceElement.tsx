@@ -5,6 +5,8 @@ import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
 import MapCarousel from '@components/SharedComponents/MapCarousel/SingleItem';
 import { AddMapModalContents } from '@components/SharedComponents/MapSearch';
 import Modal from '@components/SharedComponents/Modal';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { convertFromInfluence } from '@libs/enums';
 import {
   type BeatmapId,
@@ -13,6 +15,7 @@ import {
 } from '@services/influence';
 import { useGlobalTooltip } from '@states/globalTooltip';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
+import cx from 'classnames';
 
 import EditableDescription from '../EditableDescription';
 import InfluenceType from './InfluenceType';
@@ -25,9 +28,14 @@ const LIMIT = 5;
 type Props = {
   influenceData: InfluenceResponse;
   editable?: boolean;
+  className?: string;
 };
 
-const InfluenceElement: FC<Props> = ({ influenceData, editable }) => {
+const InfluenceElement: FC<Props> = ({
+  influenceData,
+  editable,
+  className,
+}) => {
   const { mutateAsync: updateInfluence, isPending } = useAddInfluenceMutation();
 
   // Debounce the description update
@@ -46,7 +54,7 @@ const InfluenceElement: FC<Props> = ({ influenceData, editable }) => {
 
   return (
     <>
-      <div className={styles.influenceRow}>
+      <div className={cx(styles.influenceRow, className)}>
         <div className={styles.cardWrapper}>
           <InfluenceType
             editable={editable}
@@ -127,15 +135,12 @@ const AddButton: FC<{
 
   const { mutateAsync: updateInfluence, isPending } = useAddInfluenceMutation();
   const onSubmit = useCallback(
-    (diff: number) => {
+    (diffs: number[]) => {
       updateInfluence({
         ...influenceData,
         beatmaps: [
           ...(influenceData.beatmaps || []),
-          {
-            id: diff,
-            is_beatmapset: false,
-          },
+          ...diffs.map((id) => ({ id, is_beatmapset: false })),
         ],
       }).then(() => {
         toast.success('New map added to influence.');
@@ -159,6 +164,7 @@ const AddButton: FC<{
           onSubmit={onSubmit}
           loading={isPending}
           suggestionUserId={influenceData.influenced_to}
+          mapLimit={LIMIT - (influenceData.beatmaps?.length || 0)}
         />
       </Modal>
       <button
@@ -171,7 +177,7 @@ const AddButton: FC<{
         }
         onMouseLeave={deactivateTooltip}
       >
-        +
+        <FontAwesomeIcon icon={faPlus} />
       </button>
     </>
   );

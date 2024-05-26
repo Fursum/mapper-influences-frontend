@@ -6,6 +6,8 @@ import {
   OsuIcon,
   TaikoIcon,
 } from '@components/SvgComponents/ModeIcons';
+import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getDiffColor } from '@libs/functions/colors';
 import type { BeatmapId } from '@services/influence';
 import { useMapData } from '@services/maps';
@@ -111,7 +113,7 @@ const MapCard: FC<{
             } else deleteFn(map);
           }}
         >
-          x
+          <FontAwesomeIcon icon={faTrashAlt} size="1x" />
         </button>
       )}
       {deleteConfirmation && (

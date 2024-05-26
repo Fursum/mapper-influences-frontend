@@ -13,7 +13,8 @@ import styles from './style.module.scss';
 type Props = {
   userId?: string | number;
   className?: string;
-  offlineData?: LeaderboardResponse[number];
+  offlineData?: LeaderboardResponse['data'][number];
+  forceLoading?: boolean;
 };
 
 const BaseProfileCard: FC<Props> = ({
@@ -84,7 +85,7 @@ const BaseProfileCard: FC<Props> = ({
         {!!userGroups?.length && (
           <div className={styles.badges}>
             {userData?.groups?.map((group) => (
-              <Badge key={group.id} group={group} />
+              <Badge key={group.short_name} group={group} />
             ))}
           </div>
         )}

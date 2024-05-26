@@ -1,7 +1,8 @@
-import { type FC, useState } from 'react';
+import { type FC, useEffect, useState } from 'react';
 
 import { useGetInfluences, useGetMentions } from '@services/influence';
 import { useGlobalTooltip } from '@states/globalTooltip';
+import { useRouter } from 'next/router';
 
 import InfluenceList from './InfluenceList';
 import MapperDetails from './MapperDetails';
@@ -23,6 +24,8 @@ const ProfilePage: FC<Props> = ({ userId }) => {
 export default ProfilePage;
 
 const TabContainer: FC<{ userId?: number | string }> = ({ userId }) => {
+  const router = useRouter();
+
   const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
   const deactivateTooltip = useGlobalTooltip(
     (state) => state.deactivateTooltip,
@@ -33,6 +36,11 @@ const TabContainer: FC<{ userId?: number | string }> = ({ userId }) => {
   const [selectedTab, setSelectedTab] = useState<'influences' | 'mentions'>(
     'influences',
   );
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <reset only when user opens a new profile>
+  useEffect(() => {
+    if (selectedTab === 'mentions') setSelectedTab('influences');
+  }, [router.asPath]);
 
   return (
     <>

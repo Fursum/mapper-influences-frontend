@@ -11,6 +11,7 @@ export type BeatmapId = {
 };
 
 export type InfluenceResponse = {
+  id: number;
   influenced_by: number;
   influenced_to: number;
   created_at: string;
@@ -21,7 +22,7 @@ export type InfluenceResponse = {
 };
 
 export async function getInfluences(userId: string | number) {
-  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/get_influences/${userId}`;
+  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/${userId}`;
   return axios
     .get<InfluenceResponse[]>(searchUrl, { withCredentials: true })
     .then((res) => res.data);
@@ -33,7 +34,11 @@ export const useGetInfluences = (userId?: string | number) => {
   return useQuery({
     queryKey: ['influences', id.toString()],
     enabled: !!id,
-    queryFn: () => getInfluences(id),
+    queryFn: () =>
+      getInfluences(id).then(
+        // Mongo changes the id on updates, and i need a stable unique id
+        (data) => data.map((e) => ({ ...e, id: e.influenced_to })) || [],
+      ),
   });
 };
 
@@ -49,7 +54,7 @@ export type AddInfluenceRequest = {
 
 export function addInfluence(body: AddInfluenceRequest) {
   const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence`;
-  return axios.post(
+  return axios.post<InfluenceResponse>(
     searchUrl,
     { beatmaps: [], ...body },
     { withCredentials: true },
@@ -63,17 +68,9 @@ export const useAddInfluenceMutation = () => {
 
   return useMutation({
     mutationFn: addInfluence,
-    onSuccess: (_, variables) => {
+    onSuccess: (res, variables) => {
+      const newInfluence = { ...res.data, id: res.data.influenced_to };
       queryClient.setQueryData<InfluenceResponse[]>(key, (old) => {
-        const newInfluence: InfluenceResponse = {
-          influenced_by: user?.id || 0,
-          influenced_to: variables.influenced_to || 0,
-          type: variables.type,
-          description: variables.description,
-          created_at: new Date().toISOString(),
-          modified_at: new Date().toISOString(),
-          beatmaps: variables.beatmaps || [],
-        };
         if (!old) return [newInfluence];
 
         // If the influence exists, replace it
@@ -90,7 +87,8 @@ export const useAddInfluenceMutation = () => {
 
         if (influenceIndex !== -1) return newObject;
 
-        newObject.push(newInfluence);
+        // add influence to start of array
+        newObject.unshift(newInfluence);
         return newObject;
       });
       queryClient.invalidateQueries({ queryKey: ['leaderboards'] });
@@ -109,7 +107,7 @@ export const useAddInfluenceMutation = () => {
 };
 
 export async function deleteInfluence(target: string | number) {
-  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/remove_influence/${target}`;
+  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/${target}`;
   return await axios.delete(searchUrl, { withCredentials: true });
 }
 
@@ -150,7 +148,7 @@ export const useDeleteInfluenceMutation = () => {
 };
 
 export function getMentions(userId: string | number) {
-  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/get_mentions/${userId}`;
+  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/${userId}/mentions`;
   return axios
     .get<InfluenceResponse[]>(searchUrl, { withCredentials: true })
     .then((res) => res.data);
@@ -165,3 +163,14 @@ export const useGetMentions = (userId?: string | number) => {
     queryFn: () => getMentions(id),
   });
 };
+
+export function setInfluenceOrder(order: number[]) {
+  const url = `${process.env.NEXT_PUBLIC_API_URL}/users/influence-order`;
+  return axios.post(
+    url,
+    {
+      influence_ids: order,
+    },
+    { withCredentials: true },
+  );
+}

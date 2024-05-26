@@ -3,6 +3,8 @@ import { type FC, useCallback, useState } from 'react';
 import MapCarousel from '@components/SharedComponents/MapCarousel/Slider';
 import { AddMapModalContents } from '@components/SharedComponents/MapSearch';
 import Modal from '@components/SharedComponents/Modal';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAddMapToSelfMutation } from '@services/maps';
 import { useUserBio } from '@services/user';
 import { useGlobalTooltip } from '@states/globalTooltip';
@@ -33,19 +35,37 @@ const FeaturedMaps: FC<{ userId?: string | number }> = ({ userId }) => {
 export default FeaturedMaps;
 
 const AddButton: FC<{ userId?: string | number }> = ({ userId }) => {
+  const { data: userBio } = useUserBio(userId);
+
   const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
   const deactivateTooltip = useGlobalTooltip(
     (state) => state.deactivateTooltip,
   );
+
   const [modalOpen, setModalOpen] = useState(false);
 
   const { mutateAsync: addMap, isPending } = useAddMapToSelfMutation();
   const onSubmit = useCallback(
-    (selectedDiff: number) => {
-      addMap({
-        mapId: selectedDiff,
-        isSet: false,
-      }).then(() => setModalOpen(false));
+    (selectedDiffs: number[]) => {
+      const remainingDiffs = [...selectedDiffs];
+
+      // Doing recursively since we dont have batch add
+      const addMapRecursive = (diffs: number[]) => {
+        if (diffs.length === 0) {
+          setModalOpen(false);
+          return;
+        }
+        const diff = diffs.pop();
+        if (!diff) {
+          setModalOpen(false);
+          return;
+        }
+        addMap({ mapId: diff, isSet: false }).then(() =>
+          addMapRecursive(diffs),
+        );
+      };
+
+      addMapRecursive(remainingDiffs);
     },
     [addMap],
   );
@@ -65,6 +85,7 @@ const AddButton: FC<{ userId?: string | number }> = ({ userId }) => {
           onSubmit={onSubmit}
           loading={isPending}
           suggestionUserId={userId}
+          mapLimit={5 - (userBio?.beatmaps?.length || 0)}
         />
       </Modal>
       <button
@@ -76,7 +97,7 @@ const AddButton: FC<{ userId?: string | number }> = ({ userId }) => {
         }
         onMouseLeave={deactivateTooltip}
       >
-        +
+        <FontAwesomeIcon icon={faPlus} />
       </button>
     </>
   );

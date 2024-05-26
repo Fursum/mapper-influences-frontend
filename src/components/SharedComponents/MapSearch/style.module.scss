@@ -1,7 +1,42 @@
 .form {
   > h2 {
     font-size: 1.5rem;
-    margin-top: 0;
+    margin-block: 0;
+  }
+
+  .tabs {
+    > button {
+      position: relative;
+      @extend %resetButtonDefaults;
+      width: 50%;
+      color: $color-text-faded;
+
+      // Copied from profile page
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        bottom: 0.1rem;
+        top: auto;
+        background-color: var(--primaryColor);
+        height: 0.25rem;
+        transition: transform 0.1s ease-in;
+        transform: scaleX(0%);
+        border-radius: 999rem;
+      }
+
+      &:not(.active):hover::after {
+        transform: scaleX(5%);
+      }
+    }
+
+    .active {
+      color: $color-text;
+
+      &::after {
+        transform: scaleX(100%);
+      }
+    }
   }
 
   h4 {
@@ -11,6 +46,20 @@
   label > span {
     flex-shrink: 0;
     width: max-content;
+  }
+
+  label > button {
+    width: 2rem;
+    height: 2rem;
+    line-height: 0;
+
+    > svg > path {
+      fill: $color-button-outline;
+    }
+
+    &:hover > svg > path {
+      fill: $color-button-text;
+    }
   }
 
   .previousNames {
@@ -26,7 +75,7 @@
 
   .results {
     overflow-y: auto;
-    max-height: min($card-height * 7 + $spacing * 5, calc(100dvh - 18rem));
+    max-height: min($card-height * 7 + $spacing * 5, calc(100dvh - 20rem));
 
     // Infinite scroll wrapper
     > div {
@@ -66,26 +115,33 @@
           --textColor: var(--bgColor-1);
         }
 
-        > div {
-          padding: 0;
-
-          text-align: left;
+        > button {
+          @extend %resetButtonDefaults;
 
           flex-shrink: 0;
+          text-align: left;
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
-          border-radius: $border-radius;
 
+          padding: 0;
           margin-right: $spacing / 2;
-
-          cursor: pointer;
+          border-radius: $border-radius;
+          color: $color-text;
 
           &:hover {
             outline: 1px solid $color-button-outline;
             outline-offset: -1px;
 
             transition: outline-color 0s;
+          }
+
+          &.disabled:not(.selected) {
+            opacity: 0.5;
+
+            &:hover {
+              outline: none;
+            }
           }
         }
 
@@ -101,12 +157,68 @@
 
   .buttons {
     display: flex;
+    align-items: center;
     justify-content: space-between;
     margin-top: $spacing;
     gap: $spacing;
 
+    > span {
+      margin-left: auto;
+    }
+
     > button {
       width: 6rem;
     }
+  }
+}
+
+.filters {
+  display: flex;
+  gap: $spacing / 2;
+  flex-wrap: wrap;
+
+  > h4 {
+    margin-top: $spacing / 2;
+    text-align: left;
+    flex-basis: 100%;
+  }
+
+  > button {
+    @extend %resetButtonDefaults;
+    padding: 0;
+    margin: 0;
+    font-size: 0.75rem;
+    color: $color-text-faded;
+    background-color: transparent;
+    font-weight: 400;
+
+    &:hover {
+      color: $color-text;
+    }
+
+    &.active {
+      color: $color-text;
+      font-weight: 800;
+    }
+
+    @media screen and (max-width: $responsive-breakpoint) {
+      font-size: 1rem;
+    }
+  }
+}
+
+.mapPreview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.widthMaxxing {
+  width: 50rem;
+  flex-shrink: 1;
+
+  @media screen and (max-width: $responsive-breakpoint) {
+    width: 100%;
   }
 }

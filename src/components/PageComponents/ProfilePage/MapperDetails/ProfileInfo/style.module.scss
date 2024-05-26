@@ -13,8 +13,20 @@
     gap: $spacing / 2;
     margin-left: $spacing;
 
-    .title {
+    .flag {
+      display: flex;
+      gap: $spacing / 4;
       margin-top: -$spacing / 4;
+      justify-content: center;
+      align-items: center;
+
+      > img {
+        max-height: 1rem;
+        border-radius: $border-radius;
+      }
+    }
+
+    .title {
       margin-bottom: $spacing / 4;
     }
 

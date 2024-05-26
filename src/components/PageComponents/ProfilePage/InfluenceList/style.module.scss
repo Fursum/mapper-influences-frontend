@@ -25,88 +25,13 @@
   > div {
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: $spacing * 2;
 
-    .influenceRow {
+    // DND wrapper
+    > div {
       display: flex;
-      position: relative;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-
-      width: 100%;
-      gap: $spacing;
-      padding: $spacing / 2;
-
-      // Line separator
-      &:not(:first-of-type)::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        right: $spacing / 2;
-        top: -$spacing;
-        height: 0.2rem;
-        background-color: $color-background-card;
-      }
-
-      .cardWrapper {
-        position: relative;
-        .editable {
-          margin-top: $spacing * 5;
-        }
-      }
-
-      .description {
-        height: 11rem;
-        max-width: 50ch;
-      }
-
-      .maps {
-        min-width: $card-width + $spacing;
-        > h4 {
-          width: 100%;
-          text-align: center;
-          margin-block: $spacing/2;
-        }
-
-        .placeholder {
-          opacity: 0.5;
-          width: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-      }
-    }
-
-    @media screen and (max-width: $responsive-breakpoint) {
-      .influenceRow {
-        height: auto;
-        flex-wrap: wrap;
-
-        &:not(:last-child) {
-          margin-bottom: $spacing;
-        }
-
-        .description {
-          order: 3;
-          min-height: 11rem;
-          height: 10rem;
-          flex-basis: 100%;
-          margin-right: $spacing/2;
-        }
-
-        .maps {
-          order: 2;
-        }
-
-        // Line separator
-        &:not(:first-of-type)::after {
-          top: -$spacing * 1.5;
-        }
-      }
+      gap: $spacing * 2;
     }
   }
 
@@ -120,7 +45,141 @@
   height: 1rem;
   padding: 0rem;
   margin-left: $spacing / 4;
-  font-size: 0.75rem;
-  transform: translateY(-0.25rem);
+  transform: translateY(0.1rem);
   line-height: 0;
+
+  > svg {
+    transform: translateY(-0.1rem);
+    scale: 0.6;
+    > path {
+      fill: $color-button-outline;
+    }
+  }
+
+  &:hover {
+    > svg > path {
+      fill: $color-button-text;
+    }
+  }
+}
+
+.draggableRow {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+
+  &.dragging {
+    background-color: $color-background-card;
+    box-shadow: 0 0.5rem 0.5rem rgba(0, 0, 0, 0.2);
+    padding-block: $spacing / 2;
+  }
+
+  .handle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 1.5rem;
+    width: 1.5rem;
+    padding: $spacing / 4;
+  }
+
+  // Line separator
+  &:not(:first-of-type):not(.dragging)::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: $spacing / 2;
+    top: -$spacing;
+    height: 0.2rem;
+    background-color: $color-background-card;
+  }
+}
+
+.influenceRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  gap: $spacing;
+  padding: $spacing / 2;
+
+  .cardWrapper {
+    position: relative;
+    .editable {
+      margin-top: $spacing * 5;
+    }
+  }
+
+  .description {
+    height: 11rem;
+    max-width: 50ch;
+  }
+
+  .maps {
+    min-width: $card-width + $spacing;
+    > h4 {
+      width: 100%;
+      text-align: center;
+      margin-block: $spacing/2;
+    }
+
+    .placeholder {
+      opacity: 0.5;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}
+
+@media screen and (max-width: $responsive-breakpoint) {
+  .influenceRow {
+    height: auto;
+    flex-wrap: wrap;
+
+    &:not(:last-child) {
+      margin-bottom: $spacing;
+    }
+
+    .description {
+      order: 3;
+      min-height: 11rem;
+      height: 10rem;
+      flex-basis: 100%;
+      margin-right: $spacing/2;
+    }
+
+    .maps {
+      order: 2;
+    }
+
+    // Line separator
+    &:not(:first-of-type)::after {
+      top: -$spacing * 1.5;
+    }
+  }
+}
+
+.sortColumn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: $spacing / 4;
+  margin-right: $spacing / 4;
+
+  > button {
+    @extend %resetButtonDefaults;
+
+    padding: $spacing / 2;
+
+    > svg {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
 }
