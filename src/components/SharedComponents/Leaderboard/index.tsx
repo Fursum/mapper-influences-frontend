@@ -39,15 +39,6 @@ const Leaderboard: FC<{ className?: string }> = ({ className }) => {
       <h2>Top Influencers</h2>
       <div className={styles.options}>
         <button
-          className={cx({ [styles.active]: rankedOnly })}
-          onClick={() => {
-            setRankedOnly((old) => !old);
-            setLimit(10);
-          }}
-        >
-          Ranked Mappers Only
-        </button>
-        <button
           className={cx({ [styles.active]: myCountry })}
           onClick={() => {
             setMyCountry((old) => !old);
@@ -55,6 +46,15 @@ const Leaderboard: FC<{ className?: string }> = ({ className }) => {
           }}
         >
           My Country
+        </button>
+        <button
+          className={cx({ [styles.active]: rankedOnly })}
+          onClick={() => {
+            setRankedOnly((old) => !old);
+            setLimit(10);
+          }}
+        >
+          Ranked Mappers Only
         </button>
       </div>
       <div ref={scrollRef} className={styles.list}>
