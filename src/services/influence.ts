@@ -87,7 +87,8 @@ export const useAddInfluenceMutation = () => {
 
         if (influenceIndex !== -1) return newObject;
 
-        newObject.push(newInfluence);
+        // add influence to start of array
+        newObject.unshift(newInfluence);
         return newObject;
       });
       queryClient.invalidateQueries({ queryKey: ['leaderboards'] });
