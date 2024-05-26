@@ -69,7 +69,7 @@ export const useAddInfluenceMutation = () => {
   return useMutation({
     mutationFn: addInfluence,
     onSuccess: (res, variables) => {
-      const newInfluence = res.data;
+      const newInfluence = { ...res.data, id: res.data.influenced_to };
       queryClient.setQueryData<InfluenceResponse[]>(key, (old) => {
         if (!old) return [newInfluence];
 
