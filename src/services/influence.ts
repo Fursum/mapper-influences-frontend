@@ -1,6 +1,5 @@
 import { toast } from 'react-toastify';
 
-import { mockRequest } from '@libs/functions';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -23,36 +22,7 @@ export type InfluenceResponse = {
 };
 
 export async function getInfluences(userId: string | number) {
-  // Dev response
-  if (process.env.NODE_ENV === 'development') {
-    return mockRequest<InfluenceResponse[]>(
-      [
-        {
-          id: '123',
-          influenced_by: 1,
-          influenced_to: 5,
-          created_at: '2021-01-01T00:00:00Z',
-          modified_at: '2021-01-01T00:00:00Z',
-          type: 1,
-          description: 'Test description',
-          beatmaps: [],
-        },
-        {
-          id: '1234',
-          influenced_by: 1,
-          influenced_to: 4,
-          created_at: '2021-01-01T00:00:00Z',
-          modified_at: '2021-01-01T00:00:00Z',
-          type: 1,
-          description: 'Test',
-          beatmaps: [],
-        },
-      ],
-      1000,
-    );
-  }
-
-  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/get_influences/${userId}`;
+  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/${userId}`;
   return axios
     .get<InfluenceResponse[]>(searchUrl, { withCredentials: true })
     .then((res) => res.data);
@@ -132,7 +102,7 @@ export const useAddInfluenceMutation = () => {
 };
 
 export async function deleteInfluence(target: string | number) {
-  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/remove_influence/${target}`;
+  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/${target}`;
   return await axios.delete(searchUrl, { withCredentials: true });
 }
 
@@ -173,7 +143,7 @@ export const useDeleteInfluenceMutation = () => {
 };
 
 export function getMentions(userId: string | number) {
-  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/get_mentions/${userId}`;
+  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/${userId}/mentions`;
   return axios
     .get<InfluenceResponse[]>(searchUrl, { withCredentials: true })
     .then((res) => res.data);
