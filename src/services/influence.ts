@@ -1,5 +1,6 @@
 import { toast } from 'react-toastify';
 
+import { mockRequest } from '@libs/functions';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -11,6 +12,7 @@ export type BeatmapId = {
 };
 
 export type InfluenceResponse = {
+  id: string;
   influenced_by: number;
   influenced_to: number;
   created_at: string;
@@ -21,6 +23,35 @@ export type InfluenceResponse = {
 };
 
 export async function getInfluences(userId: string | number) {
+  // Dev response
+  if (process.env.NODE_ENV === 'development') {
+    return mockRequest<InfluenceResponse[]>(
+      [
+        {
+          id: '123',
+          influenced_by: 1,
+          influenced_to: 5,
+          created_at: '2021-01-01T00:00:00Z',
+          modified_at: '2021-01-01T00:00:00Z',
+          type: 1,
+          description: 'Test description',
+          beatmaps: [],
+        },
+        {
+          id: '1234',
+          influenced_by: 1,
+          influenced_to: 4,
+          created_at: '2021-01-01T00:00:00Z',
+          modified_at: '2021-01-01T00:00:00Z',
+          type: 1,
+          description: 'Test',
+          beatmaps: [],
+        },
+      ],
+      1000,
+    );
+  }
+
   const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/get_influences/${userId}`;
   return axios
     .get<InfluenceResponse[]>(searchUrl, { withCredentials: true })
@@ -49,7 +80,7 @@ export type AddInfluenceRequest = {
 
 export function addInfluence(body: AddInfluenceRequest) {
   const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence`;
-  return axios.post(
+  return axios.post<InfluenceResponse>(
     searchUrl,
     { beatmaps: [], ...body },
     { withCredentials: true },
@@ -63,17 +94,9 @@ export const useAddInfluenceMutation = () => {
 
   return useMutation({
     mutationFn: addInfluence,
-    onSuccess: (_, variables) => {
+    onSuccess: (res, variables) => {
+      const newInfluence = res.data;
       queryClient.setQueryData<InfluenceResponse[]>(key, (old) => {
-        const newInfluence: InfluenceResponse = {
-          influenced_by: user?.id || 0,
-          influenced_to: variables.influenced_to || 0,
-          type: variables.type,
-          description: variables.description,
-          created_at: new Date().toISOString(),
-          modified_at: new Date().toISOString(),
-          beatmaps: variables.beatmaps || [],
-        };
         if (!old) return [newInfluence];
 
         // If the influence exists, replace it
