@@ -15,6 +15,7 @@ import {
 } from '@services/influence';
 import { useGlobalTooltip } from '@states/globalTooltip';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
+import cx from 'classnames';
 
 import EditableDescription from '../EditableDescription';
 import InfluenceType from './InfluenceType';
@@ -27,9 +28,14 @@ const LIMIT = 5;
 type Props = {
   influenceData: InfluenceResponse;
   editable?: boolean;
+  className?: string;
 };
 
-const InfluenceElement: FC<Props> = ({ influenceData, editable }) => {
+const InfluenceElement: FC<Props> = ({
+  influenceData,
+  editable,
+  className,
+}) => {
   const { mutateAsync: updateInfluence, isPending } = useAddInfluenceMutation();
 
   // Debounce the description update
@@ -48,7 +54,7 @@ const InfluenceElement: FC<Props> = ({ influenceData, editable }) => {
 
   return (
     <>
-      <div className={styles.influenceRow}>
+      <div className={cx(styles.influenceRow, className)}>
         <div className={styles.cardWrapper}>
           <InfluenceType
             editable={editable}

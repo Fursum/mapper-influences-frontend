@@ -184,7 +184,12 @@ const DraggableWrapper: FC<{
 }> = ({ influence, editable, changeOrder }) => {
   if (editable)
     return <Draggable influence={influence} changeOrder={changeOrder} />;
-  return <InfluenceElement influenceData={influence} />;
+  return (
+    <InfluenceElement
+      influenceData={influence}
+      className={styles.draggableRow}
+    />
+  );
 };
 
 const Draggable: FC<{
