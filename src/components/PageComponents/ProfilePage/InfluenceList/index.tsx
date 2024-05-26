@@ -1,4 +1,10 @@
-import { type FC, useCallback, useEffect, useState } from 'react';
+import {
+  type CSSProperties,
+  type FC,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import {
@@ -196,14 +202,23 @@ const Draggable: FC<{
   influence: InfluenceResponse;
   changeOrder: (currentId: string, direction: 'up' | 'down') => void;
 }> = ({ influence, changeOrder }) => {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({
-      id: influence.id,
-    });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: influence.id,
+  });
 
-  const style = {
+  const style: CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
+    zIndex: isDragging ? 2 : undefined,
+    backgroundColor: isDragging ? 'var(--bgColor-3)' : undefined,
+    paddingBlock: isDragging ? '0.5rem' : undefined,
   };
 
   return (
