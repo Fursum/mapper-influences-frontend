@@ -226,6 +226,7 @@ const Draggable: FC<{
     isDragging,
   } = useSortable({
     id: influence.influenced_to,
+    animateLayoutChanges: () => false,
   });
 
   const style: CSSProperties = {
