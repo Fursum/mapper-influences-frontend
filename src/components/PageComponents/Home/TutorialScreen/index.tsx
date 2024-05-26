@@ -33,6 +33,7 @@ const TutorialScreen: FC<Props> = ({ children }) => {
   const { data: user } = useCurrentUser();
 
   const influenceData: InfluenceResponse = {
+    id: user?.id || 0,
     description: 'Edit here to give details.',
     modified_at: new Date().toISOString(),
     created_at: new Date().toISOString(),
