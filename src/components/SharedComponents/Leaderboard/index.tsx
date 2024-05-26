@@ -40,13 +40,19 @@ const Leaderboard: FC<{ className?: string }> = ({ className }) => {
       <div className={styles.options}>
         <button
           className={cx({ [styles.active]: rankedOnly })}
-          onClick={() => setRankedOnly(!rankedOnly)}
+          onClick={() => {
+            setRankedOnly((old) => !old);
+            setLimit(10);
+          }}
         >
           Ranked Mappers Only
         </button>
         <button
           className={cx({ [styles.active]: myCountry })}
-          onClick={() => setMyCountry(!myCountry)}
+          onClick={() => {
+            setMyCountry((old) => !old);
+            setLimit(10);
+          }}
         >
           My Country
         </button>
