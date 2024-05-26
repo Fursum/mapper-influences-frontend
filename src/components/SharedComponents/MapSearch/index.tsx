@@ -66,13 +66,19 @@ export const AddMapModalContents: FC<{
 
         <div className={styles.tabs}>
           <button
-            onClick={() => setSelectedTab('search')}
+            onClick={(e) => {
+              e.preventDefault();
+              setSelectedTab('search');
+            }}
             className={selectedTab === 'search' ? styles.active : ''}
           >
             Search
           </button>
           <button
-            onClick={() => setSelectedTab('advanced')}
+            onClick={(e) => {
+              e.preventDefault();
+              setSelectedTab('advanced');
+            }}
             className={selectedTab === 'advanced' ? styles.active : ''}
           >
             Advanced

@@ -34,7 +34,8 @@ const AdvancedFilters: FC<{
         {MODES.map((mode) => (
           <button
             key={mode}
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
               setMode(mode);
             }}
             className={cx({
@@ -50,7 +51,8 @@ const AdvancedFilters: FC<{
         {STATUSES.map((status) => (
           <button
             key={status}
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
               setStatus(status);
             }}
             className={cx({
@@ -67,7 +69,8 @@ const AdvancedFilters: FC<{
         {GENRES.map((genre) => (
           <button
             key={genre.name}
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
               setGenre(genre);
             }}
             className={cx({
@@ -84,7 +87,8 @@ const AdvancedFilters: FC<{
         {LANGUAGES.map((language) => (
           <button
             key={language.name}
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
               setLanguage(language);
             }}
             className={cx({
