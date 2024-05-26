@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
+import { toast } from 'react-toastify';
 
 import {
   DndContext,
@@ -38,10 +39,13 @@ import {
   setInfluenceOrder,
   useGetInfluences,
 } from '@services/influence';
+import AwesomeDebouncePromise from 'awesome-debounce-promise';
 
 import InfluenceElement from './InfluenceElement';
 
 import styles from './style.module.scss';
+
+const debounceChangeOrder = AwesomeDebouncePromise(setInfluenceOrder, 2000);
 
 const InfluenceList: FC<{
   userId?: string | number;
@@ -94,7 +98,9 @@ const InfluenceList: FC<{
         ...(influences?.slice(newInfluences.length) || []),
       ].map((inf) => inf.id);
 
-      setInfluenceOrder(influenceOrder);
+      debounceChangeOrder(influenceOrder).then(() => {
+        toast.success('Updated influence order.');
+      });
     },
     [visibleInfluences, influences],
   );
