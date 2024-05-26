@@ -27,6 +27,12 @@ export type NewsType = {
 
 const NEWS: NewsType[] = [
   {
+    date: '26 May 2024',
+    url: '/patchnotes/1_3.md',
+    title: 'Update 1.3',
+    desc: 'More map search improvements and influence sorting!',
+  },
+  {
     date: '19 May 2024',
     url: '/patchnotes/1_2.md',
     title: 'Update 1.2',
