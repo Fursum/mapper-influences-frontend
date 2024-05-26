@@ -158,3 +158,14 @@ export const useGetMentions = (userId?: string | number) => {
     queryFn: () => getMentions(id),
   });
 };
+
+export function setInfluenceOrder(order: string[]) {
+  const url = `${process.env.NEXT_PUBLIC_API_URL}/users/influence-order`;
+  return axios.post(
+    url,
+    {
+      influence_ids: order,
+    },
+    { withCredentials: true },
+  );
+}
