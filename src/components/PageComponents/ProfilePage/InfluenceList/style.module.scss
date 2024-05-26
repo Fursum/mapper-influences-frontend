@@ -45,9 +45,22 @@
   height: 1rem;
   padding: 0rem;
   margin-left: $spacing / 4;
-  font-size: 0.75rem;
-  transform: translateY(-0.25rem);
+  transform: translateY(0.1rem);
   line-height: 0;
+
+  > svg {
+    transform: translateY(-0.1rem);
+    scale: 0.6;
+    > path {
+      fill: $color-button-outline;
+    }
+  }
+
+  &:hover {
+    > svg > path {
+      fill: $color-button-text;
+    }
+  }
 }
 
 .draggableRow {
@@ -61,8 +74,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 2rem;
-    width: 2rem;
+    height: 1.5rem;
+    width: 1.5rem;
     padding: $spacing / 4;
   }
 

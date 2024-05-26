@@ -113,12 +113,25 @@
     position: absolute;
     top: $spacing / 2;
     right: $spacing / 2;
-    height: 1rem;
-    width: 1rem;
+    height: 1.5rem;
+    width: 1.5rem;
     padding: 0;
     font-size: 0.75rem;
     line-height: 0;
     z-index: 3;
+
+    > svg {
+      margin: auto;
+      > path {
+        fill: $color-danger;
+      }
+    }
+
+    &:hover {
+      > svg > path {
+        fill: $color-button-text;
+      }
+    }
   }
 
   .loading {

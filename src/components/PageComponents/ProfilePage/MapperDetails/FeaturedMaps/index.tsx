@@ -3,6 +3,8 @@ import { type FC, useCallback, useState } from 'react';
 import MapCarousel from '@components/SharedComponents/MapCarousel/Slider';
 import { AddMapModalContents } from '@components/SharedComponents/MapSearch';
 import Modal from '@components/SharedComponents/Modal';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAddMapToSelfMutation } from '@services/maps';
 import { useUserBio } from '@services/user';
 import { useGlobalTooltip } from '@states/globalTooltip';
@@ -95,7 +97,7 @@ const AddButton: FC<{ userId?: string | number }> = ({ userId }) => {
         }
         onMouseLeave={deactivateTooltip}
       >
-        +
+        <FontAwesomeIcon icon={faPlus} />
       </button>
     </>
   );

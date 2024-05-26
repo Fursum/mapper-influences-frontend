@@ -5,6 +5,8 @@ import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
 import MapCarousel from '@components/SharedComponents/MapCarousel/SingleItem';
 import { AddMapModalContents } from '@components/SharedComponents/MapSearch';
 import Modal from '@components/SharedComponents/Modal';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { convertFromInfluence } from '@libs/enums';
 import {
   type BeatmapId,
@@ -169,7 +171,7 @@ const AddButton: FC<{
         }
         onMouseLeave={deactivateTooltip}
       >
-        +
+        <FontAwesomeIcon icon={faPlus} />
       </button>
     </>
   );
