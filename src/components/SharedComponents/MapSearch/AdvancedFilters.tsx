@@ -1,5 +1,7 @@
 import { type FC, useState } from 'react';
 
+import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useMapData } from '@services/maps';
 import cx from 'classnames';
 
@@ -114,7 +116,11 @@ const AdvancedFilters: FC<{
           }}
           role="button"
         >
-          {selectedMaps.includes(Number(difficultyId)) ? '-' : '+'}
+          <FontAwesomeIcon
+            icon={
+              selectedMaps.includes(Number(difficultyId)) ? faMinus : faPlus
+            }
+          />
         </button>
       </label>
       {mapData && difficultyId && (

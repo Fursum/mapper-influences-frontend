@@ -52,6 +52,14 @@
     width: 2rem;
     height: 2rem;
     line-height: 0;
+
+    > svg > path {
+      fill: $color-button-outline;
+    }
+
+    &:hover > svg > path {
+      fill: $color-button-text;
+    }
   }
 
   .previousNames {
