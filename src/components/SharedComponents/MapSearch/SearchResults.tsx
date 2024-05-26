@@ -45,7 +45,6 @@ const SearchResults: FC<{
         hasMore={results.length > visibleResults.length}
         useWindow={false}
         getScrollParent={() => parentRef.current}
-        loader={visibleResults.length < results.length ? <div>...</div> : <></>}
         key={selectedMaps.join(',') + String(disabled)}
       >
         {visibleResults.map((map) => (

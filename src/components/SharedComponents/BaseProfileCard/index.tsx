@@ -13,7 +13,7 @@ import styles from './style.module.scss';
 type Props = {
   userId?: string | number;
   className?: string;
-  offlineData?: LeaderboardResponse[number];
+  offlineData?: LeaderboardResponse['data'][number];
   forceLoading?: boolean;
 };
 
