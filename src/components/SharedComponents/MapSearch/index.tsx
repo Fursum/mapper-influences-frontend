@@ -81,7 +81,7 @@ export const AddMapModalContents: FC<{
             }}
             className={selectedTab === 'advanced' ? styles.active : ''}
           >
-            Advanced
+            Filters
           </button>
         </div>
 
