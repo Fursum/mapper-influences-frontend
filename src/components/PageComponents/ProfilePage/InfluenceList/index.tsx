@@ -27,7 +27,11 @@ import {
   faChevronUp,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { type InfluenceResponse, useGetInfluences } from '@services/influence';
+import {
+  type InfluenceResponse,
+  setInfluenceOrder,
+  useGetInfluences,
+} from '@services/influence';
 
 import InfluenceElement from './InfluenceElement';
 
@@ -77,8 +81,16 @@ const InfluenceList: FC<{
       newInfluences.splice(newIndex, 0, visibleInfluences[currentIndex]);
 
       setVisibleInfluences(newInfluences);
+
+      // Send the order to server
+      const influenceOrder = [
+        ...newInfluences,
+        ...(influences?.slice(newInfluences.length) || []),
+      ].map((inf) => inf.id);
+
+      setInfluenceOrder(influenceOrder);
     },
-    [visibleInfluences],
+    [visibleInfluences, influences],
   );
 
   const onDragEnd = useCallback(
@@ -97,9 +109,17 @@ const InfluenceList: FC<{
         );
 
         setVisibleInfluences(newData);
+
+        // Send the order to server
+        const influenceOrder = [
+          ...newData,
+          ...(influences?.slice(newData.length) || []),
+        ].map((inf) => inf.id);
+
+        setInfluenceOrder(influenceOrder);
       }
     },
-    [visibleInfluences],
+    [visibleInfluences, influences],
   );
 
   return (
