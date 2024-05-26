@@ -118,6 +118,15 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
             {userBio?.username ?? osuData?.username ?? ''}
           </div>
         </a>
+        {osuData?.country && (
+          <div className={styles.flag}>
+            <img
+              alt="Flag"
+              src={`https://flagcdn.com/${osuData.country?.code.toLowerCase()}.svg`}
+            />
+            <span>{osuData.country?.name}</span>
+          </div>
+        )}
         <UserGroup />
         {!ownProfile && osuData && (
           <AddUserButton
