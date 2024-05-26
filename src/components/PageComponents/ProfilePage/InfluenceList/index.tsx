@@ -138,7 +138,9 @@ const InfluenceList: FC<{
       // Send the order to server
       const influenceOrder = newData.map((inf) => inf.influenced_to);
 
-      setInfluenceOrder(influenceOrder);
+      setInfluenceOrder(influenceOrder).then(() =>
+        toast.success('Updated influence order.'),
+      );
     },
     [queryClient, currentUserId],
   );
