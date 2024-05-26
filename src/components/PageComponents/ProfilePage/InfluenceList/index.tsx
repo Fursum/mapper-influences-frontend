@@ -1,4 +1,4 @@
-import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { type FC, useCallback, useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import {
@@ -45,21 +45,9 @@ const InfluenceList: FC<{
     InfluenceResponse[]
   >([]);
 
-  const sortedInfluences = useMemo(() => {
-    // Sort by influence level first, then by date
-    return influences?.sort((a, b) => {
-      if (a.type === b.type)
-        return (
-          new Date(b.modified_at).getTime() - new Date(a.modified_at).getTime()
-        );
-
-      return b.type - a.type;
-    });
-  }, [influences]);
-
   useEffect(() => {
-    setVisibleInfluences(sortedInfluences?.slice(0, 5) || []);
-  }, [sortedInfluences]);
+    setVisibleInfluences(influences?.slice(0, 5) || []);
+  }, [influences]);
 
   const { setNodeRef } = useDroppable({
     id: 'influences',
@@ -138,13 +126,6 @@ const InfluenceList: FC<{
         }}
         hasMore={influences && influences.length > visibleInfluences.length}
         useWindow={true}
-        loader={
-          (sortedInfluences?.length || 0) < (influences?.length || 0) ? (
-            <div>...</div>
-          ) : (
-            <></>
-          )
-        }
       >
         <DndContext
           id="influences"
