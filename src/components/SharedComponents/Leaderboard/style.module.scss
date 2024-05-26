@@ -19,7 +19,7 @@
     padding: $spacing / 2;
     padding-bottom: 0;
     width: 100%;
-    max-height: 22rem;
+    max-height: 35rem;
     overflow-y: auto;
 
     scrollbar-gutter: stable;
@@ -59,6 +59,32 @@
           }
         }
       }
+    }
+  }
+}
+
+.options {
+  display: flex;
+  justify-content: flex-start;
+  gap: $spacing / 4;
+  margin-left: auto;
+  margin-bottom: $spacing / 2;
+  padding: 0;
+
+  button {
+    @extend %resetButtonDefaults;
+    padding: $spacing / 2;
+    font-size: 0.75rem;
+    color: $color-text-faded;
+    font-weight: 400;
+
+    &:hover {
+      color: $color-text;
+    }
+
+    &.active {
+      color: $color-text;
+      font-weight: 700;
     }
   }
 }

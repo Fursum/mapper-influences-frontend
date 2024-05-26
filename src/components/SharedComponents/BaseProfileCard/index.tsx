@@ -14,6 +14,7 @@ type Props = {
   userId?: string | number;
   className?: string;
   offlineData?: LeaderboardResponse[number];
+  forceLoading?: boolean;
 };
 
 const BaseProfileCard: FC<Props> = ({
