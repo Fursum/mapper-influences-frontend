@@ -1,10 +1,4 @@
-import {
-  type CSSProperties,
-  type FC,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { type CSSProperties, type FC, useCallback, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { toast } from 'react-toastify';
 
@@ -39,6 +33,8 @@ import {
   setInfluenceOrder,
   useGetInfluences,
 } from '@services/influence';
+import { useCurrentUser } from '@services/user';
+import { useQueryClient } from '@tanstack/react-query';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 
 import InfluenceElement from './InfluenceElement';
@@ -53,15 +49,13 @@ const InfluenceList: FC<{
 }> = ({ userId, open }) => {
   const editable = !userId;
 
+  const { data: currentUser } = useCurrentUser();
+  const currentUserId = currentUser?.id;
+
+  const queryClient = useQueryClient();
   const { data: influences } = useGetInfluences(userId);
 
-  const [visibleInfluences, setVisibleInfluences] = useState<
-    InfluenceResponse[]
-  >([]);
-
-  useEffect(() => {
-    setVisibleInfluences(influences?.slice(0, 5) || []);
-  }, [influences]);
+  const [visibleCount, setVisibleCount] = useState<number>(5);
 
   const { setNodeRef } = useDroppable({
     id: 'influences',
@@ -77,61 +71,76 @@ const InfluenceList: FC<{
   );
 
   const changeOrder = useCallback(
-    (currentId: string, direction: 'up' | 'down') => {
-      const currentIndex = visibleInfluences.findIndex(
-        (influence) => influence.id === currentId,
+    (influenced_to: number, direction: 'up' | 'down') => {
+      const newData = queryClient.setQueryData<InfluenceResponse[]>(
+        ['influences', currentUserId?.toString()],
+        (data) => {
+          if (!data) return data;
+
+          const newInfluences = arrayMove(
+            data,
+            data.findIndex((item) => item.influenced_to === influenced_to),
+            direction === 'up'
+              ? data.findIndex((item) => item.influenced_to === influenced_to) -
+                  1
+              : data.findIndex((item) => item.influenced_to === influenced_to) +
+                  1,
+          ).filter((element) => Boolean(element));
+
+          return newInfluences;
+        },
       );
-      if (currentIndex === -1) return;
 
-      const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-      if (newIndex < 0 || newIndex >= visibleInfluences.length) return;
-
-      const newInfluences = [...visibleInfluences];
-      newInfluences.splice(currentIndex, 1);
-      newInfluences.splice(newIndex, 0, visibleInfluences[currentIndex]);
-
-      setVisibleInfluences(newInfluences);
+      if (!newData) return;
 
       // Send the order to server
-      const influenceOrder = [
-        ...newInfluences,
-        ...(influences?.slice(newInfluences.length) || []),
-      ].map((inf) => inf.id);
+      const influenceOrder = newData.map((inf) => inf.influenced_to);
 
-      debounceChangeOrder(influenceOrder).then(() => {
-        toast.success('Updated influence order.');
-      });
+      debounceChangeOrder(influenceOrder)
+        .then(() => {
+          toast.success('Updated influence order.');
+        })
+        .catch(() => {
+          toast.error('Could not update influence order.');
+        });
     },
-    [visibleInfluences, influences],
+    [queryClient, currentUserId],
   );
 
   const onDragEnd = useCallback(
     (evt: DragEndEvent) => {
       const { active, over } = evt;
 
-      if (over && active.id !== over?.id) {
-        const oldIndex = visibleInfluences.findIndex(
-          (item) => item.id === active.id,
-        );
-        const newIndex = visibleInfluences.findIndex(
-          (item) => item.id === over.id,
-        );
-        const newData = arrayMove(visibleInfluences, oldIndex, newIndex).filter(
-          (element) => Boolean(element),
-        );
+      if (active.id === over?.id) return;
 
-        setVisibleInfluences(newData);
+      const newData = queryClient.setQueryData<InfluenceResponse[]>(
+        ['influences', currentUserId?.toString()],
+        (data) => {
+          if (!data || !over) return data;
 
-        // Send the order to server
-        const influenceOrder = [
-          ...newData,
-          ...(influences?.slice(newData.length) || []),
-        ].map((inf) => inf.id);
+          const oldIndex = data.findIndex(
+            (item) => item.influenced_to === active.id,
+          );
+          const newIndex = data.findIndex(
+            (item) => item.influenced_to === over?.id,
+          );
 
-        setInfluenceOrder(influenceOrder);
-      }
+          const newData = arrayMove(data, oldIndex, newIndex).filter(
+            (element) => Boolean(element),
+          );
+
+          return newData;
+        },
+      );
+
+      if (!newData) return;
+
+      // Send the order to server
+      const influenceOrder = newData.map((inf) => inf.influenced_to);
+
+      setInfluenceOrder(influenceOrder);
     },
-    [visibleInfluences, influences],
+    [queryClient, currentUserId],
   );
 
   return (
@@ -146,17 +155,12 @@ const InfluenceList: FC<{
           {`...Or they haven't added anyone yet.`}
         </span>
       )}
-
       <InfiniteScroll
         initialLoad={true}
         loadMore={() => {
-          influences
-            ? setVisibleInfluences(
-                influences?.slice(0, (visibleInfluences?.length || 0) + 5),
-              )
-            : [];
+          influences ? setVisibleCount((prev) => prev + 5) : [];
         }}
-        hasMore={influences && influences.length > visibleInfluences.length}
+        hasMore={influences && influences.length > visibleCount}
         useWindow={true}
       >
         <DndContext
@@ -167,18 +171,20 @@ const InfluenceList: FC<{
           onDragEnd={onDragEnd}
         >
           <SortableContext
-            items={visibleInfluences}
+            items={influences || []}
             strategy={verticalListSortingStrategy}
           >
             <div ref={setNodeRef}>
-              {visibleInfluences?.map((influence) => (
-                <DraggableWrapper
-                  key={influence.influenced_to}
-                  influence={influence}
-                  editable={editable}
-                  changeOrder={changeOrder}
-                />
-              ))}
+              {influences
+                ?.slice(0, visibleCount)
+                .map((influence) => (
+                  <DraggableWrapper
+                    key={influence.influenced_to}
+                    influence={influence}
+                    editable={editable}
+                    changeOrder={changeOrder}
+                  />
+                ))}
             </div>
           </SortableContext>
         </DndContext>
@@ -192,7 +198,7 @@ export default InfluenceList;
 const DraggableWrapper: FC<{
   influence: InfluenceResponse;
   editable?: boolean;
-  changeOrder: (currentId: string, direction: 'up' | 'down') => void;
+  changeOrder: (influenced_to: number, direction: 'up' | 'down') => void;
 }> = ({ influence, editable, changeOrder }) => {
   if (editable)
     return <Draggable influence={influence} changeOrder={changeOrder} />;
@@ -206,7 +212,7 @@ const DraggableWrapper: FC<{
 
 const Draggable: FC<{
   influence: InfluenceResponse;
-  changeOrder: (currentId: string, direction: 'up' | 'down') => void;
+  changeOrder: (influenced_to: number, direction: 'up' | 'down') => void;
 }> = ({ influence, changeOrder }) => {
   const {
     attributes,
@@ -216,7 +222,7 @@ const Draggable: FC<{
     transition,
     isDragging,
   } = useSortable({
-    id: influence.id,
+    id: influence.influenced_to,
   });
 
   const style: CSSProperties = {
@@ -230,7 +236,7 @@ const Draggable: FC<{
   return (
     <div ref={setNodeRef} style={style} className={styles.draggableRow}>
       <div className={styles.sortColumn}>
-        <button onClick={() => changeOrder(influence.id, 'up')}>
+        <button onClick={() => changeOrder(influence.influenced_to, 'up')}>
           <FontAwesomeIcon icon={faChevronUp} />
         </button>
         <FontAwesomeIcon
@@ -239,7 +245,7 @@ const Draggable: FC<{
           {...attributes}
           className={styles.handle}
         />
-        <button onClick={() => changeOrder(influence.id, 'down')}>
+        <button onClick={() => changeOrder(influence.influenced_to, 'down')}>
           <FontAwesomeIcon icon={faChevronDown} />
         </button>
       </div>

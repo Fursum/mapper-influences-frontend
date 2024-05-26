@@ -11,7 +11,7 @@ export type BeatmapId = {
 };
 
 export type InfluenceResponse = {
-  id: string;
+  id: number;
   influenced_by: number;
   influenced_to: number;
   created_at: string;
@@ -34,7 +34,11 @@ export const useGetInfluences = (userId?: string | number) => {
   return useQuery({
     queryKey: ['influences', id.toString()],
     enabled: !!id,
-    queryFn: () => getInfluences(id),
+    queryFn: () =>
+      getInfluences(id).then(
+        // Mongo changes the id on updates, and i need a stable unique id
+        (data) => data.map((e) => ({ ...e, id: e.influenced_to })) || [],
+      ),
   });
 };
 
@@ -159,7 +163,7 @@ export const useGetMentions = (userId?: string | number) => {
   });
 };
 
-export function setInfluenceOrder(order: string[]) {
+export function setInfluenceOrder(order: number[]) {
   const url = `${process.env.NEXT_PUBLIC_API_URL}/users/influence-order`;
   return axios.post(
     url,
