@@ -70,6 +70,12 @@
   align-items: center;
   width: 100%;
 
+  &.dragging {
+    background-color: $color-background-card;
+    box-shadow: 0 0.5rem 0.5rem rgba(0, 0, 0, 0.2);
+    padding-block: $spacing / 2;
+  }
+
   .handle {
     display: flex;
     justify-content: center;
@@ -80,7 +86,7 @@
   }
 
   // Line separator
-  &:not(:first-of-type)::after {
+  &:not(:first-of-type):not(.dragging)::after {
     content: '';
     position: absolute;
     left: 0;

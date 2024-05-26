@@ -36,6 +36,7 @@ import {
 import { useCurrentUser } from '@services/user';
 import { useQueryClient } from '@tanstack/react-query';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
+import cx from 'classnames';
 
 import InfluenceElement from './InfluenceElement';
 
@@ -231,12 +232,17 @@ const Draggable: FC<{
     transform: CSS.Transform.toString(transform),
     transition,
     zIndex: isDragging ? 2 : undefined,
-    backgroundColor: isDragging ? 'var(--bgColor-3)' : undefined,
-    paddingBlock: isDragging ? '0.5rem' : undefined,
   };
 
   return (
-    <div ref={setNodeRef} style={style} className={styles.draggableRow}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cx({
+        [styles.draggableRow]: true,
+        [styles.dragging]: isDragging,
+      })}
+    >
       <div className={styles.sortColumn}>
         <button onClick={() => changeOrder(influence.influenced_to, 'up')}>
           <FontAwesomeIcon icon={faChevronUp} />
