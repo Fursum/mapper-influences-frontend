@@ -28,7 +28,9 @@ export const AddMapModalContents: FC<{
   );
   const [selectedMaps, setSelectedMaps] = useState<number[]>([]);
   const [searchInput, setSearchInput] = useState(
-    suggestedUser ? `"${suggestedUser?.username}"` : '',
+    suggestedUser
+      ? `creator:${suggestedUser?.username.replaceAll(' ', '_')}`
+      : '',
   );
 
   const debouncedSearch = AwesomeDebouncePromise((query: string) => {
