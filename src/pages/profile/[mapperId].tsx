@@ -24,7 +24,11 @@ const MapperPage: NextPage<
   const { mapperId } = router.query;
 
   const { data: currentUser } = useCurrentUser();
-  const { error, isLoading } = useFullUser(mapperId?.toString());
+  const {
+    error,
+    isLoading,
+    data: profileData,
+  } = useFullUser(mapperId?.toString());
 
   if (!isLoading && error && mapperId) {
     router.push('/404');
@@ -37,15 +41,15 @@ const MapperPage: NextPage<
 
   return (
     <>
-      {cachedBio && (
-        <Head>
-          <title>{`${cachedBio.username} - Mapper Influences`}</title>
+      <Head>
+        <title>{`${cachedBio?.username ?? profileData?.username ?? 'Profile'} - Mapper Influences`}</title>
+        {cachedBio && (
           <meta
             name="description"
-            content={`Check out the influences of ${cachedBio.username}.`}
+            content={`Check out the influences of ${cachedBio?.username}.`}
           />
-        </Head>
-      )}
+        )}
+      </Head>
       <ProfilePage userId={mapperId?.toString()} />
     </>
   );
