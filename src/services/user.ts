@@ -54,7 +54,7 @@ export const useFullUser = (userId?: string | number) => {
 
   return useQuery({
     queryKey: ['fullUser', id?.toString()],
-    enabled: !isLoading && !!id,
+    enabled: !isLoading && !!id && !!currentUser,
     queryFn: () => {
       if (!id) throw new Error('No user id provided and no current user found');
 
@@ -83,7 +83,7 @@ export const useUserBio = (userId?: string | number) => {
 
   return useQuery({
     queryKey: ['userBio', id?.toString()],
-    enabled: !isLoading && !!id,
+    enabled: !isLoading && !!id && !!currentUser,
     queryFn: () => {
       if (!id) return currentUser;
 
@@ -93,7 +93,7 @@ export const useUserBio = (userId?: string | number) => {
 };
 
 export function updateUserDescription(bio: string) {
-  return axios.post(
+  return axios.post<unknown>(
     `${process.env.NEXT_PUBLIC_API_URL}/users/bio`,
     { bio },
     {
@@ -106,7 +106,7 @@ export const useDescriptionMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: updateUserDescription,
-    onSuccess: (_, variables) => {
+    onSuccess: (_, variables: string) => {
       queryClient.setQueryData<UserBioResponse>(['currentUser'], (old) => {
         if (!old) return old;
         return {
