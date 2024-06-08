@@ -1,6 +1,7 @@
 $md-size: 2rem;
 $lg-size: calc($md-size * 3);
 $xl-size: calc($md-size * 6);
+$sm-size: calc($md-size / 2);
 
 .wrapper {
   overflow: hidden;
@@ -94,5 +95,19 @@ $xl-size: calc($md-size * 6);
 
   &::after {
     filter: blur(4px);
+  }
+}
+
+.sm {
+  min-height: $sm-size;
+  max-height: $sm-size;
+  min-width: $sm-size;
+
+  &::before {
+    width: 1rem;
+  }
+
+  &::after {
+    filter: blur(1px);
   }
 }

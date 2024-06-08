@@ -6,7 +6,7 @@ import styles from './style.module.scss';
 
 type Props = {
   photoUrl?: string;
-  size: 'md' | 'lg' | 'xl';
+  size: 'md' | 'lg' | 'xl' | 'sm';
   className?: string;
   circle?: boolean;
   loading?: boolean;
