@@ -40,37 +40,5 @@ export const useActivities = () => {
     setActivities((prev) => [...prev, lastMessageParsed]);
   }, [lastMessage?.data]);
 
-  return {
-    activities: [
-      ...activities,
-      ...activities,
-      ...activities,
-      {
-        // Long name example
-        type: 'ADD_INFLUENCE',
-        user: {
-          id: 1,
-          username: 'WWWWWWWWWWWWWWWWW',
-          avatar_url: 'https://example.com/avatar.png',
-          country: 'US',
-        },
-        datetime: new Date().toISOString(),
-        details: {
-          influenced_to: {
-            id: 2,
-            username: 'WWWWWWWWWWWWWWW',
-            avatar_url: 'https://example.com/avatar2.png',
-            country: 'US',
-          },
-          beatmap: {
-            id: 1,
-            is_beatmapset: true,
-          },
-          description: 'Description',
-        },
-      } satisfies Activity,
-    ].toReversed(),
-    readyState,
-    lastMessage,
-  };
+  return { activities: activities.toReversed(), readyState, lastMessage };
 };
