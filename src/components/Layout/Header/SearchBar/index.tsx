@@ -68,7 +68,10 @@ const SearchBar: FC<Props> = ({ className }) => {
           maxLength={MAX_NAME_LENGTH}
           ref={inputRef}
         />
-        <button className={styles.magnifyButton}>
+        <button
+          className={styles.magnifyButton}
+          onClick={() => inputRef.current?.focus()}
+        >
           <Magnify className={styles.magnifySvg} />
         </button>
       </div>
