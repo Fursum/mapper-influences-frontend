@@ -21,6 +21,7 @@
     height: $card-height;
     border-radius: $border-radius;
 
+    object-fit: cover;
     position: absolute;
     inset: 0;
   }
