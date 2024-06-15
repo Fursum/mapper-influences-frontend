@@ -40,5 +40,9 @@ export const useActivities = () => {
     setActivities((prev) => [...prev, lastMessageParsed]);
   }, [lastMessage?.data]);
 
-  return { activities: activities.toReversed(), readyState, lastMessage };
+  return {
+    activities: activities?.toReversed() || [],
+    readyState,
+    lastMessage,
+  };
 };
