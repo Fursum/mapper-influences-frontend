@@ -1,5 +1,6 @@
 import { toast } from 'react-toastify';
 
+import { mockRequest } from '@libs/functions';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -52,8 +53,11 @@ export type AddInfluenceRequest = {
   }[];
 };
 
-export function addInfluence(body: AddInfluenceRequest) {
+export async function addInfluence(body: AddInfluenceRequest) {
   const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence`;
+
+  await mockRequest(null, 1000);
+
   return axios.post<InfluenceResponse>(
     searchUrl,
     { beatmaps: [], ...body },
