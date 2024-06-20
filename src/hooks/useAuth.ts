@@ -6,7 +6,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useLocalStorage } from 'usehooks-ts';
 
-const REDIRECT_URL = '/';
+const LOGIN_PAGE_URL = '/';
 
 const useAuth = () => {
   const queryClient = useQueryClient();
@@ -24,7 +24,7 @@ const useAuth = () => {
         queryClient.resetQueries({
           queryKey: ['currentUser'],
         });
-        router.push(REDIRECT_URL);
+        router.push(LOGIN_PAGE_URL);
       })
       .catch(() => {
         toast.error('Failed to logout. 🤔');
@@ -33,6 +33,7 @@ const useAuth = () => {
 
   // Kick user to home page if not logged in
   // or redirect to dashboard if logged in
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <no need to check set calls>
   useEffect(() => {
     if (isLoading) return;
 
@@ -42,14 +43,14 @@ const useAuth = () => {
       return;
     }
 
-    if (router.asPath === REDIRECT_URL) {
+    if (router.asPath === LOGIN_PAGE_URL) {
       if (!user || error) return;
       router.push('/dashboard');
     }
 
     if (!user || error) {
       setRedirectUrl(router.asPath);
-      router.push(REDIRECT_URL);
+      router.push(LOGIN_PAGE_URL);
     }
   }, [isLoading, router, user, error, redirectUrl]);
 
