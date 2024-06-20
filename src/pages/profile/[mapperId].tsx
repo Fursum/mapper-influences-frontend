@@ -1,6 +1,5 @@
 import ProfilePage from '@components/PageComponents/ProfilePage';
 import useAuth from '@hooks/useAuth';
-import { mockRequest } from '@libs/functions';
 import { getUserBio, useFullUser } from '@services/user';
 import type {
   GetServerSidePropsContext,
@@ -17,6 +16,7 @@ const MapperPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
   useAuth();
   const router = useRouter();
   const { mapperId } = router.query;
+  const { cachedData } = props;
 
   const {
     error,
@@ -28,16 +28,13 @@ const MapperPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
     router.push('/404');
   }
 
-  console.log(props);
   return (
     <>
       <Head>
-        {profileData && (
-          <title>{`${profileData?.username} - Mapper Influences`}</title>
-        )}
+        <title>{`${cachedData?.username ?? profileData?.username ?? 'Profile'} - Mapper Influences`}</title>
         <meta
           name="description"
-          content={'Check out the influences of a mapper.'}
+          content={`Check out the influences of ${cachedData.username ? cachedData.username : 'a mapper'}.`}
         />
       </Head>
       <ProfilePage userId={mapperId?.toString()} />
@@ -56,14 +53,9 @@ export const getStaticProps = async (
 
   const mapperData = await getUserBio(mapperId.toString());
 
-  await mockRequest('', 5000);
-
-  if (!mapperData) return { notFound: true };
-
   return {
     props: {
       cachedData: mapperData,
-      date: new Date().toISOString(),
     },
     revalidate: 600,
   };
