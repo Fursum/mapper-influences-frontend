@@ -1,6 +1,7 @@
 import { type FC, useState } from 'react';
 
 import DarkModeToggle from '@components/Layout/Header/DarkModeToggle';
+import ActivityList from '@components/SharedComponents/Activity';
 import Modal from '@components/SharedComponents/Modal';
 import News from '@components/SharedComponents/News';
 
@@ -90,6 +91,7 @@ const LoginScreen: FC = () => {
         </section>
         <section className={styles.fullSection}>
           <Leaderboard />
+          <ActivityList />
           <News className={styles.news} />
         </section>
         <ContributeButtons />

@@ -1,10 +1,4 @@
-.addUser,
-.removeUser {
-  .icon {
-    width: 2rem;
-    height: 2rem;
-  }
-
+.addUser {
   // Fix for default behavior
   &:hover:not(:disabled) {
     background-color: transparent;
@@ -28,18 +22,36 @@
 }
 
 .addUser {
-  background: linear-gradient(to right, $color-secondary-bg, $color-primary-bg);
-  // use text gradient
+  background-color: transparent;
 
-  // Gradient border
-  &::after {
-    content: "";
+  // Gradient bg
+  &::before {
+    content: '';
     position: absolute;
     inset: -0.2rem;
     border-radius: $border-radius * 3;
-    padding: 0.25rem;
     background: linear-gradient(to right, $color-secondary, $color-primary);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+    opacity: 0.1;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+
+  > span {
+    z-index: 1;
+  }
+
+  // Gradient border
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -0.2rem;
+    border-radius: $border-radius * 3;
+    padding: 0.26rem;
+    background: linear-gradient(to right, $color-secondary, $color-primary);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
@@ -55,20 +67,17 @@
     color: $white;
   }
 
-  &:hover {
-    background: linear-gradient(to right, $color-secondary, $color-primary);
-    > span {
-      background-clip: unset;
-      background: unset;
-      -webkit-text-fill-color: unset;
-    }
+  &:hover > span {
+    background-clip: unset;
+    background: unset;
+    -webkit-text-fill-color: unset;
   }
 }
 
 .removeUser {
   color: $color-danger;
   background-color: $color-danger-bg;
-  outline: 0.25rem solid $color-danger;
+  outline: 0.1rem solid $color-danger;
 
   &:hover,
   &:focus,

@@ -1,3 +1,6 @@
+@tailwind components;
+@tailwind utilities;
+
 @import './mixins/index';
 @import './variables/sizes';
 @import './variables/toggledVariables';
@@ -81,7 +84,7 @@ h6 {
 
   color: $color-text;
   // All of the color transitions
-  $transitionConfig: 0.1s ease-in;
+  $transitionConfig: 0.075s ease-in;
   $allTransitions:
     background-color $transitionConfig,
     color $transitionConfig,

@@ -19,7 +19,7 @@ const Layout: FC<Props> = ({ children }) => {
   const { theme } = useGlobalTheme();
   return (
     <>
-      {<Header />}
+      <Header />
       <main className={styles.contentCenterer}>{children}</main>
       <Tooltip />
       <ToastContainer

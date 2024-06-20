@@ -52,8 +52,9 @@ export type AddInfluenceRequest = {
   }[];
 };
 
-export function addInfluence(body: AddInfluenceRequest) {
+export async function addInfluence(body: AddInfluenceRequest) {
   const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence`;
+
   return axios.post<InfluenceResponse>(
     searchUrl,
     { beatmaps: [], ...body },

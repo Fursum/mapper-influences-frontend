@@ -14,7 +14,7 @@
   }
 
   .loginText {
-    font-family: "Inter Variable";
+    font-family: 'Inter Variable';
     margin-top: $spacing;
     padding-left: 0;
     border: none;
@@ -81,7 +81,6 @@
     }
 
     .news {
-      flex-grow: 1;
       max-width: 35rem;
     }
   }

@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 
+import ActivityList from '@components/SharedComponents/Activity';
 import News from '@components/SharedComponents/News';
 
 import ContributeButtons from '../../../SharedComponents/ContributeButtons';
@@ -12,6 +13,7 @@ const NewsScreen: FC = () => {
     <div className={styles.newsScreen}>
       <div className={styles.double}>
         <Leaderboard className={styles.topInfluencers} />
+        <ActivityList />
         <News className={styles.newsContainer} />
       </div>
       <ContributeButtons className={styles.contribute} />
