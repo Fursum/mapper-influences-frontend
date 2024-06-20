@@ -35,6 +35,10 @@ const ActivityRow: FC<{
 }> = ({ activity }) => {
   const { activateTooltip } = useGlobalTooltip();
 
+  // Adjust the activity timestamp to the local offset
+  const timezoneOffset = new Date().getTimezoneOffset() * 60000;
+  const adjustedTime = new Date(activity.datetime).getTime() - timezoneOffset;
+
   const DetailsRow = () => {
     if (activity.type === 'ADD_INFLUENCE' && activity.details.influenced_to) {
       return (
@@ -72,12 +76,12 @@ const ActivityRow: FC<{
           className="ml-auto shrink-0 pl-2 text-sm text-text-faded"
           onMouseEnter={(e) =>
             activateTooltip(
-              new Date(activity.datetime).toLocaleString(),
+              new Date(adjustedTime).toLocaleString(),
               e.currentTarget,
             )
           }
         >
-          <RelativeTime date={activity.datetime} />
+          <RelativeTime date={new Date(adjustedTime).toISOString()} />
         </span>
       </div>
 

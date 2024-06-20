@@ -38,14 +38,8 @@ export function isNumber(value: string | number, canBeEmpty = false) {
 export function relativeTimeText(isoTime: string) {
   const now = new Date();
   const past = new Date(isoTime);
+  const diff = (now.getTime() - past.getTime()) / 1000;
 
-  // Get the client's time zone offset in minutes and convert it to milliseconds
-  const timezoneOffset = now.getTimezoneOffset() * 60000;
-
-  // Adjust the now time to account for the client's time zone offset
-  const localNow = new Date(now.getTime() + timezoneOffset);
-
-  const diff = (localNow.getTime() - past.getTime()) / 1000;
   const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
 
   if (diff < 60) return rtf.format(-Math.floor(diff), 'second');
