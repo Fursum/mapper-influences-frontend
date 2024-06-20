@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 
 import { type Activity, useActivities } from '@services/activity';
+import { useGlobalTooltip } from '@states/globalTooltip';
 import Link from 'next/link';
 
 import ProfilePhoto from '../ProfilePhoto';
@@ -32,6 +33,8 @@ export default ActivityList;
 const ActivityRow: FC<{
   activity: Activity;
 }> = ({ activity }) => {
+  const { activateTooltip } = useGlobalTooltip();
+
   const DetailsRow = () => {
     if (activity.type === 'ADD_INFLUENCE' && activity.details.influenced_to) {
       return (
@@ -65,7 +68,15 @@ const ActivityRow: FC<{
       <div className="flex w-full justify-between">
         <SmallUser user={activity.user} />
 
-        <span className="ml-auto shrink-0 pl-2 text-sm text-text-faded">
+        <span
+          className="ml-auto shrink-0 pl-2 text-sm text-text-faded"
+          onMouseEnter={(e) =>
+            activateTooltip(
+              new Date(activity.datetime).toLocaleString(),
+              e.currentTarget,
+            )
+          }
+        >
           <RelativeTime date={activity.datetime} />
         </span>
       </div>
