@@ -4,20 +4,19 @@ import MapCard from '@components/SharedComponents/MapCard';
 import type { BeatmapId } from '@services/influence';
 import { useDeleteMapFromSelfMutation } from '@services/maps';
 import useEmblaCarousel from 'embla-carousel-react';
-import { useRouter } from 'next/router';
 
 import styles from './style.module.scss';
 
 const LIMIT = 5;
 
-const SliderCarousel: FC<{ mapList: BeatmapId[] }> = ({ mapList }) => {
-  const router = useRouter();
+const SliderCarousel: FC<{ mapList: BeatmapId[]; editable?: boolean }> = ({
+  mapList,
+  editable,
+}) => {
   const [emblaRef, _embla] = useEmblaCarousel({
     dragFree: true,
     align: 'start',
   });
-
-  const isEditable = router.asPath === '/profile';
 
   const { mutateAsync: deleteMap, isPending } = useDeleteMapFromSelfMutation();
 
@@ -29,12 +28,12 @@ const SliderCarousel: FC<{ mapList: BeatmapId[] }> = ({ mapList }) => {
             <div key={item.id} className={styles.slide}>
               <MapCard
                 map={item}
-                deleteFn={isEditable ? deleteMap : undefined}
+                deleteFn={editable ? deleteMap : undefined}
                 loading={isPending}
               />
             </div>
           ))}
-          {mapList.length < LIMIT && isEditable && (
+          {mapList.length < LIMIT && editable && (
             <div className={`${styles.slot} ${styles.slide}`}>
               <span>
                 Map slots {mapList.length} / {LIMIT}

@@ -50,9 +50,9 @@ const InfluenceList: FC<{
 }> = ({ userId, open }) => {
   const { data: currentUser } = useCurrentUser();
   const currentUserId = currentUser?.id;
-  const editable = !!(
-    userId?.toString() === currentUserId?.toString() && currentUserId
-  );
+  const editable =
+    !!(userId?.toString() === currentUserId?.toString() && currentUserId) ||
+    !userId;
 
   const queryClient = useQueryClient();
   const { data: influences } = useGetInfluences(userId);
