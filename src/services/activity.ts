@@ -13,7 +13,13 @@ export type ShortUser = {
 };
 
 export type Activity = {
-  type: 'LOGIN' | 'EDIT_BIO' | 'ADD_BEATMAP' | 'ADD_INFLUENCE';
+  type:
+    | 'LOGIN'
+    | 'EDIT_BIO'
+    | 'ADD_BEATMAP'
+    | 'REMOVE_BEATMAP'
+    | 'ADD_INFLUENCE'
+    | 'REMOVE_INFLUENCE';
   user: ShortUser;
   datetime: string; // ISO string
   details: {

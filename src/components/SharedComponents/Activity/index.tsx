@@ -42,7 +42,20 @@ const ActivityRow: FC<{
       );
     }
 
-    if (activity.type === 'ADD_BEATMAP') return <>edited their beatmaps</>;
+    if (
+      activity.type === 'REMOVE_INFLUENCE' &&
+      activity.details.influenced_to
+    ) {
+      return (
+        <>
+          <span className="mr-1 shrink-0">removed influence of</span>
+          <SmallUser user={activity.details.influenced_to} />
+        </>
+      );
+    }
+
+    if (activity.type === 'ADD_BEATMAP' || activity.type === 'REMOVE_BEATMAP')
+      return <>edited their beatmaps</>;
     if (activity.type === 'LOGIN') return <>logged in</>;
     if (activity.type === 'EDIT_BIO') return <>edited their bio</>;
   };
