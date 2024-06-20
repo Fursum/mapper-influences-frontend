@@ -50,7 +50,7 @@ const TabContainer: FC<{ userId?: number | string }> = ({ userId }) => {
           onClick={() => setSelectedTab('influences')}
           onMouseEnter={() =>
             activateTooltip(
-              `${influences?.length} influence${influences?.length === 1 ? '' : 's'}`,
+              `${influences?.length || 0} influence${influences?.length === 1 ? '' : 's'}`,
             )
           }
           onMouseLeave={deactivateTooltip}
@@ -62,7 +62,7 @@ const TabContainer: FC<{ userId?: number | string }> = ({ userId }) => {
           onClick={() => setSelectedTab('mentions')}
           onMouseEnter={() =>
             activateTooltip(
-              `${mentions?.length} mention${mentions?.length === 1 ? '' : 's'}`,
+              `${mentions?.length || 0} mention${mentions?.length === 1 ? '' : 's'}`,
             )
           }
           onMouseLeave={deactivateTooltip}
