@@ -33,7 +33,7 @@ export default ActivityList;
 const ActivityRow: FC<{
   activity: Activity;
 }> = ({ activity }) => {
-  const { activateTooltip } = useGlobalTooltip();
+  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
 
   // Adjust the activity timestamp to the local offset
   const timezoneOffset = new Date().getTimezoneOffset() * 60000;
