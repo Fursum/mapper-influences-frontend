@@ -1,9 +1,10 @@
 import type { FC } from 'react';
 
 import { type Activity, useActivities } from '@services/activity';
+import { useCurrentUser } from '@services/user';
 import { useGlobalTooltip } from '@states/globalTooltip';
-import Link from 'next/link';
 
+import ConditionalLink from '../ConditionalLink';
 import ProfilePhoto from '../ProfilePhoto';
 import RelativeTime from './RelativeTime';
 
@@ -39,34 +40,6 @@ const ActivityRow: FC<{
   const timezoneOffset = new Date().getTimezoneOffset() * 60000;
   const adjustedTime = new Date(activity.datetime).getTime() - timezoneOffset;
 
-  const DetailsRow = () => {
-    if (activity.type === 'ADD_INFLUENCE' && activity.details.influenced_to) {
-      return (
-        <>
-          <span className="mr-1 shrink-0">influenced from</span>
-          <SmallUser user={activity.details.influenced_to} />
-        </>
-      );
-    }
-
-    if (
-      activity.type === 'REMOVE_INFLUENCE' &&
-      activity.details.influenced_to
-    ) {
-      return (
-        <>
-          <span className="mr-1 shrink-0">removed influence of</span>
-          <SmallUser user={activity.details.influenced_to} />
-        </>
-      );
-    }
-
-    if (activity.type === 'ADD_BEATMAP' || activity.type === 'REMOVE_BEATMAP')
-      return <>edited their beatmaps</>;
-    if (activity.type === 'LOGIN') return <>logged in</>;
-    if (activity.type === 'EDIT_BIO') return <>edited their bio</>;
-  };
-
   return (
     <div className="w-[25rem]">
       <div className="flex w-full justify-between">
@@ -86,10 +59,35 @@ const ActivityRow: FC<{
       </div>
 
       <div className="flex w-full">
-        <DetailsRow />
+        <DetailsRow activity={activity} />
       </div>
     </div>
   );
+};
+
+const DetailsRow: FC<{ activity: Activity }> = ({ activity }) => {
+  if (activity.type === 'ADD_INFLUENCE' && activity.details.influenced_to) {
+    return (
+      <>
+        <span className="mr-1 shrink-0">influenced from</span>
+        <SmallUser user={activity.details.influenced_to} />
+      </>
+    );
+  }
+
+  if (activity.type === 'REMOVE_INFLUENCE' && activity.details.influenced_to) {
+    return (
+      <>
+        <span className="mr-1 shrink-0">removed influence of</span>
+        <SmallUser user={activity.details.influenced_to} />
+      </>
+    );
+  }
+
+  if (activity.type === 'ADD_BEATMAP' || activity.type === 'REMOVE_BEATMAP')
+    return <>edited their beatmaps</>;
+  if (activity.type === 'LOGIN') return <>logged in</>;
+  if (activity.type === 'EDIT_BIO') return <>edited their bio</>;
 };
 
 const SmallUser: FC<{
@@ -99,6 +97,12 @@ const SmallUser: FC<{
     id: number;
   };
 }> = ({ user }) => {
+  const { data: currentUser } = useCurrentUser();
+  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
+  const deactivateTooltip = useGlobalTooltip(
+    (state) => state.deactivateTooltip,
+  );
+
   return (
     <span className="truncate">
       <ProfilePhoto
@@ -107,9 +111,21 @@ const SmallUser: FC<{
         circle
         className="-mb-[0.1rem] mr-1 inline-block"
       />
-      <Link href={`/profile/${user.id}`} className="text-text">
+      <ConditionalLink
+        disabled={!currentUser}
+        href={`/profile/${user.id}`}
+        className="inline-block text-text"
+        onClick={
+          !currentUser
+            ? () => {
+                activateTooltip('Log in to see their profile!');
+                setTimeout(deactivateTooltip, 3000);
+              }
+            : deactivateTooltip
+        }
+      >
         <span className="w-fit font-bold">{user.username}</span>
-      </Link>
+      </ConditionalLink>
     </span>
   );
 };

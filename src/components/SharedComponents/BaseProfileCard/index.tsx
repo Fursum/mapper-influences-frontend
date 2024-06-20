@@ -1,11 +1,11 @@
-import type { ComponentProps, FC } from 'react';
+import type { FC } from 'react';
 
 import { DEFAULT_AVATAR } from '@libs/consts';
 import type { LeaderboardResponse } from '@services/leaderboard';
 import { useCurrentUser, useFullUser, useUserBio } from '@services/user';
 import { useGlobalTooltip } from '@states/globalTooltip';
-import Link from 'next/link';
 
+import ConditionalLink from '../ConditionalLink';
 import Badge from './Badge';
 
 import styles from './style.module.scss';
@@ -138,17 +138,3 @@ const BaseProfileCard: FC<Props> = ({
 };
 
 export default BaseProfileCard;
-
-const ConditionalLink: FC<
-  ComponentProps<typeof Link> & {
-    disabled?: boolean;
-  }
-> = ({ href, children, disabled, ...props }) => {
-  // biome-ignore lint/suspicious/noExplicitAny: <TODO>
-  if (disabled) return <div {...(props as any)}>{children}</div>;
-  return (
-    <Link href={href} {...props}>
-      {children}
-    </Link>
-  );
-};
