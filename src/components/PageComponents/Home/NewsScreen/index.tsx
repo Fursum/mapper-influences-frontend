@@ -13,8 +13,8 @@ const NewsScreen: FC = () => {
     <div className={styles.newsScreen}>
       <div className={styles.double}>
         <Leaderboard className={styles.topInfluencers} />
-        <News className={styles.newsContainer} />
         <ActivityList />
+        <News className={styles.newsContainer} />
       </div>
       <ContributeButtons className={styles.contribute} />
     </div>

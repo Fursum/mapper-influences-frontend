@@ -91,8 +91,8 @@ const LoginScreen: FC = () => {
         </section>
         <section className={styles.fullSection}>
           <Leaderboard />
-          <News className={styles.news} />
           <ActivityList />
+          <News className={styles.news} />
         </section>
         <ContributeButtons />
       </div>
