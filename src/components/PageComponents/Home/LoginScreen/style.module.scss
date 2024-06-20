@@ -1,6 +1,7 @@
 .content {
   width: 100%;
   font-weight: 300;
+  margin-top: -3.5rem; // Adjust for non-existent header
 
   .title {
     padding-block: $spacing;

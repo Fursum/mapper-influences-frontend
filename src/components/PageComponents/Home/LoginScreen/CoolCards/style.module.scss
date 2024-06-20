@@ -1,7 +1,7 @@
 .positioner {
   position: absolute;
   top: -8.5rem;
-  transform: translateX(1rem);
+  transform: translateX(1rem) translateY(3.5rem);
   pointer-events: none; // Enable it on children
 
   .cardWrapper {
@@ -16,7 +16,9 @@
     *,
     *::before,
     *::after {
-      transition: opacity 0.5s ease-out, background-color 0.5s ease-out,
+      transition:
+        opacity 0.5s ease-out,
+        background-color 0.5s ease-out,
         transform 0.5s ease-out;
     }
 
@@ -81,14 +83,14 @@
           border-radius: inherit;
         }
         &::after {
-          content: "";
+          content: '';
           inset: 0;
           opacity: 0.5;
           background-color: transparent;
           backdrop-filter: blur(5px);
         }
         &::before {
-          content: "Go to map";
+          content: 'Go to map';
           z-index: 1;
           position: absolute;
           left: 50%;
@@ -125,7 +127,9 @@
         background-color: hsla(0, 0%, 0%, 1);
         filter: blur(0.5rem);
         scale: 1;
-        transition: filter 0.5s ease-out, scale 0.5s ease-out;
+        transition:
+          filter 0.5s ease-out,
+          scale 0.5s ease-out;
       }
       &:hover {
         .shadow {
