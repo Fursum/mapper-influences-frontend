@@ -14,7 +14,7 @@ const ActivityList: FC = () => {
     <div className="bg-background-content p-2">
       <h2 className="my-3 min-w-[25rem] text-center">Recent Activity</h2>
       <div
-        className="flex h-[35rem] max-h-[35rem] flex-col gap-4 overflow-y-auto px-2"
+        className="flex h-[37rem] max-h-[37rem] flex-col gap-4 overflow-y-auto px-2"
         style={{ scrollbarGutter: 'stable' }} // Firefox scrollbar fix
       >
         {activities.map((activity) => (
