@@ -1,18 +1,23 @@
-import { useEffect } from 'react';
-
 import ProfilePage from '@components/PageComponents/ProfilePage';
 import useAuth from '@hooks/useAuth';
-import { useCurrentUser, useFullUser } from '@services/user';
-import type { NextPage } from 'next';
+import { mockRequest } from '@libs/functions';
+import { getUserBio, useFullUser } from '@services/user';
+import type {
+  GetServerSidePropsContext,
+  GetStaticPaths,
+  InferGetStaticPropsType,
+  NextPage,
+} from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
-const MapperPage: NextPage = () => {
+const MapperPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
+  props,
+) => {
   useAuth();
   const router = useRouter();
   const { mapperId } = router.query;
 
-  const { data: currentUser } = useCurrentUser();
   const {
     error,
     isLoading,
@@ -23,11 +28,7 @@ const MapperPage: NextPage = () => {
     router.push('/404');
   }
 
-  useEffect(() => {
-    if (currentUser && mapperId?.toString() === currentUser?.id.toString())
-      router.replace('/profile');
-  }, [mapperId, currentUser, router]);
-
+  console.log(props);
   return (
     <>
       <Head>
@@ -45,3 +46,29 @@ const MapperPage: NextPage = () => {
 };
 
 export default MapperPage;
+
+export const getStaticProps = async (
+  context: GetServerSidePropsContext<{ mapperId: string }>,
+) => {
+  const { mapperId } = context.params || {};
+
+  if (!mapperId) return { notFound: true };
+
+  const mapperData = await getUserBio(mapperId.toString());
+
+  await mockRequest('', 5000);
+
+  if (!mapperData) return { notFound: true };
+
+  return {
+    props: {
+      cachedData: mapperData,
+      date: new Date().toISOString(),
+    },
+    revalidate: 600,
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = () => {
+  return { paths: [], fallback: true };
+};
