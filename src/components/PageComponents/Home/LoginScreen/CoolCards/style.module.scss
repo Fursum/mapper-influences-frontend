@@ -1,7 +1,7 @@
 .positioner {
   position: absolute;
   top: -8.5rem;
-  transform: translateX(1rem) translateY(3.5rem);
+  transform: translateX(1rem);
   pointer-events: none; // Enable it on children
 
   .cardWrapper {
