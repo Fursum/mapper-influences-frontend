@@ -67,7 +67,7 @@ export const getStaticProps = async (
       revalidate: 600,
     };
   } catch (_) {
-    return { notFound: true };
+    return { props: {} };
   }
 };
 
