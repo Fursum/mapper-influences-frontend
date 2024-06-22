@@ -6,7 +6,7 @@ import axios from 'axios';
 import type { BeatmapId } from './influence';
 
 const url = `${process.env.NEXT_PUBLIC_API_URL?.replace('http', 'ws')}/ws`;
-const backupActivityUrl = `${process.env.NEXT_PUBLIC_API_URL}/activities`;
+const backupActivityUrl = `${process.env.NEXT_PUBLIC_API_URL}/activity`;
 
 export type ShortUser = {
   id: number;
@@ -60,7 +60,7 @@ export const useActivities = () => {
           console.error('Error fetching fallback data', error);
         }
       }
-    }, 2000);
+    }, 1500);
 
     return () => clearTimeout(timeoutId);
   }, [activities]);
