@@ -4,7 +4,6 @@ import { CookiesProvider } from 'react-cookie';
 import Layout from '@components/Layout';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { Analytics } from '@vercel/analytics/react';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 
@@ -25,7 +24,6 @@ function App({ Component, pageProps }: AppProps) {
 
   return (
     <>
-      <Analytics />
       <Head>
         <title>Mapper Influences</title>
         <meta
