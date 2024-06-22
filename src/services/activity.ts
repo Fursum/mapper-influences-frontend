@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 import useWebSocket from 'react-use-websocket';
 
+import axios from 'axios';
+
 import type { BeatmapId } from './influence';
 
 const url = `${process.env.NEXT_PUBLIC_API_URL?.replace('http', 'ws')}/ws`;
+const backupActivityUrl = `${process.env.NEXT_PUBLIC_API_URL}/activities`;
 
 export type ShortUser = {
   id: number;
@@ -45,6 +48,22 @@ export const useActivities = () => {
 
     setActivities((prev) => [...prev, lastMessageParsed]);
   }, [lastMessage?.data]);
+
+  // Pull the data with from the fallback endpoint if the websocket fails
+  useEffect(() => {
+    const timeoutId = setTimeout(async () => {
+      if (activities.length === 0) {
+        try {
+          const response = await axios.get<Activity[]>(backupActivityUrl);
+          if (response.data) setActivities(response.data);
+        } catch (error) {
+          console.error('Error fetching fallback data', error);
+        }
+      }
+    }, 2000);
+
+    return () => clearTimeout(timeoutId);
+  }, [activities]);
 
   return {
     activities: activities?.toReversed() || [],
