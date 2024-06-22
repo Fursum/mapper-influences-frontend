@@ -39,6 +39,7 @@ const MapperDetails: FC<Props> = ({ userId }) => {
       <div className={`${styles.bio} ${isLoading ? styles.loading : ''}`}>
         <div className={styles.desc}>
           <EditableDescription
+            key={userId}
             label={`Description textarea for ${osuData?.username}`}
             description={profileData?.bio || ''}
             placeholder={'Enter a description for your profile.'}
