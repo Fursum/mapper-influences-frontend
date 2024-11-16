@@ -1,36 +1,11 @@
 import { useEffect, useState } from 'react';
 import useWebSocket from 'react-use-websocket';
 
+import type { Activity } from '@libs/types/activity';
 import axios from 'axios';
-
-import type { BeatmapId } from './influence';
 
 const url = `${process.env.NEXT_PUBLIC_API_URL?.replace('http', 'ws')}/ws`;
 const backupActivityUrl = `${process.env.NEXT_PUBLIC_API_URL}/activity`;
-
-export type ShortUser = {
-  id: number;
-  username: string;
-  avatar_url: string;
-  country: string; // Short code
-};
-
-export type Activity = {
-  type:
-    | 'LOGIN'
-    | 'EDIT_BIO'
-    | 'ADD_BEATMAP'
-    | 'REMOVE_BEATMAP'
-    | 'ADD_INFLUENCE'
-    | 'REMOVE_INFLUENCE';
-  user: ShortUser;
-  datetime: string; // ISO string
-  details: {
-    influenced_to: ShortUser | null;
-    beatmap: BeatmapId | null;
-    description: string | null;
-  };
-};
 
 export const useActivities = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
