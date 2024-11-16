@@ -48,13 +48,16 @@ const ActivityRow: FC<{
         <span
           className="ml-auto shrink-0 pl-2 text-sm text-text-faded"
           onMouseEnter={(e) =>
+            adjustedTime &&
             activateTooltip(
               new Date(adjustedTime).toLocaleString(),
               e.currentTarget,
             )
           }
         >
-          <RelativeTime date={new Date(adjustedTime).toISOString()} />
+          {adjustedTime && (
+            <RelativeTime date={new Date(adjustedTime).toISOString()} />
+          )}
         </span>
       </div>
 
