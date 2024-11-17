@@ -4,14 +4,14 @@ import InfiniteScroll from 'react-infinite-scroller';
 import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useGetLeaderboards } from '@services/leaderboard';
+import { useGetUserLeaderboards } from '@services/leaderboard';
 import { useFullUser } from '@services/user';
 import cx from 'classnames';
 
 import styles from './style.module.scss';
 
 // Temporary limit until proper pagination
-const MAX_LIMIT = 100;
+const MAX_LIMIT = 200;
 
 const Leaderboard: FC<{ className?: string }> = ({ className }) => {
   const { data: osuData } = useFullUser();
@@ -22,7 +22,7 @@ const Leaderboard: FC<{ className?: string }> = ({ className }) => {
 
   const scrollRef = useRef(null);
 
-  const { data: leaderboards, isLoading } = useGetLeaderboards({
+  const { data: leaderboards, isLoading } = useGetUserLeaderboards({
     ranked: rankedOnly,
     country: myCountry ? osuData?.country.code : undefined,
     limit: limit,
@@ -65,20 +65,21 @@ const Leaderboard: FC<{ className?: string }> = ({ className }) => {
           loadMore={() => {
             if (limit < MAX_LIMIT) setLimit((old) => old + 10);
           }}
-          hasMore={leaderboards && !isLoading && limit < leaderboards?.count}
+          // When the leaderboard response is less than the limit, there are no more items to load
+          hasMore={leaderboards && !isLoading && limit <= leaderboards.length}
           useWindow={false}
           getScrollParent={() => scrollRef.current}
         >
-          {cachedLeaderboards?.data.map((user) => (
-            <div key={user.id} className={styles.row}>
-              <BaseProfileCard userId={user.id} offlineData={user} />
+          {cachedLeaderboards?.map((item) => (
+            <div key={item.user.id} className={styles.row}>
+              <BaseProfileCard userData={item.user} />
               <div className={styles.number}>
-                <span>{user.mention_count}</span>
-                <span>{`Mention${user.mention_count !== 1 ? 's' : ''}`}</span>
+                <span>{item.count}</span>
+                <span>{`Mention${item.count !== 1 ? 's' : ''}`}</span>
               </div>
             </div>
           ))}
-          {!cachedLeaderboards?.data.length && isLoading && <MockList />}
+          {!cachedLeaderboards?.length && isLoading && <MockList />}
           {isLoading && (
             <div className={styles.spinner}>
               <FontAwesomeIcon icon={faSpinner} />

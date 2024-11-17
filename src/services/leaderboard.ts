@@ -1,19 +1,13 @@
+import type { UserSmall } from '@libs/types/rust';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
-export type LeaderboardResponse = {
-  data: {
-    id: number;
-    username: string;
-    avatar_url: string;
-    bio: string;
-    mention_count: number;
-    country: string;
-  }[];
+export type UserLeaderboardItem = {
+  user: UserSmall;
   count: number;
 };
 
-function getLeaderboards(filters?: {
+function getUserLeaderboards(filters?: {
   country?: string;
   ranked?: boolean;
   limit: number;
@@ -24,24 +18,24 @@ function getLeaderboards(filters?: {
   if (filters?.limit) params.append('limit', filters.limit.toString());
 
   return axios
-    .get<LeaderboardResponse>(
-      `${process.env.NEXT_PUBLIC_API_URL}/leaderboard?${params.toString()}`,
-    )
+    .get<
+      UserLeaderboardItem[]
+    >(`${process.env.NEXT_PUBLIC_API_URL}/leaderboard/user?${params.toString()}`)
     .then((res) => res.data);
 }
 
-export const useGetLeaderboards = (filters?: {
+export const useGetUserLeaderboards = (filters?: {
   country?: string;
   ranked?: boolean;
   limit: number;
 }) =>
   useQuery({
     queryKey: [
-      'leaderboards',
+      'userLeaderboards',
       filters?.country,
       filters?.ranked,
       filters?.limit,
     ],
-    queryFn: () => getLeaderboards(filters),
+    queryFn: () => getUserLeaderboards(filters),
     staleTime: 60 * 1000,
   });
