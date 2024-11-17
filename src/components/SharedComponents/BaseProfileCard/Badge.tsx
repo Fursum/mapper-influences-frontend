@@ -1,12 +1,12 @@
 import type { FC } from 'react';
 
-import type { UserGroup } from 'osu-web.js';
+import type { UserSmall } from '@libs/types/rust';
 
 import { useGlobalTooltip } from 'src/states/globalTooltip';
 
 import styles from './style.module.scss';
 
-type Props = { group: UserGroup };
+type Props = { group: UserSmall['groups'][number] };
 const Badge: FC<Props> = ({ group }) => {
   const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
 
