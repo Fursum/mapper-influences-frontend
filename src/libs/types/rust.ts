@@ -25,7 +25,7 @@ export type User = UserSmall & {
   pending_beatmapset_count: number;
   ranked_and_approved_beatmapset_count: number;
   ranked_beatmapset_count: number;
-  previous_usernames: number;
+  previous_usernames: string[];
 };
 
 export type BeatmapSmall = {
