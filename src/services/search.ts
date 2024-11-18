@@ -1,13 +1,12 @@
-import type { BeatmapResponse } from '@libs/types/IOsuApi';
+import type { BeatmapSearch, UserSmall } from '@libs/types/rust';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import type { UserCompact } from 'osu-web.js';
 
 export function getSearchResults(query: string) {
   return axios
     .get<{
-      user: { data: UserCompact[] };
-    }>(`${process.env.NEXT_PUBLIC_API_URL}/osu_api/search/${query}`, {
+      user: { data: UserSmall[] };
+    }>(`${process.env.NEXT_PUBLIC_API_URL}/search/user/${query}`, {
       withCredentials: true,
     })
     .then((res) => res.data.user.data);
@@ -15,8 +14,8 @@ export function getSearchResults(query: string) {
 
 export function searchMaps(query: string) {
   return axios
-    .get<{ beatmapsets: BeatmapResponse[] }>(
-      `${process.env.NEXT_PUBLIC_API_URL}/osu_api/search_map?q=${query}&nsfw=true`,
+    .get<{ beatmapsets: BeatmapSearch[] }>(
+      `${process.env.NEXT_PUBLIC_API_URL}/search/map?q=${query}&nsfw=true`,
       {
         withCredentials: true,
       },
@@ -31,16 +30,3 @@ export const useMapSearch = (query: string) => {
     enabled: !!query,
   });
 };
-
-export type BeatmapSearchResponse = Pick<
-  BeatmapResponse,
-  | 'artist'
-  | 'artist_unicode'
-  | 'beatmaps'
-  | 'bpm'
-  | 'covers'
-  | 'creator'
-  | 'id'
-  | 'user_id'
-  | 'ranked'
->;

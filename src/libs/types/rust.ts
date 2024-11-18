@@ -15,6 +15,19 @@ export type UserSmall = {
   username: string;
 };
 
+export type User = UserSmall & {
+  beatmaps: BeatmapSmall[];
+  bio: string;
+  graveyard_beatmapset_count: number;
+  guest_beatmapset_count: number;
+  loved_beatmapset_count: number;
+  nominated_beatmapset_count: number;
+  pending_beatmapset_count: number;
+  ranked_and_approved_beatmapset_count: number;
+  ranked_beatmapset_count: number;
+  previous_usernames: number;
+};
+
 export type BeatmapSmall = {
   artist: string;
   beatmapset_id: number;
@@ -27,4 +40,21 @@ export type BeatmapSmall = {
   user_id: number;
   user_name: string;
   version: string;
+};
+
+export type BeatmapSearch = {
+  artist: string;
+  beatmaps: {
+    beatmapset_id: number;
+    difficulty_rating: number;
+    id: number;
+    mode: string;
+    version: string;
+  }[];
+  cover: string;
+  id: number;
+  title: string;
+  user_avatar_url: string;
+  user_id: number;
+  user_name: string;
 };
