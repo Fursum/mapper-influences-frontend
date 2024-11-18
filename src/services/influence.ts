@@ -1,5 +1,6 @@
 import { toast } from 'react-toastify';
 
+import type { BeatmapSmall, UserSmall } from '@libs/types/rust';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -11,18 +12,14 @@ export type BeatmapId = {
 };
 
 export type InfluenceResponse = {
-  id: number;
-  influenced_by: number;
-  influenced_to: number;
-  created_at: string;
-  modified_at: string;
-  type: number;
+  beatmaps: BeatmapSmall[];
   description: string;
-  beatmaps: BeatmapId[];
+  id: number;
+  user: UserSmall;
 };
 
 export async function getInfluences(userId: string | number) {
-  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/${userId}`;
+  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/influences/${userId}`;
   return axios
     .get<InfluenceResponse[]>(searchUrl, { withCredentials: true })
     .then((res) => res.data);
@@ -34,11 +31,7 @@ export const useGetInfluences = (userId?: string | number) => {
   return useQuery({
     queryKey: ['influences', id.toString()],
     enabled: !!id,
-    queryFn: () =>
-      getInfluences(id).then(
-        // Mongo changes the id on updates, and i need a stable unique id
-        (data) => data.map((e) => ({ ...e, id: e.influenced_to })) || [],
-      ),
+    queryFn: () => getInfluences(id),
   });
 };
 
@@ -70,17 +63,17 @@ export const useAddInfluenceMutation = () => {
   return useMutation({
     mutationFn: addInfluence,
     onSuccess: (res, variables) => {
-      const newInfluence = { ...res.data, id: res.data.influenced_to };
+      const newInfluence = { ...res.data, id: res.data.user.id };
       queryClient.setQueryData<InfluenceResponse[]>(key, (old) => {
         if (!old) return [newInfluence];
 
         // If the influence exists, replace it
         const influenceIndex = old.findIndex(
-          (inf) => inf.influenced_to === newInfluence.influenced_to,
+          (inf) => inf.user.id === newInfluence.user.id,
         );
 
         const newObject = old.map((influence) => {
-          if (influence.influenced_to === newInfluence.influenced_to) {
+          if (influence.user.id === newInfluence.user.id) {
             return newInfluence;
           }
           return influence;
@@ -126,8 +119,7 @@ export const useDeleteInfluenceMutation = () => {
       queryClient.setQueryData(key, (old: InfluenceResponse[] | undefined) => {
         if (!old) return [];
         return old.filter(
-          (influence) =>
-            influence.influenced_to.toString() !== variables.toString(),
+          (influence) => influence.user.id.toString() !== variables.toString(),
         );
       });
       toast.success('Influence removed.');
