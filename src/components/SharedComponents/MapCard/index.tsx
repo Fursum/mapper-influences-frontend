@@ -10,7 +10,6 @@ import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getDiffColor } from '@libs/functions/colors';
 import type { BeatmapSearch, BeatmapSmall } from '@libs/types/rust';
-import { useMapData } from '@services/maps';
 import { useUserBio } from '@services/user';
 import { useGlobalTooltip } from '@states/globalTooltip';
 
@@ -19,24 +18,22 @@ import ProfilePhoto from '../ProfilePhoto';
 import styles from './style.module.scss';
 
 const MapCard: FC<{
-  map: BeatmapSmall | BeatmapSearch;
+  map?: Pick<BeatmapSmall, 'id' | 'user_id' | 'cover' | 'title' | 'artist'> & {
+    /** If its a set, this will exist */
+    beatmaps?: BeatmapSearch['beatmaps'];
+  };
   deleteFn?: (id: string | number) => void;
   loading?: boolean;
 }> = ({ map, deleteFn, loading }) => {
-  const isSet = 'beatmaps' in map;
+  const isSet = map && 'beatmaps' in map;
 
   const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
 
-  const { data: mapData, isLoading } = useMapData(
-    map?.id,
-    isSet ? 'set' : 'diff',
-  );
-
-  const { data: osuData } = useUserBio(mapData?.user_id);
+  const { data: osuData } = useUserBio(map?.user_id);
 
   const diff = !isSet
-    ? mapData?.beatmaps?.find((b) => b.id === Number(map?.id))
+    ? map?.beatmaps?.find((b) => b.id === Number(map?.id))
     : undefined;
 
   const diffColor = useMemo(
@@ -47,7 +44,7 @@ const MapCard: FC<{
     [diff?.difficulty_rating],
   );
 
-  if (isLoading || !mapData || !map?.id)
+  if (!map || !map?.id)
     return (
       <div className={`${styles.skeleton}`}>
         <div className={styles.title} />
@@ -74,10 +71,10 @@ const MapCard: FC<{
       }}
       className={styles.card}
     >
-      <img src={mapData.cover} alt="cover" loading="lazy" />
+      <img src={map.cover} alt="cover" loading="lazy" />
       <div className={styles.songInfo}>
-        <div className={styles.title}>{mapData.title}</div>
-        <div className={styles.artist}>{mapData.artist}</div>
+        <div className={styles.title}>{map.title}</div>
+        <div className={styles.artist}>{map.artist}</div>
       </div>
 
       {diff && (
