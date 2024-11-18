@@ -5,7 +5,7 @@ import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useGetUserLeaderboards } from '@services/leaderboard';
-import { useFullUser } from '@services/user';
+import { useCurrentUser } from '@services/user';
 import cx from 'classnames';
 
 import styles from './style.module.scss';
@@ -14,7 +14,7 @@ import styles from './style.module.scss';
 const MAX_LIMIT = 200;
 
 const Leaderboard: FC<{ className?: string }> = ({ className }) => {
-  const { data: osuData } = useFullUser();
+  const { data: currentUser } = useCurrentUser();
 
   const [rankedOnly, setRankedOnly] = useState<boolean>(false);
   const [myCountry, setMyCountry] = useState<boolean>(false);
@@ -24,7 +24,7 @@ const Leaderboard: FC<{ className?: string }> = ({ className }) => {
 
   const { data: leaderboards, isLoading } = useGetUserLeaderboards({
     ranked: rankedOnly,
-    country: myCountry ? osuData?.country.code : undefined,
+    country: myCountry ? currentUser?.country_code : undefined,
     limit: limit,
   });
 
@@ -38,7 +38,7 @@ const Leaderboard: FC<{ className?: string }> = ({ className }) => {
     <div className={`${styles.wrapper} ${className}`}>
       <h2>Top Influencers</h2>
       <div className={styles.options}>
-        {osuData?.country.code && (
+        {currentUser?.country_code && (
           <button
             className={cx({ [styles.active]: myCountry })}
             onClick={() => {

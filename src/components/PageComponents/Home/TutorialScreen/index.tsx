@@ -5,7 +5,7 @@ import EditableDescription from '@components/PageComponents/ProfilePage/Editable
 import InfluenceType from '@components/PageComponents/ProfilePage/InfluenceList/InfluenceType';
 import AddUserButton from '@components/PageComponents/ProfilePage/MapperDetails/AddUserButton';
 import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
-import type { InfluenceResponse } from '@services/influence';
+import type { Influence } from '@libs/types/rust';
 import { useCurrentUser } from '@services/user';
 import { useGlobalTooltip } from '@states/globalTooltip';
 
@@ -32,14 +32,12 @@ const TutorialScreen: FC<Props> = ({ children }) => {
 
   const { data: user } = useCurrentUser();
 
-  const influenceData: InfluenceResponse = {
+  const influenceData: Influence = {
     id: user?.id || 0,
     description: 'Edit here to give details.',
-    modified_at: new Date().toISOString(),
-    created_at: new Date().toISOString(),
-    influenced_by: user?.id || 0,
-    influenced_to: user?.id || 0,
-    type: 1,
+    // biome-ignore lint/style/noNonNullAssertion: user will always exist if this screen is reached
+    user: user!,
+    influence_type: 1,
     beatmaps: [],
   };
 
@@ -78,10 +76,7 @@ const TutorialScreen: FC<Props> = ({ children }) => {
         >
           <div className={styles.profileSide}>
             <InfluenceType editable influenceData={influenceData} />
-            <BaseProfileCard
-              userId={influenceData.influenced_to}
-              className={styles.card}
-            />
+            <BaseProfileCard userData={user} className={styles.card} />
           </div>
           <div className={styles.descriptionSide}>
             <EditableDescription

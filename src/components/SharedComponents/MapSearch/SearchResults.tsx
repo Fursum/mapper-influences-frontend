@@ -2,7 +2,7 @@ import { type FC, useEffect, useRef, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import { getDiffColor } from '@libs/functions/colors';
-import type { BeatmapResponse } from '@libs/types/IOsuApi';
+import type { BeatmapSearch } from '@libs/types/rust';
 import { useGlobalTooltip } from '@states/globalTooltip';
 import cx from 'classnames';
 
@@ -11,7 +11,7 @@ import MapCard, { ModeIcon } from '../MapCard';
 import styles from './style.module.scss';
 
 const SearchResults: FC<{
-  results?: BeatmapResponse[];
+  results?: BeatmapSearch[];
   selectedMaps: number[];
   toggleMap: (id: number) => void;
   disabled?: boolean;
@@ -20,7 +20,7 @@ const SearchResults: FC<{
 
   const parentRef = useRef<HTMLDivElement>(null);
 
-  const [visibleResults, setVisibleResults] = useState<BeatmapResponse[]>([]);
+  const [visibleResults, setVisibleResults] = useState<BeatmapSearch[]>([]);
 
   useEffect(() => {
     if (results?.length) {
@@ -49,12 +49,7 @@ const SearchResults: FC<{
       >
         {visibleResults.map((map) => (
           <div key={map.id} className={styles.row}>
-            <MapCard
-              map={{
-                id: map.id,
-                is_beatmapset: true,
-              }}
-            />
+            <MapCard map={map} />
             <div className={styles.diffs}>
               {map.beatmaps
                 .sort((a, b) => b.difficulty_rating - a.difficulty_rating)

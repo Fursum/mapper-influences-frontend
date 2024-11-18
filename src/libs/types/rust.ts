@@ -58,3 +58,11 @@ export type BeatmapSearch = {
   user_id: number;
   user_name: string;
 };
+
+export type Influence = {
+  beatmaps: BeatmapSmall[];
+  description: string;
+  id: number;
+  user: UserSmall;
+  influence_type: number;
+};

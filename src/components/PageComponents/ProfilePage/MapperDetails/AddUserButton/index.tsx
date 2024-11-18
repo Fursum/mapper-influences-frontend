@@ -12,8 +12,8 @@ import { InfluenceTypeEnum, convertFromInfluence } from '@libs/enums';
 import {
   type AddInfluenceRequest,
   useAddInfluenceMutation,
-  useDeleteInfluenceMutation,
-} from '@services/influence';
+} from '@services/influence/addInfluence';
+import { useDeleteInfluenceMutation } from '@services/influence/deleteInfluence';
 import { useGlobalTheme } from '@states/theme';
 
 import EditableDescription from '../../EditableDescription';
@@ -71,8 +71,8 @@ const AddUserButton: FC<Props> = ({
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       const body: AddInfluenceRequest = {
-        influenced_to: Number(userId),
-        type: convertFromInfluence(type),
+        userId: userId,
+        influence_type: convertFromInfluence(type),
         description,
       };
 

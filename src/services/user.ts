@@ -2,18 +2,6 @@ import type { User } from '@libs/types/rust';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
-import type { BeatmapId } from './influence';
-
-export type UserBioResponse = {
-  id: number;
-  username: string;
-  avatar_url: string;
-  have_ranked_map: boolean;
-  bio: string;
-  beatmaps: BeatmapId[];
-  mention_count: number;
-};
-
 export function logoutRequest() {
   return axios.get(`${process.env.NEXT_PUBLIC_API_URL}/oauth/logout`, {
     withCredentials: true,
@@ -74,7 +62,7 @@ export const useDescriptionMutation = () => {
   return useMutation({
     mutationFn: updateUserDescription,
     onSuccess: (_, variables: string) => {
-      queryClient.setQueryData<UserBioResponse>(['currentUser'], (old) => {
+      queryClient.setQueryData<User>(['currentUser'], (old) => {
         if (!old) return old;
         return {
           ...old,

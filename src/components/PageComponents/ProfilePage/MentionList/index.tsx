@@ -2,7 +2,8 @@ import { type FC, useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
-import { type InfluenceResponse, useGetMentions } from '@services/influence';
+import type { Influence } from '@libs/types/rust';
+import { useGetMentions } from '@services/influence/mentions';
 
 import styles from './style.module.scss';
 
@@ -10,9 +11,7 @@ type Props = { open?: boolean; userId?: number | string };
 const MentionList: FC<Props> = ({ open, userId }) => {
   const { data: mentions } = useGetMentions(userId);
 
-  const [visibleMentions, setVisibleMentions] = useState<InfluenceResponse[]>(
-    [],
-  );
+  const [visibleMentions, setVisibleMentions] = useState<Influence[]>([]);
 
   useEffect(() => {
     setVisibleMentions(mentions?.slice(0, 10) || []);
@@ -36,10 +35,7 @@ const MentionList: FC<Props> = ({ open, userId }) => {
         useWindow={true}
       >
         {visibleMentions?.map((mention) => (
-          <BaseProfileCard
-            key={mention.influenced_by}
-            userId={mention.influenced_by}
-          />
+          <BaseProfileCard key={mention.user.id} userData={mention.user} />
         ))}
       </InfiniteScroll>
     </div>

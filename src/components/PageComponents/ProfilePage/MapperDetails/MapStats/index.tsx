@@ -5,7 +5,7 @@ import {
   useMemo,
 } from 'react';
 
-import { useFullUser } from '@services/user';
+import { useUserBio } from '@services/user';
 import { useGlobalTooltip } from '@states/globalTooltip';
 
 import styles from './style.module.scss';
@@ -37,7 +37,7 @@ const MapStats: FC<{
     (state) => state.deactivateTooltip,
   );
 
-  const { data: profileData, isLoading } = useFullUser(userId?.toString());
+  const { data: profileData, isLoading } = useUserBio(userId?.toString());
 
   const {
     ranked_and_approved_beatmapset_count = 0,

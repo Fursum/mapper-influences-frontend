@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { NewsScreen, TutorialScreen } from '@components/PageComponents/Home';
 import useAuth from '@hooks/useAuth';
-import { useGetInfluences } from '@services/influence';
+import { useGetInfluences } from '@services/influence/getInfluences';
 import type { NextPage } from 'next';
 
 const Dashboard: NextPage = () => {

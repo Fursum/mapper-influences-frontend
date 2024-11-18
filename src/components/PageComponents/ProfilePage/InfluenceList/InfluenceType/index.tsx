@@ -4,10 +4,8 @@ import { toast } from 'react-toastify';
 import Modal from '@components/SharedComponents/Modal';
 import Arrow from '@components/SvgComponents/Arrow';
 import { InfluenceTypeEnum, convertToInfluence } from '@libs/enums';
-import {
-  type InfluenceResponse,
-  useDeleteInfluenceMutation,
-} from '@services/influence';
+import type { Influence } from '@libs/types/rust';
+import { useDeleteInfluenceMutation } from '@services/influence/deleteInfluence';
 import { useOnClickOutside } from 'usehooks-ts';
 
 import styles from './style.module.scss';
@@ -16,7 +14,7 @@ type Props = {
   className?: string;
   editable?: boolean;
   loading?: boolean;
-  influenceData?: InfluenceResponse;
+  influenceData?: Influence;
   hideRemove?: boolean;
   onChange?: (type: InfluenceTypeEnum) => Promise<unknown>;
   noSubmitOnChange?: (type: InfluenceTypeEnum) => void;
@@ -35,7 +33,7 @@ const InfluenceType: FC<Props> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<InfluenceTypeEnum>(
-    convertToInfluence(influenceData?.type || 1),
+    convertToInfluence(influenceData?.influence_type || 1),
   );
 
   const ref = useRef(null);
@@ -47,7 +45,7 @@ const InfluenceType: FC<Props> = ({
 
   const onRemove = () => {
     setIsLoading(true);
-    removeInfluence(influenceData?.influenced_to || 0, {
+    removeInfluence(influenceData?.user.id || 0, {
       onSettled: () => {
         setIsLoading(false);
         setIsModalOpen(false);

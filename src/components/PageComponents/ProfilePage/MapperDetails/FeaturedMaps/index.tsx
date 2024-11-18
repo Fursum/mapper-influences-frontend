@@ -60,9 +60,7 @@ const AddButton: FC<{ userId?: string | number }> = ({ userId }) => {
           setModalOpen(false);
           return;
         }
-        addMap({ mapId: diff, isSet: false }).then(() =>
-          addMapRecursive(diffs),
-        );
+        addMap({ mapId: diff }).then(() => addMapRecursive(diffs));
       };
 
       addMapRecursive(remainingDiffs);

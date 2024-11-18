@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 
 import MapCard from '@components/SharedComponents/MapCard';
-import type { BeatmapId } from '@services/influence';
+import type { BeatmapSmall } from '@libs/types/rust';
 import { useDeleteMapFromSelfMutation } from '@services/maps';
 import useEmblaCarousel from 'embla-carousel-react';
 
@@ -9,7 +9,7 @@ import styles from './style.module.scss';
 
 const LIMIT = 5;
 
-const SliderCarousel: FC<{ mapList: BeatmapId[]; editable?: boolean }> = ({
+const SliderCarousel: FC<{ mapList: BeatmapSmall[]; editable?: boolean }> = ({
   mapList,
   editable,
 }) => {

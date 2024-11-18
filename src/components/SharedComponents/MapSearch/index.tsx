@@ -1,8 +1,8 @@
 import { type FC, useEffect, useState } from 'react';
 
-import type { BeatmapResponse } from '@libs/types/IOsuApi';
+import type { BeatmapSearch } from '@libs/types/rust';
 import { searchMaps } from '@services/search';
-import { useFullUser } from '@services/user';
+import { useUserBio } from '@services/user';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 
 import AdvancedFilters from './AdvancedFilters';
@@ -18,11 +18,11 @@ export const AddMapModalContents: FC<{
   suggestionUserId?: number | string;
   loading: boolean;
 }> = ({ closeForm, loading, onSubmit, suggestionUserId, mapLimit }) => {
-  const { data: suggestedUser } = useFullUser(suggestionUserId?.toString());
+  const { data: suggestedUser } = useUserBio(suggestionUserId?.toString());
 
   const getFiltersQuery = useFilterStore((state) => state.getQueryString);
 
-  const [mapResults, setMapResults] = useState<BeatmapResponse[]>([]);
+  const [mapResults, setMapResults] = useState<BeatmapSearch[]>([]);
   const [selectedTab, setSelectedTab] = useState<'search' | 'advanced'>(
     'search',
   );
@@ -121,7 +121,7 @@ export const AddMapModalContents: FC<{
         )}
 
         <div className={styles.buttons}>
-          <button className="cancel" role="button" onClick={closeForm}>
+          <button className="cancel" onClick={closeForm}>
             Cancel
           </button>
           <span
@@ -129,7 +129,6 @@ export const AddMapModalContents: FC<{
           >{`${selectedMaps.length} / ${mapLimit}`}</span>
           <button
             className="submit"
-            role="button"
             disabled={loading || !selectedMaps.length || limitExceeded}
           >
             {loading ? 'Adding...' : 'Add'}

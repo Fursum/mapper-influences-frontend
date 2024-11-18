@@ -1,6 +1,7 @@
 import { type FC, useEffect, useState } from 'react';
 
-import { useGetInfluences, useGetMentions } from '@services/influence';
+import { useGetInfluences } from '@services/influence/getInfluences';
+import { useGetMentions } from '@services/influence/mentions';
 import { useGlobalTooltip } from '@states/globalTooltip';
 import { useRouter } from 'next/router';
 

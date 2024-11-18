@@ -9,9 +9,9 @@ import {
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getDiffColor } from '@libs/functions/colors';
-import type { BeatmapId } from '@services/influence';
+import type { BeatmapSearch, BeatmapSmall } from '@libs/types/rust';
 import { useMapData } from '@services/maps';
-import { useFullUser } from '@services/user';
+import { useUserBio } from '@services/user';
 import { useGlobalTooltip } from '@states/globalTooltip';
 
 import ProfilePhoto from '../ProfilePhoto';
@@ -19,21 +19,23 @@ import ProfilePhoto from '../ProfilePhoto';
 import styles from './style.module.scss';
 
 const MapCard: FC<{
-  map?: BeatmapId;
-  deleteFn?: (map: BeatmapId) => void;
+  map: BeatmapSmall | BeatmapSearch;
+  deleteFn?: (id: string | number) => void;
   loading?: boolean;
 }> = ({ map, deleteFn, loading }) => {
+  const isSet = 'beatmaps' in map;
+
   const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
 
   const { data: mapData, isLoading } = useMapData(
     map?.id,
-    map?.is_beatmapset ? 'set' : 'diff',
+    isSet ? 'set' : 'diff',
   );
 
-  const { data: osuData } = useFullUser(mapData?.user_id);
+  const { data: osuData } = useUserBio(mapData?.user_id);
 
-  const diff = !map?.is_beatmapset
+  const diff = !isSet
     ? mapData?.beatmaps?.find((b) => b.id === Number(map?.id))
     : undefined;
 
@@ -57,7 +59,7 @@ const MapCard: FC<{
   const setUrl = `https://osu.ppy.sh/beatmapsets/${map.id}`;
   const diffUrl = `https://osu.ppy.sh/beatmaps/${map.id}`;
 
-  const mapUrl = map.is_beatmapset ? setUrl : diffUrl;
+  const mapUrl = isSet ? setUrl : diffUrl;
 
   const canDelete = !!deleteFn;
 
@@ -72,7 +74,7 @@ const MapCard: FC<{
       }}
       className={styles.card}
     >
-      <img src={mapData.covers.cover} alt="cover" loading="lazy" />
+      <img src={mapData.cover} alt="cover" loading="lazy" />
       <div className={styles.songInfo}>
         <div className={styles.title}>{mapData.title}</div>
         <div className={styles.artist}>{mapData.artist}</div>
@@ -110,7 +112,7 @@ const MapCard: FC<{
             if (!deleteConfirmation) {
               setDeleteConfirmation(true);
               setTimeout(() => setDeleteConfirmation(false), 3000);
-            } else deleteFn(map);
+            } else deleteFn(map.id);
           }}
         >
           <FontAwesomeIcon icon={faTrashAlt} size="1x" />

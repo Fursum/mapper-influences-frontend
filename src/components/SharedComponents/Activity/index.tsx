@@ -1,4 +1,4 @@
-import { type FC, memo } from 'react';
+import type { FC } from 'react';
 
 import type { Activity } from '@libs/types/activity';
 import { useActivities } from '@services/activity';
@@ -64,7 +64,7 @@ const ActivityRow: FC<{
 };
 
 // Memoized because the RelativeTime component triggers a re-render on this for some reason???
-const DetailsRow: FC<{ activity: Activity }> = memo(({ activity }) => {
+const DetailsRow: FC<{ activity: Activity }> = ({ activity }) => {
   if (activity.event_type === 'ADD_INFLUENCE') {
     return (
       <>
@@ -118,7 +118,7 @@ const DetailsRow: FC<{ activity: Activity }> = memo(({ activity }) => {
 
   if (activity.event_type === 'LOGIN') return <>logged in</>;
   if (activity.event_type === 'EDIT_BIO') return <>edited their bio</>;
-});
+};
 
 const SmallUser: FC<{
   user: {
@@ -128,10 +128,6 @@ const SmallUser: FC<{
   };
 }> = ({ user }) => {
   const { data: currentUser } = useCurrentUser();
-  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
-  const deactivateTooltip = useGlobalTooltip(
-    (state) => state.deactivateTooltip,
-  );
 
   return (
     <span className="truncate">
@@ -145,14 +141,6 @@ const SmallUser: FC<{
         disabled={!currentUser}
         href={`/profile/${user.id}`}
         className="inline-block text-text"
-        onClick={
-          !currentUser
-            ? () => {
-                activateTooltip('Log in to see their profile!');
-                setTimeout(deactivateTooltip, 3000);
-              }
-            : deactivateTooltip
-        }
       >
         <span className="w-fit font-bold">{user.username}</span>
       </ConditionalLink>

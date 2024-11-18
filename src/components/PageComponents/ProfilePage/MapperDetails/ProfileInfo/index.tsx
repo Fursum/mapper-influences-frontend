@@ -3,8 +3,8 @@ import { type FC, useEffect, useMemo, useRef } from 'react';
 import ProfilePhoto from '@components/SharedComponents/ProfilePhoto';
 import useAuth from '@hooks/useAuth';
 import { OSU_BASE_URL } from '@libs/consts/urls';
-import { useGetInfluences } from '@services/influence';
-import { useFullUser, useUserBio } from '@services/user';
+import { useGetInfluences } from '@services/influence/getInfluences';
+import { useUserBio } from '@services/user';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 
 import AddUserButton from '../AddUserButton';
@@ -21,18 +21,17 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
   const { logout } = useAuth();
   const ownProfile = !userId;
 
-  const { data: osuData, isLoading } = useFullUser(userId?.toString());
   const { data: userBio, isLoading: bioLoading } = useUserBio(
     userId?.toString(),
   );
   const { data: currentUserInfluences } = useGetInfluences();
 
-  const mapperName = userBio?.username ?? osuData?.username ?? '';
+  const mapperName = userBio?.username ?? '';
 
   const isAlreadyAdded = useMemo(() => {
     if (!currentUserInfluences) return false;
     return currentUserInfluences.some(
-      (influence) => influence.influenced_to.toString() === userId?.toString(),
+      (influence) => influence.user.id.toString() === userId?.toString(),
     );
   }, [currentUserInfluences, userId]);
 
@@ -57,26 +56,26 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
     // Run fit text on name and loading change
     if (!nameRef.current) return;
     textFit(nameRef.current);
-  }, [mapperName, isLoading, bioLoading]);
+  }, [mapperName, bioLoading]);
 
   const UserGroup = () => {
-    if (!osuData?.groups?.length) return <></>;
+    if (!userBio?.groups?.length) return <></>;
 
     // If the name ends with an 's', cut it off
-    let name = osuData.groups[0].name;
+    let name = userBio.groups[0].name;
     if (name.endsWith('s')) name = name.slice(0, -1);
 
     return (
       <div
         className={styles.title}
-        style={{ color: osuData.groups[0].colour || 'inherit' }}
+        style={{ color: userBio.groups[0].colour || 'inherit' }}
       >
         {name}
       </div>
     );
   };
 
-  if (isLoading || bioLoading)
+  if (bioLoading)
     return (
       <div className={`${styles.skeleton} ${styles.profileInfo}`}>
         <ProfilePhoto
@@ -96,13 +95,13 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
   return (
     <div className={styles.profileInfo}>
       <a
-        href={`${OSU_BASE_URL}users/${osuData?.id}`}
+        href={`${OSU_BASE_URL}users/${userBio?.id}`}
         target="_blank"
         rel="noreferrer"
       >
         <ProfilePhoto
-          photoUrl={userBio?.avatar_url ?? osuData?.avatar_url}
-          loading={isLoading}
+          photoUrl={userBio?.avatar_url}
+          loading={bioLoading}
           size="xl"
           circle
           className={styles.avatar}
@@ -110,25 +109,25 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
       </a>
       <div className={styles.rightSide}>
         <a
-          href={`${OSU_BASE_URL}users/${osuData?.id}`}
+          href={`${OSU_BASE_URL}users/${userBio?.id}`}
           target="_blank"
           rel="noreferrer"
         >
           <div className={styles.mapperName} ref={nameRef}>
-            {userBio?.username ?? osuData?.username ?? ''}
+            {userBio?.username ?? userBio?.username ?? ''}
           </div>
         </a>
-        {osuData?.country && (
+        {userBio?.country_code && (
           <div className={styles.flag}>
             <img
               alt="Flag"
-              src={`https://flagcdn.com/${osuData.country?.code.toLowerCase()}.svg`}
+              src={`https://flagcdn.com/${userBio.country_code.toLowerCase()}.svg`}
             />
-            <span>{osuData.country?.name}</span>
+            <span>{userBio.country_name}</span>
           </div>
         )}
         <UserGroup />
-        {!ownProfile && osuData && (
+        {!ownProfile && userBio && (
           <AddUserButton
             userId={userId}
             action={isAlreadyAdded ? 'remove' : 'add'}
