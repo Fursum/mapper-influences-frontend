@@ -28,12 +28,14 @@ export const useActivities = () => {
   useEffect(() => {
     const timeoutId = setTimeout(async () => {
       if (activities.length === 0) {
-        try {
-          const response = await axios.get<Activity[]>(backupActivityUrl);
-          if (response.data) setActivities(response.data);
-        } catch (error) {
-          console.error('Error fetching fallback data', error);
-        }
+        axios
+          .get<Activity[]>(backupActivityUrl)
+          .then((res) => {
+            setActivities(res.data);
+          })
+          .catch((err) => {
+            console.warn('Error fetching fallback data', err);
+          });
       }
     }, 1500);
 
