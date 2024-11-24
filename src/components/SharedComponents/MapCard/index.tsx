@@ -27,7 +27,7 @@ const MapCard: FC<{
 }> = ({ map, deleteFn, loading }) => {
   const isSet = map && 'beatmaps' in map;
 
-  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
+  const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
 
   const { data: osuData } = useUserBio(map?.user_id);
@@ -82,9 +82,7 @@ const MapCard: FC<{
           <ModeIcon
             mode={diff?.mode}
             color={diffColor}
-            onMouseEnter={(e) =>
-              activateTooltip(`${diff.difficulty_rating}*`, e.currentTarget)
-            }
+            {...tooltipProps(`${diff.difficulty_rating}*`)}
           />
           {diff.version}
         </div>
@@ -94,11 +92,13 @@ const MapCard: FC<{
         photoUrl={osuData?.avatar_url}
         size="md"
         circle
-        parentProps={{
-          onMouseEnter: (e) =>
-            osuData?.username &&
-            activateTooltip(osuData?.username, e.currentTarget),
-        }}
+        parentProps={
+          osuData?.username
+            ? {
+                ...tooltipProps(osuData.username),
+              }
+            : {}
+        }
       />
       {canDelete && (
         <button

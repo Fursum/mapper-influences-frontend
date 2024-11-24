@@ -16,7 +16,7 @@ const SearchResults: FC<{
   toggleMap: (id: number) => void;
   disabled?: boolean;
 }> = ({ results, selectedMaps, toggleMap, disabled }) => {
-  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
+  const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
 
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -70,12 +70,7 @@ const SearchResults: FC<{
                       <ModeIcon
                         mode={row.mode}
                         color={getDiffColor(row.difficulty_rating)}
-                        onMouseEnter={(e) =>
-                          activateTooltip(
-                            `${row.difficulty_rating}*`,
-                            e.currentTarget,
-                          )
-                        }
+                        {...tooltipProps(`${row.difficulty_rating}*`)}
                       />{' '}
                       {row.version}
                     </button>

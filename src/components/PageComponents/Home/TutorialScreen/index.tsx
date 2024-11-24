@@ -28,7 +28,7 @@ const TutorialStep: FC<{
 
 type Props = { children?: ReactNode };
 const TutorialScreen: FC<Props> = ({ children }) => {
-  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
+  const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
 
   const { data: user } = useCurrentUser();
 
@@ -60,13 +60,10 @@ const TutorialScreen: FC<Props> = ({ children }) => {
           <AddUserButton
             userId={0}
             action="add"
-            onClick={(e) => {
-              activateTooltip(
-                'You need to click this inside a profile. Search someone first!',
-                e.currentTarget,
-              );
-            }}
             dontShowForm
+            {...tooltipProps(
+              'You need to click this inside a profile. Search someone first!',
+            )}
           />
         </TutorialStep>
 

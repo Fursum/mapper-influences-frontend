@@ -32,10 +32,7 @@ const SingleStat: FC<{
 const MapStats: FC<{
   userId?: string | number;
 }> = ({ userId }) => {
-  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
-  const deactivateTooltip = useGlobalTooltip(
-    (state) => state.deactivateTooltip,
-  );
+  const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
 
   const { data: profileData, isLoading } = useUserBio(userId?.toString());
 
@@ -78,10 +75,7 @@ const MapStats: FC<{
     <div className={`${styles.wrapper} ${isLoading ? styles.loading : ''}`}>
       <SingleStat
         count={ranked_and_approved_beatmapset_count + guest_beatmapset_count}
-        onMouseEnter={(e) =>
-          rankedTooltip && activateTooltip(rankedTooltip, e.currentTarget)
-        }
-        onMouseLeave={() => rankedTooltip && deactivateTooltip()}
+        {...(rankedTooltip ? tooltipProps(rankedTooltip) : {})}
       >
         Ranked
       </SingleStat>
@@ -89,10 +83,7 @@ const MapStats: FC<{
       <SingleStat count={nominated_beatmapset_count}>Nominated</SingleStat>
       <SingleStat
         count={totalCount}
-        onMouseEnter={(e) =>
-          totalTooltip && activateTooltip(totalTooltip, e.currentTarget)
-        }
-        onMouseLeave={() => totalTooltip && deactivateTooltip()}
+        {...(totalTooltip ? tooltipProps(totalTooltip) : {})}
       >
         Total
       </SingleStat>

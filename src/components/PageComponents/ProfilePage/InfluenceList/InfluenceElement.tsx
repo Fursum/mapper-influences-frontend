@@ -158,10 +158,7 @@ const AddButton: FC<{
   editable?: boolean;
   setUpdateState: (state: 'untouched' | 'dirty' | 'success' | 'error') => void;
 }> = ({ influenceData, editable, setUpdateState }) => {
-  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
-  const deactivateTooltip = useGlobalTooltip(
-    (state) => state.deactivateTooltip,
-  );
+  const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
   const [modalOpen, setModalOpen] = useState(false);
 
   const { mutateAsync: updateInfluence, isPending } = useAddInfluenceMutation();
@@ -209,11 +206,7 @@ const AddButton: FC<{
         className={styles.addButton}
         aria-label={'Add maps to this influence'}
         onClick={() => setModalOpen(true)}
-        onMouseEnter={() =>
-          // biome-ignore lint/suspicious/noExplicitAny: <hack to display the tooltip on buttons>
-          activateTooltip('Add maps to this influence', {} as any)
-        }
-        onMouseLeave={deactivateTooltip}
+        {...tooltipProps('Add maps to this influence')}
       >
         <FontAwesomeIcon icon={faPlus} />
       </button>

@@ -17,10 +17,12 @@ type Props = {
 };
 
 const BaseProfileCard: FC<Props> = ({ className = '', userData }) => {
+  const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
   const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
   const deactivateTooltip = useGlobalTooltip(
     (state) => state.deactivateTooltip,
   );
+
   const { data: currentUser } = useCurrentUser();
 
   if (!userData) {
@@ -75,12 +77,7 @@ const BaseProfileCard: FC<Props> = ({ className = '', userData }) => {
         Ranked Maps {userData && <span>{userData.ranked_maps}</span>}
       </div>
       {displayFlag && (
-        <div
-          className={styles.flag}
-          onMouseEnter={(e) =>
-            activateTooltip(userData.country_name, e.currentTarget)
-          }
-        >
+        <div className={styles.flag} {...tooltipProps(userData.country_name)}>
           <img
             alt={`${userData.username} is from ${userData.country_name}`}
             src={`https://flagcdn.com/${userData.country_code.toLowerCase()}.svg`}

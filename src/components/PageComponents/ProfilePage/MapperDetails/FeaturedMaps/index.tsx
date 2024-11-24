@@ -37,10 +37,7 @@ export default FeaturedMaps;
 const AddButton: FC<{ userId?: string | number }> = ({ userId }) => {
   const { data: userBio } = useUserBio(userId);
 
-  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
-  const deactivateTooltip = useGlobalTooltip(
-    (state) => state.deactivateTooltip,
-  );
+  const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
 
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -89,11 +86,7 @@ const AddButton: FC<{ userId?: string | number }> = ({ userId }) => {
       <button
         aria-label="Add maps to your profile"
         onClick={() => setModalOpen(true)}
-        onMouseEnter={() =>
-          // biome-ignore lint/suspicious/noExplicitAny: <hack to display the tooltip on buttons>
-          activateTooltip('Add maps to your profile', {} as any)
-        }
-        onMouseLeave={deactivateTooltip}
+        {...tooltipProps('Add maps to your profile')}
       >
         <FontAwesomeIcon icon={faPlus} />
       </button>

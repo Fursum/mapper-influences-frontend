@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import { type FC, useMemo } from 'react';
 
 import type { Activity } from '@libs/types/activity';
 import { useActivities } from '@services/activity';
@@ -32,11 +32,23 @@ export default ActivityList;
 const ActivityRow: FC<{
   activity: Activity;
 }> = ({ activity }) => {
-  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
+  const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
 
-  // Adjust the activity timestamp to the local offset
-  const timezoneOffset = new Date().getTimezoneOffset() * 60000;
-  const adjustedTime = new Date(activity.created_at).getTime() - timezoneOffset;
+  const { isoDate, onMouseEnter, onMouseLeave } = useMemo(() => {
+    const timezoneOffset = new Date().getTimezoneOffset() * 60000;
+    const adjustedTime =
+      new Date(activity.created_at).getTime() - timezoneOffset;
+
+    const { onMouseEnter, onMouseLeave } = tooltipProps(
+      new Date(adjustedTime).toLocaleString(),
+    );
+
+    return {
+      isoDate: new Date(adjustedTime).toISOString(),
+      onMouseEnter,
+      onMouseLeave,
+    };
+  }, [activity.created_at, tooltipProps]);
 
   return (
     <div className="w-[25rem]">
@@ -45,14 +57,10 @@ const ActivityRow: FC<{
 
         <span
           className="ml-auto shrink-0 pl-2 text-sm text-text-faded"
-          onMouseEnter={(e) =>
-            activateTooltip(
-              new Date(adjustedTime).toLocaleString(),
-              e.currentTarget,
-            )
-          }
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
         >
-          <RelativeTime date={new Date(adjustedTime).toISOString()} />
+          <RelativeTime date={isoDate} />
         </span>
       </div>
 

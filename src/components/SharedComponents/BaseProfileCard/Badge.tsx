@@ -8,7 +8,7 @@ import styles from './style.module.scss';
 
 type Props = { group: UserSmall['groups'][number] };
 const Badge: FC<Props> = ({ group }) => {
-  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
+  const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
 
   return (
     <span
@@ -17,7 +17,7 @@ const Badge: FC<Props> = ({ group }) => {
         color: group.colour || 'black',
         borderColor: group.colour || 'black',
       }}
-      onMouseEnter={(e) => activateTooltip(group.name, e.currentTarget)}
+      {...tooltipProps(group.name)}
     >
       {group.short_name}
     </span>

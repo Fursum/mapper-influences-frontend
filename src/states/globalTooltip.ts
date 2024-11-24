@@ -1,20 +1,30 @@
+import type { MouseEventHandler } from 'react';
+
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 type SessionStore = {
   isActive: boolean;
   text: string;
-  parent: HTMLElement | SVGSVGElement | null;
-  activateTooltip: (text: string, parent?: HTMLElement | SVGSVGElement) => void;
+  activateTooltip: (text: string) => void;
   deactivateTooltip: () => void;
+  tooltipProps: (text: string) => {
+    onMouseEnter: MouseEventHandler;
+    onMouseLeave: MouseEventHandler;
+  };
 };
 
 export const useGlobalTooltip = create<SessionStore>()(
   devtools((set) => ({
-    parent: null,
     isActive: false,
     text: '',
-    activateTooltip: (text, parent) => set({ isActive: true, text, parent }),
-    deactivateTooltip: () => set({ isActive: false, parent: null }),
+    activateTooltip: (text) => set({ isActive: true, text }),
+    deactivateTooltip: () => set({ isActive: false }),
+    tooltipProps: (text) => {
+      return {
+        onMouseEnter: () => set({ isActive: true, text }),
+        onMouseLeave: () => set({ isActive: false }),
+      };
+    },
   })),
 );
