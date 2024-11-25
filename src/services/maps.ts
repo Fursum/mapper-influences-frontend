@@ -34,10 +34,11 @@ export const useMapData = (mapId?: string | number, type?: 'set' | 'diff') =>
     retry: 0,
   });
 
-export function addMapToSelf({ mapId }: { mapId: number }) {
-  if (!mapId) throw new Error('No map id provided');
+export function addMapToSelf({ mapIds }: { mapIds: number[] }) {
+  if (!mapIds.length) throw new Error('No map id provided');
   return axios.patch<User>(
-    `${process.env.NEXT_PUBLIC_API_URL}/users/map/${mapId}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/users/map`,
+    { beatmaps: mapIds },
     {
       withCredentials: true,
     },
