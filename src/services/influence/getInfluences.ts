@@ -17,5 +17,7 @@ export const useGetInfluences = (userId?: string | number) => {
     queryKey: ['influences', id.toString()],
     enabled: !!id,
     queryFn: () => getInfluences(id),
+    select: (data) =>
+      data.map((influence) => ({ ...influence, id: influence.user.id })),
   });
 };

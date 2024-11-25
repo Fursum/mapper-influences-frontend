@@ -23,20 +23,23 @@ export const useDeleteMapFromInfluenceMutation = () => {
   return useMutation({
     mutationFn: deleteMapFromInfluence,
     onSuccess: (res, variables) => {
-      queryClient.setQueryData<Influence[]>(['influences', user?.id], (old) => {
-        if (!old) return old;
-        return old.map((influence) => {
-          if (influence.id === variables.influenceId) {
-            return res.data;
-          }
-          return influence;
-        });
-      });
+      queryClient.setQueryData<Influence[]>(
+        ['influences', user?.id.toString()],
+        (old) => {
+          if (!old) return old;
+          return old.map((influence) => {
+            if (influence.user.id === variables.influenceId) {
+              return res.data;
+            }
+            return influence;
+          });
+        },
+      );
     },
     onError: () => {
       toast.error('Could not remove map from influence.');
       queryClient.invalidateQueries({
-        queryKey: ['influences', user?.id],
+        queryKey: ['influences', user?.id.toString()],
       });
     },
   });

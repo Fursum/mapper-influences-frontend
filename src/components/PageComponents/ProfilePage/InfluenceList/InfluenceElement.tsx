@@ -9,7 +9,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { convertFromInfluence } from '@libs/enums';
 import type { Influence } from '@libs/types/rust';
-import { useAddInfluenceMutation } from '@services/influence/addInfluence';
+import { useAddMapToInfluenceMutation } from '@services/influence/addMap';
 import { useDeleteMapFromInfluenceMutation } from '@services/influence/deleteMap';
 import { useEditInfluenceDescriptionMutation } from '@services/influence/editDescription';
 import { useEditInfluenceTypeMutation } from '@services/influence/editType';
@@ -55,9 +55,14 @@ const InfluenceElement: FC<Props> = ({
 
   const onDelete = editable
     ? (mapId: number | string) => {
-        deleteMap({ influenceId: influenceData.id, mapId }).catch(() =>
-          toast.error('Could not remove map from influence.'),
-        );
+        setUpdateState('dirty');
+        deleteMap({ influenceId: influenceData.user.id, mapId })
+          .then(() => {
+            setUpdateState('success');
+          })
+          .catch(() => {
+            setUpdateState('error');
+          });
       }
     : undefined;
 
@@ -85,7 +90,7 @@ const InfluenceElement: FC<Props> = ({
             onChange={(type) => {
               setUpdateState('dirty');
               return editType({
-                influenceId: influenceData.id,
+                influenceId: influenceData.user.id,
                 influenceType: convertFromInfluence(type),
               })
                 .then(() => setUpdateState('success'))
@@ -109,7 +114,7 @@ const InfluenceElement: FC<Props> = ({
           noSubmitOnChange={(e) => {
             setUpdateState('dirty');
             return updateInfluenceDebounce({
-              influenceId: influenceData.id,
+              influenceId: influenceData.user.id,
               description: e,
             })
               .then(() => setUpdateState('success'))
@@ -161,14 +166,13 @@ const AddButton: FC<{
   const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const { mutateAsync: updateInfluence, isPending } = useAddInfluenceMutation();
+  const { mutateAsync: addMaps, isPending } = useAddMapToInfluenceMutation();
   const onSubmit = useCallback(
     (diffs: number[]) => {
       setUpdateState('dirty');
-      updateInfluence({
-        ...influenceData,
-        userId: influenceData.user.id,
-        beatmaps: [
+      addMaps({
+        influenceId: influenceData.user.id,
+        beatmapIds: [
           ...(influenceData.beatmaps.map((map) => map.id) || []),
           ...diffs,
         ],
@@ -182,7 +186,7 @@ const AddButton: FC<{
           toast.error('Could not add maps to influence.');
         });
     },
-    [updateInfluence, influenceData, setUpdateState],
+    [influenceData, setUpdateState, addMaps],
   );
 
   if (!editable) return <></>;

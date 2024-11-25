@@ -33,7 +33,6 @@ const TutorialScreen: FC<Props> = ({ children }) => {
   const { data: user } = useCurrentUser();
 
   const influenceData: Influence = {
-    id: user?.id || 0,
     description: 'Edit here to give details.',
     // biome-ignore lint/style/noNonNullAssertion: user will always exist if this screen is reached
     user: user!,

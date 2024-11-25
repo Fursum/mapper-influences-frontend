@@ -16,7 +16,7 @@ export const addMapToInfluence = async (params: {
   );
 };
 
-export const useAddInfluenceMutation = () => {
+export const useAddMapToInfluenceMutation = () => {
   const queryClient = useQueryClient();
   const { data: user } = useCurrentUser();
   return useMutation({
@@ -27,7 +27,7 @@ export const useAddInfluenceMutation = () => {
         (old) => {
           if (!old) return old;
           return old.map((influence) => {
-            if (influence.id === variables.influenceId) {
+            if (influence.user.id === variables.influenceId) {
               return res.data;
             }
             return influence;

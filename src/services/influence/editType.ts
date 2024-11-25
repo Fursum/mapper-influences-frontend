@@ -25,7 +25,7 @@ export const useEditInfluenceTypeMutation = () => {
         (old) => {
           if (!old) return old;
           return old.map((influence) => {
-            if (influence.id === variables.influenceId) {
+            if (influence.user.id === variables.influenceId) {
               return res.data;
             }
             return influence;

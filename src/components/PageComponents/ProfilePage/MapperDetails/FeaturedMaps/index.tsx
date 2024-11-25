@@ -44,23 +44,11 @@ const AddButton: FC<{ userId?: string | number }> = ({ userId }) => {
   const { mutateAsync: addMap, isPending } = useAddMapToSelfMutation();
   const onSubmit = useCallback(
     (selectedDiffs: number[]) => {
-      const remainingDiffs = [...selectedDiffs];
-
-      // Doing recursively since we dont have batch add
-      const addMapRecursive = (diffs: number[]) => {
-        if (diffs.length === 0) {
-          setModalOpen(false);
-          return;
-        }
-        const diff = diffs.pop();
-        if (!diff) {
-          setModalOpen(false);
-          return;
-        }
-        addMap({ mapId: diff }).then(() => addMapRecursive(diffs));
-      };
-
-      addMapRecursive(remainingDiffs);
+      addMap({
+        mapIds: selectedDiffs,
+      }).then(() => {
+        setModalOpen(false);
+      });
     },
     [addMap],
   );
