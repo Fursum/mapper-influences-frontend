@@ -7,11 +7,11 @@ import axios from 'axios';
 
 export const addMapToInfluence = async (params: {
   influenceId: number;
-  beatmapId: number;
+  beatmapIds: number[];
 }) => {
   return await axios.patch<Influence>(
-    `${process.env.NEXT_PUBLIC_API_URL}/influence/${params.influenceId}/map/${params.beatmapId}`,
-    {},
+    `${process.env.NEXT_PUBLIC_API_URL}/influence/${params.influenceId}/map`,
+    { beatmaps: params.beatmapIds },
     { withCredentials: true },
   );
 };
@@ -36,7 +36,7 @@ export const useAddInfluenceMutation = () => {
       );
     },
     onError: () => {
-      toast.error('Could not remove map from influence.');
+      toast.error('Could not add maps to influence.');
       queryClient.invalidateQueries({
         queryKey: ['influences', user?.id.toString()],
       });

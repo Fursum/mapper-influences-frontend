@@ -5,8 +5,8 @@ import axios from 'axios';
 
 export type AddInfluenceRequest = {
   userId: string | number;
-  influence_type: number;
-  description: string;
+  influence_type?: number;
+  description?: string;
   beatmaps?: number[];
 };
 

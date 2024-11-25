@@ -9,14 +9,8 @@ export const editInfluenceType = (params: {
   influenceId: number;
   influenceType: number;
 }) => {
-  const url = `${process.env.NEXT_PUBLIC_API_URL}/influence/${params.influenceId}/type`;
-  return axios.patch<Influence>(
-    url,
-    {
-      influence_type: params.influenceType,
-    },
-    { withCredentials: true },
-  );
+  const url = `${process.env.NEXT_PUBLIC_API_URL}/influence/${params.influenceId}/type/${params.influenceType}`;
+  return axios.patch<Influence>(url, {}, { withCredentials: true });
 };
 
 export const useEditInfluenceTypeMutation = () => {
