@@ -14,13 +14,13 @@ export function getSearchResults(query: string) {
 
 export function searchMaps(query: string) {
   return axios
-    .get<{ beatmapsets: BeatmapSearch[] }>(
+    .get<BeatmapSearch[]>(
       `${process.env.NEXT_PUBLIC_API_URL}/search/map?q=${query}&nsfw=true`,
       {
         withCredentials: true,
       },
     )
-    .then((res) => res.data.beatmapsets);
+    .then((res) => res.data);
 }
 
 export const useMapSearch = (query: string) => {
