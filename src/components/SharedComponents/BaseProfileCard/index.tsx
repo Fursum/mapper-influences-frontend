@@ -1,9 +1,10 @@
-import type { FC } from 'react';
+import { type FC, useCallback } from 'react';
 
 import { DEFAULT_AVATAR } from '@libs/consts';
 import type { UserSmall } from '@libs/types/rust';
-import { useCurrentUser } from '@services/user';
+import { getUserBio, useCurrentUser } from '@services/user';
 import { useGlobalTooltip } from '@states/globalTooltip';
+import { useQueryClient } from '@tanstack/react-query';
 
 import ConditionalLink from '../ConditionalLink';
 import Badge from './Badge';
@@ -17,6 +18,8 @@ type Props = {
 };
 
 const BaseProfileCard: FC<Props> = ({ className = '', userData }) => {
+  const queryClient = useQueryClient();
+
   const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
   const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
   const deactivateTooltip = useGlobalTooltip(
@@ -24,6 +27,14 @@ const BaseProfileCard: FC<Props> = ({ className = '', userData }) => {
   );
 
   const { data: currentUser } = useCurrentUser();
+
+  const prefetchUserBio = useCallback(() => {
+    if (!userData?.id) return;
+    queryClient.prefetchQuery({
+      queryKey: ['userBio', userData?.id.toString()],
+      queryFn: () => getUserBio(userData?.id),
+    });
+  }, [userData?.id, queryClient.prefetchQuery]);
 
   if (!userData) {
     return (
@@ -44,6 +55,7 @@ const BaseProfileCard: FC<Props> = ({ className = '', userData }) => {
     <ConditionalLink
       disabled={!userData || !currentUser}
       href={`/profile/${userData.id}`}
+      onMouseEnter={prefetchUserBio}
       onClick={
         !currentUser
           ? () => {
