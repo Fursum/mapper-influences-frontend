@@ -10,7 +10,6 @@ import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getDiffColor } from '@libs/functions/colors';
 import type { BeatmapSearch, BeatmapSmall } from '@libs/types/rust';
-import { useUserBio } from '@services/user';
 import { useGlobalTooltip } from '@states/globalTooltip';
 
 import ProfilePhoto from '../ProfilePhoto';
@@ -18,7 +17,16 @@ import ProfilePhoto from '../ProfilePhoto';
 import styles from './style.module.scss';
 
 const MapCard: FC<{
-  map?: Pick<BeatmapSmall, 'id' | 'user_id' | 'cover' | 'title' | 'artist'> & {
+  map?: Pick<
+    BeatmapSmall,
+    | 'id'
+    | 'user_id'
+    | 'cover'
+    | 'title'
+    | 'artist'
+    | 'user_avatar_url'
+    | 'user_name'
+  > & {
     /** If its a set, this will exist */
     beatmaps?: BeatmapSearch['beatmaps'];
   };
@@ -29,8 +37,6 @@ const MapCard: FC<{
 
   const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
-
-  const { data: osuData } = useUserBio(map?.user_id);
 
   const diff = !isSet
     ? map?.beatmaps?.find((b) => b.id === Number(map?.id))
@@ -89,13 +95,13 @@ const MapCard: FC<{
       )}
       <ProfilePhoto
         className={styles.ownerAvatar}
-        photoUrl={osuData?.avatar_url}
+        photoUrl={map?.user_avatar_url}
         size="md"
         circle
         parentProps={
-          osuData?.username
+          map?.user_name
             ? {
-                ...tooltipProps(osuData.username),
+                ...tooltipProps(map?.user_name),
               }
             : {}
         }
