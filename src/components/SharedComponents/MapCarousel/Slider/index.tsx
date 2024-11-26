@@ -3,6 +3,7 @@ import type { FC } from 'react';
 import MapCard from '@components/SharedComponents/MapCard';
 import type { BeatmapSmall } from '@libs/types/rust';
 import { useDeleteMapFromSelfMutation } from '@services/maps';
+import AutoScroll from 'embla-carousel-auto-scroll';
 import useEmblaCarousel from 'embla-carousel-react';
 
 import styles from './style.module.scss';
@@ -13,10 +14,21 @@ const SliderCarousel: FC<{ mapList: BeatmapSmall[]; editable?: boolean }> = ({
   mapList,
   editable,
 }) => {
-  const [emblaRef, _embla] = useEmblaCarousel({
-    dragFree: true,
-    align: 'start',
-  });
+  const [emblaRef, _embla] = useEmblaCarousel(
+    {
+      dragFree: true,
+      align: 'start',
+    },
+    [
+      // @ts-expect-error types dont match but it works 🤷
+      AutoScroll({
+        playOnInit: true,
+        startDelay: 2000,
+        stopOnInteraction: true,
+        speed: 0.5,
+      }),
+    ],
+  );
 
   const { mutateAsync: deleteMap, isPending } = useDeleteMapFromSelfMutation();
 
