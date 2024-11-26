@@ -4,12 +4,13 @@ import axios from 'axios';
 
 export function getSearchResults(query: string) {
   return axios
-    .get<{
-      user: { data: UserSmall[] };
-    }>(`${process.env.NEXT_PUBLIC_API_URL}/search/user/${query}`, {
-      withCredentials: true,
-    })
-    .then((res) => res.data.user.data);
+    .get<UserSmall[]>(
+      `${process.env.NEXT_PUBLIC_API_URL}/search/user/${query}`,
+      {
+        withCredentials: true,
+      },
+    )
+    .then((res) => res.data);
 }
 
 export function searchMaps(query: string) {
