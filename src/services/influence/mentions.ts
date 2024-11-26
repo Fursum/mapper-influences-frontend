@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
 export function getMentions(userId: string | number) {
-  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/${userId}/mentions`;
+  const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/influence/mentions/${userId}`;
   return axios
     .get<Influence[]>(searchUrl, { withCredentials: true })
     .then((res) => res.data);
