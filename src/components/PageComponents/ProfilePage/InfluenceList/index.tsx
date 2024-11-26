@@ -111,6 +111,10 @@ const InfluenceList: FC<{
 
       if (active.id === over?.id) return;
 
+      const oldData = queryClient.getQueryData<Influence[]>([
+        'influences',
+        currentUserId?.toString(),
+      ]);
       const newData = queryClient.setQueryData<Influence[]>(
         ['influences', currentUserId?.toString()],
         (data) => {
@@ -132,9 +136,15 @@ const InfluenceList: FC<{
       // Send the order to server
       const influenceOrder = newData.map((inf) => inf.user.id);
 
-      setInfluenceOrder(influenceOrder).then(() =>
-        toast.success('Updated influence order.'),
-      );
+      setInfluenceOrder(influenceOrder)
+        .then(() => toast.success('Updated influence order.'))
+        .catch(() => {
+          queryClient.setQueryData(
+            ['influences', currentUserId?.toString()],
+            oldData,
+          );
+          toast.error('Could not update influence order.');
+        });
     },
     [queryClient, currentUserId],
   );
