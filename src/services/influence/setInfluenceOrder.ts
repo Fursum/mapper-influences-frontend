@@ -5,7 +5,7 @@ export function setInfluenceOrder(order: number[]) {
   return axios.post(
     url,
     {
-      influence_ids: order,
+      influence_user_ids: order,
     },
     { withCredentials: true },
   );
