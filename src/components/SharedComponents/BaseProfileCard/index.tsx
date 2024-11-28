@@ -29,12 +29,12 @@ const BaseProfileCard: FC<Props> = ({ className = '', userData }) => {
   const { data: currentUser } = useCurrentUser();
 
   const prefetchUserBio = useCallback(() => {
-    if (!userData?.id) return;
+    if (!userData?.id || currentUser) return;
     queryClient.prefetchQuery({
       queryKey: ['userBio', userData?.id.toString()],
       queryFn: () => getUserBio(userData?.id),
     });
-  }, [userData?.id, queryClient.prefetchQuery]);
+  }, [userData?.id, queryClient.prefetchQuery, currentUser]);
 
   if (!userData) {
     return (
