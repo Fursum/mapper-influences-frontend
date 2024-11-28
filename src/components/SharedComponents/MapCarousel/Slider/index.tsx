@@ -20,7 +20,6 @@ const SliderCarousel: FC<{ mapList: BeatmapSmall[]; editable?: boolean }> = ({
       align: 'start',
     },
     [
-      // @ts-expect-error types dont match but it works 🤷
       AutoScroll({
         playOnInit: true,
         startDelay: 2000,
