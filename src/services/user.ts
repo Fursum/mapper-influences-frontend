@@ -54,7 +54,7 @@ export const useUserBio = (userId?: string | number) => {
 };
 
 export function updateUserDescription(bio: string) {
-  return axios.post<unknown>(
+  return axios.patch<unknown>(
     `${process.env.NEXT_PUBLIC_API_URL}/users/bio`,
     { bio },
     {
