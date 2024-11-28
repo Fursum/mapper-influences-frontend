@@ -11,10 +11,10 @@ import axios from 'axios';
 
 import { useCurrentUser } from './user';
 
-function getMapData({ id, isSet }: { isSet?: boolean; id: string | number }) {
+function getMapData(diffId: string | number) {
   return axios
     .get<BeatmapSearch>(
-      `${process.env.NEXT_PUBLIC_API_URL}/osu_api/beatmap/${id}?type=${isSet ? 'beatmapset' : 'beatmap'}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/search/map/${diffId}`,
       {
         withCredentials: true,
       },
@@ -26,11 +26,11 @@ function getMapData({ id, isSet }: { isSet?: boolean; id: string | number }) {
     });
 }
 
-export const useMapData = (mapId?: string | number, type?: 'set' | 'diff') =>
+export const useMapData = (diffId?: string | number) =>
   useQuery({
-    enabled: !!mapId,
-    queryKey: [type, mapId?.toString()],
-    queryFn: () => getMapData({ id: mapId || 0, isSet: type === 'set' }),
+    enabled: !!diffId,
+    queryKey: ['map', diffId?.toString()],
+    queryFn: () => getMapData(diffId || 0),
     retry: 0,
   });
 
