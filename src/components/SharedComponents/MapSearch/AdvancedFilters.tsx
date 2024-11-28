@@ -25,7 +25,7 @@ const AdvancedFilters: FC<{
 
   const [difficultyId, setDifficultyId] = useState<string | undefined>();
 
-  const { data: mapData, isLoading } = useMapData(difficultyId, 'diff');
+  const { data: mapData, isLoading } = useMapData(difficultyId);
 
   return (
     <>
