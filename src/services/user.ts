@@ -1,3 +1,5 @@
+import { useCookies } from 'react-cookie';
+
 import type { User } from '@libs/types/rust';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
@@ -16,12 +18,16 @@ export function getCurrentUser() {
     .then((res) => res.data);
 }
 
-export const useCurrentUser = () =>
-  useQuery({
+export const useCurrentUser = () => {
+  const [cookies] = useCookies(['logged_in']);
+
+  return useQuery({
     queryKey: ['currentUser'],
     queryFn: getCurrentUser,
     retry: 1,
+    enabled: !!cookies.logged_in,
   });
+};
 
 export function getUserBio(userId: string | number) {
   return axios
