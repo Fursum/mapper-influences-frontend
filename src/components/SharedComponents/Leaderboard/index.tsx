@@ -18,7 +18,7 @@ const Leaderboard: FC<{ className?: string }> = ({ className }) => {
 
   const [rankedOnly, setRankedOnly] = useState<boolean>(false);
   const [myCountry, setMyCountry] = useState<boolean>(false);
-  const [limit, setLimit] = useState<number>(10);
+  const [limit, setLimit] = useState<number>(25);
 
   const scrollRef = useRef(null);
 
@@ -43,7 +43,7 @@ const Leaderboard: FC<{ className?: string }> = ({ className }) => {
             className={cx({ [styles.active]: myCountry })}
             onClick={() => {
               setMyCountry((old) => !old);
-              setLimit(10);
+              setLimit(25);
             }}
           >
             My Country
@@ -53,7 +53,7 @@ const Leaderboard: FC<{ className?: string }> = ({ className }) => {
           className={cx({ [styles.active]: rankedOnly })}
           onClick={() => {
             setRankedOnly((old) => !old);
-            setLimit(10);
+            setLimit(25);
           }}
         >
           Ranked Mappers Only
@@ -63,7 +63,7 @@ const Leaderboard: FC<{ className?: string }> = ({ className }) => {
         <InfiniteScroll
           initialLoad={false}
           loadMore={() => {
-            if (limit < MAX_LIMIT) setLimit((old) => old + 10);
+            if (limit < MAX_LIMIT) setLimit((old) => old + 25);
           }}
           // When the leaderboard response is less than the limit, there are no more items to load
           hasMore={leaderboards && !isLoading && limit <= leaderboards.length}
