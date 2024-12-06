@@ -67,7 +67,8 @@ const AddButton: FC<{ userId?: string | number }> = ({ userId }) => {
           closeForm={() => setModalOpen(false)}
           onSubmit={onSubmit}
           loading={isPending}
-          suggestionUserId={userId}
+          suggestedUsername={userBio?.username}
+          suggestedUserPreviousNames={userBio?.previous_usernames || []}
           mapLimit={5 - (userBio?.beatmaps?.length || 0)}
         />
       </Modal>
