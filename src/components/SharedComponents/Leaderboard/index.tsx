@@ -72,7 +72,7 @@ const Leaderboard: FC<{ className?: string }> = ({ className }) => {
         >
           {cachedLeaderboards?.map((item) => (
             <div key={item.user.id} className={styles.row}>
-              <BaseProfileCard userData={item.user} prefetch={false} />
+              <BaseProfileCard userData={item.user} />
               <div className={styles.number}>
                 <span>{item.count}</span>
                 <span>{`Mention${item.count !== 1 ? 's' : ''}`}</span>
@@ -97,7 +97,7 @@ const MockList = () => {
   return Array.from({ length: 5 }).map((_, index) => (
     // biome-ignore lint/suspicious/noArrayIndexKey: <mock list>
     <div key={index} className={styles.row}>
-      <BaseProfileCard prefetch={false} />
+      <BaseProfileCard />
       <div className={styles.number}>
         <span>..</span>
         <span>...</span>

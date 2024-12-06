@@ -17,11 +17,7 @@ type Props = {
   prefetch?: boolean;
 };
 
-const BaseProfileCard: FC<Props> = ({
-  className = '',
-  userData,
-  prefetch = true,
-}) => {
+const BaseProfileCard: FC<Props> = ({ className = '', userData }) => {
   const queryClient = useQueryClient();
 
   const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
@@ -59,7 +55,7 @@ const BaseProfileCard: FC<Props> = ({
     <ConditionalLink
       disabled={!userData || !currentUser}
       href={`/profile/${userData.id}`}
-      onMouseEnter={prefetch ? () => prefetchUserBio() : undefined}
+      onMouseEnter={currentUser ? () => prefetchUserBio() : undefined}
       onClick={
         !currentUser
           ? () => {
