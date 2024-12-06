@@ -14,7 +14,6 @@ import styles from './style.module.scss';
 type Props = {
   className?: string;
   userData?: UserSmall;
-  prefetch?: boolean;
 };
 
 const BaseProfileCard: FC<Props> = ({ className = '', userData }) => {
