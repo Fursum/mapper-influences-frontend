@@ -14,10 +14,14 @@ import styles from './style.module.scss';
 type Props = {
   className?: string;
   userData?: UserSmall;
-  forceLoading?: boolean;
+  prefetch?: boolean;
 };
 
-const BaseProfileCard: FC<Props> = ({ className = '', userData }) => {
+const BaseProfileCard: FC<Props> = ({
+  className = '',
+  userData,
+  prefetch = true,
+}) => {
   const queryClient = useQueryClient();
 
   const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
@@ -55,7 +59,7 @@ const BaseProfileCard: FC<Props> = ({ className = '', userData }) => {
     <ConditionalLink
       disabled={!userData || !currentUser}
       href={`/profile/${userData.id}`}
-      onMouseEnter={prefetchUserBio}
+      onMouseEnter={prefetch ? () => prefetchUserBio() : undefined}
       onClick={
         !currentUser
           ? () => {
