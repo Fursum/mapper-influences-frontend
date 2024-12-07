@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
 export type AddInfluenceRequest = {
-  userId: string | number;
+  user_id: string | number;
   influence_type?: number;
   description?: string;
   beatmaps?: number[];
@@ -53,10 +53,10 @@ export const useAddInfluenceMutation = () => {
       queryClient.invalidateQueries({ queryKey: ['leaderboards'] });
       // TODO: Change this to update current user influences
       queryClient.invalidateQueries({
-        queryKey: ['userBio', variables.userId.toString()],
+        queryKey: ['userBio', variables.user_id.toString()],
       });
       queryClient.invalidateQueries({
-        queryKey: ['mentions', variables.userId.toString()],
+        queryKey: ['mentions', variables.user_id.toString()],
       });
     },
     onError: () =>

@@ -15,11 +15,17 @@ export const AddMapModalContents: FC<{
   closeForm: () => void;
   onSubmit: (selectedDiffs: number[]) => void;
   mapLimit: number;
-  suggestionUserId?: number | string;
+  suggestedUsername: string | undefined;
+  suggestedUserPreviousNames: string[];
   loading: boolean;
-}> = ({ closeForm, loading, onSubmit, suggestionUserId, mapLimit }) => {
-  const { data: suggestedUser } = useUserBio(suggestionUserId?.toString());
-
+}> = ({
+  closeForm,
+  loading,
+  onSubmit,
+  suggestedUsername,
+  suggestedUserPreviousNames,
+  mapLimit,
+}) => {
   const getFiltersQuery = useFilterStore((state) => state.getQueryString);
 
   const [mapResults, setMapResults] = useState<BeatmapSearch[]>([]);
@@ -28,8 +34,8 @@ export const AddMapModalContents: FC<{
   );
   const [selectedMaps, setSelectedMaps] = useState<number[]>([]);
   const [searchInput, setSearchInput] = useState(
-    suggestedUser
-      ? `creator:${suggestedUser?.username.replaceAll(' ', '_')}`
+    suggestedUsername
+      ? `creator:${suggestedUsername?.replaceAll(' ', '_')}`
       : '',
   );
 
@@ -94,16 +100,15 @@ export const AddMapModalContents: FC<{
               setSearchInput(e.target.value);
               debouncedSearch(e.target.value);
             }}
-            defaultValue={`"${suggestedUser?.username}"`}
             value={searchInput}
             onKeyDown={(e) => {
               if (e.key === 'Enter') e.preventDefault();
             }}
           />
         </label>
-        {!!suggestedUser?.previous_usernames.length && (
+        {!!suggestedUserPreviousNames.length && (
           <span className={styles.previousNames}>
-            Previous usernames: {suggestedUser.previous_usernames.join(', ')}
+            Previous usernames: {suggestedUserPreviousNames.join(', ')}
           </span>
         )}
 

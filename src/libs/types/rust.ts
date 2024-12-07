@@ -13,6 +13,7 @@ export type UserSmall = {
   mentions: number | null;
   ranked_maps: number;
   username: string;
+  previous_usernames: string[];
 };
 
 export type User = UserSmall & {

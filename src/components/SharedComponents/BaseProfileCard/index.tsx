@@ -14,7 +14,6 @@ import styles from './style.module.scss';
 type Props = {
   className?: string;
   userData?: UserSmall;
-  forceLoading?: boolean;
 };
 
 const BaseProfileCard: FC<Props> = ({ className = '', userData }) => {
@@ -55,7 +54,7 @@ const BaseProfileCard: FC<Props> = ({ className = '', userData }) => {
     <ConditionalLink
       disabled={!userData || !currentUser}
       href={`/profile/${userData.id}`}
-      onMouseEnter={prefetchUserBio}
+      onMouseEnter={currentUser ? () => prefetchUserBio() : undefined}
       onClick={
         !currentUser
           ? () => {

@@ -71,7 +71,7 @@ const AddUserButton: FC<Props> = ({
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       const body: AddInfluenceRequest = {
-        userId: userId,
+        user_id: userId,
         influence_type: convertFromInfluence(type),
         description,
       };

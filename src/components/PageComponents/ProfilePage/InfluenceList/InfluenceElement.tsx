@@ -202,7 +202,8 @@ const AddButton: FC<{
           closeForm={() => setModalOpen(false)}
           onSubmit={onSubmit}
           loading={isPending}
-          suggestionUserId={influenceData.user.id}
+          suggestedUsername={influenceData.user.username}
+          suggestedUserPreviousNames={influenceData.user.previous_usernames}
           mapLimit={LIMIT - (influenceData.beatmaps?.length || 0)}
         />
       </Modal>

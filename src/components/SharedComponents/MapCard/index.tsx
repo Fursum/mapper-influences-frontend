@@ -137,10 +137,12 @@ export const ModeIcon = ({
   mode,
   color,
   onMouseEnter,
+  onMouseLeave,
 }: {
   mode?: string;
   color?: string;
   onMouseEnter?: (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => void;
+  onMouseLeave?: (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => void;
 }) => {
   let Component = OsuIcon;
   switch (mode) {
@@ -159,6 +161,10 @@ export const ModeIcon = ({
   }
 
   return (
-    <Component color={color || 'var(--white)'} onMouseEnter={onMouseEnter} />
+    <Component
+      color={color || 'var(--white)'}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    />
   );
 };
