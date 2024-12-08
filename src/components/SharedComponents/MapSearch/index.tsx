@@ -1,6 +1,6 @@
 import { type FC, useEffect, useState } from 'react';
 
-import type { BeatmapSearch } from '@libs/types/rust';
+import type { BeatmapsetSmall } from '@libs/types/rust';
 import { searchMaps } from '@services/search';
 import { useUserBio } from '@services/user';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
@@ -28,7 +28,7 @@ export const AddMapModalContents: FC<{
 }) => {
   const getFiltersQuery = useFilterStore((state) => state.getQueryString);
 
-  const [mapResults, setMapResults] = useState<BeatmapSearch[]>([]);
+  const [mapResults, setMapResults] = useState<BeatmapsetSmall[]>([]);
   const [selectedTab, setSelectedTab] = useState<'search' | 'advanced'>(
     'search',
   );

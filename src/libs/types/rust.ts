@@ -17,7 +17,7 @@ export type UserSmall = {
 };
 
 export type User = UserSmall & {
-  beatmaps: BeatmapSmall[];
+  beatmaps: BeatmapsetSmall[];
   bio: string;
   graveyard_beatmapset_count: number;
   guest_beatmapset_count: number;
@@ -29,21 +29,7 @@ export type User = UserSmall & {
   previous_usernames: string[];
 };
 
-export type BeatmapSmall = {
-  artist: string;
-  beatmapset_id: number;
-  cover: string;
-  difficulty_rating: number;
-  id: number;
-  mode: string;
-  title: string;
-  user_avatar_url: string;
-  user_id: number;
-  user_name: string;
-  version: string;
-};
-
-export type BeatmapSearch = {
+export type BeatmapsetSmall = {
   artist: string;
   beatmaps: {
     beatmapset_id: number;
@@ -61,7 +47,7 @@ export type BeatmapSearch = {
 };
 
 export type Influence = {
-  beatmaps: BeatmapSmall[];
+  beatmaps: BeatmapsetSmall[];
   description: string;
   user: UserSmall;
   influence_type: number;

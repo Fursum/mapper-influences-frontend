@@ -9,7 +9,7 @@ import {
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getDiffColor } from '@libs/functions/colors';
-import type { BeatmapSearch, BeatmapSmall } from '@libs/types/rust';
+import type { BeatmapsetSmall } from '@libs/types/rust';
 import { useGlobalTooltip } from '@states/globalTooltip';
 
 import ProfilePhoto from '../ProfilePhoto';
@@ -18,7 +18,7 @@ import styles from './style.module.scss';
 
 const MapCard: FC<{
   map?: Pick<
-    BeatmapSmall,
+    BeatmapsetSmall,
     | 'id'
     | 'user_id'
     | 'cover'
@@ -28,7 +28,7 @@ const MapCard: FC<{
     | 'user_name'
   > & {
     /** If its a set, this will exist */
-    beatmaps?: BeatmapSearch['beatmaps'];
+    beatmaps?: BeatmapsetSmall['beatmaps'];
   };
   deleteFn?: (id: string | number) => void;
   loading?: boolean;
@@ -115,7 +115,7 @@ const MapCard: FC<{
             if (!deleteConfirmation) {
               setDeleteConfirmation(true);
               setTimeout(() => setDeleteConfirmation(false), 3000);
-            } else deleteFn(map.id);
+            } else deleteFn(map.beatmaps?.at(0)?.id ?? map.id);
           }}
         >
           <FontAwesomeIcon icon={faTrashAlt} size="1x" />

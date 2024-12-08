@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
 
-import type { BeatmapSearch, User } from '@libs/types/rust';
+import type { BeatmapsetSmall, User } from '@libs/types/rust';
 import {
   type Updater,
   useMutation,
@@ -13,7 +13,7 @@ import { useCurrentUser } from './user';
 
 function getMapData(diffId: string | number) {
   return axios
-    .get<BeatmapSearch>(
+    .get<BeatmapsetSmall>(
       `${process.env.NEXT_PUBLIC_API_URL}/search/map/${diffId}`,
       {
         withCredentials: true,
@@ -93,7 +93,9 @@ export const useDeleteMapFromSelfMutation = () => {
         if (!old) return old;
         return {
           ...old,
-          beatmaps: old.beatmaps.filter((b) => b.id !== variables),
+          beatmaps: old.beatmaps.filter(
+            (b) => b.beatmaps.at(0)?.id !== variables,
+          ),
         };
       };
 
