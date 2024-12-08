@@ -1,6 +1,6 @@
 import ProfilePage from '@components/PageComponents/ProfilePage';
 import useAuth from '@hooks/useAuth';
-import { getUserBio, useCurrentUser, useFullUser } from '@services/user';
+import { getUserBio, useCurrentUser, useUserBio } from '@services/user';
 import type {
   GetServerSidePropsContext,
   GetStaticPaths,
@@ -24,7 +24,7 @@ const MapperPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
     error,
     isLoading,
     data: profileData,
-  } = useFullUser(mapperId?.toString());
+  } = useUserBio(mapperId?.toString());
 
   // Hack to force editable checks to be correct
   // Before i was assuming the current profile wouldnt use the id from the url
@@ -64,7 +64,7 @@ export const getStaticProps = async (
       props: {
         cachedData: mapperData,
       },
-      revalidate: 600,
+      revalidate: 1200,
     };
   } catch (_) {
     return { props: {} };

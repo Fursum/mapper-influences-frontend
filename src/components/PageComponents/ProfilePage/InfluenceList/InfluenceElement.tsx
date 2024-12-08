@@ -8,11 +8,11 @@ import Modal from '@components/SharedComponents/Modal';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { convertFromInfluence } from '@libs/enums';
-import {
-  type BeatmapId,
-  type InfluenceResponse,
-  useAddInfluenceMutation,
-} from '@services/influence';
+import type { Influence } from '@libs/types/rust';
+import { useAddMapToInfluenceMutation } from '@services/influence/addMap';
+import { useDeleteMapFromInfluenceMutation } from '@services/influence/deleteMap';
+import { useEditInfluenceDescriptionMutation } from '@services/influence/editDescription';
+import { useEditInfluenceTypeMutation } from '@services/influence/editType';
 import { useGlobalTooltip } from '@states/globalTooltip';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 import cx from 'classnames';
@@ -26,7 +26,7 @@ import styles from './style.module.scss';
 const LIMIT = 5;
 
 type Props = {
-  influenceData: InfluenceResponse;
+  influenceData: Influence;
   editable?: boolean;
   className?: string;
 };
@@ -36,22 +36,33 @@ const InfluenceElement: FC<Props> = ({
   editable,
   className = '',
 }) => {
-  const { mutateAsync: updateInfluence, isPending } = useAddInfluenceMutation();
+  const { mutateAsync: deleteMap, isPending: isDeleteMapPending } =
+    useDeleteMapFromInfluenceMutation();
+  const { mutateAsync: editDescription, isPending: isEditDescriptionPending } =
+    useEditInfluenceDescriptionMutation();
+  const { mutateAsync: editType, isPending: isEditTypePending } =
+    useEditInfluenceTypeMutation();
+
+  const isAnyPending =
+    isDeleteMapPending || isEditDescriptionPending || isEditTypePending;
+
   const [updateState, setUpdateState] = useState<
     'untouched' | 'dirty' | 'success' | 'error'
   >('untouched');
 
   // Debounce the description update
-  const updateInfluenceDebounce = AwesomeDebouncePromise(updateInfluence, 3000);
+  const updateInfluenceDebounce = AwesomeDebouncePromise(editDescription, 3000);
 
   const onDelete = editable
-    ? (map: BeatmapId) => {
-        updateInfluence({
-          ...influenceData,
-          beatmaps: influenceData.beatmaps?.filter((b) => b.id !== map.id),
-        })
-          .then(() => toast.success('Map removed from influence.'))
-          .catch(() => toast.error('Could not remove map from influence.'));
+    ? (mapId: number | string) => {
+        setUpdateState('dirty');
+        deleteMap({ influenceId: influenceData.user.id, mapId })
+          .then(() => {
+            setUpdateState('success');
+          })
+          .catch(() => {
+            setUpdateState('error');
+          });
       }
     : undefined;
 
@@ -64,8 +75,8 @@ const InfluenceElement: FC<Props> = ({
           'border-0 border-r-4 border-solid': true,
           'border-transparent': updateState === 'untouched',
           'border-dashed border-secondary':
-            updateState === 'dirty' && !isPending,
-          'border-orange-400': isPending,
+            updateState === 'dirty' && !isAnyPending,
+          'border-orange-400': isAnyPending,
           'border-red-400': updateState === 'error',
           'border-green-400': updateState === 'success',
           [styles.successFade]: updateState === 'success',
@@ -74,13 +85,13 @@ const InfluenceElement: FC<Props> = ({
         <div className={styles.cardWrapper}>
           <InfluenceType
             editable={editable}
-            loading={isPending}
+            loading={isEditTypePending}
             influenceData={influenceData}
             onChange={(type) => {
               setUpdateState('dirty');
-              return updateInfluence({
-                ...influenceData,
-                type: convertFromInfluence(type),
+              return editType({
+                influenceId: influenceData.user.id,
+                influenceType: convertFromInfluence(type),
               })
                 .then(() => setUpdateState('success'))
                 .catch(() => {
@@ -90,7 +101,7 @@ const InfluenceElement: FC<Props> = ({
             }}
           />
           <BaseProfileCard
-            userId={influenceData.influenced_to}
+            userData={influenceData.user}
             className={`${editable ? styles.editable : ''}`}
           />
         </div>
@@ -98,12 +109,12 @@ const InfluenceElement: FC<Props> = ({
           className={styles.description}
           label={'Description textarea'}
           description={influenceData.description || ''}
-          editable={editable && !isPending}
+          editable={editable && !isEditDescriptionPending}
           placeholder={'Describe your influence here.'}
           noSubmitOnChange={(e) => {
             setUpdateState('dirty');
             return updateInfluenceDebounce({
-              ...influenceData,
+              influenceId: influenceData.user.id,
               description: e,
             })
               .then(() => setUpdateState('success'))
@@ -148,25 +159,22 @@ InfluenceElement.displayName = 'InfluenceElement';
 export default InfluenceElement;
 
 const AddButton: FC<{
-  influenceData: InfluenceResponse;
+  influenceData: Influence;
   editable?: boolean;
   setUpdateState: (state: 'untouched' | 'dirty' | 'success' | 'error') => void;
 }> = ({ influenceData, editable, setUpdateState }) => {
-  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
-  const deactivateTooltip = useGlobalTooltip(
-    (state) => state.deactivateTooltip,
-  );
+  const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const { mutateAsync: updateInfluence, isPending } = useAddInfluenceMutation();
+  const { mutateAsync: addMaps, isPending } = useAddMapToInfluenceMutation();
   const onSubmit = useCallback(
     (diffs: number[]) => {
       setUpdateState('dirty');
-      updateInfluence({
-        ...influenceData,
-        beatmaps: [
-          ...(influenceData.beatmaps || []),
-          ...diffs.map((id) => ({ id, is_beatmapset: false })),
+      addMaps({
+        influenceId: influenceData.user.id,
+        beatmapIds: [
+          ...(influenceData.beatmaps.map((map) => map.id) || []),
+          ...diffs,
         ],
       })
         .then(() => {
@@ -178,7 +186,7 @@ const AddButton: FC<{
           toast.error('Could not add maps to influence.');
         });
     },
-    [updateInfluence, influenceData, setUpdateState],
+    [influenceData, setUpdateState, addMaps],
   );
 
   if (!editable) return <></>;
@@ -194,7 +202,8 @@ const AddButton: FC<{
           closeForm={() => setModalOpen(false)}
           onSubmit={onSubmit}
           loading={isPending}
-          suggestionUserId={influenceData.influenced_to}
+          suggestedUsername={influenceData.user.username}
+          suggestedUserPreviousNames={influenceData.user.previous_usernames}
           mapLimit={LIMIT - (influenceData.beatmaps?.length || 0)}
         />
       </Modal>
@@ -202,11 +211,7 @@ const AddButton: FC<{
         className={styles.addButton}
         aria-label={'Add maps to this influence'}
         onClick={() => setModalOpen(true)}
-        onMouseEnter={() =>
-          // biome-ignore lint/suspicious/noExplicitAny: <hack to display the tooltip on buttons>
-          activateTooltip('Add maps to this influence', {} as any)
-        }
-        onMouseLeave={deactivateTooltip}
+        {...tooltipProps('Add maps to this influence')}
       >
         <FontAwesomeIcon icon={faPlus} />
       </button>

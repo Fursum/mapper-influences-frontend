@@ -3,7 +3,8 @@ import { type FC, useEffect, useState } from 'react';
 import DarkModeToggle from '@components/Layout/Header/DarkModeToggle';
 import ProfilePhoto from '@components/SharedComponents/ProfilePhoto';
 import { Influences } from '@components/SvgComponents';
-import { type UserBioResponse, useCurrentUser } from '@services/user';
+import type { UserSmall } from '@libs/types/rust';
+import { useCurrentUser } from '@services/user';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -42,7 +43,7 @@ export default function Header() {
   );
 }
 
-export const ProfileLinkAvatar: FC<{ user?: UserBioResponse }> = ({ user }) => (
+export const ProfileLinkAvatar: FC<{ user?: UserSmall }> = ({ user }) => (
   <Link href={'/profile'}>
     <ProfilePhoto
       className={styles.avatar}

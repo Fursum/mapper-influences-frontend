@@ -14,7 +14,7 @@ import CoolCards from './CoolCards';
 import styles from './style.module.scss';
 
 const LoginScreen: FC = () => {
-  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
+  const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const LoginButton = () => {
@@ -68,9 +68,7 @@ const LoginScreen: FC = () => {
               target={'_blank'}
               rel={'noreferrer'}
               className={styles.a}
-              onMouseEnter={(e) =>
-                activateTooltip('Opens in new tab', e.currentTarget)
-              }
+              {...tooltipProps('Opens in new tab')}
             >
               pishifat’s Mapper Influences
             </a>{' '}

@@ -1,4 +1,4 @@
-import { type FC, memo } from 'react';
+import { type FC, useMemo } from 'react';
 
 import type { Activity } from '@libs/types/activity';
 import { useActivities } from '@services/activity';
@@ -32,11 +32,23 @@ export default ActivityList;
 const ActivityRow: FC<{
   activity: Activity;
 }> = ({ activity }) => {
-  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
+  const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
 
-  // Adjust the activity timestamp to the local offset
-  const timezoneOffset = new Date().getTimezoneOffset() * 60000;
-  const adjustedTime = new Date(activity.created_at).getTime() - timezoneOffset;
+  const { isoDate, onMouseEnter, onMouseLeave } = useMemo(() => {
+    const timezoneOffset = new Date().getTimezoneOffset() * 60000;
+    const adjustedTime =
+      new Date(activity.created_at).getTime() - timezoneOffset;
+
+    const { onMouseEnter, onMouseLeave } = tooltipProps(
+      new Date(adjustedTime).toLocaleString(),
+    );
+
+    return {
+      isoDate: new Date(adjustedTime).toISOString(),
+      onMouseEnter,
+      onMouseLeave,
+    };
+  }, [activity.created_at, tooltipProps]);
 
   return (
     <div className="w-[25rem]">
@@ -45,14 +57,10 @@ const ActivityRow: FC<{
 
         <span
           className="ml-auto shrink-0 pl-2 text-sm text-text-faded"
-          onMouseEnter={(e) =>
-            activateTooltip(
-              new Date(adjustedTime).toLocaleString(),
-              e.currentTarget,
-            )
-          }
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
         >
-          <RelativeTime date={new Date(adjustedTime).toISOString()} />
+          <RelativeTime date={isoDate} />
         </span>
       </div>
 
@@ -64,7 +72,7 @@ const ActivityRow: FC<{
 };
 
 // Memoized because the RelativeTime component triggers a re-render on this for some reason???
-const DetailsRow: FC<{ activity: Activity }> = memo(({ activity }) => {
+const DetailsRow: FC<{ activity: Activity }> = ({ activity }) => {
   if (activity.event_type === 'ADD_INFLUENCE') {
     return (
       <>
@@ -118,7 +126,7 @@ const DetailsRow: FC<{ activity: Activity }> = memo(({ activity }) => {
 
   if (activity.event_type === 'LOGIN') return <>logged in</>;
   if (activity.event_type === 'EDIT_BIO') return <>edited their bio</>;
-});
+};
 
 const SmallUser: FC<{
   user: {
@@ -128,10 +136,6 @@ const SmallUser: FC<{
   };
 }> = ({ user }) => {
   const { data: currentUser } = useCurrentUser();
-  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
-  const deactivateTooltip = useGlobalTooltip(
-    (state) => state.deactivateTooltip,
-  );
 
   return (
     <span className="truncate">
@@ -145,14 +149,6 @@ const SmallUser: FC<{
         disabled={!currentUser}
         href={`/profile/${user.id}`}
         className="inline-block text-text"
-        onClick={
-          !currentUser
-            ? () => {
-                activateTooltip('Log in to see their profile!');
-                setTimeout(deactivateTooltip, 3000);
-              }
-            : deactivateTooltip
-        }
       >
         <span className="w-fit font-bold">{user.username}</span>
       </ConditionalLink>

@@ -9,9 +9,7 @@ import {
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getDiffColor } from '@libs/functions/colors';
-import type { BeatmapId } from '@services/influence';
-import { useMapData } from '@services/maps';
-import { useFullUser } from '@services/user';
+import type { BeatmapSearch, BeatmapSmall } from '@libs/types/rust';
 import { useGlobalTooltip } from '@states/globalTooltip';
 
 import ProfilePhoto from '../ProfilePhoto';
@@ -19,22 +17,29 @@ import ProfilePhoto from '../ProfilePhoto';
 import styles from './style.module.scss';
 
 const MapCard: FC<{
-  map?: BeatmapId;
-  deleteFn?: (map: BeatmapId) => void;
+  map?: Pick<
+    BeatmapSmall,
+    | 'id'
+    | 'user_id'
+    | 'cover'
+    | 'title'
+    | 'artist'
+    | 'user_avatar_url'
+    | 'user_name'
+  > & {
+    /** If its a set, this will exist */
+    beatmaps?: BeatmapSearch['beatmaps'];
+  };
+  deleteFn?: (id: string | number) => void;
   loading?: boolean;
 }> = ({ map, deleteFn, loading }) => {
-  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
+  const isSet = map && 'beatmaps' in map;
+
+  const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
 
-  const { data: mapData, isLoading } = useMapData(
-    map?.id,
-    map?.is_beatmapset ? 'set' : 'diff',
-  );
-
-  const { data: osuData } = useFullUser(mapData?.user_id);
-
-  const diff = !map?.is_beatmapset
-    ? mapData?.beatmaps?.find((b) => b.id === Number(map?.id))
+  const diff = !isSet
+    ? map?.beatmaps?.find((b) => b.id === Number(map?.id))
     : undefined;
 
   const diffColor = useMemo(
@@ -45,7 +50,7 @@ const MapCard: FC<{
     [diff?.difficulty_rating],
   );
 
-  if (isLoading || !mapData || !map?.id)
+  if (!map || !map?.id)
     return (
       <div className={`${styles.skeleton}`}>
         <div className={styles.title} />
@@ -57,7 +62,7 @@ const MapCard: FC<{
   const setUrl = `https://osu.ppy.sh/beatmapsets/${map.id}`;
   const diffUrl = `https://osu.ppy.sh/beatmaps/${map.id}`;
 
-  const mapUrl = map.is_beatmapset ? setUrl : diffUrl;
+  const mapUrl = isSet ? setUrl : diffUrl;
 
   const canDelete = !!deleteFn;
 
@@ -72,10 +77,10 @@ const MapCard: FC<{
       }}
       className={styles.card}
     >
-      <img src={mapData.covers.cover} alt="cover" loading="lazy" />
+      <img src={map.cover} alt="cover" loading="lazy" />
       <div className={styles.songInfo}>
-        <div className={styles.title}>{mapData.title}</div>
-        <div className={styles.artist}>{mapData.artist}</div>
+        <div className={styles.title}>{map.title}</div>
+        <div className={styles.artist}>{map.artist}</div>
       </div>
 
       {diff && (
@@ -83,23 +88,23 @@ const MapCard: FC<{
           <ModeIcon
             mode={diff?.mode}
             color={diffColor}
-            onMouseEnter={(e) =>
-              activateTooltip(`${diff.difficulty_rating}*`, e.currentTarget)
-            }
+            {...tooltipProps(`${diff.difficulty_rating}*`)}
           />
           {diff.version}
         </div>
       )}
       <ProfilePhoto
         className={styles.ownerAvatar}
-        photoUrl={osuData?.avatar_url}
+        photoUrl={map?.user_avatar_url}
         size="md"
         circle
-        parentProps={{
-          onMouseEnter: (e) =>
-            osuData?.username &&
-            activateTooltip(osuData?.username, e.currentTarget),
-        }}
+        parentProps={
+          map?.user_name
+            ? {
+                ...tooltipProps(map?.user_name),
+              }
+            : {}
+        }
       />
       {canDelete && (
         <button
@@ -110,7 +115,7 @@ const MapCard: FC<{
             if (!deleteConfirmation) {
               setDeleteConfirmation(true);
               setTimeout(() => setDeleteConfirmation(false), 3000);
-            } else deleteFn(map);
+            } else deleteFn(map.id);
           }}
         >
           <FontAwesomeIcon icon={faTrashAlt} size="1x" />
@@ -132,10 +137,12 @@ export const ModeIcon = ({
   mode,
   color,
   onMouseEnter,
+  onMouseLeave,
 }: {
   mode?: string;
   color?: string;
   onMouseEnter?: (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => void;
+  onMouseLeave?: (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => void;
 }) => {
   let Component = OsuIcon;
   switch (mode) {
@@ -154,6 +161,10 @@ export const ModeIcon = ({
   }
 
   return (
-    <Component color={color || 'var(--white)'} onMouseEnter={onMouseEnter} />
+    <Component
+      color={color || 'var(--white)'}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    />
   );
 };

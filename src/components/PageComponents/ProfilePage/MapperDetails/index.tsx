@@ -1,10 +1,6 @@
 import type { FC } from 'react';
 
-import {
-  useDescriptionMutation,
-  useFullUser,
-  useUserBio,
-} from '@services/user';
+import { useDescriptionMutation, useUserBio } from '@services/user';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 
 import EditableDescription from '../EditableDescription';
@@ -19,7 +15,7 @@ type Props = {
 };
 
 const MapperDetails: FC<Props> = ({ userId }) => {
-  const { data: osuData, isLoading } = useFullUser(userId?.toString());
+  const { data: osuData, isLoading } = useUserBio(userId?.toString());
   const editable = !userId;
 
   const { data: profileData } = useUserBio(userId?.toString());

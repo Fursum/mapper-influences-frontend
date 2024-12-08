@@ -37,35 +37,18 @@ export default FeaturedMaps;
 const AddButton: FC<{ userId?: string | number }> = ({ userId }) => {
   const { data: userBio } = useUserBio(userId);
 
-  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
-  const deactivateTooltip = useGlobalTooltip(
-    (state) => state.deactivateTooltip,
-  );
+  const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
 
   const [modalOpen, setModalOpen] = useState(false);
 
   const { mutateAsync: addMap, isPending } = useAddMapToSelfMutation();
   const onSubmit = useCallback(
     (selectedDiffs: number[]) => {
-      const remainingDiffs = [...selectedDiffs];
-
-      // Doing recursively since we dont have batch add
-      const addMapRecursive = (diffs: number[]) => {
-        if (diffs.length === 0) {
-          setModalOpen(false);
-          return;
-        }
-        const diff = diffs.pop();
-        if (!diff) {
-          setModalOpen(false);
-          return;
-        }
-        addMap({ mapId: diff, isSet: false }).then(() =>
-          addMapRecursive(diffs),
-        );
-      };
-
-      addMapRecursive(remainingDiffs);
+      addMap({
+        mapIds: selectedDiffs,
+      }).then(() => {
+        setModalOpen(false);
+      });
     },
     [addMap],
   );
@@ -84,18 +67,15 @@ const AddButton: FC<{ userId?: string | number }> = ({ userId }) => {
           closeForm={() => setModalOpen(false)}
           onSubmit={onSubmit}
           loading={isPending}
-          suggestionUserId={userId}
+          suggestedUsername={userBio?.username}
+          suggestedUserPreviousNames={userBio?.previous_usernames || []}
           mapLimit={5 - (userBio?.beatmaps?.length || 0)}
         />
       </Modal>
       <button
         aria-label="Add maps to your profile"
         onClick={() => setModalOpen(true)}
-        onMouseEnter={() =>
-          // biome-ignore lint/suspicious/noExplicitAny: <hack to display the tooltip on buttons>
-          activateTooltip('Add maps to your profile', {} as any)
-        }
-        onMouseLeave={deactivateTooltip}
+        {...tooltipProps('Add maps to your profile')}
       >
         <FontAwesomeIcon icon={faPlus} />
       </button>
