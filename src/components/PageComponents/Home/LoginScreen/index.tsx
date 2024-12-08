@@ -3,7 +3,6 @@ import { type FC, useState } from 'react';
 import DarkModeToggle from '@components/Layout/Header/DarkModeToggle';
 import ActivityList from '@components/SharedComponents/Activity';
 import Modal from '@components/SharedComponents/Modal';
-import News from '@components/SharedComponents/News';
 
 import { useGlobalTooltip } from 'src/states/globalTooltip';
 
@@ -88,9 +87,9 @@ const LoginScreen: FC = () => {
           </p>
         </section>
         <section className={styles.fullSection}>
-          <Leaderboard />
+          <Leaderboard type="user" />
+          <Leaderboard type="beatmap" />
           <ActivityList />
-          <News className={styles.news} />
         </section>
         <ContributeButtons />
       </div>

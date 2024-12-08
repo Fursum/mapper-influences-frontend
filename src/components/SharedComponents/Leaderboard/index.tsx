@@ -4,16 +4,21 @@ import InfiniteScroll from 'react-infinite-scroller';
 import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useGetUserLeaderboards } from '@services/leaderboard';
+import { useGetLeaderboards } from '@services/leaderboard';
 import { useCurrentUser } from '@services/user';
 import cx from 'classnames';
+
+import MapCard from '../MapCard';
 
 import styles from './style.module.scss';
 
 // Temporary limit until proper pagination
 const MAX_LIMIT = 200;
 
-const Leaderboard: FC<{ className?: string }> = ({ className }) => {
+const Leaderboard: FC<{ className?: string; type: 'user' | 'beatmap' }> = ({
+  className,
+  type,
+}) => {
   const { data: currentUser } = useCurrentUser();
 
   const [rankedOnly, setRankedOnly] = useState<boolean>(false);
@@ -22,12 +27,14 @@ const Leaderboard: FC<{ className?: string }> = ({ className }) => {
 
   const scrollRef = useRef(null);
 
-  const { data: leaderboards, isLoading } = useGetUserLeaderboards({
+  const { data: leaderboards, isLoading } = useGetLeaderboards({
     ranked: rankedOnly,
     country: myCountry ? currentUser?.country_code : undefined,
     limit: limit,
+    type,
   });
 
+  // Caching to avoid entering the loading state when scrolling
   const [cachedLeaderboards, setCachedLeaderboards] = useState(leaderboards);
 
   useEffect(() => {
@@ -36,9 +43,9 @@ const Leaderboard: FC<{ className?: string }> = ({ className }) => {
 
   return (
     <div className={`${styles.wrapper} ${className}`}>
-      <h2>Top Influencers</h2>
+      <h2>Top {type === 'user' ? 'Influencers' : 'Beatmaps'}</h2>
       <div className={styles.options}>
-        {currentUser?.country_code && (
+        {currentUser?.country_code && type === 'user' && (
           <button
             className={cx({ [styles.active]: myCountry })}
             onClick={() => {
@@ -71,15 +78,16 @@ const Leaderboard: FC<{ className?: string }> = ({ className }) => {
           getScrollParent={() => scrollRef.current}
         >
           {cachedLeaderboards?.map((item) => (
-            <div key={item.user.id} className={styles.row}>
-              <BaseProfileCard userData={item.user} />
+            <div key={item.user?.id || item.beatmap?.id} className={styles.row}>
+              {item.user && <BaseProfileCard userData={item.user} />}
+              {item.beatmap && <MapCard map={item.beatmap} />}
               <div className={styles.number}>
                 <span>{item.count}</span>
                 <span>{`Mention${item.count !== 1 ? 's' : ''}`}</span>
               </div>
             </div>
           ))}
-          {!cachedLeaderboards?.length && isLoading && <MockList />}
+          {!cachedLeaderboards?.length && isLoading && <MockList type={type} />}
           {isLoading && (
             <div className={styles.spinner}>
               <FontAwesomeIcon icon={faSpinner} />
@@ -93,11 +101,12 @@ const Leaderboard: FC<{ className?: string }> = ({ className }) => {
 
 export default Leaderboard;
 
-const MockList = () => {
+const MockList: FC<{ type: 'user' | 'beatmap' }> = ({ type }) => {
   return Array.from({ length: 5 }).map((_, index) => (
     // biome-ignore lint/suspicious/noArrayIndexKey: <mock list>
     <div key={index} className={styles.row}>
-      <BaseProfileCard />
+      {type === 'user' && <BaseProfileCard />}
+      {type === 'beatmap' && <MapCard />}
       <div className={styles.number}>
         <span>..</span>
         <span>...</span>
