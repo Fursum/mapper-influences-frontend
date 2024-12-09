@@ -1,11 +1,11 @@
 import type { FC } from 'react';
 
 import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
-import type { UserCompact } from 'osu-web.js';
+import type { UserSmall } from '@libs/types/rust';
 
 import styles from './style.module.scss';
 
-const Results: FC<{ results: UserCompact[]; length?: number }> = ({
+const Results: FC<{ results: UserSmall[]; length?: number }> = ({
   results,
   length = 3,
 }) => {
@@ -14,18 +14,7 @@ const Results: FC<{ results: UserCompact[]; length?: number }> = ({
       {!!results.length && <h4>Matching users:</h4>}
       {!results.length && <h4>No users found.</h4>}
       {results.slice(0, length).map((user) => (
-        <BaseProfileCard
-          userId={user.id}
-          key={user.id}
-          offlineData={{
-            avatar_url: user.avatar_url,
-            country: user.country_code,
-            bio: '',
-            id: user.id,
-            username: user.username,
-            mention_count: 0,
-          }}
-        />
+        <BaseProfileCard key={user.id} userData={user} />
       ))}
     </div>
   );

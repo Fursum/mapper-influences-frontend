@@ -4,11 +4,13 @@ type Props = {
   color?: string;
   className?: string;
   onMouseEnter?: (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => void;
+  onMouseLeave?: (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => void;
 };
 export const OsuIcon: FC<Props> = ({
   color = 'var(--textColor)',
   className,
   onMouseEnter,
+  onMouseLeave
 }) => {
   return (
     <svg
@@ -19,6 +21,7 @@ export const OsuIcon: FC<Props> = ({
       viewBox="0 0 24 24"
       fill="none"
       onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       <g clipPath="url(#clip0_4188_3248)">
         <g clipPath="url(#clip1_4188_3248)">
@@ -46,6 +49,7 @@ export const TaikoIcon: FC<Props> = ({
   color = 'var(--textColor)',
   className,
   onMouseEnter,
+  onMouseLeave
 }) => {
   return (
     <svg
@@ -56,6 +60,7 @@ export const TaikoIcon: FC<Props> = ({
       viewBox="0 0 24 24"
       fill="none"
       onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       <g clipPath="url(#clip0_4188_3249)">
         <g clipPath="url(#clip1_4188_3249)">
@@ -83,6 +88,7 @@ export const ManiaIcon: FC<Props> = ({
   color = 'var(--textColor)',
   className,
   onMouseEnter,
+  onMouseLeave
 }) => {
   return (
     <svg
@@ -93,6 +99,7 @@ export const ManiaIcon: FC<Props> = ({
       viewBox="0 0 24 24"
       fill="none"
       onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       <g clipPath="url(#clip0_4188_3251)">
         <g clipPath="url(#clip1_4188_3251)">
@@ -120,6 +127,7 @@ export const CatchIcon: FC<Props> = ({
   color = 'var(--textColor)',
   className,
   onMouseEnter,
+  onMouseLeave
 }) => {
   return (
     <svg
@@ -130,6 +138,7 @@ export const CatchIcon: FC<Props> = ({
       viewBox="0 0 24 24"
       fill="none"
       onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       <g clipPath="url(#clip0_4188_3250)">
         <g clipPath="url(#clip1_4188_3250)">

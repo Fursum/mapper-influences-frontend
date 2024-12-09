@@ -25,7 +25,7 @@ const AdvancedFilters: FC<{
 
   const [difficultyId, setDifficultyId] = useState<string | undefined>();
 
-  const { data: mapData, isLoading } = useMapData(difficultyId, 'diff');
+  const { data: mapData, isLoading } = useMapData(difficultyId);
 
   return (
     <>
@@ -118,7 +118,6 @@ const AdvancedFilters: FC<{
             e.preventDefault();
             toggleMap(Number(difficultyId));
           }}
-          role="button"
         >
           <FontAwesomeIcon
             icon={
@@ -129,12 +128,7 @@ const AdvancedFilters: FC<{
       </label>
       {mapData && difficultyId && (
         <div className={styles.mapPreview}>
-          <MapCard
-            map={{
-              id: difficultyId ? Number(difficultyId) : 0,
-              is_beatmapset: false,
-            }}
-          />
+          <MapCard map={mapData} />
         </div>
       )}
     </>

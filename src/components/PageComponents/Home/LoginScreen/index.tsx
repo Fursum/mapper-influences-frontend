@@ -3,7 +3,6 @@ import { type FC, useState } from 'react';
 import DarkModeToggle from '@components/Layout/Header/DarkModeToggle';
 import ActivityList from '@components/SharedComponents/Activity';
 import Modal from '@components/SharedComponents/Modal';
-import News from '@components/SharedComponents/News';
 
 import { useGlobalTooltip } from 'src/states/globalTooltip';
 
@@ -14,7 +13,7 @@ import CoolCards from './CoolCards';
 import styles from './style.module.scss';
 
 const LoginScreen: FC = () => {
-  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
+  const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const LoginButton = () => {
@@ -68,9 +67,7 @@ const LoginScreen: FC = () => {
               target={'_blank'}
               rel={'noreferrer'}
               className={styles.a}
-              onMouseEnter={(e) =>
-                activateTooltip('Opens in new tab', e.currentTarget)
-              }
+              {...tooltipProps('Opens in new tab')}
             >
               pishifat’s Mapper Influences
             </a>{' '}
@@ -90,9 +87,9 @@ const LoginScreen: FC = () => {
           </p>
         </section>
         <section className={styles.fullSection}>
-          <Leaderboard />
+          <Leaderboard type="user" />
+          <Leaderboard type="beatmap" />
           <ActivityList />
-          <News className={styles.news} />
         </section>
         <ContributeButtons />
       </div>

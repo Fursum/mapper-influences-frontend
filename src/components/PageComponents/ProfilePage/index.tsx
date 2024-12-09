@@ -1,6 +1,7 @@
 import { type FC, useEffect, useState } from 'react';
 
-import { useGetInfluences, useGetMentions } from '@services/influence';
+import { useGetInfluences } from '@services/influence/getInfluences';
+import { useGetMentions } from '@services/influence/mentions';
 import { useGlobalTooltip } from '@states/globalTooltip';
 import { useRouter } from 'next/router';
 
@@ -26,12 +27,9 @@ export default ProfilePage;
 const TabContainer: FC<{ userId?: number | string }> = ({ userId }) => {
   const router = useRouter();
 
-  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
-  const deactivateTooltip = useGlobalTooltip(
-    (state) => state.deactivateTooltip,
-  );
   const { data: influences } = useGetInfluences(userId);
   const { data: mentions } = useGetMentions(userId);
+  const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
 
   const [selectedTab, setSelectedTab] = useState<'influences' | 'mentions'>(
     'influences',
@@ -48,24 +46,18 @@ const TabContainer: FC<{ userId?: number | string }> = ({ userId }) => {
         <button
           className={selectedTab === 'influences' ? styles.selected : ''}
           onClick={() => setSelectedTab('influences')}
-          onMouseEnter={() =>
-            activateTooltip(
-              `${influences?.length || 0} influence${influences?.length === 1 ? '' : 's'}`,
-            )
-          }
-          onMouseLeave={deactivateTooltip}
+          {...tooltipProps(
+            `${influences?.length || 0} influence${influences?.length === 1 ? '' : 's'}`,
+          )}
         >
           Influences
         </button>
         <button
           className={selectedTab === 'mentions' ? styles.selected : ''}
           onClick={() => setSelectedTab('mentions')}
-          onMouseEnter={() =>
-            activateTooltip(
-              `${mentions?.length || 0} mention${mentions?.length === 1 ? '' : 's'}`,
-            )
-          }
-          onMouseLeave={deactivateTooltip}
+          {...tooltipProps(
+            `${mentions?.length || 0} mention${mentions?.length === 1 ? '' : 's'}`,
+          )}
         >
           Mentions
         </button>

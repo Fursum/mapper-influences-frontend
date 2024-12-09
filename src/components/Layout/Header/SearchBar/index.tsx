@@ -2,10 +2,10 @@ import { type FC, useCallback, useEffect, useRef, useState } from 'react';
 
 import { Magnify } from '@components/SvgComponents';
 import { MAX_NAME_LENGTH } from '@libs/consts';
+import type { UserSmall } from '@libs/types/rust';
 import { getSearchResults } from '@services/search';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 import { useRouter } from 'next/router';
-import type { UserCompact } from 'osu-web.js';
 import { useOnClickOutside } from 'usehooks-ts';
 
 import Results from './Results';
@@ -20,7 +20,7 @@ const SearchBar: FC<Props> = ({ className }) => {
   const router = useRouter();
   const containerRef = useRef(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [results, setResults] = useState<UserCompact[] | undefined>();
+  const [results, setResults] = useState<UserSmall[] | undefined>();
   const [showResults, setShowResults] = useState(false);
 
   useOnClickOutside(containerRef, () => setShowResults(false));

@@ -45,11 +45,9 @@
   height: 1rem;
   padding: 0rem;
   margin-left: $spacing / 4;
-  transform: translateY(0.1rem);
   line-height: 0;
 
   > svg {
-    transform: translateY(-0.1rem);
     scale: 0.6;
     > path {
       fill: $color-button-outline;

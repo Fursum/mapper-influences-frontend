@@ -8,19 +8,15 @@ const Tooltip: FC = () => {
   const ref = useRef<HTMLElement>(null);
   const element = ref.current;
 
-  const { text, parent, isActive, deactivateTooltip } = useGlobalTooltip();
+  const text = useGlobalTooltip((state) => state.text);
+  const isActive = useGlobalTooltip((state) => state.isActive);
 
   useEffect(() => {
-    if (!isActive || !element) return;
+    if (!element) return;
 
-    element.style.opacity = '1';
-    // Spans work but buttons dont with this 🤷‍♀️
-    if (parent)
-      parent.onmouseleave = () => {
-        element.style.opacity = '0';
-        deactivateTooltip();
-      };
-  }, [isActive, deactivateTooltip, parent, element]);
+    if (isActive) element.style.opacity = '1';
+    else element.style.opacity = '0';
+  }, [isActive, element]);
 
   useEffect(() => {
     function handleMouse(e: MouseEvent) {

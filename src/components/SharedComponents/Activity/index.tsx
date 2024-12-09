@@ -1,6 +1,7 @@
-import type { FC } from 'react';
+import { type FC, useMemo } from 'react';
 
-import { type Activity, useActivities } from '@services/activity';
+import type { Activity } from '@libs/types/activity';
+import { useActivities } from '@services/activity';
 import { useCurrentUser } from '@services/user';
 import { useGlobalTooltip } from '@states/globalTooltip';
 
@@ -19,10 +20,7 @@ const ActivityList: FC = () => {
         style={{ scrollbarGutter: 'stable' }} // Firefox scrollbar fix
       >
         {activities.map((activity) => (
-          <ActivityRow
-            key={`${activity.datetime}-${activity.user.username}`}
-            activity={activity}
-          />
+          <ActivityRow key={activity.id} activity={activity} />
         ))}
       </div>
     </div>
@@ -34,11 +32,23 @@ export default ActivityList;
 const ActivityRow: FC<{
   activity: Activity;
 }> = ({ activity }) => {
-  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
+  const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
 
-  // Adjust the activity timestamp to the local offset
-  const timezoneOffset = new Date().getTimezoneOffset() * 60000;
-  const adjustedTime = new Date(activity.datetime).getTime() - timezoneOffset;
+  const { isoDate, onMouseEnter, onMouseLeave } = useMemo(() => {
+    const timezoneOffset = new Date().getTimezoneOffset() * 60000;
+    const adjustedTime =
+      new Date(activity.created_at).getTime() - timezoneOffset;
+
+    const { onMouseEnter, onMouseLeave } = tooltipProps(
+      new Date(adjustedTime).toLocaleString(),
+    );
+
+    return {
+      isoDate: new Date(adjustedTime).toISOString(),
+      onMouseEnter,
+      onMouseLeave,
+    };
+  }, [activity.created_at, tooltipProps]);
 
   return (
     <div className="w-[25rem]">
@@ -47,14 +57,10 @@ const ActivityRow: FC<{
 
         <span
           className="ml-auto shrink-0 pl-2 text-sm text-text-faded"
-          onMouseEnter={(e) =>
-            activateTooltip(
-              new Date(adjustedTime).toLocaleString(),
-              e.currentTarget,
-            )
-          }
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
         >
-          <RelativeTime date={new Date(adjustedTime).toISOString()} />
+          <RelativeTime date={isoDate} />
         </span>
       </div>
 
@@ -65,29 +71,61 @@ const ActivityRow: FC<{
   );
 };
 
+// Memoized because the RelativeTime component triggers a re-render on this for some reason???
 const DetailsRow: FC<{ activity: Activity }> = ({ activity }) => {
-  if (activity.type === 'ADD_INFLUENCE' && activity.details.influenced_to) {
+  if (activity.event_type === 'ADD_INFLUENCE') {
     return (
       <>
         <span className="mr-1 shrink-0">influenced from</span>
-        <SmallUser user={activity.details.influenced_to} />
+        <SmallUser user={activity.influence} />
       </>
     );
   }
 
-  if (activity.type === 'REMOVE_INFLUENCE' && activity.details.influenced_to) {
+  if (activity.event_type === 'REMOVE_INFLUENCE') {
     return (
       <>
         <span className="mr-1 shrink-0">removed influence of</span>
-        <SmallUser user={activity.details.influenced_to} />
+        <SmallUser user={activity.influence} />
       </>
     );
   }
 
-  if (activity.type === 'ADD_BEATMAP' || activity.type === 'REMOVE_BEATMAP')
+  if (
+    activity.event_type === 'ADD_USER_BEATMAP' ||
+    activity.event_type === 'REMOVE_USER_BEATMAP'
+  )
     return <>edited their beatmaps</>;
-  if (activity.type === 'LOGIN') return <>logged in</>;
-  if (activity.type === 'EDIT_BIO') return <>edited their bio</>;
+
+  if (
+    activity.event_type === 'ADD_INFLUENCE_BEATMAP' ||
+    activity.event_type === 'REMOVE_INFLUENCE_BEATMAP'
+  )
+    return (
+      <>
+        <span className="mr-1 shrink-0">edited beatmaps of</span>
+        <SmallUser user={activity.influence} />
+      </>
+    );
+
+  if (activity.event_type === 'EDIT_INFLUENCE_TYPE')
+    return (
+      <>
+        <span className="mr-1 shrink-0">changed influence type of</span>
+        <SmallUser user={activity.influence} />
+      </>
+    );
+
+  if (activity.event_type === 'EDIT_INFLUENCE_DESC')
+    return (
+      <>
+        <span className="mr-1 shrink-0">edited influence description of</span>
+        <SmallUser user={activity.influence} />
+      </>
+    );
+
+  if (activity.event_type === 'LOGIN') return <>logged in</>;
+  if (activity.event_type === 'EDIT_BIO') return <>edited their bio</>;
 };
 
 const SmallUser: FC<{
@@ -98,10 +136,6 @@ const SmallUser: FC<{
   };
 }> = ({ user }) => {
   const { data: currentUser } = useCurrentUser();
-  const activateTooltip = useGlobalTooltip((state) => state.activateTooltip);
-  const deactivateTooltip = useGlobalTooltip(
-    (state) => state.deactivateTooltip,
-  );
 
   return (
     <span className="truncate">
@@ -115,14 +149,6 @@ const SmallUser: FC<{
         disabled={!currentUser}
         href={`/profile/${user.id}`}
         className="inline-block text-text"
-        onClick={
-          !currentUser
-            ? () => {
-                activateTooltip('Log in to see their profile!');
-                setTimeout(deactivateTooltip, 3000);
-              }
-            : deactivateTooltip
-        }
       >
         <span className="w-fit font-bold">{user.username}</span>
       </ConditionalLink>

@@ -1,8 +1,8 @@
 import { type FC, useEffect, useState } from 'react';
 
-import type { BeatmapResponse } from '@libs/types/IOsuApi';
+import type { BeatmapsetSmall } from '@libs/types/rust';
 import { searchMaps } from '@services/search';
-import { useFullUser } from '@services/user';
+import { useUserBio } from '@services/user';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 
 import AdvancedFilters from './AdvancedFilters';
@@ -15,21 +15,27 @@ export const AddMapModalContents: FC<{
   closeForm: () => void;
   onSubmit: (selectedDiffs: number[]) => void;
   mapLimit: number;
-  suggestionUserId?: number | string;
+  suggestedUsername: string | undefined;
+  suggestedUserPreviousNames: string[];
   loading: boolean;
-}> = ({ closeForm, loading, onSubmit, suggestionUserId, mapLimit }) => {
-  const { data: suggestedUser } = useFullUser(suggestionUserId?.toString());
-
+}> = ({
+  closeForm,
+  loading,
+  onSubmit,
+  suggestedUsername,
+  suggestedUserPreviousNames,
+  mapLimit,
+}) => {
   const getFiltersQuery = useFilterStore((state) => state.getQueryString);
 
-  const [mapResults, setMapResults] = useState<BeatmapResponse[]>([]);
+  const [mapResults, setMapResults] = useState<BeatmapsetSmall[]>([]);
   const [selectedTab, setSelectedTab] = useState<'search' | 'advanced'>(
     'search',
   );
   const [selectedMaps, setSelectedMaps] = useState<number[]>([]);
   const [searchInput, setSearchInput] = useState(
-    suggestedUser
-      ? `creator:${suggestedUser?.username.replaceAll(' ', '_')}`
+    suggestedUsername
+      ? `creator:${suggestedUsername?.replaceAll(' ', '_')}`
       : '',
   );
 
@@ -94,16 +100,15 @@ export const AddMapModalContents: FC<{
               setSearchInput(e.target.value);
               debouncedSearch(e.target.value);
             }}
-            defaultValue={`"${suggestedUser?.username}"`}
             value={searchInput}
             onKeyDown={(e) => {
               if (e.key === 'Enter') e.preventDefault();
             }}
           />
         </label>
-        {!!suggestedUser?.previous_usernames.length && (
+        {!!suggestedUserPreviousNames.length && (
           <span className={styles.previousNames}>
-            Previous usernames: {suggestedUser.previous_usernames.join(', ')}
+            Previous usernames: {suggestedUserPreviousNames.join(', ')}
           </span>
         )}
 
@@ -121,7 +126,7 @@ export const AddMapModalContents: FC<{
         )}
 
         <div className={styles.buttons}>
-          <button className="cancel" role="button" onClick={closeForm}>
+          <button className="cancel" onClick={closeForm}>
             Cancel
           </button>
           <span
@@ -129,7 +134,6 @@ export const AddMapModalContents: FC<{
           >{`${selectedMaps.length} / ${mapLimit}`}</span>
           <button
             className="submit"
-            role="button"
             disabled={loading || !selectedMaps.length || limitExceeded}
           >
             {loading ? 'Adding...' : 'Add'}

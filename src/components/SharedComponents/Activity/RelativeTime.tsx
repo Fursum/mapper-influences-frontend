@@ -1,18 +1,21 @@
-import { type FC, useEffect, useReducer } from 'react';
+import { type FC, useEffect, useState } from 'react';
 
 import { relativeTimeText } from '@libs/functions';
 
 const RelativeTime: FC<{
   date: string;
 }> = ({ date }) => {
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [relativeTime, setRelativeTime] = useState<string>(
+    relativeTimeText(date),
+  );
 
   useEffect(() => {
-    const interval = setInterval(forceUpdate, 1000);
+    const interval = setInterval(
+      () => setRelativeTime(relativeTimeText(date)),
+      1000,
+    );
     return () => clearInterval(interval);
-  }, []);
-
-  const relativeTime = relativeTimeText(date);
+  }, [date]);
 
   return <>{relativeTime}</>;
 };

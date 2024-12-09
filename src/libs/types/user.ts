@@ -6,13 +6,6 @@ export type MapInfo = {
   mapUrl: string;
 };
 
-export type BeatmapResponse = {
-  difficulty_rating: number;
-  id: number;
-  url: string;
-  name: string;
-};
-
 export type CoversResponse = {
   cover: string;
   card: string;

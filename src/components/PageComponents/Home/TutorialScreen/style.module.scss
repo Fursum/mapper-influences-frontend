@@ -62,13 +62,14 @@
 
       // Mobile search bar expanding alignment fix
       &:nth-child(1) {
+        z-index: 1; // fix for search results
+        // apparently backdrop-filter messes up stacking context
+
         @media screen and (max-width: $responsive-breakpoint) {
           > div:focus-within {
             bottom: 15%;
           }
         }
-        z-index: 1; // fix for search results
-        // apparently backdrop-filter messes up stacking context
       }
 
       // Editing step

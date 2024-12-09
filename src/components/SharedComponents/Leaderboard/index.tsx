@@ -5,29 +5,36 @@ import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useGetLeaderboards } from '@services/leaderboard';
-import { useFullUser } from '@services/user';
+import { useCurrentUser } from '@services/user';
 import cx from 'classnames';
+
+import MapCard from '../MapCard';
 
 import styles from './style.module.scss';
 
 // Temporary limit until proper pagination
-const MAX_LIMIT = 100;
+const MAX_LIMIT = 200;
 
-const Leaderboard: FC<{ className?: string }> = ({ className }) => {
-  const { data: osuData } = useFullUser();
+const Leaderboard: FC<{ className?: string; type: 'user' | 'beatmap' }> = ({
+  className,
+  type,
+}) => {
+  const { data: currentUser } = useCurrentUser();
 
   const [rankedOnly, setRankedOnly] = useState<boolean>(false);
   const [myCountry, setMyCountry] = useState<boolean>(false);
-  const [limit, setLimit] = useState<number>(10);
+  const [limit, setLimit] = useState<number>(25);
 
   const scrollRef = useRef(null);
 
   const { data: leaderboards, isLoading } = useGetLeaderboards({
     ranked: rankedOnly,
-    country: myCountry ? osuData?.country.code : undefined,
+    country: myCountry ? currentUser?.country_code : undefined,
     limit: limit,
+    type,
   });
 
+  // Caching to avoid entering the loading state when scrolling
   const [cachedLeaderboards, setCachedLeaderboards] = useState(leaderboards);
 
   useEffect(() => {
@@ -36,14 +43,14 @@ const Leaderboard: FC<{ className?: string }> = ({ className }) => {
 
   return (
     <div className={`${styles.wrapper} ${className}`}>
-      <h2>Top Influencers</h2>
+      <h2>Top {type === 'user' ? 'Influencers' : 'Beatmaps'}</h2>
       <div className={styles.options}>
-        {osuData?.country.code && (
+        {currentUser?.country_code && type === 'user' && (
           <button
             className={cx({ [styles.active]: myCountry })}
             onClick={() => {
               setMyCountry((old) => !old);
-              setLimit(10);
+              setLimit(25);
             }}
           >
             My Country
@@ -53,7 +60,7 @@ const Leaderboard: FC<{ className?: string }> = ({ className }) => {
           className={cx({ [styles.active]: rankedOnly })}
           onClick={() => {
             setRankedOnly((old) => !old);
-            setLimit(10);
+            setLimit(25);
           }}
         >
           Ranked Mappers Only
@@ -63,22 +70,24 @@ const Leaderboard: FC<{ className?: string }> = ({ className }) => {
         <InfiniteScroll
           initialLoad={false}
           loadMore={() => {
-            if (limit < MAX_LIMIT) setLimit((old) => old + 10);
+            if (limit < MAX_LIMIT) setLimit((old) => old + 25);
           }}
-          hasMore={leaderboards && !isLoading && limit < leaderboards?.count}
+          // When the leaderboard response is less than the limit, there are no more items to load
+          hasMore={leaderboards && !isLoading && limit <= leaderboards.length}
           useWindow={false}
           getScrollParent={() => scrollRef.current}
         >
-          {cachedLeaderboards?.data.map((user) => (
-            <div key={user.id} className={styles.row}>
-              <BaseProfileCard userId={user.id} offlineData={user} />
+          {cachedLeaderboards?.map((item) => (
+            <div key={item.user?.id || item.beatmap?.id} className={styles.row}>
+              {item.user && <BaseProfileCard userData={item.user} />}
+              {item.beatmap && <MapCard map={item.beatmap} />}
               <div className={styles.number}>
-                <span>{user.mention_count}</span>
-                <span>{`Mention${user.mention_count !== 1 ? 's' : ''}`}</span>
+                <span>{item.count}</span>
+                <span>{`Mention${item.count !== 1 ? 's' : ''}`}</span>
               </div>
             </div>
           ))}
-          {!cachedLeaderboards?.data.length && isLoading && <MockList />}
+          {!cachedLeaderboards?.length && isLoading && <MockList type={type} />}
           {isLoading && (
             <div className={styles.spinner}>
               <FontAwesomeIcon icon={faSpinner} />
@@ -92,11 +101,12 @@ const Leaderboard: FC<{ className?: string }> = ({ className }) => {
 
 export default Leaderboard;
 
-const MockList = () => {
+const MockList: FC<{ type: 'user' | 'beatmap' }> = ({ type }) => {
   return Array.from({ length: 5 }).map((_, index) => (
     // biome-ignore lint/suspicious/noArrayIndexKey: <mock list>
     <div key={index} className={styles.row}>
-      <BaseProfileCard />
+      {type === 'user' && <BaseProfileCard />}
+      {type === 'beatmap' && <MapCard />}
       <div className={styles.number}>
         <span>..</span>
         <span>...</span>

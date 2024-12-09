@@ -28,11 +28,9 @@ import {
   faChevronUp,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  type InfluenceResponse,
-  setInfluenceOrder,
-  useGetInfluences,
-} from '@services/influence';
+import type { Influence } from '@libs/types/rust';
+import { useGetInfluences } from '@services/influence/getInfluences';
+import { setInfluenceOrder } from '@services/influence/setInfluenceOrder';
 import { useCurrentUser } from '@services/user';
 import { useQueryClient } from '@tanstack/react-query';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
@@ -74,19 +72,17 @@ const InfluenceList: FC<{
 
   const changeOrder = useCallback(
     (influenced_to: number, direction: 'up' | 'down') => {
-      const newData = queryClient.setQueryData<InfluenceResponse[]>(
+      const newData = queryClient.setQueryData<Influence[]>(
         ['influences', currentUserId?.toString()],
         (data) => {
           if (!data) return data;
 
           const newInfluences = arrayMove(
             data,
-            data.findIndex((item) => item.influenced_to === influenced_to),
+            data.findIndex((item) => item.user.id === influenced_to),
             direction === 'up'
-              ? data.findIndex((item) => item.influenced_to === influenced_to) -
-                  1
-              : data.findIndex((item) => item.influenced_to === influenced_to) +
-                  1,
+              ? data.findIndex((item) => item.user.id === influenced_to) - 1
+              : data.findIndex((item) => item.user.id === influenced_to) + 1,
           ).filter((element) => Boolean(element));
 
           return newInfluences;
@@ -96,7 +92,7 @@ const InfluenceList: FC<{
       if (!newData) return;
 
       // Send the order to server
-      const influenceOrder = newData.map((inf) => inf.influenced_to);
+      const influenceOrder = newData.map((inf) => inf.user.id);
 
       debounceChangeOrder(influenceOrder)
         .then(() => {
@@ -115,17 +111,17 @@ const InfluenceList: FC<{
 
       if (active.id === over?.id) return;
 
-      const newData = queryClient.setQueryData<InfluenceResponse[]>(
+      const oldData = queryClient.getQueryData<Influence[]>([
+        'influences',
+        currentUserId?.toString(),
+      ]);
+      const newData = queryClient.setQueryData<Influence[]>(
         ['influences', currentUserId?.toString()],
         (data) => {
           if (!data || !over) return data;
 
-          const oldIndex = data.findIndex(
-            (item) => item.influenced_to === active.id,
-          );
-          const newIndex = data.findIndex(
-            (item) => item.influenced_to === over?.id,
-          );
+          const oldIndex = data.findIndex((item) => item.user.id === active.id);
+          const newIndex = data.findIndex((item) => item.user.id === over?.id);
 
           const newData = arrayMove(data, oldIndex, newIndex).filter(
             (element) => Boolean(element),
@@ -138,11 +134,17 @@ const InfluenceList: FC<{
       if (!newData) return;
 
       // Send the order to server
-      const influenceOrder = newData.map((inf) => inf.influenced_to);
+      const influenceOrder = newData.map((inf) => inf.user.id);
 
-      setInfluenceOrder(influenceOrder).then(() =>
-        toast.success('Updated influence order.'),
-      );
+      setInfluenceOrder(influenceOrder)
+        .then(() => toast.success('Updated influence order.'))
+        .catch(() => {
+          queryClient.setQueryData(
+            ['influences', currentUserId?.toString()],
+            oldData,
+          );
+          toast.error('Could not update influence order.');
+        });
     },
     [queryClient, currentUserId],
   );
@@ -183,7 +185,7 @@ const InfluenceList: FC<{
                 ?.slice(0, visibleCount)
                 .map((influence) => (
                   <DraggableWrapper
-                    key={influence.influenced_to}
+                    key={influence.user.id}
                     influence={influence}
                     editable={editable}
                     changeOrder={changeOrder}
@@ -200,7 +202,7 @@ const InfluenceList: FC<{
 export default InfluenceList;
 
 const DraggableWrapper: FC<{
-  influence: InfluenceResponse;
+  influence: Influence;
   editable?: boolean;
   changeOrder: (influenced_to: number, direction: 'up' | 'down') => void;
 }> = ({ influence, editable, changeOrder }) => {
@@ -215,7 +217,7 @@ const DraggableWrapper: FC<{
 };
 
 const Draggable: FC<{
-  influence: InfluenceResponse;
+  influence: Influence;
   changeOrder: (influenced_to: number, direction: 'up' | 'down') => void;
 }> = ({ influence, changeOrder }) => {
   const {
@@ -226,7 +228,7 @@ const Draggable: FC<{
     transition,
     isDragging,
   } = useSortable({
-    id: influence.influenced_to,
+    id: influence.user.id,
     animateLayoutChanges: () => false,
   });
 
@@ -246,7 +248,7 @@ const Draggable: FC<{
       })}
     >
       <div className={styles.sortColumn}>
-        <button onClick={() => changeOrder(influence.influenced_to, 'up')}>
+        <button onClick={() => changeOrder(influence.user.id, 'up')}>
           <FontAwesomeIcon icon={faChevronUp} />
         </button>
         <FontAwesomeIcon
@@ -255,7 +257,7 @@ const Draggable: FC<{
           {...attributes}
           className={styles.handle}
         />
-        <button onClick={() => changeOrder(influence.influenced_to, 'down')}>
+        <button onClick={() => changeOrder(influence.user.id, 'down')}>
           <FontAwesomeIcon icon={faChevronDown} />
         </button>
       </div>
