@@ -35,9 +35,7 @@ const ActivityRow: FC<{
   const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
 
   const { isoDate, onMouseEnter, onMouseLeave } = useMemo(() => {
-    const timezoneOffset = new Date().getTimezoneOffset() * 60000;
-    const adjustedTime =
-      new Date(activity.created_at).getTime() - timezoneOffset;
+    const adjustedTime = new Date(activity.created_at).getTime();
 
     const { onMouseEnter, onMouseLeave } = tooltipProps(
       new Date(adjustedTime).toLocaleString(),
