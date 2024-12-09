@@ -57,7 +57,7 @@ const MapCard: FC<{
     );
 
   const setUrl = `https://osu.ppy.sh/beatmapsets/${map.id}`;
-  const diffUrl = `https://osu.ppy.sh/beatmaps/${map.id}`;
+  const diffUrl = `https://osu.ppy.sh/beatmaps/${diff?.id}`;
 
   const mapUrl = diff ? diffUrl : setUrl;
 
