@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { CookiesProvider } from 'react-cookie';
 
+import Layout from '@components/Layout';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { AppProps } from 'next/app';
@@ -43,15 +44,9 @@ function App({ Component, pageProps }: AppProps) {
       <QueryClientProvider client={queryClient}>
         <ReactQueryDevtools initialIsOpen={false} />
         <CookiesProvider>
-          <div className="min-h-lvh">
-            <h1 className="m-0 min-w-max p-4 text-center">
-              Sorry! We are under construction.
-              <br /> Please come back in a few hours 🙏🙏
-            </h1>
-          </div>
-          {/* <Layout>
+          <Layout>
             <Component {...pageProps} />
-          </Layout> */}
+          </Layout>
         </CookiesProvider>
       </QueryClientProvider>
     </>
