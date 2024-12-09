@@ -26,21 +26,15 @@ const MapCard: FC<{
     | 'artist'
     | 'user_avatar_url'
     | 'user_name'
-  > & {
-    /** If its a set, this will exist */
-    beatmaps?: BeatmapsetSmall['beatmaps'];
-  };
+    | 'beatmaps'
+  >;
   deleteFn?: (id: string | number) => void;
   loading?: boolean;
 }> = ({ map, deleteFn, loading }) => {
-  const isSet = map && 'beatmaps' in map;
-
   const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
 
-  const diff = !isSet
-    ? map?.beatmaps?.find((b) => b.id === Number(map?.id))
-    : undefined;
+  const diff = map?.beatmaps.find((b) => b.id === Number(map?.id));
 
   const diffColor = useMemo(
     () =>
@@ -62,7 +56,7 @@ const MapCard: FC<{
   const setUrl = `https://osu.ppy.sh/beatmapsets/${map.id}`;
   const diffUrl = `https://osu.ppy.sh/beatmaps/${map.id}`;
 
-  const mapUrl = isSet ? setUrl : diffUrl;
+  const mapUrl = diff ? diffUrl : setUrl;
 
   const canDelete = !!deleteFn;
 
@@ -115,7 +109,7 @@ const MapCard: FC<{
             if (!deleteConfirmation) {
               setDeleteConfirmation(true);
               setTimeout(() => setDeleteConfirmation(false), 3000);
-            } else deleteFn(map.beatmaps?.at(0)?.id ?? map.id);
+            } else deleteFn(diff?.id ?? map.id);
           }}
         >
           <FontAwesomeIcon icon={faTrashAlt} size="1x" />
