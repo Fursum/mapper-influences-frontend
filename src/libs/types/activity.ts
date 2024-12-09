@@ -1,4 +1,4 @@
-import type { BeatmapSmall, UserSmall } from './rust';
+import type { BeatmapsetSmall, UserSmall } from './rust';
 
 type ActivityBase = {
   id: string;
@@ -17,7 +17,7 @@ type EditBio = ActivityBase & {
 
 type EditSelfMaps = ActivityBase & {
   event_type: 'ADD_USER_BEATMAP' | 'REMOVE_USER_BEATMAP';
-  beatmap: BeatmapSmall;
+  beatmap: BeatmapsetSmall;
 };
 
 type EditInfluence = ActivityBase & {
@@ -39,7 +39,7 @@ type EditInfluenceDesc = ActivityBase & {
 
 type EditInfluenceMaps = ActivityBase & {
   event_type: 'ADD_INFLUENCE_BEATMAP' | 'REMOVE_INFLUENCE_BEATMAP';
-  beatmap: BeatmapSmall;
+  beatmap: BeatmapsetSmall;
   influence: UserSmall;
 };
 

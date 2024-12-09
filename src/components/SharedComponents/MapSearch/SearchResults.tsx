@@ -2,7 +2,7 @@ import { type FC, useEffect, useRef, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import { getDiffColor } from '@libs/functions/colors';
-import type { BeatmapSearch } from '@libs/types/rust';
+import type { BeatmapsetSmall } from '@libs/types/rust';
 import { useGlobalTooltip } from '@states/globalTooltip';
 import cx from 'classnames';
 
@@ -11,7 +11,7 @@ import MapCard, { ModeIcon } from '../MapCard';
 import styles from './style.module.scss';
 
 const SearchResults: FC<{
-  results?: BeatmapSearch[];
+  results?: BeatmapsetSmall[];
   selectedMaps: number[];
   toggleMap: (id: number) => void;
   disabled?: boolean;
@@ -20,7 +20,7 @@ const SearchResults: FC<{
 
   const parentRef = useRef<HTMLDivElement>(null);
 
-  const [visibleResults, setVisibleResults] = useState<BeatmapSearch[]>([]);
+  const [visibleResults, setVisibleResults] = useState<BeatmapsetSmall[]>([]);
 
   useEffect(() => {
     if (results?.length) {

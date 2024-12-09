@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 
-import type { BeatmapSmall } from '@libs/types/rust';
+import type { BeatmapsetSmall } from '@libs/types/rust';
 
 import MapCard from '../../MapCard';
 
@@ -12,7 +12,7 @@ import styles from './style.module.scss';
 const LIMIT = 5;
 
 const SingleItemCarousel: FC<{
-  mapList: BeatmapSmall[];
+  mapList: BeatmapsetSmall[];
   className?: string;
   editable?: boolean;
   onDelete?: (map: string | number) => void;

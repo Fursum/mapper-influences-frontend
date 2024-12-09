@@ -9,7 +9,7 @@ import {
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getDiffColor } from '@libs/functions/colors';
-import type { BeatmapSearch, BeatmapSmall } from '@libs/types/rust';
+import type { BeatmapsetSmall } from '@libs/types/rust';
 import { useGlobalTooltip } from '@states/globalTooltip';
 
 import ProfilePhoto from '../ProfilePhoto';
@@ -18,7 +18,7 @@ import styles from './style.module.scss';
 
 const MapCard: FC<{
   map?: Pick<
-    BeatmapSmall,
+    BeatmapsetSmall,
     | 'id'
     | 'user_id'
     | 'cover'
@@ -26,21 +26,18 @@ const MapCard: FC<{
     | 'artist'
     | 'user_avatar_url'
     | 'user_name'
-  > & {
-    /** If its a set, this will exist */
-    beatmaps?: BeatmapSearch['beatmaps'];
-  };
+    | 'beatmaps'
+  >;
   deleteFn?: (id: string | number) => void;
   loading?: boolean;
 }> = ({ map, deleteFn, loading }) => {
-  const isSet = map && 'beatmaps' in map;
-
   const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
 
-  const diff = !isSet
-    ? map?.beatmaps?.find((b) => b.id === Number(map?.id))
-    : undefined;
+  const diff =
+    map?.beatmaps.length === 1
+      ? map?.beatmaps[0]
+      : map?.beatmaps.find((b) => b.id === Number(map?.id));
 
   const diffColor = useMemo(
     () =>
@@ -62,7 +59,7 @@ const MapCard: FC<{
   const setUrl = `https://osu.ppy.sh/beatmapsets/${map.id}`;
   const diffUrl = `https://osu.ppy.sh/beatmaps/${map.id}`;
 
-  const mapUrl = isSet ? setUrl : diffUrl;
+  const mapUrl = diff ? diffUrl : setUrl;
 
   const canDelete = !!deleteFn;
 
@@ -115,7 +112,7 @@ const MapCard: FC<{
             if (!deleteConfirmation) {
               setDeleteConfirmation(true);
               setTimeout(() => setDeleteConfirmation(false), 3000);
-            } else deleteFn(map.id);
+            } else deleteFn(diff?.id ?? map.id);
           }}
         >
           <FontAwesomeIcon icon={faTrashAlt} size="1x" />

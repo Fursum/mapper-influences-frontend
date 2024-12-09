@@ -1,10 +1,10 @@
-import type { BeatmapSmall, UserSmall } from '@libs/types/rust';
+import type { BeatmapsetSmall, UserSmall } from '@libs/types/rust';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
 export type LeaderboardResponse = {
   user?: UserSmall;
-  beatmap?: BeatmapSmall;
+  beatmap?: BeatmapsetSmall;
   count: number;
 }[];
 
