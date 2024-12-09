@@ -34,7 +34,10 @@ const MapCard: FC<{
   const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
 
-  const diff = map?.beatmaps.find((b) => b.id === Number(map?.id));
+  const diff =
+    map?.beatmaps.length === 1
+      ? map?.beatmaps[0]
+      : map?.beatmaps.find((b) => b.id === Number(map?.id));
 
   const diffColor = useMemo(
     () =>
