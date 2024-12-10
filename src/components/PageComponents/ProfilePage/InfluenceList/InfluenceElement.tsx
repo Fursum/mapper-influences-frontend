@@ -1,4 +1,4 @@
-import { type FC, useCallback, useState } from 'react';
+import { type FC, useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
@@ -51,7 +51,31 @@ const InfluenceElement: FC<Props> = ({
   >('untouched');
 
   // Debounce the description update
-  const updateInfluenceDebounce = AwesomeDebouncePromise(editDescription, 3000);
+  const debouncedUpdateDescription = useMemo(
+    () =>
+      AwesomeDebouncePromise(
+        (description: string) =>
+          editDescription({
+            influenceId: influenceData.user.id,
+            description,
+          }),
+        3000
+      ),
+    [editDescription, influenceData.user.id]
+  );
+
+  const onDescriptionChange = useCallback(
+    (description: string) => {
+      setUpdateState('dirty');
+      debouncedUpdateDescription(description)
+        .then(() => setUpdateState('success'))
+        .catch(() => {
+          setUpdateState('error');
+          toast.error('Could not update description.');
+        });
+    },
+    [debouncedUpdateDescription]
+  );
 
   const onDelete = editable
     ? (mapId: number | string) => {
@@ -66,6 +90,7 @@ const InfluenceElement: FC<Props> = ({
       }
     : undefined;
 
+    
   return (
     <>
       <div
@@ -109,20 +134,9 @@ const InfluenceElement: FC<Props> = ({
           className={styles.description}
           label={'Description textarea'}
           description={influenceData.description || ''}
-          editable={editable && !isEditDescriptionPending}
+          editable={editable}
           placeholder={'Describe your influence here.'}
-          noSubmitOnChange={(e) => {
-            setUpdateState('dirty');
-            return updateInfluenceDebounce({
-              influenceId: influenceData.user.id,
-              description: e,
-            })
-              .then(() => setUpdateState('success'))
-              .catch(() => {
-                setUpdateState('error');
-                toast.error('Could not update description.');
-              });
-          }}
+          noSubmitOnChange={onDescriptionChange}
         />
         <div className={styles.maps}>
           {editable || !!influenceData.beatmaps.length ? (
