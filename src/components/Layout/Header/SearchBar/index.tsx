@@ -35,6 +35,7 @@ const SearchBar: FC<Props> = ({ className }) => {
     if (!query) {
       setResults([]);
       setShowResults(false);
+      return;
     }
 
     getSearchResults(query)
@@ -49,7 +50,9 @@ const SearchBar: FC<Props> = ({ className }) => {
       });
   }, []);
 
-  const debouncedSearch = AwesomeDebouncePromise(searchUser, 300);
+  // keeping the debounce time a little longer for search
+  // because it's 4 separate osu api requests for each query
+  const debouncedSearch = AwesomeDebouncePromise(searchUser, 600);
 
   const handleChange = (query: string) => {
     // TODO: Display loading indicator

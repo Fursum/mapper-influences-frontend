@@ -1,4 +1,4 @@
-import { type FC, useEffect, useState } from 'react';
+import { type FC, useCallback, useEffect, useState } from 'react';
 
 import type { BeatmapsetSmall } from '@libs/types/rust';
 import { searchMaps } from '@services/search';
@@ -39,9 +39,12 @@ export const AddMapModalContents: FC<{
       : '',
   );
 
-  const debouncedSearch = AwesomeDebouncePromise((query: string) => {
-    searchMaps(query + getFiltersQuery()).then(setMapResults);
-  }, 300);
+  const debouncedSearch = useCallback(
+    AwesomeDebouncePromise((query: string) => {
+      searchMaps(query + getFiltersQuery()).then(setMapResults);
+    }, 400),
+    [getFiltersQuery]
+  );
 
   const toggleMap = (id: number) => {
     setSelectedMaps((old) => {
