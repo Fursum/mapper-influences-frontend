@@ -23,9 +23,11 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
+  faAngleDown,
+  faAngleUp,
+  faAnglesDown,
+  faAnglesUp,
   faBars,
-  faChevronDown,
-  faChevronUp,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { Influence } from '@libs/types/rust';
@@ -63,26 +65,43 @@ const InfluenceList: FC<{
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
-      // Require the mouse to move by 10 pixels before activating
+      // Require the mouse to move by 5 pixels before activating
       activationConstraint: {
-        distance: 10,
+        distance: 5,
       },
     }),
   );
 
   const changeOrder = useCallback(
-    (influenced_to: number, direction: 'up' | 'down') => {
+    (influenced_to: number, direction: 'up' | 'down' | 'top' | 'bottom') => {
       const newData = queryClient.setQueryData<Influence[]>(
         ['influences', currentUserId?.toString()],
         (data) => {
           if (!data) return data;
+          const currentIndex = data.findIndex(
+            (item) => item.user.id === influenced_to,
+          );
+          let targetIndex = 0;
+
+          switch (direction) {
+            case 'up':
+              targetIndex = currentIndex - 1;
+              break;
+            case 'down':
+              targetIndex = currentIndex + 1;
+              break;
+            case 'top':
+              targetIndex = 0;
+              break;
+            case 'bottom':
+              targetIndex = data.length - 1;
+              break;
+          }
 
           const newInfluences = arrayMove(
             data,
-            data.findIndex((item) => item.user.id === influenced_to),
-            direction === 'up'
-              ? data.findIndex((item) => item.user.id === influenced_to) - 1
-              : data.findIndex((item) => item.user.id === influenced_to) + 1,
+            currentIndex,
+            targetIndex,
           ).filter((element) => Boolean(element));
 
           return newInfluences;
@@ -183,12 +202,19 @@ const InfluenceList: FC<{
             <div ref={setNodeRef}>
               {influences
                 ?.slice(0, visibleCount)
-                .map((influence) => (
+                .map((influence, i) => (
                   <DraggableWrapper
                     key={influence.user.id}
                     influence={influence}
                     editable={editable}
                     changeOrder={changeOrder}
+                    position={
+                      i === 0
+                        ? 'top'
+                        : i === influences.length - 1
+                          ? 'bottom'
+                          : 'middle'
+                    }
                   />
                 ))}
             </div>
@@ -204,10 +230,20 @@ export default InfluenceList;
 const DraggableWrapper: FC<{
   influence: Influence;
   editable?: boolean;
-  changeOrder: (influenced_to: number, direction: 'up' | 'down') => void;
-}> = ({ influence, editable, changeOrder }) => {
+  position: 'top' | 'bottom' | 'middle';
+  changeOrder: (
+    influenced_to: number,
+    direction: 'up' | 'down' | 'top' | 'bottom',
+  ) => void;
+}> = ({ influence, editable, changeOrder, position }) => {
   if (editable)
-    return <Draggable influence={influence} changeOrder={changeOrder} />;
+    return (
+      <Draggable
+        influence={influence}
+        changeOrder={changeOrder}
+        position={position}
+      />
+    );
   return (
     <InfluenceElement
       influenceData={influence}
@@ -218,8 +254,12 @@ const DraggableWrapper: FC<{
 
 const Draggable: FC<{
   influence: Influence;
-  changeOrder: (influenced_to: number, direction: 'up' | 'down') => void;
-}> = ({ influence, changeOrder }) => {
+  position: 'top' | 'bottom' | 'middle';
+  changeOrder: (
+    influenced_to: number,
+    direction: 'up' | 'down' | 'top' | 'bottom',
+  ) => void;
+}> = ({ influence, changeOrder, position }) => {
   const {
     attributes,
     listeners,
@@ -238,6 +278,9 @@ const Draggable: FC<{
     zIndex: isDragging ? 2 : undefined,
   };
 
+  const isTop = position === 'top';
+  const isBottom = position === 'bottom';
+
   return (
     <div
       ref={setNodeRef}
@@ -248,8 +291,17 @@ const Draggable: FC<{
       })}
     >
       <div className={styles.sortColumn}>
-        <button onClick={() => changeOrder(influence.user.id, 'up')}>
-          <FontAwesomeIcon icon={faChevronUp} />
+        <button
+          onClick={() => changeOrder(influence.user.id, 'top')}
+          disabled={isTop}
+        >
+          <FontAwesomeIcon icon={faAnglesUp} opacity={isTop ? 0.25 : 1} />
+        </button>
+        <button
+          onClick={() => changeOrder(influence.user.id, 'up')}
+          disabled={isTop}
+        >
+          <FontAwesomeIcon icon={faAngleUp} opacity={isTop ? 0.25 : 1} />
         </button>
         <FontAwesomeIcon
           icon={faBars}
@@ -257,8 +309,23 @@ const Draggable: FC<{
           {...attributes}
           className={styles.handle}
         />
-        <button onClick={() => changeOrder(influence.user.id, 'down')}>
-          <FontAwesomeIcon icon={faChevronDown} />
+        <button
+          onClick={() => changeOrder(influence.user.id, 'down')}
+          disabled={isBottom}
+          className={cx({
+            'opacity-5': isBottom,
+          })}
+        >
+          <FontAwesomeIcon icon={faAngleDown} />
+        </button>
+        <button
+          onClick={() => changeOrder(influence.user.id, 'bottom')}
+          disabled={isBottom}
+          className={cx({
+            'opacity-5': isBottom,
+          })}
+        >
+          <FontAwesomeIcon icon={faAnglesDown} />
         </button>
       </div>
       <InfluenceElement influenceData={influence} editable />
