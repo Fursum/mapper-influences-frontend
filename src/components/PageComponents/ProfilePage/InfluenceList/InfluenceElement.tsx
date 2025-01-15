@@ -59,9 +59,9 @@ const InfluenceElement: FC<Props> = ({
             influenceId: influenceData.user.id,
             description,
           }),
-        3000
+        3000,
       ),
-    [editDescription, influenceData.user.id]
+    [editDescription, influenceData.user.id],
   );
 
   const onDescriptionChange = useCallback(
@@ -74,7 +74,7 @@ const InfluenceElement: FC<Props> = ({
           toast.error('Could not update description.');
         });
     },
-    [debouncedUpdateDescription]
+    [debouncedUpdateDescription],
   );
 
   const onDelete = editable
@@ -90,7 +90,6 @@ const InfluenceElement: FC<Props> = ({
       }
     : undefined;
 
-    
   return (
     <>
       <div
@@ -186,10 +185,7 @@ const AddButton: FC<{
       setUpdateState('dirty');
       addMaps({
         influenceId: influenceData.user.id,
-        beatmapIds: [
-          ...(influenceData.beatmaps.map((map) => map.id) || []),
-          ...diffs,
-        ],
+        beatmapIds: diffs,
       })
         .then(() => {
           setUpdateState('success');
