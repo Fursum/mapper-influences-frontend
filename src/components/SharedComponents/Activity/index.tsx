@@ -2,12 +2,10 @@ import { type FC, useMemo } from 'react';
 
 import type { Activity } from '@libs/types/activity';
 import { useActivities } from '@services/activity';
-import { useCurrentUser } from '@services/user';
 import { useGlobalTooltip } from '@states/globalTooltip';
 
-import ConditionalLink from '../ConditionalLink';
-import ProfilePhoto from '../ProfilePhoto';
 import RelativeTime from './RelativeTime';
+import SmallUser from './SmallUser';
 
 const ActivityList: FC = () => {
   const { activities } = useActivities();
@@ -124,32 +122,4 @@ const DetailsRow: FC<{ activity: Activity }> = ({ activity }) => {
 
   if (activity.event_type === 'LOGIN') return <>logged in</>;
   if (activity.event_type === 'EDIT_BIO') return <>edited their bio</>;
-};
-
-const SmallUser: FC<{
-  user: {
-    username: string;
-    avatar_url: string;
-    id: number;
-  };
-}> = ({ user }) => {
-  const { data: currentUser } = useCurrentUser();
-
-  return (
-    <span className="truncate">
-      <ProfilePhoto
-        photoUrl={user.avatar_url}
-        size="sm"
-        circle
-        className="-mb-[0.1rem] mr-1 inline-block"
-      />
-      <ConditionalLink
-        disabled={!currentUser}
-        href={`/profile/${user.id}`}
-        className="inline-block text-text"
-      >
-        <span className="w-fit font-bold">{user.username}</span>
-      </ConditionalLink>
-    </span>
-  );
 };
