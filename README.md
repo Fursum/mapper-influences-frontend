@@ -1,6 +1,6 @@
 # Mapper Influences
 
-Backend Repo: https://github.com/aticie/Mapper-Influences-Backend
+Backend Repo: https://github.com/112batuhan/mapper-influences-backend-rs
 
 ## How to run the server locally
 1. Clone or download this repo. 
