@@ -22,8 +22,8 @@
     "@fortawesome/free-regular-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
-    "@tanstack/react-query": "^5.66.0",
-    "@tanstack/react-query-devtools": "^5.66.0",
+    "@tanstack/react-query": "^5.66.9",
+    "@tanstack/react-query-devtools": "^5.66.9",
     "@vercel/analytics": "^1.5.0",
     "@vercel/og": "^0.6.5",
     "awesome-debounce-promise": "^2.1.0",
@@ -51,7 +51,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@tailwindcss/postcss": "^4.0.6",
+    "@tailwindcss/postcss": "^4.0.8",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/node": "22.13.4",
     "@types/react": "18.3.12",
@@ -59,11 +59,11 @@
     "@types/react-infinite-scroller": "^1.2.5",
     "autoprefixer": "^10.4.20",
     "cross-env": "^7.0.3",
-    "postcss": "^8.5.2",
-    "prettier": "^3.5.1",
+    "postcss": "^8.5.3",
+    "prettier": "^3.5.2",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "sass-loader": "^16.0.5",
-    "tailwindcss": "^4.0.6",
+    "tailwindcss": "^4.0.8",
     "typescript": "5.7.3"
   }
 }
