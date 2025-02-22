@@ -20,12 +20,12 @@ const SmallUser: FC<{
         photoUrl={user.avatar_url}
         size="sm"
         circle
-        className="-mb-[0.1rem] mr-1 inline-block"
+        className="mr-1 -mb-[0.1rem] inline-block"
       />
       <ConditionalLink
         disabled={!currentUser}
         href={`/profile/${user.id}`}
-        className="inline-block text-text"
+        className="text-text inline-block"
       >
         <span className="w-fit font-bold">{user.username}</span>
       </ConditionalLink>
