@@ -1,6 +1,4 @@
-@tailwind components;
-@tailwind utilities;
-
+@import 'tailwindcss';
 @import './mixins/index';
 @import './variables/sizes';
 @import './variables/toggledVariables';
@@ -37,7 +35,8 @@ body {
     width: 100%;
     height: 100%;
     opacity: 0.025;
-    background-image: linear-gradient($color-text 0.1rem, transparent 0.1rem),
+    background-image:
+      linear-gradient($color-text 0.1rem, transparent 0.1rem),
       linear-gradient(to right, $color-text 0.1rem, transparent 0.1rem);
     background-size: 2rem 2rem;
     background-position: 50%;
