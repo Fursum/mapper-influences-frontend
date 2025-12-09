@@ -31,7 +31,7 @@
     "classnames": "^2.5.1",
     "embla-carousel-auto-scroll": "^8.5.1",
     "embla-carousel-react": "^8.5.1",
-    "next": "^15.0.3",
+    "next": "^15.5.7",
     "osu-web.js": "^2.5.0",
     "react": "^18.3.1",
     "react-cookie": "^7.2.2",
