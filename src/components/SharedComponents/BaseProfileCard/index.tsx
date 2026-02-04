@@ -74,7 +74,7 @@ const BaseProfileCard: FC<Props> = ({ className = '', userData }) => {
         />
         {!!userGroups?.length && (
           <div className={styles.badges}>
-            {userGroups.map((group) => (
+            {userGroups.slice(0, 2).map((group) => (
               <Badge key={group.short_name} group={group} />
             ))}
           </div>
