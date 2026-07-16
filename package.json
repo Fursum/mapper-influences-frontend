@@ -29,6 +29,7 @@
     "awesome-debounce-promise": "^2.1.0",
     "axios": "^1.7.8",
     "classnames": "^2.5.1",
+    "d3-force": "^3.0.0",
     "embla-carousel-auto-scroll": "^8.5.1",
     "embla-carousel-react": "^8.5.1",
     "next": "^15.5.7",
@@ -52,6 +53,7 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@types/d3-force": "^3.0.10",
     "@types/node": "22.10.0",
     "@types/react": "18.3.12",
     "@types/react-dom": "18.3.1",

@@ -1,0 +1,256 @@
+// Strips the global %button styling (pink outline box, big padding)
+// that leaks into every <button> via globals.scss
+@mixin plainButton {
+  outline: none;
+  border: none;
+  padding: 0;
+  background-color: transparent;
+  font-weight: 400;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    &:not(:disabled) {
+      background-color: transparent;
+    }
+  }
+}
+
+.graphPage {
+  position: relative;
+
+  .loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+  }
+
+  .searchBar {
+    position: absolute;
+    top: $spacing;
+    left: $spacing;
+    z-index: 2;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    input {
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid $color-text-faded;
+      background-color: $color-background-content;
+      color: $color-text;
+      outline: none;
+
+      &:focus-visible {
+        border-color: $color-primary;
+      }
+    }
+
+    .hint {
+      font-size: 0.75rem;
+      color: $color-text-faded;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  .infoCard {
+    position: absolute;
+    top: $spacing;
+    right: $spacing;
+    z-index: 2;
+
+    display: flex;
+    flex-direction: column;
+    padding: $spacing * 0.75;
+    max-height: 60vh;
+    min-width: 17rem;
+
+    border-radius: 0.75rem;
+    background-color: $color-background-content;
+    color: $color-text;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+
+    .cardHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: $spacing;
+      padding: 0 0.25rem 0.5rem;
+      border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+
+      .cardTitle {
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: $color-text-faded;
+      }
+
+      .clearAll {
+        @include plainButton;
+        font-size: 0.8rem;
+        color: $color-text-faded;
+
+        &:hover,
+        &:focus-visible {
+          color: $color-text;
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .selectedList {
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      overflow-y: auto;
+    }
+
+    .selectedUser {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0.25rem;
+      border-radius: 0.5rem;
+
+      &:not(:last-child) {
+        border-bottom: 1px solid rgba(128, 128, 128, 0.12);
+      }
+
+      &:hover {
+        background-color: rgba(128, 128, 128, 0.1);
+      }
+
+      img {
+        width: 2.75rem;
+        height: 2.75rem;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid transparent; // color set inline per community
+        flex-shrink: 0;
+      }
+
+      .info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.125rem;
+        min-width: 0;
+
+        .username {
+          font-weight: 700;
+          color: $color-text;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+
+          &:hover {
+            color: $color-primary;
+          }
+        }
+
+        .stats {
+          font-size: 0.8rem;
+          color: $color-text-faded;
+          white-space: nowrap;
+        }
+      }
+
+      .close {
+        @include plainButton;
+        margin-left: auto;
+        flex-shrink: 0;
+
+        width: 1.5rem;
+        height: 1.5rem;
+        line-height: 1;
+        border-radius: 50%;
+        color: $color-text-faded;
+        font-size: 1rem;
+
+        &:hover,
+        &:focus-visible {
+          &:not(:disabled) {
+            background-color: rgba(128, 128, 128, 0.2);
+            color: $color-text;
+          }
+        }
+      }
+    }
+  }
+
+  .legend {
+    position: absolute;
+    bottom: $spacing * 2;
+    left: $spacing;
+    z-index: 2;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    padding: $spacing * 0.75;
+    max-width: 16rem;
+
+    border-radius: 0.75rem;
+    background-color: $color-background-content;
+    color: $color-text;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+
+    .legendTitle {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: $color-text-faded;
+      margin-bottom: 0.25rem;
+    }
+
+    > button {
+      @include plainButton;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      padding: 0.25rem 0.4rem;
+      border-radius: 0.25rem;
+      color: $color-text;
+      font-size: 0.85rem;
+      text-align: left;
+
+      &:hover,
+      &:focus-visible {
+        &:not(:disabled) {
+          background-color: rgba(128, 128, 128, 0.15);
+        }
+      }
+
+      &.active {
+        background-color: rgba(128, 128, 128, 0.25);
+        font-weight: 700;
+      }
+
+      .swatch {
+        flex-shrink: 0;
+        width: 0.75rem;
+        height: 0.75rem;
+        border-radius: 50%;
+      }
+
+      .count {
+        color: $color-text-faded;
+        font-size: 0.75rem;
+      }
+    }
+
+    .legendHint {
+      margin-top: 0.25rem;
+      font-size: 0.7rem;
+      color: $color-text-faded;
+    }
+  }
+}

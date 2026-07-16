@@ -5,11 +5,13 @@ export type GraphResponse = {
   links: {
     source: number;
     target: number;
+    influence_type: number;
   }[];
   nodes: {
     avatar_url: string;
     id: number;
     mentions: number;
+    influenced_by: number;
     username: string;
   }[];
 };
@@ -19,32 +21,25 @@ export const getGraphData = () =>
     .get<GraphResponse>(`${process.env.NEXT_PUBLIC_API_URL}/graph`)
     .then((res) => res.data);
 
+// Module-level so react-query can memoize the result between renders.
+// The backend only returns users with at least one influence edge, so no
+// client-side node filtering is needed. Dropping links with missing
+// endpoints is a safety net (O(N + L)).
+const selectGraphData = (data: GraphResponse) => {
+  const nodeIds = new Set(data.nodes.map((node) => node.id));
+
+  return {
+    // Copy before sorting to avoid mutating the react-query cache
+    nodes: [...data.nodes].sort((a, b) => b.mentions - a.mentions),
+    links: data.links.filter(
+      (link) => nodeIds.has(link.source) && nodeIds.has(link.target),
+    ),
+  };
+};
+
 export const useGraphData = () =>
   useQuery({
     queryKey: ['graph'],
     queryFn: getGraphData,
-    select: (data) => {
-      const filteredNodes = data.nodes.filter((node) => {
-        return data.links.some(
-          (link) => link.source === node.id || link.target === node.id,
-        );
-      });
-
-      // Sort the filtered nodes by 'mentions' in descending order
-      const sortedFilteredNodes = filteredNodes.sort(
-        (a, b) => b.mentions - a.mentions,
-      );
-
-      const filteredData = {
-        nodes: sortedFilteredNodes,
-        links: data.links.filter((link) => {
-          // Keep only links where both nodes are in the filtered list
-          return sortedFilteredNodes.some(
-            (node) => node.id === link.source || node.id === link.target,
-          );
-        }),
-      };
-
-      return filteredData;
-    },
+    select: selectGraphData,
   });
