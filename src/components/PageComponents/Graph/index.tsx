@@ -1,4 +1,4 @@
-import { forceCollide } from 'd3-force';
+import { forceCollide, forceX, forceY } from 'd3-force';
 import Link from 'next/link';
 import {
   type FC,
@@ -9,7 +9,11 @@ import {
   useRef,
   useState,
 } from 'react';
-import type { ForceGraphMethods, NodeObject } from 'react-force-graph-2d';
+import type {
+  ForceGraphMethods,
+  LinkObject,
+  NodeObject,
+} from 'react-force-graph-2d';
 import ForceGraph from 'react-force-graph-2d';
 
 import { type GraphResponse, useGraphData } from '@services/graph';
@@ -27,11 +31,8 @@ type NodeExtra = GraphResponse['nodes'][number] & {
 };
 type LinkExtra = { influence_type: number };
 type GraphNode = NodeObject<NodeExtra>;
-type LinkEnd = string | number | { id?: string | number };
-type GraphLink = LinkExtra & {
-  source: string | number | GraphNode;
-  target: string | number | GraphNode;
-};
+type GraphLink = LinkObject<NodeExtra, LinkExtra>;
+type LinkEnd = GraphLink['source'];
 
 // Matches the library default (nodeRelSize) so force strengths keep behaving
 // the same as the previous nodeVal-based rendering
@@ -61,12 +62,81 @@ const LEGEND_SIZE = 8;
 // Shared instance — returning a fresh array per link per frame is GC churn
 const OUTBOUND_DASH = [2, 2];
 
+// Bump the version whenever force configuration changes, so stale layouts
+// computed under old physics are discarded
+const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v1';
+
+// Base resolution label sprites are rasterized at; on-screen labels are this
+// sprite scaled, so past ~48px they soften slightly
+const LABEL_SPRITE_FONT_PX = 48;
+
+// High-DPI screens quadruple canvas fill cost; capping the ratio trades a
+// hint of sharpness for half the pixels or better on 2x displays
+const DEVICE_PIXEL_RATIO_CAP = 1.5;
+
+const capDevicePixelRatio = (): (() => void) => {
+  if (typeof window === 'undefined') return () => {};
+  if ((window.devicePixelRatio || 1) <= DEVICE_PIXEL_RATIO_CAP)
+    return () => {};
+  const descriptor = Object.getOwnPropertyDescriptor(
+    window,
+    'devicePixelRatio',
+  );
+  Object.defineProperty(window, 'devicePixelRatio', {
+    get: () => DEVICE_PIXEL_RATIO_CAP,
+    configurable: true,
+  });
+  return () => {
+    if (descriptor)
+      Object.defineProperty(window, 'devicePixelRatio', descriptor);
+    else Reflect.deleteProperty(window, 'devicePixelRatio');
+  };
+};
+
 // ForceGraph replaces link endpoints (ids) with node object references once
 // the simulation starts, so both shapes must be handled
 const endId = (end?: LinkEnd): number | undefined => {
   if (end === undefined) return undefined;
   if (typeof end === 'object') return end.id as number;
   return Number(end);
+};
+
+const nodeVal = (node: GraphNode) => node.mentions ** 1.7;
+const nodeTooltip = (node: GraphNode) => `${node.username} - ${node.mentions}`;
+
+// Link hover/click is unused, so painting every link onto the interaction
+// shadow canvas is wasted work
+const skipLinkPointerPaint = () => {};
+
+const hashGraphData = (data: GraphResponse) => {
+  let hash = 5381;
+  const mix = (value: number) => {
+    hash = ((hash * 33) ^ value) >>> 0;
+  };
+  for (const node of data.nodes) {
+    mix(node.id);
+    mix(node.mentions);
+  }
+  for (const link of data.links) {
+    mix(link.source * 31 + link.target);
+  }
+  return hash;
+};
+
+type StoredLayout = { hash: number; positions: [number, number, number][] };
+
+const loadCachedLayout = (hash: number): Map<number, [number, number]> | null => {
+  try {
+    const raw = localStorage.getItem(LAYOUT_CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as StoredLayout;
+    if (parsed.hash !== hash || !Array.isArray(parsed.positions)) return null;
+    return new Map(
+      parsed.positions.map(([id, x, y]) => [id, [x, y] as [number, number]]),
+    );
+  } catch {
+    return null;
+  }
 };
 
 // Label propagation: every node repeatedly adopts the most common community
@@ -117,20 +187,37 @@ const computeCommunities = (
   return labels;
 };
 
+// Focus/highlight state lives in refs and is read by stable canvas accessors:
+// hovering repaints the canvas directly without a React render, which was
+// re-diffing every accessor prop per hover change
+type ViewState = {
+  focusIds: Set<number>;
+  highlightSet: Set<number> | null;
+  activeCommunity: number | null;
+};
+
 const GraphPage: FC = () => {
   const { data, isLoading } = useGraphData();
 
   const graphRef = useRef<ForceGraphMethods<GraphNode>>();
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [hoverId, setHoverId] = useState<number | null>(null);
   const [activeCommunity, setActiveCommunity] = useState<number | null>(null);
   const [search, setSearch] = useState('');
 
+  // Applied before the canvas mounts so it sizes itself at the capped ratio
+  const [restoreDevicePixelRatio] = useState(() => capDevicePixelRatio());
+  useEffect(() => restoreDevicePixelRatio, [restoreDevicePixelRatio]);
+
   // Copies nodes/links because ForceGraph mutates them (layout coordinates,
   // link endpoint object references)
-  const graphData = useMemo(() => {
-    if (!data) return { nodes: [] as GraphNode[], links: [] as GraphLink[] };
+  const { graphData, layoutHash, layoutFromCache } = useMemo(() => {
+    if (!data)
+      return {
+        graphData: { nodes: [] as GraphNode[], links: [] as GraphLink[] },
+        layoutHash: 0,
+        layoutFromCache: false,
+      };
 
     const labels = computeCommunities(data.nodes, data.links);
     const communitySizes = new Map<number, number>();
@@ -144,20 +231,33 @@ const GraphPage: FC = () => {
         .map(([label], index) => [label, PALETTE[index % PALETTE.length]]),
     );
 
+    const hash = hashGraphData(data);
+    const cachedPositions = loadCachedLayout(hash);
+
+    const nodes = data.nodes.map<GraphNode>((node) => {
+      const community = labels.get(node.id) as number;
+      const color = colorByCommunity.get(community) ?? '#999';
+      const position = cachedPositions?.get(node.id);
+      return {
+        ...node,
+        community,
+        color,
+        colorFaded: `${color}30`,
+        colorSemi: `${color}80`,
+        radius: Math.sqrt(node.mentions ** 1.7) * NODE_REL_SIZE,
+        ...(position ? { x: position[0], y: position[1] } : {}),
+      };
+    });
+
     return {
-      nodes: data.nodes.map<GraphNode>((node) => {
-        const community = labels.get(node.id) as number;
-        const color = colorByCommunity.get(community) ?? '#999';
-        return {
-          ...node,
-          community,
-          color,
-          colorFaded: `${color}30`,
-          colorSemi: `${color}80`,
-          radius: Math.sqrt(node.mentions ** 1.7) * NODE_REL_SIZE,
-        };
-      }),
-      links: data.links.map<GraphLink>((link) => ({ ...link })),
+      graphData: {
+        nodes,
+        links: data.links.map<GraphLink>((link) => ({ ...link })),
+      },
+      layoutHash: hash,
+      layoutFromCache:
+        cachedPositions !== null &&
+        data.nodes.every((node) => cachedPositions.has(node.id)),
     };
   }, [data]);
 
@@ -205,32 +305,6 @@ const GraphPage: FC = () => {
       .slice(0, LEGEND_SIZE);
   }, [graphData]);
 
-  // Nodes with a highlight ring (directly picked by the user)
-  const focusIds = useMemo(() => {
-    const set = new Set(selectedIds);
-    if (hoverId !== null) set.add(hoverId);
-    return set;
-  }, [selectedIds, hoverId]);
-
-  // Everything drawn at full opacity; null = no filter active
-  const highlightSet = useMemo(() => {
-    if (activeCommunity !== null) {
-      const set = new Set<number>();
-      for (const node of graphData.nodes) {
-        if (node.community === activeCommunity) set.add(node.id as number);
-      }
-      return set;
-    }
-    if (focusIds.size === 0) return null;
-    const set = new Set<number>();
-    for (const id of Array.from(focusIds)) {
-      set.add(id);
-      const linked = neighbors.get(id);
-      if (linked) for (const neighborId of Array.from(linked)) set.add(neighborId);
-    }
-    return set;
-  }, [activeCommunity, graphData, focusIds, neighbors]);
-
   const selectedNodes = useMemo(
     () =>
       selectedIds
@@ -238,6 +312,71 @@ const GraphPage: FC = () => {
         .filter((node): node is GraphNode => node !== undefined),
     [selectedIds, nodeById],
   );
+
+  const viewRef = useRef<ViewState>({
+    focusIds: new Set(),
+    highlightSet: null,
+    activeCommunity: null,
+  });
+  const hoverRef = useRef<number | null>(null);
+  const selectedRef = useRef<number[]>([]);
+  const communityRef = useRef<number | null>(null);
+  const dataRef = useRef({
+    nodes: graphData.nodes,
+    neighbors,
+    layoutHash,
+  });
+  const labelSprites = useRef(new Map<number, HTMLCanvasElement | null>());
+
+  // Rebuilds the focus/highlight sets from the refs and nudges the canvas
+  // into a repaint (the library only redraws on prop changes or interaction)
+  const refreshView = useCallback(() => {
+    const { nodes, neighbors: neighborMap } = dataRef.current;
+    const focusIds = new Set(selectedRef.current);
+    if (hoverRef.current !== null) focusIds.add(hoverRef.current);
+    const community = communityRef.current;
+
+    let highlightSet: Set<number> | null = null;
+    if (community !== null) {
+      highlightSet = new Set<number>();
+      for (const node of nodes) {
+        if (node.community === community)
+          highlightSet.add(node.id as number);
+      }
+    } else if (focusIds.size > 0) {
+      highlightSet = new Set<number>();
+      for (const id of Array.from(focusIds)) {
+        highlightSet.add(id);
+        const linked = neighborMap.get(id);
+        if (linked)
+          for (const neighborId of Array.from(linked))
+            highlightSet.add(neighborId);
+      }
+    }
+
+    viewRef.current = { focusIds, highlightSet, activeCommunity: community };
+
+    const graph = graphRef.current;
+    if (graph) {
+      try {
+        // Re-centering on the current center is a no-op visually but flags
+        // the canvas as needing a redraw
+        const center = graph.centerAt();
+        graph.centerAt(center.x, center.y);
+      } catch {
+        // Canvas not initialized yet; the first natural draw will pick up
+        // the current view state
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    dataRef.current = { nodes: graphData.nodes, neighbors, layoutHash };
+    labelSprites.current.clear();
+    selectedRef.current = selectedIds;
+    communityRef.current = activeCommunity;
+    refreshView();
+  }, [graphData, neighbors, layoutHash, selectedIds, activeCommunity, refreshView]);
 
   useEffect(() => {
     const graph = graphRef.current;
@@ -265,6 +404,17 @@ const GraphPage: FC = () => {
         // biome-ignore lint/suspicious/noExplicitAny: idc
         forceCollide().radius((node: any) => node.mentions ** 1.2 + 5),
       );
+
+      // Weight-based gravity replaces the uniform centering force: heavily
+      // mentioned mappers are pulled to the middle, small nodes barely at
+      // all, so repulsion pushes them to the rim instead of letting them
+      // pool in the center
+      // biome-ignore lint/suspicious/noExplicitAny: idc
+      const centerPull = (node: any) =>
+        Math.min(node.mentions / 100, 1) * 0.1 + 0.003;
+      graph.d3Force('center', null);
+      graph.d3Force('x', forceX(0).strength(centerPull));
+      graph.d3Force('y', forceY(0).strength(centerPull));
     }
   }, []);
 
@@ -279,22 +429,126 @@ const GraphPage: FC = () => {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
-  const isFocusedLink = useCallback(
-    (link: { source?: LinkEnd; target?: LinkEnd }): boolean => {
-      if (focusIds.size === 0) return false;
-      const source = endId(link.source);
-      const target = endId(link.target);
-      return (
-        (source !== undefined && focusIds.has(source)) ||
-        (target !== undefined && focusIds.has(target))
+  const saveLayout = useCallback(() => {
+    const { nodes, layoutHash: hash } = dataRef.current;
+    if (nodes.length === 0) return;
+    try {
+      const positions = nodes.map<[number, number, number]>((node) => [
+        node.id as number,
+        Math.round(node.x ?? 0),
+        Math.round(node.y ?? 0),
+      ]);
+      localStorage.setItem(
+        LAYOUT_CACHE_KEY,
+        JSON.stringify({ hash, positions } satisfies StoredLayout),
       );
+    } catch {
+      // Storage full or unavailable — layout just recomputes next visit
+    }
+  }, []);
+
+  const isFocusedLink = useCallback((link: GraphLink): boolean => {
+    const { focusIds } = viewRef.current;
+    if (focusIds.size === 0) return false;
+    const source = endId(link.source);
+    const target = endId(link.target);
+    return (
+      (source !== undefined && focusIds.has(source)) ||
+      (target !== undefined && focusIds.has(target))
+    );
+  }, []);
+
+  // Non-matching links are hidden (not drawn faintly) while a filter is
+  // active — stroking thousands of near-invisible links made every hover
+  // repaint expensive
+  const linkVisibility = useCallback(
+    (link: GraphLink) => {
+      const { focusIds, activeCommunity: community } = viewRef.current;
+      if (community !== null) {
+        return (
+          typeof link.source === 'object' &&
+          typeof link.target === 'object' &&
+          link.source.community === community &&
+          link.target.community === community
+        );
+      }
+      if (focusIds.size > 0) return isFocusedLink(link);
+      return true;
     },
-    [focusIds],
+    [isFocusedLink],
   );
+
+  const linkColor = useCallback(
+    (link: GraphLink) => {
+      const { focusIds, activeCommunity: community } = viewRef.current;
+      const source = typeof link.source === 'object' ? link.source : undefined;
+      if (community !== null) return source?.colorSemi ?? '#999';
+      if (focusIds.size > 0) return source?.color ?? '#999';
+      return source?.colorFaded ?? 'rgba(128, 128, 128, 0.1)';
+    },
+    [],
+  );
+
+  const linkWidth = useCallback(
+    (link: GraphLink) => (isFocusedLink(link) ? 2 : 0.2),
+    [isFocusedLink],
+  );
+
+  const linkLineDash = useCallback((link: GraphLink) => {
+    // Outbound from selected/hovered nodes (influences they added) render
+    // dotted; inbound stay solid
+    const { focusIds } = viewRef.current;
+    if (focusIds.size === 0) return null;
+    const target = endId(link.target);
+    return target !== undefined && focusIds.has(target) ? OUTBOUND_DASH : null;
+  }, []);
+
+  // Usernames rasterize once into an offscreen sprite; per-frame label cost
+  // becomes a drawImage instead of strokeText/fillText (the slowest canvas
+  // primitives)
+  const getLabelSprite = useCallback((node: GraphNode) => {
+    const cache = labelSprites.current;
+    const id = node.id as number;
+    let sprite = cache.get(id);
+    if (sprite === undefined) {
+      sprite = null;
+      const canvas = document.createElement('canvas');
+      const spriteCtx = canvas.getContext('2d');
+      if (spriteCtx) {
+        const font = `${LABEL_SPRITE_FONT_PX}px Sans-Serif`;
+        spriteCtx.font = font;
+        canvas.width = Math.ceil(
+          spriteCtx.measureText(node.username).width + LABEL_SPRITE_FONT_PX / 2,
+        );
+        canvas.height = Math.ceil(LABEL_SPRITE_FONT_PX * 1.4);
+        spriteCtx.font = font;
+        spriteCtx.textAlign = 'center';
+        spriteCtx.textBaseline = 'top';
+        spriteCtx.lineWidth = LABEL_SPRITE_FONT_PX / 5;
+        spriteCtx.strokeStyle = 'rgba(0, 0, 0, 0.75)';
+        spriteCtx.strokeText(
+          node.username,
+          canvas.width / 2,
+          LABEL_SPRITE_FONT_PX * 0.15,
+        );
+        spriteCtx.fillStyle = '#ffffff';
+        spriteCtx.fillText(
+          node.username,
+          canvas.width / 2,
+          LABEL_SPRITE_FONT_PX * 0.15,
+        );
+        sprite = canvas;
+      }
+      cache.set(id, sprite);
+    }
+    return sprite;
+  }, []);
 
   const paintNode = useCallback(
     (node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number) => {
       if (node.x === undefined || node.y === undefined) return;
+      const { focusIds, highlightSet, activeCommunity: community } =
+        viewRef.current;
       const dimmed = highlightSet !== null && !highlightSet.has(node.id);
       const screenRadius = node.radius * globalScale;
 
@@ -333,30 +587,28 @@ const GraphPage: FC = () => {
         (screenRadius > 12 ||
           (highlightSet !== null &&
             highlightSet.size <= 150 &&
-            activeCommunity === null &&
+            community === null &&
             screenRadius > 4));
       if (showLabel) {
-        const fontSize = Math.max(12 / globalScale, node.radius * 0.3);
-        ctx.font = `${fontSize}px Sans-Serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'top';
-        ctx.lineWidth = fontSize / 5;
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.75)';
-        ctx.strokeText(
-          node.username,
-          node.x,
-          node.y + node.radius + fontSize * 0.3,
-        );
-        ctx.fillStyle = '#ffffff';
-        ctx.fillText(
-          node.username,
-          node.x,
-          node.y + node.radius + fontSize * 0.3,
-        );
+        const sprite = getLabelSprite(node);
+        if (sprite) {
+          const fontSize = Math.max(12 / globalScale, node.radius * 0.3);
+          const scale = fontSize / LABEL_SPRITE_FONT_PX;
+          ctx.drawImage(
+            sprite,
+            node.x - (sprite.width * scale) / 2,
+            node.y +
+              node.radius +
+              fontSize * 0.3 -
+              LABEL_SPRITE_FONT_PX * 0.15 * scale,
+            sprite.width * scale,
+            sprite.height * scale,
+          );
+        }
       }
       ctx.globalAlpha = 1;
     },
-    [highlightSet, focusIds, activeCommunity],
+    [getLabelSprite],
   );
 
   const paintPointerArea = useCallback(
@@ -396,6 +648,31 @@ const GraphPage: FC = () => {
     });
   }, []);
 
+  const handleNodeHover = useCallback(
+    (node: GraphNode | null) => {
+      hoverRef.current = node ? (node.id as number) : null;
+      refreshView();
+    },
+    [refreshView],
+  );
+
+  const handleNodeClick = useCallback(
+    (node: GraphNode, event: MouseEvent) => {
+      toggleSelect(
+        node.id as number,
+        event.ctrlKey || event.metaKey || event.shiftKey,
+      );
+      if (node.x !== undefined && node.y !== undefined)
+        graphRef.current?.centerAt(node.x, node.y, 400);
+    },
+    [toggleSelect],
+  );
+
+  const handleBackgroundClick = useCallback(() => {
+    setSelectedIds([]);
+    setActiveCommunity(null);
+  }, []);
+
   const handleSearch = (event: FormEvent) => {
     event.preventDefault();
     const query = search.trim().toLowerCase();
@@ -418,6 +695,14 @@ const GraphPage: FC = () => {
       graphRef.current?.zoom(2.5, 600);
     }
   };
+
+  const hoverFromList = useCallback(
+    (id: number | null) => {
+      hoverRef.current = id;
+      refreshView();
+    },
+    [refreshView],
+  );
 
   return (
     <div className={styles.graphPage}>
@@ -454,8 +739,8 @@ const GraphPage: FC = () => {
               <li
                 key={node.id}
                 className={styles.selectedUser}
-                onMouseEnter={() => setHoverId(node.id as number)}
-                onMouseLeave={() => setHoverId(null)}
+                onMouseEnter={() => hoverFromList(node.id as number)}
+                onMouseLeave={() => hoverFromList(null)}
               >
                 <img
                   src={node.avatar_url}
@@ -524,60 +809,24 @@ const GraphPage: FC = () => {
       <ForceGraph<NodeExtra, LinkExtra>
         graphData={graphData}
         nodeRelSize={NODE_REL_SIZE}
-        nodeVal={(node) => node.mentions ** 1.7}
-        nodeLabel={(node) => `${node.username} - ${node.mentions}`}
+        nodeVal={nodeVal}
+        nodeLabel={nodeTooltip}
         nodeCanvasObject={paintNode}
         nodePointerAreaPaint={paintPointerArea}
-        // Non-matching links are hidden (not drawn faintly) while a filter is
-        // active — stroking thousands of near-invisible links made every
-        // hover repaint expensive
-        linkVisibility={(link) => {
-          if (activeCommunity !== null) {
-            return (
-              typeof link.source === 'object' &&
-              typeof link.target === 'object' &&
-              link.source.community === activeCommunity &&
-              link.target.community === activeCommunity
-            );
-          }
-          if (focusIds.size > 0) return isFocusedLink(link);
-          return true;
-        }}
-        linkColor={(link) => {
-          const source =
-            typeof link.source === 'object' ? link.source : undefined;
-          if (activeCommunity !== null) return source?.colorSemi ?? '#999';
-          if (focusIds.size > 0) return source?.color ?? '#999';
-          return source?.colorFaded ?? 'rgba(128, 128, 128, 0.1)';
-        }}
-        linkWidth={(link) => (isFocusedLink(link) ? 2 : 0.2)}
-        linkLineDash={(link) => {
-          // Outbound from selected/hovered nodes (influences they added)
-          // render dotted; inbound stay solid
-          if (focusIds.size === 0) return null;
-          const target = endId(link.target);
-          return target !== undefined && focusIds.has(target)
-            ? OUTBOUND_DASH
-            : null;
-        }}
+        linkVisibility={linkVisibility}
+        linkColor={linkColor}
+        linkWidth={linkWidth}
+        linkLineDash={linkLineDash}
+        linkPointerAreaPaint={skipLinkPointerPaint}
         maxZoom={10}
         enableNodeDrag={false}
-        warmupTicks={5}
-        cooldownTicks={100}
+        warmupTicks={layoutFromCache ? 0 : 5}
+        cooldownTicks={layoutFromCache ? 0 : 100}
         autoPauseRedraw
-        onNodeClick={(node, event) => {
-          toggleSelect(
-            node.id as number,
-            event.ctrlKey || event.metaKey || event.shiftKey,
-          );
-          if (node.x !== undefined && node.y !== undefined)
-            graphRef.current?.centerAt(node.x, node.y, 400);
-        }}
-        onNodeHover={(node) => setHoverId(node ? (node.id as number) : null)}
-        onBackgroundClick={() => {
-          setSelectedIds([]);
-          setActiveCommunity(null);
-        }}
+        onEngineStop={saveLayout}
+        onNodeClick={handleNodeClick}
+        onNodeHover={handleNodeHover}
+        onBackgroundClick={handleBackgroundClick}
         ref={graphRef}
         height={window?.innerHeight - 90}
       />
