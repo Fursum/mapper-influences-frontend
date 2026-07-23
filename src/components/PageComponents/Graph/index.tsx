@@ -1,5 +1,6 @@
 import { forceCollide, forceX, forceY } from 'd3-force';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import {
   type FC,
   type FormEvent,
@@ -19,6 +20,7 @@ import ForceGraph from 'react-force-graph-2d';
 import { type GraphResponse, useGraphData } from '@services/graph';
 import { useGlobalTheme } from '@states/theme';
 
+import { DEFAULT_PRESET, FORCE_PRESETS, type ForcePreset } from './presets';
 import styles from './style.module.scss';
 
 type NodeExtra = GraphResponse['nodes'][number] & {
@@ -93,25 +95,27 @@ const NEIGHBOR_LABEL_LIMIT = 150;
 // Prevents a burst of canvas text rasterization on the first hover of a hub.
 const SPRITE_BUDGET_PER_FRAME = 24;
 
-// Bump the version whenever force configuration changes, so stale layouts
-// computed under old physics are discarded
-const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v64';
+// Bump the version whenever force semantics change so stale layouts computed
+// under old physics are discarded; the preset name is appended per entry so
+// each lab preset caches its own settled layout
+const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v65';
 
 // Single source of truth for the collision sphere, shared by the live force
 // and the post-settle cleanup pass
-// biome-ignore lint/suspicious/noExplicitAny: d3 node
-const collideRadius = (node: any) => node.radius * 1.4 + 20;
+const makeCollideRadius = (collision: ForcePreset['collision']) =>
+  // biome-ignore lint/suspicious/noExplicitAny: d3 node
+  (node: any) => node.radius * collision.radiusScale + collision.radiusPad;
 
 // Terminal velocity, scaled with alpha: generous while the sim is hot so
 // clusters can form and travel, tightening as it cools so late kicks cannot
 // fling light nodes. Registered last to cap the net velocity of all forces.
-const createSpeedLimit = (baseSpeed: number, earlyBoost: number) => {
+const createSpeedLimit = (config: ForcePreset['speedCap']) => {
   let nodes: GraphNode[] = [];
-  // Per-node scale: influential mappers are anchors and should barely move
-  // (~0.2x cap), light mappers travel freely (~1.15x)
+  // Per-node scale: influential mappers are anchors and should barely move,
+  // light mappers travel freely
   let capScales: number[] = [];
   const force = (alpha: number) => {
-    const maxSpeed = baseSpeed + earlyBoost * alpha;
+    const maxSpeed = config.base + config.earlyBoost * alpha;
     for (let index = 0; index < nodes.length; index++) {
       const node = nodes[index];
       const nodeMax = maxSpeed * capScales[index];
@@ -127,7 +131,9 @@ const createSpeedLimit = (baseSpeed: number, earlyBoost: number) => {
   force.initialize = (simNodes: GraphNode[]) => {
     nodes = simNodes;
     capScales = simNodes.map(
-      (node) => 1.15 - 0.95 * Math.min(node.mentions / 100, 1),
+      (node) =>
+        config.maxScale -
+        config.influenceScale * Math.min(node.mentions / 100, 1),
     );
   };
   return force;
@@ -138,11 +144,11 @@ const createSpeedLimit = (baseSpeed: number, earlyBoost: number) => {
 // an inverse-mass factor every tick (after all forces) makes influential
 // mappers heavy — mutual interactions move the light party, and the biggest
 // cluster becomes the reference frame others arrange around.
-const createInertia = () => {
+const createInertia = (config: ForcePreset['inertia']) => {
   let nodes: GraphNode[] = [];
   // Mass grows as the simulation cools: giants stay mobile during the hot
-  // sorting phase (keep 70% of injected velocity), then progressively
-  // freeze into anchors (keep 10%) so nothing displaces the settled core
+  // sorting phase, then progressively freeze into anchors so nothing
+  // displaces the settled core
   let earlyKeeps: number[] = [];
   let lateKeeps: number[] = [];
   const force = (alpha: number) => {
@@ -159,8 +165,10 @@ const createInertia = () => {
     const influences = simNodes.map((node) =>
       Math.min(node.mentions / 100, 1),
     );
-    earlyKeeps = influences.map((influence) => 1 - 0.3 * influence);
-    lateKeeps = influences.map((influence) => 1 - 0.9 * influence);
+    earlyKeeps = influences.map(
+      (influence) => 1 - config.earlyLoss * influence,
+    );
+    lateKeeps = influences.map((influence) => 1 - config.lateLoss * influence);
   };
   return force;
 };
@@ -232,13 +240,18 @@ const recenterLayout = (nodes: GraphNode[]) => {
 // reel them back get clamped onto the layout's outer rim (95th-percentile
 // radius with slack). The collision pass afterwards separates any overlap
 // this introduces.
-const clampOutliers = (nodes: GraphNode[]) => {
+const clampOutliers = (
+  nodes: GraphNode[],
+  cleanup: ForcePreset['cleanup'],
+) => {
   if (nodes.length < 20) return;
   const distances = nodes.map((node) =>
     Math.hypot(node.x ?? 0, node.y ?? 0),
   );
   const sorted = [...distances].sort((a, b) => a - b);
-  const limit = sorted[Math.floor(sorted.length * 0.9)] * 1.25;
+  const limit =
+    sorted[Math.floor(sorted.length * cleanup.outlierPercentile)] *
+    cleanup.outlierSlack;
   if (limit <= 0) return;
   nodes.forEach((node, index) => {
     const distance = distances[index];
@@ -254,9 +267,13 @@ const clampOutliers = (nodes: GraphNode[]) => {
 // clusters, alpha running out). This runs pure collision passes on the
 // settled positions until nothing moves, guaranteeing separation before the
 // layout is drawn and cached.
-const resolveResidualOverlaps = (nodes: GraphNode[]) => {
+const resolveResidualOverlaps = (
+  nodes: GraphNode[],
+  collision: ForcePreset['collision'],
+  cleanup: ForcePreset['cleanup'],
+) => {
   const resolver = forceCollide()
-    .radius(collideRadius)
+    .radius(makeCollideRadius(collision))
     .strength(1)
     .iterations(4);
   // d3-force v3 initialize requires a random source (used to jiggle exactly
@@ -268,7 +285,7 @@ const resolveResidualOverlaps = (nodes: GraphNode[]) => {
   };
   // biome-ignore lint/suspicious/noExplicitAny: d3 force typing
   (resolver as any).initialize(nodes, seededRandom);
-  for (let pass = 0; pass < 40; pass++) {
+  for (let pass = 0; pass < cleanup.maxPasses; pass++) {
     for (const node of nodes) {
       node.vx = 0;
       node.vy = 0;
@@ -280,7 +297,7 @@ const resolveResidualOverlaps = (nodes: GraphNode[]) => {
       node.y = (node.y ?? 0) + (node.vy ?? 0);
       moved += Math.abs(node.vx ?? 0) + Math.abs(node.vy ?? 0);
     }
-    if (moved < 0.5) break;
+    if (moved < cleanup.settleThreshold) break;
   }
   for (const node of nodes) {
     node.vx = 0;
@@ -347,9 +364,12 @@ const hashGraphData = (data: GraphResponse) => {
 
 type StoredLayout = { hash: number; positions: [number, number, number][] };
 
-const loadCachedLayout = (hash: number): Map<number, [number, number]> | null => {
+const loadCachedLayout = (
+  cacheKey: string,
+  hash: number,
+): Map<number, [number, number]> | null => {
   try {
-    const raw = localStorage.getItem(LAYOUT_CACHE_KEY);
+    const raw = localStorage.getItem(cacheKey);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as StoredLayout;
     if (parsed.hash !== hash || !Array.isArray(parsed.positions)) return null;
@@ -448,12 +468,24 @@ type ViewState = {
 
 const GraphPage: FC = () => {
   const { data, isLoading } = useGraphData();
+  const router = useRouter();
 
   const graphRef = useRef<ForceGraphMethods<GraphNode>>();
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [activeCommunity, setActiveCommunity] = useState<number | null>(null);
   const [search, setSearch] = useState('');
+
+  // Preset lab: dev builds always get the panel, production needs ?lab=1
+  const labOpen =
+    process.env.NODE_ENV === 'development' || router.query.lab === '1';
+  const [presetName, setPresetName] = useState(DEFAULT_PRESET.name);
+  const preset =
+    FORCE_PRESETS.find((candidate) => candidate.name === presetName) ??
+    DEFAULT_PRESET;
+  // Each preset settles into its own cached layout, so switching back to an
+  // already-explored preset restores instantly instead of re-simulating
+  const layoutCacheKey = `${LAYOUT_CACHE_KEY}:${preset.name}`;
 
   const isDarkTheme = useGlobalTheme((state) => state.theme) !== 'light';
 
@@ -485,7 +517,7 @@ const GraphPage: FC = () => {
     );
 
     const hash = hashGraphData(data);
-    const cachedPositions = loadCachedLayout(hash);
+    const cachedPositions = loadCachedLayout(layoutCacheKey, hash);
 
     // Deterministic two-pass seeding (nodes are sorted by mentions desc):
     // notable mappers go on a phyllotaxis spiral by rank — biggest in the
@@ -505,11 +537,13 @@ const GraphPage: FC = () => {
       adjacency.get(link.target)?.push(link.source);
     }
 
-    const SPIRAL_MIN_MENTIONS = 10;
+    const {
+      spiralMinMentions,
+      communitySpacing,
+      memberSpacing,
+      anchorRingMargin,
+    } = preset.seeding;
     const GOLDEN_ANGLE = 2.399963229728653;
-    // Distance between community centroids and between members inside one
-    const COMMUNITY_SPACING = 6000;
-    const MEMBER_SPACING = 800;
     const seeded = new Map<number, [number, number]>();
     if (!cachedPositions) {
       // Communities claim spiral slots by aggregate influence (biggest in
@@ -517,7 +551,7 @@ const GraphPage: FC = () => {
       // related clusters spawn adjacent instead of wherever raw rank lands
       const communityWeight = new Map<number, number>();
       for (const node of data.nodes) {
-        if (node.mentions < SPIRAL_MIN_MENTIONS) continue;
+        if (node.mentions < spiralMinMentions) continue;
         const community = labels.get(node.id) as number;
         communityWeight.set(
           community,
@@ -533,7 +567,7 @@ const GraphPage: FC = () => {
       for (const node of data.nodes) {
         let anchor: [number, number] | undefined;
         let anchorMentions = 0;
-        if (node.mentions < SPIRAL_MIN_MENTIONS) {
+        if (node.mentions < spiralMinMentions) {
           for (const neighborId of adjacency.get(node.id) ?? []) {
             const neighborMentions = mentionsById.get(neighborId) ?? 0;
             const position = seeded.get(neighborId);
@@ -547,7 +581,9 @@ const GraphPage: FC = () => {
           // Deterministic offset ring around the anchor, outside both bodies
           const offsetAngle = (node.id % 997) * 0.006302;
           const offsetDistance =
-            visualRadius(anchorMentions) + visualRadius(node.mentions) + 80;
+            visualRadius(anchorMentions) +
+            visualRadius(node.mentions) +
+            anchorRingMargin;
           seeded.set(node.id, [
             anchor[0] + Math.cos(offsetAngle) * offsetDistance,
             anchor[1] + Math.sin(offsetAngle) * offsetDistance,
@@ -556,11 +592,11 @@ const GraphPage: FC = () => {
           const community = labels.get(node.id) as number;
           const slot = communitySlot.get(community) ?? communitySlot.size;
           const communityAngle = slot * GOLDEN_ANGLE;
-          const communityRadius = COMMUNITY_SPACING * Math.sqrt(slot);
+          const communityRadius = communitySpacing * Math.sqrt(slot);
           const member = memberCount.get(community) ?? 0;
           memberCount.set(community, member + 1);
           const memberAngle = member * GOLDEN_ANGLE;
-          const memberRadius = MEMBER_SPACING * Math.sqrt(member);
+          const memberRadius = memberSpacing * Math.sqrt(member);
           seeded.set(node.id, [
             Math.cos(communityAngle) * communityRadius +
               Math.cos(memberAngle) * memberRadius,
@@ -606,7 +642,7 @@ const GraphPage: FC = () => {
         cachedPositions !== null &&
         data.nodes.every((node) => cachedPositions.has(node.id)),
     };
-  }, [data, isDarkTheme]);
+  }, [data, isDarkTheme, preset, layoutCacheKey]);
 
   const nodeById = useMemo(() => {
     const map = new Map<number, GraphNode>();
@@ -691,7 +727,11 @@ const GraphPage: FC = () => {
     linksByNode,
     nodeById,
     layoutHash,
+    layoutCacheKey,
   });
+  // Engine callbacks (tick ramp, settle cleanup) read the active preset
+  // through a ref so their identities stay stable across preset switches
+  const presetRef = useRef(preset);
   const labelSprites = useRef(new Map<number, HTMLCanvasElement | null>());
   const themeRef = useRef(true);
   const tickRef = useRef(0);
@@ -756,7 +796,9 @@ const GraphPage: FC = () => {
       linksByNode,
       nodeById,
       layoutHash,
+      layoutCacheKey,
     };
+    presetRef.current = preset;
     selectedRef.current = selectedIds;
     communityRef.current = activeCommunity;
     refreshView();
@@ -766,142 +808,157 @@ const GraphPage: FC = () => {
     linksByNode,
     nodeById,
     layoutHash,
+    layoutCacheKey,
+    preset,
     selectedIds,
     activeCommunity,
     isDarkTheme,
     refreshView,
   ]);
 
+  // Re-applies the full force stack whenever the active preset (or the graph
+  // instance — ForceGraph remounts per preset via its key) changes
   useEffect(() => {
     const graph = graphRef.current;
-    if (graph) {
-      // Link rest length can never sit below the two endpoint radii: the
-      // old 3000/mentions distance was far smaller than a hub's own radius,
-      // so the spring pulled neighbors inside the blob and permanently
-      // fought the collision force
-      graph
-        .d3Force('link')
-        // biome-ignore lint/suspicious/noExplicitAny: idc
-        ?.distance((link: any) =>
-          Math.max(
-            3000 / (link.source.mentions || 1),
-            link.source.radius + link.target.radius + 40,
-          ),
-        );
-      // TODO: Add influence type for the link distance and strength
-      // Each endpoint pulls proportionally to its influence count: heavily
-      // mentioned mappers drag their connections toward themselves, while
-      // mappers under ~4 mentions contribute next to nothing so leaf nodes
-      // cannot tug the layout
-      const endpointPull = (mentions: number) =>
-        Math.max(Math.min((mentions - 3) / 140, 0.6), 0.002);
-      // Cross-community links get a fraction of the spring: a small mapper
-      // listing two unrelated hubs should not glue their scenes together.
-      // Influences declared BY a giant are the exception — those pull hard
-      // (up to 2.5x) and mostly bypass the cross-community damp, so scenes a
-      // giant explicitly relates to get dragged toward its cluster. Capped
-      // at 1 to keep the spring solver stable.
-      graph.d3Force('link')?.strength(
-        // biome-ignore lint/suspicious/noExplicitAny: idc
-        (link: any) => {
-          const declarerInfluence = Math.min(link.source.mentions / 100, 1);
-          // Declarer-dominated for links touching a giant: a crowd of small
-          // declarers holds its giant loosely, so fan springs cannot add up
-          // to drag related giants apart. Between two small/mid mappers the
-          // spring stays symmetric — small clusters need their full internal
-          // bonds or they scatter.
-          const bothSmall =
-            link.source.mentions < 40 && link.target.mentions < 40;
-          const base = bothSmall
-            ? endpointPull(link.source.mentions) +
-              endpointPull(link.target.mentions)
-            : endpointPull(link.source.mentions) * 1.7 +
-              endpointPull(link.target.mentions) * 0.05;
-          const declarerBoost = 1 + declarerInfluence * 1.5;
-          const communityFactor =
-            link.source.community === link.target.community
-              ? 1
-              : 0.3 + 0.4 * declarerInfluence;
-          return (
-            Math.min(base * declarerBoost * communityFactor, 1) *
-            (bothSmall ? 0.6 : 0.45)
-          );
-        },
+    if (!graph) return;
+    const { springs, charge: chargeConfig, collision, gravity } = preset;
+
+    // Link rest length can never sit below the two endpoint radii: anything
+    // smaller pulls neighbors inside the blob and permanently fights the
+    // collision force
+    graph
+      .d3Force('link')
+      // biome-ignore lint/suspicious/noExplicitAny: idc
+      ?.distance((link: any) =>
+        Math.max(
+          springs.distanceNumerator / (link.source.mentions || 1),
+          link.source.radius + link.target.radius + springs.distanceMargin,
+        ),
       );
+    // TODO: Add influence type for the link distance and strength
+    // Each endpoint pulls proportionally to its influence count: heavily
+    // mentioned mappers drag their connections toward themselves, while
+    // barely mentioned mappers contribute next to nothing so leaf nodes
+    // cannot tug the layout
+    const endpointPull = (mentions: number) =>
+      Math.max(
+        Math.min(
+          (mentions - springs.pullOffset) / springs.pullDivisor,
+          springs.pullMax,
+        ),
+        springs.pullMin,
+      );
+    // Cross-community links get a fraction of the spring: a small mapper
+    // listing two unrelated hubs should not glue their scenes together.
+    // Influences declared BY a giant are the exception — those pull hard
+    // and mostly bypass the cross-community damp, so scenes a giant
+    // explicitly relates to get dragged toward its cluster. Capped to keep
+    // the spring solver stable.
+    graph.d3Force('link')?.strength(
+      // biome-ignore lint/suspicious/noExplicitAny: idc
+      (link: any) => {
+        const declarerInfluence = Math.min(link.source.mentions / 100, 1);
+        // Declarer-dominated for links touching a giant: a crowd of small
+        // declarers holds its giant loosely, so fan springs cannot add up
+        // to drag related giants apart. Between two small/mid mappers the
+        // spring stays symmetric — small clusters need their full internal
+        // bonds or they scatter.
+        const bothSmall =
+          link.source.mentions < springs.bothSmallThreshold &&
+          link.target.mentions < springs.bothSmallThreshold;
+        const base = bothSmall
+          ? endpointPull(link.source.mentions) +
+            endpointPull(link.target.mentions)
+          : endpointPull(link.source.mentions) * springs.declarerFactor +
+            endpointPull(link.target.mentions) * springs.receiverFactor;
+        const declarerBoost =
+          1 + declarerInfluence * springs.declarerBoostScale;
+        const communityFactor =
+          link.source.community === link.target.community
+            ? 1
+            : springs.crossCommunityBase +
+              springs.crossCommunityDeclarerScale * declarerInfluence;
+        return (
+          Math.min(
+            base * declarerBoost * communityFactor,
+            springs.strengthCap,
+          ) * (bothSmall ? springs.bothSmallScale : springs.mixedScale)
+        );
+      },
+    );
 
-      // Curved repulsion: full push at close range decaying with distance,
-      // and a hard cutoff so far-apart nodes stop shoving each other toward
-      // the edges of the canvas. distanceMin tames the near-singularity
-      // (hard overlaps are collide's job).
-      const charge = graph.d3Force('charge');
+    // Curved repulsion: full push at close range decaying with distance,
+    // and a hard cutoff so far-apart nodes stop shoving each other toward
+    // the edges of the canvas. distanceMin tames the near-singularity
+    // (hard overlaps are collide's job). The giant term starts at the ramp
+    // floor and grows over time (see onEngineTick) so small nodes can cross
+    // the middle early instead of bouncing off the giant field.
+    const charge = graph.d3Force('charge');
+    charge?.strength(
       // biome-ignore lint/suspicious/noExplicitAny: idc
-      // Raised together with link strength: unconnected pairs only feel this
-      // push, while connected pairs get it offset by their stronger spring —
-      // net repulsion is higher between strangers than between connections.
-      // Exponent 2.5 skews push toward giants: their fan clouds orbit
-      // farther out, while small nodes push each other only mildly. The
-      // giant term ramps up over time (see onEngineTick) so small nodes can
-      // cross the middle early instead of bouncing off the giant field.
-      charge?.strength((node: any) => -(node.mentions ** 2.8 * 3) - 95);
-      // biome-ignore lint/suspicious/noExplicitAny: idc
-      (charge as any)?.distanceMin(10);
-      // biome-ignore lint/suspicious/noExplicitAny: idc
-      (charge as any)?.distanceMax(3200);
+      (node: any) =>
+        -(
+          node.mentions ** chargeConfig.exponent *
+          chargeConfig.scale *
+          chargeConfig.rampFloor
+        ) - chargeConfig.base,
+    );
+    // biome-ignore lint/suspicious/noExplicitAny: idc
+    (charge as any)?.distanceMin(chargeConfig.distanceMin);
+    // biome-ignore lint/suspicious/noExplicitAny: idc
+    (charge as any)?.distanceMax(chargeConfig.distanceMax);
 
-      // Collision sphere derives from the drawn radius (the old
-      // mentions^1.2 formula fell below the visual radius for mid-size
-      // nodes, letting blobs overlap) plus a margin that grows with size,
-      // so large blobs clear more space around themselves. Two iterations
-      // resolve stacked overlaps more firmly per tick.
-      // Collision stays off while the simulation is hot (alpha above the
-      // gate, roughly the first ~40 ticks) so nodes can pass through each
-      // other and reach their cluster; it engages once the layout has
-      // roughly sorted itself. The post-settle cleanup still guarantees
-      // final separation.
-      const COLLIDE_ALPHA_GATE = 0.4;
-      const collide = forceCollide()
-        .radius(collideRadius)
-        .strength(1)
-        .iterations(3);
+    // Collision sphere derives from the drawn radius plus a margin that
+    // grows with size, so large blobs clear more space around themselves.
+    // Collision stays off while the simulation is hot (alpha above the
+    // gate) so nodes can pass through each other and reach their cluster;
+    // it engages once the layout has roughly sorted itself. The post-settle
+    // cleanup still guarantees final separation.
+    const collide = forceCollide()
+      .radius(makeCollideRadius(collision))
+      .strength(collision.strength)
+      .iterations(collision.iterations);
+    if (collision.alphaGate >= 1) {
+      graph.d3Force('collide', collide);
+    } else {
       // biome-ignore lint/suspicious/noExplicitAny: custom d3 force wrapper
       const gatedCollide: any = (alpha: number) => {
-        if (alpha <= COLLIDE_ALPHA_GATE) collide(alpha);
+        if (alpha <= collision.alphaGate) collide(alpha);
       };
       // biome-ignore lint/suspicious/noExplicitAny: d3 initialize passthrough
       gatedCollide.initialize = (...args: any[]) =>
         // biome-ignore lint/suspicious/noExplicitAny: d3 initialize passthrough
         (collide as any).initialize(...args);
       graph.d3Force('collide', gatedCollide);
+    }
 
-      // Weight-based gravity replaces the uniform centering force: heavily
-      // mentioned mappers are pulled to the middle, small nodes barely at
-      // all, so repulsion pushes them to the rim instead of letting them
-      // pool in the center
-      // Floor kept low on purpose: raising it compresses everything into one
-      // uniformly packed disc (gravity vs collision equilibrium) and cluster
-      // structure smears out. Far-flung strays are handled after settle by
-      // the outlier clamp instead.
-      // Quadratic ramp for stronger big/small contrast: mid-size mappers get
-      // far less center pull than a linear ramp gave them, so anything but
-      // the giants tends outward
-      // biome-ignore lint/suspicious/noExplicitAny: idc
-      const centerPull = (node: any) => {
-        const influence = Math.min(node.mentions / 100, 1);
-        return influence * influence * 0.08 + 0.001;
-      };
-      graph.d3Force('center', null);
-      graph.d3Force('x', forceX(0).strength(centerPull));
-      graph.d3Force('y', forceY(0).strength(centerPull));
+    // Weight-based gravity replaces the uniform centering force: heavily
+    // mentioned mappers are pulled to the middle, small nodes barely at
+    // all, so repulsion pushes them to the rim instead of letting them
+    // pool in the center.
+    // Floor kept low on purpose: raising it compresses everything into one
+    // uniformly packed disc (gravity vs collision equilibrium) and cluster
+    // structure smears out. Far-flung strays are handled after settle by
+    // the outlier clamp instead.
+    // biome-ignore lint/suspicious/noExplicitAny: idc
+    const centerPull = (node: any) => {
+      const influence = Math.min(node.mentions / 100, 1);
+      return influence ** gravity.exponent * gravity.scale + gravity.floor;
+    };
+    graph.d3Force('center', null);
+    graph.d3Force('x', forceX(0).strength(centerPull));
+    graph.d3Force('y', forceY(0).strength(centerPull));
 
-      // Extra recall that grows with distance: the linear link spring is too
-      // weak on light nodes once they drift far, so links stretched beyond
-      // RECALL_START get an additional pull that ramps with the excess,
-      // applied mostly to the lighter endpoint
-      const RECALL_START = 1500;
-      // 1 mention = full recall, fading with size but keeping a floor so a
+    // Extra recall that grows with distance: the linear link spring is too
+    // weak on light nodes once they drift far, so links stretched beyond
+    // the start threshold get an additional pull that ramps with the
+    // excess, applied mostly to the lighter endpoint
+    if (preset.recall.enabled) {
+      const recall = preset.recall;
+      // Full recall for leaves, fading with size but keeping a floor so a
       // large mapper stranded far from its connections still walks back
       const recallWeight = (mentions: number) =>
-        Math.max(1 - mentions / 30, 0.12);
+        Math.max(1 - mentions / recall.weightDivisor, recall.weightFloor);
       const longRangeRecall = (alpha: number) => {
         for (const link of dataRef.current.links) {
           const source = link.source;
@@ -911,20 +968,20 @@ const GraphPage: FC = () => {
           const deltaX = (target.x ?? 0) - (source.x ?? 0);
           const deltaY = (target.y ?? 0) - (source.y ?? 0);
           const distance = Math.hypot(deltaX, deltaY);
-          if (distance < RECALL_START) continue;
-          // Unit-vector pull with a small capped magnitude: proportional-to-
-          // distance versions resonate (overshoot, re-stretch, gain energy)
-          // and slingshot nodes off screen
-          // Partial alpha floor: recall keeps working late in the settle,
-          // when strays created by the early chaos still need to walk home.
-          // The ramp keeps growing up to 4x for far-off nodes so off-screen
-          // strays cover the distance before the simulation stops.
-          // Superlinear ramp: near-threshold stretches get a gentle nudge,
-          // far strays get drastically more pull the farther out they sit
+          if (distance < recall.start) continue;
+          // Unit-vector pull with a capped superlinear ramp: proportional-
+          // to-distance versions resonate (overshoot, re-stretch, gain
+          // energy) and slingshot nodes off screen. The alpha floor keeps
+          // recall working late in the settle, when strays created by the
+          // early chaos still need to walk home.
           const pull =
-            Math.min((distance - RECALL_START) / 2000, 12) ** 2 *
-            35 *
-            (0.2 + 0.8 * alpha);
+            Math.min(
+              (distance - recall.start) / recall.excessDivisor,
+              recall.rampCap,
+            ) **
+              recall.rampExponent *
+            recall.scale *
+            (recall.alphaFloor + (1 - recall.alphaFloor) * alpha);
           const unitX = deltaX / distance;
           const unitY = deltaY / distance;
           // Each endpoint is recalled by its own lightness: influential
@@ -941,25 +998,39 @@ const GraphPage: FC = () => {
       };
       // biome-ignore lint/suspicious/noExplicitAny: custom d3 force
       graph.d3Force('recall', longRangeRecall as any);
-
-      // Strengths sized to survive inertia damping on heavy endpoints:
-      // cross-community hubs push apart hard at long range, same-community
-      // hubs get a shorter gentler push so they spread inside their cluster
-      // biome-ignore lint/suspicious/noExplicitAny: custom d3 force
-      graph.d3Force(
-        'hubSeparation',
-        // biome-ignore lint/suspicious/noExplicitAny: custom d3 force
-        createHubSeparation(40, 2200, 50, 800, 25) as any,
-      );
-
-      // biome-ignore lint/suspicious/noExplicitAny: custom d3 force
-      graph.d3Force('speedLimit', createSpeedLimit(280, 1700) as any);
-
-      // Last: converts injected velocity into mass-weighted displacement
-      // biome-ignore lint/suspicious/noExplicitAny: custom d3 force
-      graph.d3Force('inertia', createInertia() as any);
+    } else {
+      // biome-ignore lint/suspicious/noExplicitAny: force removal
+      graph.d3Force('recall', null as any);
     }
-  }, []);
+
+    // Strengths sized to survive inertia damping on heavy endpoints:
+    // cross-community hubs push apart hard at long range, same-community
+    // hubs get a shorter gentler push so they spread inside their cluster
+    // biome-ignore lint/suspicious/noExplicitAny: custom d3 force / removal
+    const hubSeparation: any = preset.hubSeparation.enabled
+      ? createHubSeparation(
+          preset.hubSeparation.minMentions,
+          preset.hubSeparation.crossRange,
+          preset.hubSeparation.crossStrength,
+          preset.hubSeparation.sameRange,
+          preset.hubSeparation.sameStrength,
+        )
+      : null;
+    graph.d3Force('hubSeparation', hubSeparation);
+
+    // biome-ignore lint/suspicious/noExplicitAny: custom d3 force / removal
+    const speedLimit: any = preset.speedCap.enabled
+      ? createSpeedLimit(preset.speedCap)
+      : null;
+    graph.d3Force('speedLimit', speedLimit);
+
+    // Last: converts injected velocity into mass-weighted displacement
+    // biome-ignore lint/suspicious/noExplicitAny: custom d3 force / removal
+    const inertia: any = preset.inertia.enabled
+      ? createInertia(preset.inertia)
+      : null;
+    graph.d3Force('inertia', inertia);
+  }, [preset]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -973,11 +1044,13 @@ const GraphPage: FC = () => {
   }, []);
 
   const handleEngineStop = useCallback(() => {
-    const { nodes, layoutHash: hash } = dataRef.current;
+    const { nodes, layoutHash: hash, layoutCacheKey: cacheKey } =
+      dataRef.current;
+    const activePreset = presetRef.current;
     if (nodes.length === 0) return;
     recenterLayout(nodes);
-    clampOutliers(nodes);
-    resolveResidualOverlaps(nodes);
+    clampOutliers(nodes, activePreset.cleanup);
+    resolveResidualOverlaps(nodes, activePreset.collision, activePreset.cleanup);
     // Positions may have shifted after the engine stopped — force one
     // repaint so the cleanup is visible
     const graph = graphRef.current;
@@ -994,7 +1067,7 @@ const GraphPage: FC = () => {
         Math.round(node.y ?? 0),
       ]);
       localStorage.setItem(
-        LAYOUT_CACHE_KEY,
+        cacheKey,
         JSON.stringify({ hash, positions } satisfies StoredLayout),
       );
     } catch {
@@ -1393,6 +1466,25 @@ const GraphPage: FC = () => {
         </aside>
       )}
 
+      {labOpen && (
+        <aside className={styles.labPanel}>
+          <span className={styles.labTitle}>Force presets</span>
+          {FORCE_PRESETS.map((candidate) => (
+            <button
+              type="button"
+              key={candidate.name}
+              className={
+                candidate.name === preset.name ? styles.active : undefined
+              }
+              onClick={() => setPresetName(candidate.name)}
+            >
+              {candidate.name}
+            </button>
+          ))}
+          <span className={styles.labIntent}>{preset.intent}</span>
+        </aside>
+      )}
+
       <aside className={styles.legend}>
         <span className={styles.legendTitle}>Communities</span>
         {legend.map((entry) => (
@@ -1475,6 +1567,9 @@ const GraphPage: FC = () => {
       </aside>
 
       <ForceGraph<NodeExtra, LinkExtra>
+        // Preset switches remount the graph: fresh simulation, fresh warmup,
+        // fresh tick counter — settled layouts stay comparable across presets
+        key={preset.name}
         graphData={graphData}
         nodeRelSize={NODE_REL_SIZE}
         nodeVal={nodeVal}
@@ -1488,24 +1583,32 @@ const GraphPage: FC = () => {
         onRenderFramePost={paintFocusOverlay}
         maxZoom={10}
         enableNodeDrag={false}
-        warmupTicks={layoutFromCache ? 0 : 5}
-        cooldownTicks={layoutFromCache ? 0 : 300}
+        warmupTicks={layoutFromCache ? 0 : preset.sim.warmupTicks}
+        cooldownTicks={layoutFromCache ? 0 : preset.sim.cooldownTicks}
         autoPauseRedraw
         onEngineTick={() => {
-          // Giant repulsion ramps in as the sim cools (0.15x -> 1x): small
-          // nodes cross the middle early without bouncing off the giant
-          // field, then full separation locks in. Alpha is approximated
-          // from the tick count (the library does not expose it).
+          // Giant repulsion ramps in as the sim cools (rampFloor -> 1x):
+          // small nodes cross the middle early without bouncing off the
+          // giant field, then full separation locks in. Alpha is
+          // approximated from the tick count (the library does not expose
+          // it). forceManyBody caches strength at init, so the accessor
+          // must be re-set every tick for the ramp to take effect.
           tickRef.current++;
-          // Slower than the sim's real alpha decay (0.9772) so full giant
-          // push arrives late in the settle rather than a third of the way in
-          const rampDecay = 0.9925 ** tickRef.current;
-          const ramp = 0.15 + 0.85 * (1 - rampDecay);
+          const chargeConfig = presetRef.current.charge;
+          // rampFloor >= 1 means static charge — skip the per-tick re-set
+          if (chargeConfig.rampFloor >= 1) return;
+          const rampDecay = chargeConfig.rampDecay ** tickRef.current;
+          const ramp =
+            chargeConfig.rampFloor +
+            (1 - chargeConfig.rampFloor) * (1 - rampDecay);
           const charge = graphRef.current?.d3Force('charge');
           // biome-ignore lint/suspicious/noExplicitAny: idc
           (charge as any)?.strength(
             // biome-ignore lint/suspicious/noExplicitAny: idc
-            (node: any) => -(node.mentions ** 2.8 * 20 * ramp) - 95,
+            (node: any) =>
+              -(node.mentions ** chargeConfig.exponent *
+                chargeConfig.scale *
+                ramp) - chargeConfig.base,
           );
         }}
         onEngineStop={handleEngineStop}
