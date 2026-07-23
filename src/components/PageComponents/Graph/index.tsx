@@ -269,6 +269,18 @@ const GraphPage: FC = () => {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
+  // Particles and dense labels get expensive on hubs with hundreds of links,
+  // so effects are capped by the focused neighborhood size
+  const focusedLinkCount = useMemo(() => {
+    let count = 0;
+    for (const id of Array.from(focusIds)) {
+      count += neighbors.get(id)?.size ?? 0;
+    }
+    return count;
+  }, [focusIds, neighbors]);
+
+  const showParticles = focusedLinkCount > 0 && focusedLinkCount <= 200;
+
   const isFocusedLink = useCallback(
     (link: { source?: LinkEnd; target?: LinkEnd }): boolean => {
       if (focusIds.size === 0) return false;
@@ -305,7 +317,10 @@ const GraphPage: FC = () => {
       const showLabel =
         !dimmed &&
         (screenRadius > 12 ||
-          (highlightSet !== null && activeCommunity === null && screenRadius > 4));
+          (highlightSet !== null &&
+            highlightSet.size <= 150 &&
+            activeCommunity === null &&
+            screenRadius > 4));
       if (showLabel) {
         const fontSize = Math.max(12 / globalScale, node.radius * 0.3);
         ctx.font = `${fontSize}px Sans-Serif`;
@@ -507,12 +522,15 @@ const GraphPage: FC = () => {
         }}
         linkWidth={(link) => (isFocusedLink(link) ? 2 : 0.2)}
         linkLineDash={(link) => {
-          // Outbound from hovered node (influences they added) render dotted;
-          // inbound stay solid
-          if (hoverId === null) return null;
-          return endId(link.target) === hoverId ? [2, 2] : null;
+          // Outbound from selected/hovered nodes (influences they added)
+          // render dotted; inbound stay solid
+          if (focusIds.size === 0) return null;
+          const target = endId(link.target);
+          return target !== undefined && focusIds.has(target) ? [2, 2] : null;
         }}
-        linkDirectionalParticles={(link) => (isFocusedLink(link) ? 2 : 0)}
+        linkDirectionalParticles={(link) =>
+          showParticles && isFocusedLink(link) ? 2 : 0
+        }
         linkDirectionalParticleWidth={3}
         maxZoom={10}
         enableNodeDrag={false}
