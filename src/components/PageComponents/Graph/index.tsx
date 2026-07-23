@@ -95,7 +95,7 @@ const SPRITE_BUDGET_PER_FRAME = 24;
 
 // Bump the version whenever force configuration changes, so stale layouts
 // computed under old physics are discarded
-const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v6';
+const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v7';
 
 // Base resolution label sprites are rasterized at; on-screen labels are this
 // sprite scaled, so past ~48px they soften slightly
@@ -496,10 +496,19 @@ const GraphPage: FC = () => {
   useEffect(() => {
     const graph = graphRef.current;
     if (graph) {
+      // Link rest length can never sit below the two endpoint radii: the
+      // old 3000/mentions distance was far smaller than a hub's own radius,
+      // so the spring pulled neighbors inside the blob and permanently
+      // fought the collision force
       graph
         .d3Force('link')
         // biome-ignore lint/suspicious/noExplicitAny: idc
-        ?.distance((node: any) => 3000 / (node.source.mentions || 1));
+        ?.distance((link: any) =>
+          Math.max(
+            3000 / (link.source.mentions || 1),
+            link.source.radius + link.target.radius + 40,
+          ),
+        );
       // TODO: Add influence type for the link distance and strength
       // Each endpoint pulls proportionally to its influence count: heavily
       // mentioned mappers drag their connections toward themselves, while
