@@ -327,11 +327,24 @@
 
     .fieldRow {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
+      flex-direction: column;
+      gap: 0.1rem;
+      margin-bottom: 0.3rem;
       font-size: 0.75rem;
       font-family: monospace;
+
+      .fieldMain {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+      }
+
+      .fieldHint {
+        font-size: 0.65rem;
+        font-family: $inter, sans-serif;
+        color: $color-text-faded;
+      }
 
       input[type='text'] {
         width: 5.5rem;
