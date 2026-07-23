@@ -17,6 +17,7 @@ import type {
 import ForceGraph from 'react-force-graph-2d';
 
 import { type GraphResponse, useGraphData } from '@services/graph';
+import { useGlobalTheme } from '@states/theme';
 
 import styles from './style.module.scss';
 
@@ -38,7 +39,9 @@ type LinkEnd = GraphLink['source'];
 // the same as the previous nodeVal-based rendering
 const NODE_REL_SIZE = 4;
 
-const PALETTE = [
+// Bright set for dark backgrounds; same hue order darkened for light mode,
+// where the bright set washes out
+const DARK_THEME_PALETTE = [
   '#4cc9f0',
   '#f72585',
   '#8ac926',
@@ -55,6 +58,24 @@ const PALETTE = [
   '#90be6d',
   '#f4a261',
   '#a8dadc',
+];
+const LIGHT_THEME_PALETTE = [
+  '#147ca3',
+  '#b91c68',
+  '#557d0e',
+  '#a67c00',
+  '#c62828',
+  '#10527e',
+  '#7b2fbf',
+  '#c05e14',
+  '#2e6b4a',
+  '#4a2f6e',
+  '#9c7a10',
+  '#22705a',
+  '#a4161a',
+  '#4f7a35',
+  '#b3641f',
+  '#4d8a8c',
 ];
 
 const LEGEND_SIZE = 8;
@@ -197,8 +218,12 @@ const computeCommunities = (
   return labels;
 };
 
-// Rasterizes a username once; per-frame label drawing is then a drawImage
-const buildLabelSprite = (username: string): HTMLCanvasElement | null => {
+// Rasterizes a username once; per-frame label drawing is then a drawImage.
+// Dark theme: white text with dark outline; light theme: inverted.
+const buildLabelSprite = (
+  username: string,
+  darkTheme: boolean,
+): HTMLCanvasElement | null => {
   const canvas = document.createElement('canvas');
   const spriteCtx = canvas.getContext('2d');
   if (!spriteCtx) return null;
@@ -212,9 +237,11 @@ const buildLabelSprite = (username: string): HTMLCanvasElement | null => {
   spriteCtx.textAlign = 'center';
   spriteCtx.textBaseline = 'top';
   spriteCtx.lineWidth = LABEL_SPRITE_FONT_PX / 5;
-  spriteCtx.strokeStyle = 'rgba(0, 0, 0, 0.75)';
+  spriteCtx.strokeStyle = darkTheme
+    ? 'rgba(0, 0, 0, 0.75)'
+    : 'rgba(255, 255, 255, 0.85)';
   spriteCtx.strokeText(username, canvas.width / 2, LABEL_SPRITE_FONT_PX * 0.15);
-  spriteCtx.fillStyle = '#ffffff';
+  spriteCtx.fillStyle = darkTheme ? '#ffffff' : '#1a1a1a';
   spriteCtx.fillText(username, canvas.width / 2, LABEL_SPRITE_FONT_PX * 0.15);
   return canvas;
 };
@@ -237,6 +264,8 @@ const GraphPage: FC = () => {
   const [activeCommunity, setActiveCommunity] = useState<number | null>(null);
   const [search, setSearch] = useState('');
 
+  const isDarkTheme = useGlobalTheme((state) => state.theme) !== 'light';
+
   // Applied before the canvas mounts so it sizes itself at the capped ratio
   const [restoreDevicePixelRatio] = useState(() => capDevicePixelRatio());
   useEffect(() => restoreDevicePixelRatio, [restoreDevicePixelRatio]);
@@ -257,10 +286,11 @@ const GraphPage: FC = () => {
       communitySizes.set(label, (communitySizes.get(label) ?? 0) + 1);
     }
     // Biggest communities claim the palette first; smaller ones cycle it
+    const palette = isDarkTheme ? DARK_THEME_PALETTE : LIGHT_THEME_PALETTE;
     const colorByCommunity = new Map(
       Array.from(communitySizes.entries())
         .sort((a, b) => b[1] - a[1])
-        .map(([label], index) => [label, PALETTE[index % PALETTE.length]]),
+        .map(([label], index) => [label, palette[index % palette.length]]),
     );
 
     const hash = hashGraphData(data);
@@ -291,7 +321,7 @@ const GraphPage: FC = () => {
         cachedPositions !== null &&
         data.nodes.every((node) => cachedPositions.has(node.id)),
     };
-  }, [data]);
+  }, [data, isDarkTheme]);
 
   const nodeById = useMemo(() => {
     const map = new Map<number, GraphNode>();
@@ -377,6 +407,7 @@ const GraphPage: FC = () => {
     layoutHash,
   });
   const labelSprites = useRef(new Map<number, HTMLCanvasElement | null>());
+  const themeRef = useRef(true);
   // Wash color for the hover overlay dim — the page background with high
   // alpha, so "dimmed" elements fade toward the background like before
   const dimWashRef = useRef('rgba(0, 0, 0, 0.85)');
@@ -424,8 +455,12 @@ const GraphPage: FC = () => {
   }, []);
 
   useEffect(() => {
-    if (dataRef.current.nodes !== graphData.nodes)
+    if (
+      dataRef.current.nodes !== graphData.nodes ||
+      themeRef.current !== isDarkTheme
+    )
       labelSprites.current.clear();
+    themeRef.current = isDarkTheme;
     dataRef.current = {
       nodes: graphData.nodes,
       neighbors,
@@ -444,6 +479,7 @@ const GraphPage: FC = () => {
     layoutHash,
     selectedIds,
     activeCommunity,
+    isDarkTheme,
     refreshView,
   ]);
 
@@ -546,7 +582,7 @@ const GraphPage: FC = () => {
     const id = node.id as number;
     let sprite = cache.get(id);
     if (sprite === undefined) {
-      sprite = buildLabelSprite(node.username);
+      sprite = buildLabelSprite(node.username, themeRef.current);
       cache.set(id, sprite);
     }
     return sprite;
@@ -651,7 +687,7 @@ const GraphPage: FC = () => {
         const focused = focusIds.has(id);
         if (focused) {
           ctx.lineWidth = Math.max(2 / globalScale, node.radius * 0.1);
-          ctx.strokeStyle = '#ffffff';
+          ctx.strokeStyle = themeRef.current ? '#ffffff' : '#1a1a1a';
           ctx.stroke();
           ctx.lineWidth = 2 / globalScale;
         }
@@ -664,7 +700,7 @@ const GraphPage: FC = () => {
             // for a later frame instead of bursting on first hover
             if (spriteBudget > 0) {
               spriteBudget--;
-              sprite = buildLabelSprite(node.username);
+              sprite = buildLabelSprite(node.username, themeRef.current);
               cache.set(id, sprite);
             } else sprite = null;
           }
