@@ -95,7 +95,7 @@ const SPRITE_BUDGET_PER_FRAME = 24;
 
 // Bump the version whenever force configuration changes, so stale layouts
 // computed under old physics are discarded
-const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v4';
+const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v5';
 
 // Base resolution label sprites are rasterized at; on-screen labels are this
 // sprite scaled, so past ~48px they soften slightly
@@ -514,10 +514,17 @@ const GraphPage: FC = () => {
           endpointPull(node.target.mentions),
       );
 
-      graph
-        .d3Force('charge')
-        // biome-ignore lint/suspicious/noExplicitAny: idc
-        ?.strength((node: any) => -(node.mentions ** 2 * 100) - 100);
+      // Curved repulsion: full push at close range decaying with distance,
+      // and a hard cutoff so far-apart nodes stop shoving each other toward
+      // the edges of the canvas. distanceMin tames the near-singularity
+      // (hard overlaps are collide's job).
+      const charge = graph.d3Force('charge');
+      // biome-ignore lint/suspicious/noExplicitAny: idc
+      charge?.strength((node: any) => -(node.mentions ** 2 * 100) - 100);
+      // biome-ignore lint/suspicious/noExplicitAny: idc
+      (charge as any)?.distanceMin(20);
+      // biome-ignore lint/suspicious/noExplicitAny: idc
+      (charge as any)?.distanceMax(2400);
 
       // Collision sphere derives from the drawn radius (the old
       // mentions^1.2 formula fell below the visual radius for mid-size
