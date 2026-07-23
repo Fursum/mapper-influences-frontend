@@ -1061,7 +1061,7 @@ const GraphPage: FC = () => {
               strokeDasharray="5 4"
             />
           </svg>
-          Influences they added
+          Mappers they influenced
         </div>
         <div className={styles.linkType}>
           <svg viewBox="0 0 40 6" aria-hidden="true">
@@ -1074,7 +1074,7 @@ const GraphPage: FC = () => {
               strokeWidth="2"
             />
           </svg>
-          Mappers they influenced
+          Influences they added
         </div>
         <div className={styles.linkType}>
           <svg viewBox="0 0 40 6" aria-hidden="true">
