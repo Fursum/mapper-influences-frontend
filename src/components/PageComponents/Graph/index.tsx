@@ -510,7 +510,7 @@ const GraphPage: FC = () => {
           // Outbound from hovered node (influences they added) render dotted;
           // inbound stay solid
           if (hoverId === null) return null;
-          return endId(link.source) === hoverId ? [2, 2] : null;
+          return endId(link.target) === hoverId ? [2, 2] : null;
         }}
         linkDirectionalParticles={(link) => (isFocusedLink(link) ? 2 : 0)}
         linkDirectionalParticleWidth={3}
