@@ -1491,8 +1491,11 @@ const GraphPage: FC = () => {
       {editorOpen ? (
         <PresetEditor
           // Remount per active preset so reopening seeds fresh values from
-          // whatever is currently running (including the last custom run)
-          key={`${preset.name}:${customRun}`}
+          // whatever is currently running (including the last custom run).
+          // Prefixed: ForceGraph below is a sibling keyed on the same
+          // preset/run pair, and duplicate sibling keys corrupt React's
+          // reconciliation (the closed editor stayed mounted as a ghost).
+          key={`editor:${preset.name}:${customRun}`}
           seed={preset}
           onStart={(built) => {
             setCustomPreset(built);
