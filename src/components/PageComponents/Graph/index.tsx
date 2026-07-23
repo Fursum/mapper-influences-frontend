@@ -95,7 +95,43 @@ const SPRITE_BUDGET_PER_FRAME = 24;
 
 // Bump the version whenever force configuration changes, so stale layouts
 // computed under old physics are discarded
-const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v7';
+const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v8';
+
+// Single source of truth for the collision sphere, shared by the live force
+// and the post-settle cleanup pass
+// biome-ignore lint/suspicious/noExplicitAny: d3 node
+const collideRadius = (node: any) => node.radius * 1.4 + 20;
+
+// The simulation can end with a handful of unresolved contacts (dense
+// clusters, alpha running out). This runs pure collision passes on the
+// settled positions until nothing moves, guaranteeing separation before the
+// layout is drawn and cached.
+const resolveResidualOverlaps = (nodes: GraphNode[]) => {
+  const resolver = forceCollide()
+    .radius(collideRadius)
+    .strength(1)
+    .iterations(4);
+  // biome-ignore lint/suspicious/noExplicitAny: d3 force typing
+  (resolver as any).initialize(nodes);
+  for (let pass = 0; pass < 40; pass++) {
+    for (const node of nodes) {
+      node.vx = 0;
+      node.vy = 0;
+    }
+    resolver(1);
+    let moved = 0;
+    for (const node of nodes) {
+      node.x = (node.x ?? 0) + (node.vx ?? 0);
+      node.y = (node.y ?? 0) + (node.vy ?? 0);
+      moved += Math.abs(node.vx ?? 0) + Math.abs(node.vy ?? 0);
+    }
+    if (moved < 0.5) break;
+  }
+  for (const node of nodes) {
+    node.vx = 0;
+    node.vy = 0;
+  }
+};
 
 // Base resolution label sprites are rasterized at; on-screen labels are this
 // sprite scaled, so past ~48px they soften slightly
@@ -542,11 +578,7 @@ const GraphPage: FC = () => {
       // resolve stacked overlaps more firmly per tick.
       graph.d3Force(
         'collide',
-        forceCollide()
-          // biome-ignore lint/suspicious/noExplicitAny: idc
-          .radius((node: any) => node.radius * 1.4 + 20)
-          .strength(1)
-          .iterations(3),
+        forceCollide().radius(collideRadius).strength(1).iterations(3),
       );
 
       // Weight-based gravity replaces the uniform centering force: heavily
@@ -573,9 +605,19 @@ const GraphPage: FC = () => {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
-  const saveLayout = useCallback(() => {
+  const handleEngineStop = useCallback(() => {
     const { nodes, layoutHash: hash } = dataRef.current;
     if (nodes.length === 0) return;
+    resolveResidualOverlaps(nodes);
+    // Positions may have shifted after the engine stopped — force one
+    // repaint so the cleanup is visible
+    const graph = graphRef.current;
+    if (graph) {
+      try {
+        const center = graph.centerAt();
+        graph.centerAt(center.x, center.y);
+      } catch {}
+    }
     try {
       const positions = nodes.map<[number, number, number]>((node) => [
         node.id as number,
@@ -995,9 +1037,9 @@ const GraphPage: FC = () => {
         maxZoom={10}
         enableNodeDrag={false}
         warmupTicks={layoutFromCache ? 0 : 5}
-        cooldownTicks={layoutFromCache ? 0 : 100}
+        cooldownTicks={layoutFromCache ? 0 : 300}
         autoPauseRedraw
-        onEngineStop={saveLayout}
+        onEngineStop={handleEngineStop}
         onNodeClick={handleNodeClick}
         onNodeHover={handleNodeHover}
         onBackgroundClick={handleBackgroundClick}
