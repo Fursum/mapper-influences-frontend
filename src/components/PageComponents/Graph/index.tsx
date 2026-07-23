@@ -58,10 +58,6 @@ const PALETTE = [
 
 const LEGEND_SIZE = 8;
 
-// Below this zoom level links drop their per-node colors for one flat color,
-// which lets the canvas batch all of them into a single stroke pass
-const LINK_LOD_ZOOM = 0.35;
-
 // Shared instance — returning a fresh array per link per frame is GC churn
 const OUTBOUND_DASH = [2, 2];
 
@@ -125,9 +121,6 @@ const GraphPage: FC = () => {
   const { data, isLoading } = useGraphData();
 
   const graphRef = useRef<ForceGraphMethods<GraphNode>>();
-  // Read by per-frame link accessors; a ref avoids re-rendering on every
-  // zoom event
-  const zoomRef = useRef(1);
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [hoverId, setHoverId] = useState<number | null>(null);
@@ -555,8 +548,6 @@ const GraphPage: FC = () => {
             typeof link.source === 'object' ? link.source : undefined;
           if (activeCommunity !== null) return source?.colorSemi ?? '#999';
           if (focusIds.size > 0) return source?.color ?? '#999';
-          if (zoomRef.current < LINK_LOD_ZOOM)
-            return 'rgba(140, 140, 140, 0.15)';
           return source?.colorFaded ?? 'rgba(128, 128, 128, 0.1)';
         }}
         linkWidth={(link) => (isFocusedLink(link) ? 2 : 0.2)}
@@ -574,9 +565,6 @@ const GraphPage: FC = () => {
         warmupTicks={5}
         cooldownTicks={100}
         autoPauseRedraw
-        onZoom={(transform) => {
-          zoomRef.current = transform.k;
-        }}
         onNodeClick={(node, event) => {
           toggleSelect(
             node.id as number,
