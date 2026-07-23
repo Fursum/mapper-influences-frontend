@@ -18,6 +18,10 @@
 
 .graphPage {
   position: relative;
+  // The layout's contentCenterer <main> pads all pages by $spacing; the
+  // graph should bleed to the header and viewport bottom, so cancel the
+  // vertical padding with matching negative margins
+  margin-block: -$spacing;
 
   .loading {
     position: absolute;

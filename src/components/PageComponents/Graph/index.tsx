@@ -1677,7 +1677,9 @@ const GraphPage: FC = () => {
         onNodeHover={handleNodeHover}
         onBackgroundClick={handleBackgroundClick}
         ref={graphRef}
-        height={window?.innerHeight - 90}
+        // Fill everything below the 3.5rem fixed header; the page's
+        // negative margins cancel the layout padding
+        height={window?.innerHeight - 56}
       />
     </div>
   );
