@@ -59,8 +59,18 @@ const PALETTE = [
 
 const LEGEND_SIZE = 8;
 
-// Shared instance — returning a fresh array per link per frame is GC churn
-const OUTBOUND_DASH = [2, 2];
+// Shared mutable instances used by the hover overlay — rescaled in place
+// each frame instead of allocating
+const OVERLAY_DASH: [number, number] = [4, 3];
+const EMPTY_DASH: number[] = [];
+
+// Overlay label cap: neighborhoods larger than this only label the focused
+// nodes themselves
+const NEIGHBOR_LABEL_LIMIT = 150;
+
+// Max label sprites rasterized per frame; the rest appear on later frames.
+// Prevents a burst of canvas text rasterization on the first hover of a hub.
+const SPRITE_BUDGET_PER_FRAME = 24;
 
 // Bump the version whenever force configuration changes, so stale layouts
 // computed under old physics are discarded
@@ -187,6 +197,28 @@ const computeCommunities = (
   return labels;
 };
 
+// Rasterizes a username once; per-frame label drawing is then a drawImage
+const buildLabelSprite = (username: string): HTMLCanvasElement | null => {
+  const canvas = document.createElement('canvas');
+  const spriteCtx = canvas.getContext('2d');
+  if (!spriteCtx) return null;
+  const font = `${LABEL_SPRITE_FONT_PX}px Sans-Serif`;
+  spriteCtx.font = font;
+  canvas.width = Math.ceil(
+    spriteCtx.measureText(username).width + LABEL_SPRITE_FONT_PX / 2,
+  );
+  canvas.height = Math.ceil(LABEL_SPRITE_FONT_PX * 1.4);
+  spriteCtx.font = font;
+  spriteCtx.textAlign = 'center';
+  spriteCtx.textBaseline = 'top';
+  spriteCtx.lineWidth = LABEL_SPRITE_FONT_PX / 5;
+  spriteCtx.strokeStyle = 'rgba(0, 0, 0, 0.75)';
+  spriteCtx.strokeText(username, canvas.width / 2, LABEL_SPRITE_FONT_PX * 0.15);
+  spriteCtx.fillStyle = '#ffffff';
+  spriteCtx.fillText(username, canvas.width / 2, LABEL_SPRITE_FONT_PX * 0.15);
+  return canvas;
+};
+
 // Focus/highlight state lives in refs and is read by stable canvas accessors:
 // hovering repaints the canvas directly without a React render, which was
 // re-diffing every accessor prop per hover change
@@ -281,6 +313,22 @@ const GraphPage: FC = () => {
     return map;
   }, [graphData]);
 
+  // Same link objects the library mutates, indexed per endpoint, so the
+  // hover overlay can draw a node's links without scanning the full list
+  const linksByNode = useMemo(() => {
+    const map = new Map<number, GraphLink[]>();
+    for (const link of graphData.links) {
+      const source = endId(link.source);
+      const target = endId(link.target);
+      if (source === undefined || target === undefined) continue;
+      if (!map.has(source)) map.set(source, []);
+      if (!map.has(target)) map.set(target, []);
+      map.get(source)?.push(link);
+      map.get(target)?.push(link);
+    }
+    return map;
+  }, [graphData]);
+
   // Legend: biggest communities, each named after its most mentioned member.
   // Nodes are already sorted by mentions, so the first node seen per
   // community is its figurehead.
@@ -324,18 +372,25 @@ const GraphPage: FC = () => {
   const dataRef = useRef({
     nodes: graphData.nodes,
     neighbors,
+    linksByNode,
+    nodeById,
     layoutHash,
   });
   const labelSprites = useRef(new Map<number, HTMLCanvasElement | null>());
+  // Wash color for the hover overlay dim — the page background with high
+  // alpha, so "dimmed" elements fade toward the background like before
+  const dimWashRef = useRef('rgba(0, 0, 0, 0.85)');
 
   // Rebuilds the focus/highlight sets from the refs and nudges the canvas
   // into a repaint (the library only redraws on prop changes or interaction)
   const refreshView = useCallback(() => {
-    const { nodes, neighbors: neighborMap } = dataRef.current;
+    const { nodes } = dataRef.current;
     const focusIds = new Set(selectedRef.current);
     if (hoverRef.current !== null) focusIds.add(hoverRef.current);
     const community = communityRef.current;
 
+    // Focus highlighting is drawn as an overlay, so highlightSet only serves
+    // the community filter (which restyles the base render)
     let highlightSet: Set<number> | null = null;
     if (community !== null) {
       highlightSet = new Set<number>();
@@ -343,15 +398,13 @@ const GraphPage: FC = () => {
         if (node.community === community)
           highlightSet.add(node.id as number);
       }
-    } else if (focusIds.size > 0) {
-      highlightSet = new Set<number>();
-      for (const id of Array.from(focusIds)) {
-        highlightSet.add(id);
-        const linked = neighborMap.get(id);
-        if (linked)
-          for (const neighborId of Array.from(linked))
-            highlightSet.add(neighborId);
-      }
+    }
+
+    if (focusIds.size > 0) {
+      const background = getComputedStyle(document.body).backgroundColor;
+      const channels = background.match(/\d+(\.\d+)?/g);
+      if (channels && channels.length >= 3 && background !== 'rgba(0, 0, 0, 0)')
+        dimWashRef.current = `rgba(${channels[0]}, ${channels[1]}, ${channels[2]}, 0.85)`;
     }
 
     viewRef.current = { focusIds, highlightSet, activeCommunity: community };
@@ -371,12 +424,28 @@ const GraphPage: FC = () => {
   }, []);
 
   useEffect(() => {
-    dataRef.current = { nodes: graphData.nodes, neighbors, layoutHash };
-    labelSprites.current.clear();
+    if (dataRef.current.nodes !== graphData.nodes)
+      labelSprites.current.clear();
+    dataRef.current = {
+      nodes: graphData.nodes,
+      neighbors,
+      linksByNode,
+      nodeById,
+      layoutHash,
+    };
     selectedRef.current = selectedIds;
     communityRef.current = activeCommunity;
     refreshView();
-  }, [graphData, neighbors, layoutHash, selectedIds, activeCommunity, refreshView]);
+  }, [
+    graphData,
+    neighbors,
+    linksByNode,
+    nodeById,
+    layoutHash,
+    selectedIds,
+    activeCommunity,
+    refreshView,
+  ]);
 
   useEffect(() => {
     const graph = graphRef.current;
@@ -447,113 +516,171 @@ const GraphPage: FC = () => {
     }
   }, []);
 
-  const isFocusedLink = useCallback((link: GraphLink): boolean => {
-    const { focusIds } = viewRef.current;
-    if (focusIds.size === 0) return false;
-    const source = endId(link.source);
-    const target = endId(link.target);
+  // Base link styling never reacts to hover/selection — the overlay handles
+  // focus — so pan/zoom while hovering costs the same as normal panning
+  const linkVisibility = useCallback((link: GraphLink) => {
+    const { activeCommunity: community } = viewRef.current;
+    if (community === null) return true;
     return (
-      (source !== undefined && focusIds.has(source)) ||
-      (target !== undefined && focusIds.has(target))
+      typeof link.source === 'object' &&
+      typeof link.target === 'object' &&
+      link.source.community === community &&
+      link.target.community === community
     );
   }, []);
 
-  // Non-matching links are hidden (not drawn faintly) while a filter is
-  // active — stroking thousands of near-invisible links made every hover
-  // repaint expensive
-  const linkVisibility = useCallback(
-    (link: GraphLink) => {
-      const { focusIds, activeCommunity: community } = viewRef.current;
-      if (community !== null) {
-        return (
-          typeof link.source === 'object' &&
-          typeof link.target === 'object' &&
-          link.source.community === community &&
-          link.target.community === community
-        );
-      }
-      if (focusIds.size > 0) return isFocusedLink(link);
-      return true;
-    },
-    [isFocusedLink],
-  );
-
-  const linkColor = useCallback(
-    (link: GraphLink) => {
-      const { focusIds, activeCommunity: community } = viewRef.current;
-      const source = typeof link.source === 'object' ? link.source : undefined;
-      if (community !== null) return source?.colorSemi ?? '#999';
-      if (focusIds.size > 0) return source?.color ?? '#999';
-      return source?.colorFaded ?? 'rgba(128, 128, 128, 0.1)';
-    },
-    [],
-  );
-
-  const linkWidth = useCallback(
-    (link: GraphLink) => (isFocusedLink(link) ? 2 : 0.2),
-    [isFocusedLink],
-  );
-
-  const linkLineDash = useCallback((link: GraphLink) => {
-    // Outbound from selected/hovered nodes (influences they added) render
-    // dotted; inbound stay solid
-    const { focusIds } = viewRef.current;
-    if (focusIds.size === 0) return null;
-    const target = endId(link.target);
-    return target !== undefined && focusIds.has(target) ? OUTBOUND_DASH : null;
+  const linkColor = useCallback((link: GraphLink) => {
+    const { activeCommunity: community } = viewRef.current;
+    const source = typeof link.source === 'object' ? link.source : undefined;
+    if (community !== null) return source?.colorSemi ?? '#999';
+    return source?.colorFaded ?? 'rgba(128, 128, 128, 0.1)';
   }, []);
 
-  // Usernames rasterize once into an offscreen sprite; per-frame label cost
-  // becomes a drawImage instead of strokeText/fillText (the slowest canvas
-  // primitives)
   const getLabelSprite = useCallback((node: GraphNode) => {
     const cache = labelSprites.current;
     const id = node.id as number;
     let sprite = cache.get(id);
     if (sprite === undefined) {
-      sprite = null;
-      const canvas = document.createElement('canvas');
-      const spriteCtx = canvas.getContext('2d');
-      if (spriteCtx) {
-        const font = `${LABEL_SPRITE_FONT_PX}px Sans-Serif`;
-        spriteCtx.font = font;
-        canvas.width = Math.ceil(
-          spriteCtx.measureText(node.username).width + LABEL_SPRITE_FONT_PX / 2,
-        );
-        canvas.height = Math.ceil(LABEL_SPRITE_FONT_PX * 1.4);
-        spriteCtx.font = font;
-        spriteCtx.textAlign = 'center';
-        spriteCtx.textBaseline = 'top';
-        spriteCtx.lineWidth = LABEL_SPRITE_FONT_PX / 5;
-        spriteCtx.strokeStyle = 'rgba(0, 0, 0, 0.75)';
-        spriteCtx.strokeText(
-          node.username,
-          canvas.width / 2,
-          LABEL_SPRITE_FONT_PX * 0.15,
-        );
-        spriteCtx.fillStyle = '#ffffff';
-        spriteCtx.fillText(
-          node.username,
-          canvas.width / 2,
-          LABEL_SPRITE_FONT_PX * 0.15,
-        );
-        sprite = canvas;
-      }
+      sprite = buildLabelSprite(node.username);
       cache.set(id, sprite);
     }
     return sprite;
   }, []);
 
+  const drawLabel = useCallback(
+    (
+      node: GraphNode,
+      sprite: HTMLCanvasElement,
+      ctx: CanvasRenderingContext2D,
+      globalScale: number,
+    ) => {
+      const fontSize = Math.max(12 / globalScale, node.radius * 0.3);
+      const scale = fontSize / LABEL_SPRITE_FONT_PX;
+      ctx.drawImage(
+        sprite,
+        (node.x as number) - (sprite.width * scale) / 2,
+        (node.y as number) +
+          node.radius +
+          fontSize * 0.3 -
+          LABEL_SPRITE_FONT_PX * 0.15 * scale,
+        sprite.width * scale,
+        sprite.height * scale,
+      );
+    },
+    [],
+  );
+
+  // Hover/selection highlight, drawn on top of the untouched base render:
+  // one translucent wash dims everything at O(1), then only the focused
+  // neighborhood is redrawn. Hover cost scales with the neighborhood, never
+  // with the whole graph.
+  const paintFocusOverlay = useCallback(
+    (ctx: CanvasRenderingContext2D, globalScale: number) => {
+      const { focusIds } = viewRef.current;
+      if (focusIds.size === 0) return;
+      const { neighbors: neighborMap, linksByNode: linkIndex, nodeById: nodeIndex } =
+        dataRef.current;
+
+      ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.fillStyle = dimWashRef.current;
+      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      ctx.restore();
+
+      const focusList = Array.from(focusIds);
+
+      // Links of every focused node; outbound (focused node is the target's
+      // declarer) drawn dotted, inbound solid
+      OVERLAY_DASH[0] = 4 / globalScale;
+      OVERLAY_DASH[1] = 3 / globalScale;
+      ctx.lineWidth = 2 / globalScale;
+      const drawnLinks = new Set<GraphLink>();
+      for (const id of focusList) {
+        const links = linkIndex.get(id);
+        if (!links) continue;
+        for (const link of links) {
+          if (drawnLinks.has(link)) continue;
+          drawnLinks.add(link);
+          const source = link.source;
+          const target = link.target;
+          if (typeof source !== 'object' || typeof target !== 'object')
+            continue;
+          if (
+            source.x === undefined ||
+            source.y === undefined ||
+            target.x === undefined ||
+            target.y === undefined
+          )
+            continue;
+          const outbound = focusIds.has(target.id as number);
+          ctx.setLineDash(outbound ? OVERLAY_DASH : EMPTY_DASH);
+          ctx.strokeStyle = source.color ?? '#999';
+          ctx.beginPath();
+          ctx.moveTo(source.x, source.y);
+          ctx.lineTo(target.x, target.y);
+          ctx.stroke();
+        }
+      }
+      ctx.setLineDash(EMPTY_DASH);
+
+      // Neighborhood nodes at full brightness on top of the wash
+      const visibleIds = new Set<number>(focusList);
+      for (const id of focusList) {
+        const linked = neighborMap.get(id);
+        if (linked)
+          for (const neighborId of Array.from(linked))
+            visibleIds.add(neighborId);
+      }
+      const labelNeighbors = visibleIds.size <= NEIGHBOR_LABEL_LIMIT;
+      let spriteBudget = SPRITE_BUDGET_PER_FRAME;
+      const cache = labelSprites.current;
+
+      for (const id of Array.from(visibleIds)) {
+        const node = nodeIndex.get(id);
+        if (!node || node.x === undefined || node.y === undefined) continue;
+        ctx.fillStyle = node.color;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.radius, 0, 2 * Math.PI);
+        ctx.fill();
+
+        const focused = focusIds.has(id);
+        if (focused) {
+          ctx.lineWidth = Math.max(2 / globalScale, node.radius * 0.1);
+          ctx.strokeStyle = '#ffffff';
+          ctx.stroke();
+          ctx.lineWidth = 2 / globalScale;
+        }
+
+        const screenRadius = node.radius * globalScale;
+        if (focused || (labelNeighbors && screenRadius > 4)) {
+          let sprite = cache.get(id);
+          if (sprite === undefined) {
+            // Unbuilt sprite: rasterize within budget, otherwise leave it
+            // for a later frame instead of bursting on first hover
+            if (spriteBudget > 0) {
+              spriteBudget--;
+              sprite = buildLabelSprite(node.username);
+              cache.set(id, sprite);
+            } else sprite = null;
+          }
+          if (sprite) drawLabel(node, sprite, ctx, globalScale);
+        }
+      }
+    },
+    [drawLabel],
+  );
+
+  // Base node painting is independent of hover/selection (overlay handles
+  // those); only the community filter dims here
   const paintNode = useCallback(
     (node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number) => {
       if (node.x === undefined || node.y === undefined) return;
-      const { focusIds, highlightSet, activeCommunity: community } =
-        viewRef.current;
+      const { highlightSet } = viewRef.current;
       const dimmed = highlightSet !== null && !highlightSet.has(node.id);
       const screenRadius = node.radius * globalScale;
 
       // Dimmed nodes below a few pixels are invisible at 0.08 alpha; skipping
-      // them keeps hover repaints cheap on large graphs
+      // them keeps community-filtered repaints cheap
       if (dimmed && screenRadius < 3) return;
 
       ctx.globalAlpha = dimmed ? 0.08 : 1;
@@ -574,41 +701,13 @@ const GraphPage: FC = () => {
       ctx.arc(node.x, node.y, node.radius, 0, 2 * Math.PI);
       ctx.fill();
 
-      if (focusIds.has(node.id as number)) {
-        ctx.lineWidth = Math.max(2 / globalScale, node.radius * 0.1);
-        ctx.strokeStyle = '#ffffff';
-        ctx.stroke();
-      }
-
-      // Username under the node: when it is big enough on screen, or when
-      // it is part of the highlighted neighborhood
-      const showLabel =
-        !dimmed &&
-        (screenRadius > 12 ||
-          (highlightSet !== null &&
-            highlightSet.size <= 150 &&
-            community === null &&
-            screenRadius > 4));
-      if (showLabel) {
+      if (!dimmed && screenRadius > 12) {
         const sprite = getLabelSprite(node);
-        if (sprite) {
-          const fontSize = Math.max(12 / globalScale, node.radius * 0.3);
-          const scale = fontSize / LABEL_SPRITE_FONT_PX;
-          ctx.drawImage(
-            sprite,
-            node.x - (sprite.width * scale) / 2,
-            node.y +
-              node.radius +
-              fontSize * 0.3 -
-              LABEL_SPRITE_FONT_PX * 0.15 * scale,
-            sprite.width * scale,
-            sprite.height * scale,
-          );
-        }
+        if (sprite) drawLabel(node, sprite, ctx, globalScale);
       }
       ctx.globalAlpha = 1;
     },
-    [getLabelSprite],
+    [getLabelSprite, drawLabel],
   );
 
   const paintPointerArea = useCallback(
@@ -815,9 +914,9 @@ const GraphPage: FC = () => {
         nodePointerAreaPaint={paintPointerArea}
         linkVisibility={linkVisibility}
         linkColor={linkColor}
-        linkWidth={linkWidth}
-        linkLineDash={linkLineDash}
+        linkWidth={0.2}
         linkPointerAreaPaint={skipLinkPointerPaint}
+        onRenderFramePost={paintFocusOverlay}
         maxZoom={10}
         enableNodeDrag={false}
         warmupTicks={layoutFromCache ? 0 : 5}
