@@ -752,14 +752,30 @@ const GraphPage: FC = () => {
           if (drawnPairs.has(pairKey)) continue;
           drawnPairs.add(pairKey);
           if (link.mutual) {
-            // Both mappers list each other: thick solid line
+            // Both mappers list each other: two parallel lines, each colored
+            // by the mapper declaring that direction
             ctx.setLineDash(EMPTY_DASH);
-            ctx.lineWidth = 4 / globalScale;
-          } else {
-            const outbound = focusIds.has(targetId);
-            ctx.setLineDash(outbound ? OVERLAY_DASH : EMPTY_DASH);
-            ctx.lineWidth = 2 / globalScale;
+            ctx.lineWidth = 1.5 / globalScale;
+            const deltaX = target.x - source.x;
+            const deltaY = target.y - source.y;
+            const length = Math.hypot(deltaX, deltaY) || 1;
+            const offsetX = (-deltaY / length) * (2.5 / globalScale);
+            const offsetY = (deltaX / length) * (2.5 / globalScale);
+            ctx.strokeStyle = source.color ?? '#999';
+            ctx.beginPath();
+            ctx.moveTo(source.x + offsetX, source.y + offsetY);
+            ctx.lineTo(target.x + offsetX, target.y + offsetY);
+            ctx.stroke();
+            ctx.strokeStyle = target.color ?? '#999';
+            ctx.beginPath();
+            ctx.moveTo(source.x - offsetX, source.y - offsetY);
+            ctx.lineTo(target.x - offsetX, target.y - offsetY);
+            ctx.stroke();
+            continue;
           }
+          const outbound = focusIds.has(targetId);
+          ctx.setLineDash(outbound ? OVERLAY_DASH : EMPTY_DASH);
+          ctx.lineWidth = 2 / globalScale;
           ctx.strokeStyle = source.color ?? '#999';
           ctx.beginPath();
           ctx.moveTo(source.x, source.y);
@@ -1080,11 +1096,19 @@ const GraphPage: FC = () => {
           <svg viewBox="0 0 40 6" aria-hidden="true">
             <line
               x1="0"
-              y1="3"
+              y1="1.5"
               x2="40"
-              y2="3"
+              y2="1.5"
               stroke="currentColor"
-              strokeWidth="4"
+              strokeWidth="1.5"
+            />
+            <line
+              x1="0"
+              y1="4.5"
+              x2="40"
+              y2="4.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
             />
           </svg>
           Mutual influence
