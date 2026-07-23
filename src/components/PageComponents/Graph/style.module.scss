@@ -184,7 +184,7 @@
     }
   }
 
-  // Dev-only preset lab (?lab=1): switches force configurations live
+  // Layout preset picker: switches force configurations live
   .labPanel {
     position: absolute;
     bottom: $spacing * 2;
@@ -213,6 +213,9 @@
 
     > button {
       @include plainButton;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       padding: 0.2rem 0.4rem;
       border-radius: 0.25rem;
       color: $color-text;
@@ -230,6 +233,14 @@
       &.active {
         background-color: rgba(128, 128, 128, 0.25);
         font-weight: 700;
+      }
+
+      .recommended {
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: $color-primary;
       }
     }
 

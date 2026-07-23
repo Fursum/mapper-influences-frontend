@@ -1,6 +1,5 @@
 import { forceCollide, forceX, forceY } from 'd3-force';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import {
   type FC,
   type FormEvent,
@@ -468,7 +467,6 @@ type ViewState = {
 
 const GraphPage: FC = () => {
   const { data, isLoading } = useGraphData();
-  const router = useRouter();
 
   const graphRef = useRef<ForceGraphMethods<GraphNode>>();
 
@@ -476,9 +474,6 @@ const GraphPage: FC = () => {
   const [activeCommunity, setActiveCommunity] = useState<number | null>(null);
   const [search, setSearch] = useState('');
 
-  // Preset lab: dev builds always get the panel, production needs ?lab=1
-  const labOpen =
-    process.env.NODE_ENV === 'development' || router.query.lab === '1';
   const [presetName, setPresetName] = useState(DEFAULT_PRESET.name);
   const preset =
     FORCE_PRESETS.find((candidate) => candidate.name === presetName) ??
@@ -1466,24 +1461,25 @@ const GraphPage: FC = () => {
         </aside>
       )}
 
-      {labOpen && (
-        <aside className={styles.labPanel}>
-          <span className={styles.labTitle}>Force presets</span>
-          {FORCE_PRESETS.map((candidate) => (
-            <button
-              type="button"
-              key={candidate.name}
-              className={
-                candidate.name === preset.name ? styles.active : undefined
-              }
-              onClick={() => setPresetName(candidate.name)}
-            >
-              {candidate.name}
-            </button>
-          ))}
-          <span className={styles.labIntent}>{preset.intent}</span>
-        </aside>
-      )}
+      <aside className={styles.labPanel}>
+        <span className={styles.labTitle}>Layout presets</span>
+        {FORCE_PRESETS.map((candidate) => (
+          <button
+            type="button"
+            key={candidate.name}
+            className={
+              candidate.name === preset.name ? styles.active : undefined
+            }
+            onClick={() => setPresetName(candidate.name)}
+          >
+            {candidate.name}
+            {candidate.recommended && (
+              <span className={styles.recommended}>recommended</span>
+            )}
+          </button>
+        ))}
+        <span className={styles.labIntent}>{preset.intent}</span>
+      </aside>
 
       <aside className={styles.legend}>
         <span className={styles.legendTitle}>Communities</span>

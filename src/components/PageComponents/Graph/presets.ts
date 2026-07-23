@@ -9,8 +9,10 @@
 
 export type ForcePreset = {
   name: string;
-  // One-line philosophy shown in the lab panel
+  // One-line philosophy shown in the preset panel
   intent: string;
+  // Highlighted in the panel as the suggested default
+  recommended?: boolean;
   seeding: {
     // Nodes below this mention count seed beside their biggest neighbor
     // instead of on the community spiral
@@ -210,6 +212,7 @@ const baseline: ForcePreset = {
 const from = (overrides: {
   name: string;
   intent: string;
+  recommended?: boolean;
   seeding?: Partial<ForcePreset['seeding']>;
   gravity?: Partial<ForcePreset['gravity']>;
   springs?: Partial<ForcePreset['springs']>;
@@ -224,6 +227,7 @@ const from = (overrides: {
 }): ForcePreset => ({
   name: overrides.name,
   intent: overrides.intent,
+  recommended: overrides.recommended,
   seeding: { ...baseline.seeding, ...overrides.seeding },
   gravity: { ...baseline.gravity, ...overrides.gravity },
   springs: { ...baseline.springs, ...overrides.springs },
@@ -237,7 +241,45 @@ const from = (overrides: {
   cleanup: { ...baseline.cleanup, ...overrides.cleanup },
 });
 
+// Recommended default: flat-hierarchy's egalitarian internals on
+// archipelago's separated-island geography
+const flatIsles = from({
+  name: 'flat-isles',
+  intent: 'Egalitarian islands: mild size scaling inside well-separated communities.',
+  recommended: true,
+  // Archipelago's geography: wide seeding gaps, short-range repulsion,
+  // weak center pull so islands keep their distance
+  seeding: { communitySpacing: 10000, memberSpacing: 700 },
+  charge: {
+    exponent: 1.8,
+    scale: 600,
+    rampFloor: 0.3,
+    distanceMax: 2000,
+  },
+  gravity: { exponent: 1, scale: 0.04, floor: 0.001 },
+  // Flat-hierarchy's internals: giants dominate their island far less,
+  // small mappers keep real spring weight
+  springs: {
+    declarerFactor: 1.2,
+    receiverFactor: 0.3,
+    declarerBoostScale: 0.8,
+    crossCommunityBase: 0.1,
+    crossCommunityDeclarerScale: 0.3,
+  },
+  inertia: { earlyLoss: 0.2, lateLoss: 0.6 },
+  speedCap: { influenceScale: 0.6 },
+  hubSeparation: {
+    crossRange: 2800,
+    crossStrength: 45,
+    sameRange: 800,
+    sameStrength: 22,
+  },
+  recall: { start: 2000, scale: 30 },
+  cleanup: { outlierPercentile: 0.92, outlierSlack: 1.3 },
+});
+
 export const FORCE_PRESETS: ForcePreset[] = [
+  flatIsles,
   baseline,
 
   from({
@@ -363,40 +405,6 @@ export const FORCE_PRESETS: ForcePreset[] = [
   }),
 
   from({
-    name: 'flat-isles',
-    intent: 'Egalitarian islands: mild size scaling inside well-separated communities.',
-    // Archipelago's geography: wide seeding gaps, short-range repulsion,
-    // weak center pull so islands keep their distance
-    seeding: { communitySpacing: 10000, memberSpacing: 700 },
-    charge: {
-      exponent: 1.8,
-      scale: 600,
-      rampFloor: 0.3,
-      distanceMax: 2000,
-    },
-    gravity: { exponent: 1, scale: 0.04, floor: 0.001 },
-    // Flat-hierarchy's internals: giants dominate their island far less,
-    // small mappers keep real spring weight
-    springs: {
-      declarerFactor: 1.2,
-      receiverFactor: 0.3,
-      declarerBoostScale: 0.8,
-      crossCommunityBase: 0.1,
-      crossCommunityDeclarerScale: 0.3,
-    },
-    inertia: { earlyLoss: 0.2, lateLoss: 0.6 },
-    speedCap: { influenceScale: 0.6 },
-    hubSeparation: {
-      crossRange: 2800,
-      crossStrength: 45,
-      sameRange: 800,
-      sameStrength: 22,
-    },
-    recall: { start: 2000, scale: 30 },
-    cleanup: { outlierPercentile: 0.92, outlierSlack: 1.3 },
-  }),
-
-  from({
     name: 'dense-carpet',
     intent: 'Tight weave: small gaps, strong early collision keeps the texture.',
     seeding: { communitySpacing: 2500, memberSpacing: 400 },
@@ -465,4 +473,4 @@ export const FORCE_PRESETS: ForcePreset[] = [
   }),
 ];
 
-export const DEFAULT_PRESET = baseline;
+export const DEFAULT_PRESET = flatIsles;
