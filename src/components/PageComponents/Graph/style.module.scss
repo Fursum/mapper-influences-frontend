@@ -273,7 +273,10 @@
 
   // Editor mode of the preset panel: full parameter list + start button
   .editorPanel {
-    max-width: 17rem;
+    // Wide enough for the longest field label (crossCommunityDeclarerScale)
+    // plus its input on one row
+    max-width: 24rem;
+    width: 24rem;
 
     .editorHeader {
       display: flex;
