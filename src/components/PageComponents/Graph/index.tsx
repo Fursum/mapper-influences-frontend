@@ -286,18 +286,6 @@ const GraphPage: FC = () => {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
-  // Particles and dense labels get expensive on hubs with hundreds of links,
-  // so effects are capped by the focused neighborhood size
-  const focusedLinkCount = useMemo(() => {
-    let count = 0;
-    for (const id of Array.from(focusIds)) {
-      count += neighbors.get(id)?.size ?? 0;
-    }
-    return count;
-  }, [focusIds, neighbors]);
-
-  const showParticles = focusedLinkCount > 0 && focusedLinkCount <= 200;
-
   const isFocusedLink = useCallback(
     (link: { source?: LinkEnd; target?: LinkEnd }): boolean => {
       if (focusIds.size === 0) return false;
@@ -574,17 +562,11 @@ const GraphPage: FC = () => {
             ? OUTBOUND_DASH
             : null;
         }}
-        linkDirectionalParticles={(link) =>
-          showParticles && isFocusedLink(link) ? 2 : 0
-        }
-        linkDirectionalParticleWidth={3}
         maxZoom={10}
         enableNodeDrag={false}
         warmupTicks={5}
         cooldownTicks={100}
-        // Continuous redraw is only needed while particles animate; otherwise
-        // pausing between interactions keeps idle and zoomed-out frames cheap
-        autoPauseRedraw={!showParticles}
+        autoPauseRedraw
         onZoom={(transform) => {
           zoomRef.current = transform.k;
         }}
