@@ -305,6 +305,10 @@ const GraphPage: FC = () => {
       const dimmed = highlightSet !== null && !highlightSet.has(node.id);
       const screenRadius = node.radius * globalScale;
 
+      // Dimmed nodes below a few pixels are invisible at 0.08 alpha; skipping
+      // them keeps hover repaints cheap on large graphs
+      if (dimmed && screenRadius < 3) return;
+
       ctx.globalAlpha = dimmed ? 0.08 : 1;
       ctx.fillStyle = node.color;
       // LOD: sub-2px nodes are drawn as squares — at that size the shape is
@@ -531,23 +535,26 @@ const GraphPage: FC = () => {
         nodeLabel={(node) => `${node.username} - ${node.mentions}`}
         nodeCanvasObject={paintNode}
         nodePointerAreaPaint={paintPointerArea}
+        // Non-matching links are hidden (not drawn faintly) while a filter is
+        // active — stroking thousands of near-invisible links made every
+        // hover repaint expensive
+        linkVisibility={(link) => {
+          if (activeCommunity !== null) {
+            return (
+              typeof link.source === 'object' &&
+              typeof link.target === 'object' &&
+              link.source.community === activeCommunity &&
+              link.target.community === activeCommunity
+            );
+          }
+          if (focusIds.size > 0) return isFocusedLink(link);
+          return true;
+        }}
         linkColor={(link) => {
           const source =
             typeof link.source === 'object' ? link.source : undefined;
-          if (activeCommunity !== null) {
-            const inCommunity =
-              source !== undefined &&
-              typeof link.target === 'object' &&
-              source.community === activeCommunity &&
-              link.target.community === activeCommunity;
-            return inCommunity && source
-              ? source.colorSemi
-              : 'rgba(128, 128, 128, 0.02)';
-          }
-          if (focusIds.size > 0)
-            return isFocusedLink(link)
-              ? (source?.color ?? '#999')
-              : 'rgba(128, 128, 128, 0.02)';
+          if (activeCommunity !== null) return source?.colorSemi ?? '#999';
+          if (focusIds.size > 0) return source?.color ?? '#999';
           if (zoomRef.current < LINK_LOD_ZOOM)
             return 'rgba(140, 140, 140, 0.15)';
           return source?.colorFaded ?? 'rgba(128, 128, 128, 0.1)';
