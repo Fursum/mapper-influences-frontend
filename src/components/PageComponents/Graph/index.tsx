@@ -1023,9 +1023,40 @@ const GraphPage: FC = () => {
             <span className={styles.count}>+{entry.size - 1}</span>
           </button>
         ))}
+        <span className={`${styles.legendTitle} ${styles.linkTitle}`}>
+          Connections
+        </span>
+        <div className={styles.linkType}>
+          <svg viewBox="0 0 40 6" aria-hidden="true">
+            <line
+              x1="0"
+              y1="3"
+              x2="40"
+              y2="3"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeDasharray="5 4"
+            />
+          </svg>
+          Influences they added
+        </div>
+        <div className={styles.linkType}>
+          <svg viewBox="0 0 40 6" aria-hidden="true">
+            <line
+              x1="0"
+              y1="3"
+              x2="40"
+              y2="3"
+              stroke="currentColor"
+              strokeWidth="2"
+            />
+          </svg>
+          Mappers they influenced
+        </div>
         <span className={styles.legendHint}>
           Auto-detected clusters, named after their most mentioned mapper.
           Links take the color of the mapper who declared the influence.
+          Connection styles show when a mapper is hovered or selected.
         </span>
       </aside>
 
