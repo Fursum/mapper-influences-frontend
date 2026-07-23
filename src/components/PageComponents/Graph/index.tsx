@@ -30,7 +30,7 @@ type NodeExtra = GraphResponse['nodes'][number] & {
   radius: number;
   community: number;
 };
-type LinkExtra = { influence_type: number };
+type LinkExtra = { influence_type: number; mutual: boolean };
 type GraphNode = NodeObject<NodeExtra>;
 type GraphLink = LinkObject<NodeExtra, LinkExtra>;
 type LinkEnd = GraphLink['source'];
@@ -364,10 +364,18 @@ const GraphPage: FC = () => {
       };
     });
 
+    // A pair is mutual when both directions were declared
+    const directedPairs = new Set<string>();
+    for (const link of data.links)
+      directedPairs.add(`${link.source}>${link.target}`);
+
     return {
       graphData: {
         nodes,
-        links: data.links.map<GraphLink>((link) => ({ ...link })),
+        links: data.links.map<GraphLink>((link) => ({
+          ...link,
+          mutual: directedPairs.has(`${link.target}>${link.source}`),
+        })),
       },
       layoutHash: hash,
       layoutFromCache:
@@ -717,14 +725,13 @@ const GraphPage: FC = () => {
       // declarer) drawn dotted, inbound solid
       OVERLAY_DASH[0] = 4 / globalScale;
       OVERLAY_DASH[1] = 3 / globalScale;
-      ctx.lineWidth = 2 / globalScale;
-      const drawnLinks = new Set<GraphLink>();
+      // Mutual pairs exist as two link objects over the same segment, so
+      // dedupe by unordered pair to draw each connection once
+      const drawnPairs = new Set<string>();
       for (const id of focusList) {
         const links = linkIndex.get(id);
         if (!links) continue;
         for (const link of links) {
-          if (drawnLinks.has(link)) continue;
-          drawnLinks.add(link);
           const source = link.source;
           const target = link.target;
           if (typeof source !== 'object' || typeof target !== 'object')
@@ -736,8 +743,23 @@ const GraphPage: FC = () => {
             target.y === undefined
           )
             continue;
-          const outbound = focusIds.has(target.id as number);
-          ctx.setLineDash(outbound ? OVERLAY_DASH : EMPTY_DASH);
+          const sourceId = source.id as number;
+          const targetId = target.id as number;
+          const pairKey =
+            sourceId < targetId
+              ? `${sourceId}>${targetId}`
+              : `${targetId}>${sourceId}`;
+          if (drawnPairs.has(pairKey)) continue;
+          drawnPairs.add(pairKey);
+          if (link.mutual) {
+            // Both mappers list each other: thick solid line
+            ctx.setLineDash(EMPTY_DASH);
+            ctx.lineWidth = 4 / globalScale;
+          } else {
+            const outbound = focusIds.has(targetId);
+            ctx.setLineDash(outbound ? OVERLAY_DASH : EMPTY_DASH);
+            ctx.lineWidth = 2 / globalScale;
+          }
           ctx.strokeStyle = source.color ?? '#999';
           ctx.beginPath();
           ctx.moveTo(source.x, source.y);
@@ -746,6 +768,7 @@ const GraphPage: FC = () => {
         }
       }
       ctx.setLineDash(EMPTY_DASH);
+      ctx.lineWidth = 2 / globalScale;
 
       // Neighborhood nodes at full brightness on top of the wash
       const visibleIds = new Set<number>(focusList);
@@ -1052,6 +1075,19 @@ const GraphPage: FC = () => {
             />
           </svg>
           Mappers they influenced
+        </div>
+        <div className={styles.linkType}>
+          <svg viewBox="0 0 40 6" aria-hidden="true">
+            <line
+              x1="0"
+              y1="3"
+              x2="40"
+              y2="3"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+          </svg>
+          Mutual influence
         </div>
         <span className={styles.legendHint}>
           Auto-detected clusters, named after their most mentioned mapper.
