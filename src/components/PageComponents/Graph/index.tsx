@@ -74,7 +74,7 @@ const SPRITE_BUDGET_PER_FRAME = 24;
 
 // Bump the version whenever force configuration changes, so stale layouts
 // computed under old physics are discarded
-const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v1';
+const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v2';
 
 // Base resolution label sprites are rasterized at; on-screen labels are this
 // sprite scaled, so past ~48px they soften slightly
@@ -455,12 +455,17 @@ const GraphPage: FC = () => {
         // biome-ignore lint/suspicious/noExplicitAny: idc
         ?.distance((node: any) => 3000 / (node.source.mentions || 1));
       // TODO: Add influence type for the link distance and strength
+      // Each endpoint pulls proportionally to its influence count: heavily
+      // mentioned mappers drag their connections toward themselves, while
+      // mappers under ~4 mentions contribute next to nothing so leaf nodes
+      // cannot tug the layout
+      const endpointPull = (mentions: number) =>
+        Math.max(Math.min((mentions - 3) / 200, 0.45), 0.002);
       graph.d3Force('link')?.strength(
         // biome-ignore lint/suspicious/noExplicitAny: idc
         (node: any) =>
-          // Clamp each endpoint's contribution to [0.025, 0.4]
-          Math.min(Math.max(node.source.mentions / 200, 0.025), 0.4) +
-          Math.min(Math.max(node.target.mentions / 200, 0.025), 0.4),
+          endpointPull(node.source.mentions) +
+          endpointPull(node.target.mentions),
       );
 
       graph
