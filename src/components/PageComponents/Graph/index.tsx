@@ -95,7 +95,7 @@ const SPRITE_BUDGET_PER_FRAME = 24;
 
 // Bump the version whenever force configuration changes, so stale layouts
 // computed under old physics are discarded
-const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v3';
+const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v4';
 
 // Base resolution label sprites are rasterized at; on-screen labels are this
 // sprite scaled, so past ~48px they soften slightly
@@ -296,10 +296,19 @@ const GraphPage: FC = () => {
     const hash = hashGraphData(data);
     const cachedPositions = loadCachedLayout(hash);
 
-    const nodes = data.nodes.map<GraphNode>((node) => {
+    const nodes = data.nodes.map<GraphNode>((node, index) => {
       const community = labels.get(node.id) as number;
       const color = colorByCommunity.get(community) ?? '#999';
-      const position = cachedPositions?.get(node.id);
+      // Deterministic start instead of d3's default: nodes are sorted by
+      // mentions, so a phyllotaxis spiral by rank seeds the most influential
+      // mappers in the middle and small ones on the outside — they never
+      // begin (or end up trapped) in the center
+      const spiralAngle = index * 2.399963229728653;
+      const spiralRadius = 60 * Math.sqrt(index);
+      const position = cachedPositions?.get(node.id) ?? [
+        Math.cos(spiralAngle) * spiralRadius,
+        Math.sin(spiralAngle) * spiralRadius,
+      ];
       return {
         ...node,
         community,
@@ -307,7 +316,8 @@ const GraphPage: FC = () => {
         colorFaded: `${color}30`,
         colorSemi: `${color}80`,
         radius: Math.sqrt(node.mentions ** 1.7) * NODE_REL_SIZE,
-        ...(position ? { x: position[0], y: position[1] } : {}),
+        x: position[0],
+        y: position[1],
       };
     });
 
