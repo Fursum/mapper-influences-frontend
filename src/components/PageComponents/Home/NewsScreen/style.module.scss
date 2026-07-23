@@ -5,6 +5,53 @@
   flex-wrap: wrap;
   gap: $spacing;
 
+  .graphCard {
+    @extend %contentBox;
+    @extend %buttonHover;
+    outline: 0.1rem solid transparent;
+
+    display: flex;
+    align-items: center;
+    gap: $spacing;
+    width: 100%;
+    max-width: 40rem;
+    padding: $spacing;
+
+    .graphIcon {
+      width: 2.5rem;
+      height: 2.5rem;
+      flex-shrink: 0;
+    }
+
+    .graphText {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing / 4;
+      flex: 1;
+    }
+
+    .graphTitle {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .graphSubtitle {
+      color: $color-text-faded;
+    }
+
+    .graphArrow {
+      width: 1rem;
+      height: 1.5rem;
+      flex-shrink: 0;
+      transform: rotate(180deg);
+      transition: transform 0.15s ease-out;
+    }
+
+    &:hover .graphArrow {
+      transform: rotate(180deg) translateX(-0.25rem);
+    }
+  }
+
   .double {
     display: flex;
     flex-wrap: wrap;

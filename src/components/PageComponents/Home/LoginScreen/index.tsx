@@ -3,6 +3,7 @@ import { type FC, useState } from 'react';
 import DarkModeToggle from '@components/Layout/Header/DarkModeToggle';
 import ActivityList from '@components/SharedComponents/Activity';
 import Modal from '@components/SharedComponents/Modal';
+import { getOsuAuthUrl } from '@libs/consts/urls';
 
 import { useGlobalTooltip } from 'src/states/globalTooltip';
 
@@ -16,27 +17,15 @@ const LoginScreen: FC = () => {
   const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  const LoginButton = () => {
-    const loginUrl = new URLSearchParams();
-
-    loginUrl.append('response_type', 'code');
-    loginUrl.append('client_id', process.env.NEXT_PUBLIC_OSU_CLIENT_ID || '');
-    loginUrl.append(
-      'redirect_uri',
-      process.env.NEXT_PUBLIC_OSU_REDIRECT_URI || '',
-    );
-    loginUrl.append('scope', 'public identify');
-
-    return (
-      <a
-        className={`${styles.login} ${styles.a}`}
-        href={`https://osu.ppy.sh/oauth/authorize?${loginUrl.toString()}`}
-        onClick={() => setIsLoggingIn(true)}
-      >
-        Log In
-      </a>
-    );
-  };
+  const LoginButton = () => (
+    <a
+      className={`${styles.login} ${styles.a}`}
+      href={getOsuAuthUrl()}
+      onClick={() => setIsLoggingIn(true)}
+    >
+      Log In
+    </a>
+  );
 
   return (
     <>

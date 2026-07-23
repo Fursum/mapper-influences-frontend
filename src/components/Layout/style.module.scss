@@ -59,8 +59,33 @@
     margin-right: $spacing;
   }
 
+  .graphLink {
+    display: flex;
+    align-items: center;
+    margin-right: $spacing;
+    border-radius: $spacing / 4;
+    padding: $spacing / 4;
+    outline: 2px transparent solid;
+
+    > svg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    &:hover {
+      outline-color: $color-button-outline;
+    }
+  }
+
   .darkMode {
     margin-right: $spacing;
+  }
+
+  .login {
+    @extend %button;
+    padding-inline: $spacing;
+    padding-block: $spacing / 4;
+    white-space: nowrap;
   }
 
   .avatar {

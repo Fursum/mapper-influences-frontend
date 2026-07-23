@@ -506,6 +506,12 @@ const GraphPage: FC = () => {
             : 'rgba(128, 128, 128, 0.1)';
         }}
         linkWidth={(link) => (isFocusedLink(link) ? 2 : 0.2)}
+        linkLineDash={(link) => {
+          // Outbound from hovered node (influences they added) render dotted;
+          // inbound stay solid
+          if (hoverId === null) return null;
+          return endId(link.source) === hoverId ? [2, 2] : null;
+        }}
         linkDirectionalParticles={(link) => (isFocusedLink(link) ? 2 : 0)}
         linkDirectionalParticleWidth={3}
         maxZoom={10}

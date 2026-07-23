@@ -2,9 +2,11 @@ import { type FC, useEffect, useState } from 'react';
 
 import DarkModeToggle from '@components/Layout/Header/DarkModeToggle';
 import ProfilePhoto from '@components/SharedComponents/ProfilePhoto';
-import { Influences } from '@components/SvgComponents';
+import { Graph, Influences } from '@components/SvgComponents';
+import { getOsuAuthUrl } from '@libs/consts/urls';
 import type { UserSmall } from '@libs/types/rust';
 import { useCurrentUser } from '@services/user';
+import { useGlobalTooltip } from '@states/globalTooltip';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -16,6 +18,7 @@ import styles from '../style.module.scss';
 export default function Header() {
   const router = useRouter();
   const { data: user } = useCurrentUser();
+  const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
   const NoSSRProfile = dynamic(
     () => import('.').then((modules) => modules.ProfileLinkAvatar),
     { ssr: false },
@@ -28,17 +31,32 @@ export default function Header() {
   }, []);
 
   if (router.pathname === '/') return <></>;
-  if (hasHydrated && !user) return <></>;
+
+  const isGuest = hasHydrated && !user;
 
   return (
     <div className={styles.header}>
-      <Link href="/dashboard" className={styles.home}>
+      <Link href={isGuest ? '/' : '/dashboard'} className={styles.home}>
         <Influences />
         <span>Mapper Influences</span>
       </Link>
       <SearchBar className={styles.searchBar} />
+      <Link
+        href="/graph"
+        className={styles.graphLink}
+        aria-label="Influence graph"
+        {...tooltipProps('Influence graph')}
+      >
+        <Graph />
+      </Link>
       <DarkModeToggle className={styles.darkMode} />
-      <NoSSRProfile user={user} />
+      {isGuest ? (
+        <a className={styles.login} href={getOsuAuthUrl()}>
+          Log In
+        </a>
+      ) : (
+        <NoSSRProfile user={user} />
+      )}
     </div>
   );
 }

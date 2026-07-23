@@ -2,6 +2,7 @@ import Beams from "./Beams";
 import Discord from "./Discord";
 import Followers from "./Followers";
 import Github from "./Github";
+import Graph from "./Graph";
 import Graved from "./Graved";
 import Influences from "./Influences";
 import LinkIcon from "./LinkIcon";
@@ -16,6 +17,7 @@ export {
   Discord,
   Followers,
   Github,
+  Graph,
   Graved,
   Influences,
   LinkIcon,
