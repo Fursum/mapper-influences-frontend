@@ -54,6 +54,10 @@ const PALETTE = [
 
 const LEGEND_SIZE = 8;
 
+// Below this zoom level links drop their per-node colors for one flat color,
+// which lets the canvas batch all of them into a single stroke pass
+const LINK_LOD_ZOOM = 0.35;
+
 // ForceGraph replaces link endpoints (ids) with node object references once
 // the simulation starts, so both shapes must be handled
 const endId = (end?: LinkEnd): number | undefined => {
@@ -114,6 +118,9 @@ const GraphPage: FC = () => {
   const { data, isLoading } = useGraphData();
 
   const graphRef = useRef<ForceGraphMethods<GraphNode>>();
+  // Read by per-frame link accessors; a ref avoids re-rendering on every
+  // zoom event
+  const zoomRef = useRef(1);
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [hoverId, setHoverId] = useState<number | null>(null);
@@ -298,11 +305,24 @@ const GraphPage: FC = () => {
     (node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number) => {
       if (node.x === undefined || node.y === undefined) return;
       const dimmed = highlightSet !== null && !highlightSet.has(node.id);
+      const screenRadius = node.radius * globalScale;
 
       ctx.globalAlpha = dimmed ? 0.08 : 1;
+      ctx.fillStyle = node.color;
+      // LOD: sub-2px nodes are drawn as squares — at that size the shape is
+      // indistinguishable and skipping the arc keeps zoomed-out frames cheap
+      if (screenRadius < 2) {
+        ctx.fillRect(
+          node.x - node.radius,
+          node.y - node.radius,
+          node.radius * 2,
+          node.radius * 2,
+        );
+        ctx.globalAlpha = 1;
+        return;
+      }
       ctx.beginPath();
       ctx.arc(node.x, node.y, node.radius, 0, 2 * Math.PI);
-      ctx.fillStyle = node.color;
       ctx.fill();
 
       if (focusIds.has(node.id as number)) {
@@ -313,7 +333,6 @@ const GraphPage: FC = () => {
 
       // Username under the node: when it is big enough on screen, or when
       // it is part of the highlighted neighborhood
-      const screenRadius = node.radius * globalScale;
       const showLabel =
         !dimmed &&
         (screenRadius > 12 ||
@@ -346,11 +365,26 @@ const GraphPage: FC = () => {
   );
 
   const paintPointerArea = useCallback(
-    (node: GraphNode, color: string, ctx: CanvasRenderingContext2D) => {
+    (
+      node: GraphNode,
+      color: string,
+      ctx: CanvasRenderingContext2D,
+      globalScale: number,
+    ) => {
       if (node.x === undefined || node.y === undefined) return;
       ctx.fillStyle = color;
+      const hitRadius = node.radius + 1;
+      if (node.radius * globalScale < 2) {
+        ctx.fillRect(
+          node.x - hitRadius,
+          node.y - hitRadius,
+          hitRadius * 2,
+          hitRadius * 2,
+        );
+        return;
+      }
       ctx.beginPath();
-      ctx.arc(node.x, node.y, node.radius + 1, 0, 2 * Math.PI);
+      ctx.arc(node.x, node.y, hitRadius, 0, 2 * Math.PI);
       ctx.fill();
     },
     [],
@@ -516,6 +550,8 @@ const GraphPage: FC = () => {
             return isFocusedLink(link)
               ? sourceColor
               : 'rgba(128, 128, 128, 0.02)';
+          if (zoomRef.current < LINK_LOD_ZOOM)
+            return 'rgba(140, 140, 140, 0.15)';
           return typeof link.source === 'object'
             ? `${sourceColor}30`
             : 'rgba(128, 128, 128, 0.1)';
@@ -536,7 +572,12 @@ const GraphPage: FC = () => {
         enableNodeDrag={false}
         warmupTicks={5}
         cooldownTicks={100}
-        autoPauseRedraw={false}
+        // Continuous redraw is only needed while particles animate; otherwise
+        // pausing between interactions keeps idle and zoomed-out frames cheap
+        autoPauseRedraw={!showParticles}
+        onZoom={(transform) => {
+          zoomRef.current = transform.k;
+        }}
         onNodeClick={(node, event) => {
           toggleSelect(
             node.id as number,
