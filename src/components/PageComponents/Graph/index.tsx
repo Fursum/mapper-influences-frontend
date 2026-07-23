@@ -111,8 +111,15 @@ const resolveResidualOverlaps = (nodes: GraphNode[]) => {
     .radius(collideRadius)
     .strength(1)
     .iterations(4);
+  // d3-force v3 initialize requires a random source (used to jiggle exactly
+  // coincident nodes); a seeded LCG keeps the pass deterministic
+  let seed = 1;
+  const seededRandom = () => {
+    seed = (seed * 48271) % 2147483647;
+    return seed / 2147483647;
+  };
   // biome-ignore lint/suspicious/noExplicitAny: d3 force typing
-  (resolver as any).initialize(nodes);
+  (resolver as any).initialize(nodes, seededRandom);
   for (let pass = 0; pass < 40; pass++) {
     for (const node of nodes) {
       node.vx = 0;
