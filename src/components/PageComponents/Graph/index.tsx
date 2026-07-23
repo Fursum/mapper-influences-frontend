@@ -480,13 +480,18 @@ const GraphPage: FC = () => {
   const [activeCommunity, setActiveCommunity] = useState<number | null>(null);
   const [search, setSearch] = useState('');
 
-  // Tracked in state: the canvas height prop only re-evaluates on render,
-  // so without this a window resize leaves a gap below the graph
-  const [viewportHeight, setViewportHeight] = useState(() =>
-    typeof window === 'undefined' ? 0 : window.innerHeight,
+  // Tracked in state: the canvas size props only re-evaluate on render, so
+  // without this a window resize leaves the canvas at its mount-time size
+  // (gap below the graph, content stuck in a shrunken strip after
+  // shrink-then-enlarge)
+  const [viewport, setViewport] = useState(() =>
+    typeof window === 'undefined'
+      ? { width: 0, height: 0 }
+      : { width: window.innerWidth, height: window.innerHeight },
   );
   useEffect(() => {
-    const onResize = () => setViewportHeight(window.innerHeight);
+    const onResize = () =>
+      setViewport({ width: window.innerWidth, height: window.innerHeight });
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);
@@ -1690,7 +1695,8 @@ const GraphPage: FC = () => {
         ref={graphRef}
         // Fill everything below the 3.5rem fixed header; the page's
         // negative margins cancel the layout padding
-        height={viewportHeight - 56}
+        width={viewport.width}
+        height={viewport.height - 56}
       />
     </div>
   );
