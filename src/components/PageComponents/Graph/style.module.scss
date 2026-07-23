@@ -240,7 +240,10 @@
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: $color-primary;
+        // Not $color-primary: dark theme's primary is a dark navy that
+        // disappears against the panel background. The button-outline
+        // variable stays high-contrast in both themes.
+        color: $color-button-outline;
       }
     }
 
@@ -345,7 +348,7 @@
       @include plainButton;
       margin-top: 0.5rem;
       padding: 0.35rem 0.5rem;
-      border: 1px solid $color-primary;
+      border: 1px solid $color-button-outline;
       border-radius: 0.5rem;
       color: $color-text;
       font-weight: 700;
