@@ -474,3 +474,8 @@ export const FORCE_PRESETS: ForcePreset[] = [
 ];
 
 export const DEFAULT_PRESET = flatIsles;
+
+// Reserved name for the user-tuned preset built by the editor panel; never
+// part of FORCE_PRESETS and its layouts are never cached (values change
+// without the data hash noticing)
+export const CUSTOM_PRESET_NAME = 'custom';

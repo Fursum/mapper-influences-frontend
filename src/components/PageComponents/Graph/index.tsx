@@ -19,7 +19,13 @@ import ForceGraph from 'react-force-graph-2d';
 import { type GraphResponse, useGraphData } from '@services/graph';
 import { useGlobalTheme } from '@states/theme';
 
-import { DEFAULT_PRESET, FORCE_PRESETS, type ForcePreset } from './presets';
+import PresetEditor from './PresetEditor';
+import {
+  CUSTOM_PRESET_NAME,
+  DEFAULT_PRESET,
+  FORCE_PRESETS,
+  type ForcePreset,
+} from './presets';
 import styles from './style.module.scss';
 
 type NodeExtra = GraphResponse['nodes'][number] & {
@@ -475,11 +481,22 @@ const GraphPage: FC = () => {
   const [search, setSearch] = useState('');
 
   const [presetName, setPresetName] = useState(DEFAULT_PRESET.name);
+  // Custom physics from the editor panel: the built preset, a run counter
+  // (each start remounts the graph even when values repeat), and whether
+  // the editor currently replaces the preset list
+  const [customPreset, setCustomPreset] = useState<ForcePreset | null>(null);
+  const [customRun, setCustomRun] = useState(0);
+  const [editorOpen, setEditorOpen] = useState(false);
   const preset =
-    FORCE_PRESETS.find((candidate) => candidate.name === presetName) ??
+    (presetName === CUSTOM_PRESET_NAME
+      ? customPreset
+      : FORCE_PRESETS.find((candidate) => candidate.name === presetName)) ??
     DEFAULT_PRESET;
-  // Each preset settles into its own cached layout, so switching back to an
-  // already-explored preset restores instantly instead of re-simulating
+  // Each named preset settles into its own cached layout, so switching back
+  // to an already-explored preset restores instantly instead of
+  // re-simulating. Custom runs bypass the cache entirely: their values can
+  // change without the data hash noticing.
+  const cacheEnabled = preset.name !== CUSTOM_PRESET_NAME;
   const layoutCacheKey = `${LAYOUT_CACHE_KEY}:${preset.name}`;
 
   const isDarkTheme = useGlobalTheme((state) => state.theme) !== 'light';
@@ -512,7 +529,9 @@ const GraphPage: FC = () => {
     );
 
     const hash = hashGraphData(data);
-    const cachedPositions = loadCachedLayout(layoutCacheKey, hash);
+    const cachedPositions = cacheEnabled
+      ? loadCachedLayout(layoutCacheKey, hash)
+      : null;
 
     // Deterministic two-pass seeding (nodes are sorted by mentions desc):
     // notable mappers go on a phyllotaxis spiral by rank — biggest in the
@@ -637,7 +656,7 @@ const GraphPage: FC = () => {
         cachedPositions !== null &&
         data.nodes.every((node) => cachedPositions.has(node.id)),
     };
-  }, [data, isDarkTheme, preset, layoutCacheKey]);
+  }, [data, isDarkTheme, preset, layoutCacheKey, cacheEnabled]);
 
   const nodeById = useMemo(() => {
     const map = new Map<number, GraphNode>();
@@ -723,6 +742,7 @@ const GraphPage: FC = () => {
     nodeById,
     layoutHash,
     layoutCacheKey,
+    cacheEnabled,
   });
   // Engine callbacks (tick ramp, settle cleanup) read the active preset
   // through a ref so their identities stay stable across preset switches
@@ -792,6 +812,7 @@ const GraphPage: FC = () => {
       nodeById,
       layoutHash,
       layoutCacheKey,
+      cacheEnabled,
     };
     presetRef.current = preset;
     selectedRef.current = selectedIds;
@@ -804,6 +825,7 @@ const GraphPage: FC = () => {
     nodeById,
     layoutHash,
     layoutCacheKey,
+    cacheEnabled,
     preset,
     selectedIds,
     activeCommunity,
@@ -1039,8 +1061,12 @@ const GraphPage: FC = () => {
   }, []);
 
   const handleEngineStop = useCallback(() => {
-    const { nodes, layoutHash: hash, layoutCacheKey: cacheKey } =
-      dataRef.current;
+    const {
+      nodes,
+      layoutHash: hash,
+      layoutCacheKey: cacheKey,
+      cacheEnabled: shouldCache,
+    } = dataRef.current;
     const activePreset = presetRef.current;
     if (nodes.length === 0) return;
     recenterLayout(nodes);
@@ -1055,6 +1081,7 @@ const GraphPage: FC = () => {
         graph.centerAt(center.x, center.y);
       } catch {}
     }
+    if (!shouldCache) return;
     try {
       const positions = nodes.map<[number, number, number]>((node) => [
         node.id as number,
@@ -1461,25 +1488,58 @@ const GraphPage: FC = () => {
         </aside>
       )}
 
-      <aside className={styles.labPanel}>
-        <span className={styles.labTitle}>Layout presets</span>
-        {FORCE_PRESETS.map((candidate) => (
+      {editorOpen ? (
+        <PresetEditor
+          // Remount per active preset so reopening seeds fresh values from
+          // whatever is currently running (including the last custom run)
+          key={`${preset.name}:${customRun}`}
+          seed={preset}
+          onStart={(built) => {
+            setCustomPreset(built);
+            setPresetName(CUSTOM_PRESET_NAME);
+            setCustomRun((run) => run + 1);
+          }}
+          onClose={() => setEditorOpen(false)}
+        />
+      ) : (
+        <aside className={styles.labPanel}>
+          <span className={styles.labTitle}>Layout presets</span>
+          {FORCE_PRESETS.map((candidate) => (
+            <button
+              type="button"
+              key={candidate.name}
+              className={
+                candidate.name === preset.name ? styles.active : undefined
+              }
+              onClick={() => setPresetName(candidate.name)}
+            >
+              {candidate.name}
+              {candidate.recommended && (
+                <span className={styles.recommended}>recommended</span>
+              )}
+            </button>
+          ))}
+          {customPreset && (
+            <button
+              type="button"
+              className={
+                preset.name === CUSTOM_PRESET_NAME ? styles.active : undefined
+              }
+              onClick={() => setPresetName(CUSTOM_PRESET_NAME)}
+            >
+              {CUSTOM_PRESET_NAME}
+            </button>
+          )}
           <button
             type="button"
-            key={candidate.name}
-            className={
-              candidate.name === preset.name ? styles.active : undefined
-            }
-            onClick={() => setPresetName(candidate.name)}
+            className={styles.customizeButton}
+            onClick={() => setEditorOpen(true)}
           >
-            {candidate.name}
-            {candidate.recommended && (
-              <span className={styles.recommended}>recommended</span>
-            )}
+            customize…
           </button>
-        ))}
-        <span className={styles.labIntent}>{preset.intent}</span>
-      </aside>
+          <span className={styles.labIntent}>{preset.intent}</span>
+        </aside>
+      )}
 
       <aside className={styles.legend}>
         <span className={styles.legendTitle}>Communities</span>
@@ -1564,8 +1624,10 @@ const GraphPage: FC = () => {
 
       <ForceGraph<NodeExtra, LinkExtra>
         // Preset switches remount the graph: fresh simulation, fresh warmup,
-        // fresh tick counter — settled layouts stay comparable across presets
-        key={preset.name}
+        // fresh tick counter — settled layouts stay comparable across
+        // presets. Custom runs bump the counter so pressing start always
+        // re-runs even with unchanged values.
+        key={`${preset.name}:${customRun}`}
         graphData={graphData}
         nodeRelSize={NODE_REL_SIZE}
         nodeVal={nodeVal}

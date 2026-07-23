@@ -251,6 +251,113 @@
       font-size: 0.7rem;
       color: $color-text-faded;
     }
+
+    .customizeButton {
+      margin-top: 0.375rem;
+      padding-top: 0.375rem;
+      border-top: 1px solid rgba(128, 128, 128, 0.2);
+      border-radius: 0;
+      color: $color-text-faded;
+
+      &:hover,
+      &:focus-visible {
+        &:not(:disabled) {
+          color: $color-text;
+        }
+      }
+    }
+  }
+
+  // Editor mode of the preset panel: full parameter list + start button
+  .editorPanel {
+    max-width: 17rem;
+
+    .editorHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+
+      .backButton {
+        @include plainButton;
+        font-size: 0.8rem;
+        color: $color-text-faded;
+
+        &:hover,
+        &:focus-visible {
+          &:not(:disabled) {
+            color: $color-text;
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+
+    .editorFields {
+      display: flex;
+      flex-direction: column;
+      gap: 0.125rem;
+      max-height: 50vh;
+      overflow-y: auto;
+      padding-right: 0.25rem;
+    }
+
+    .sectionTitle {
+      margin-top: 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: $color-text-faded;
+
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+
+    .fieldRow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-family: monospace;
+
+      input[type='text'] {
+        width: 5.5rem;
+        padding: 0.1rem 0.3rem;
+        font-size: 0.75rem;
+        font-family: monospace;
+        text-align: right;
+        border: 1px solid rgba(128, 128, 128, 0.35);
+        border-radius: 0.25rem;
+        background-color: transparent;
+        color: $color-text;
+        outline: none;
+
+        &:focus-visible {
+          border-color: $color-primary;
+        }
+      }
+    }
+
+    .startButton {
+      @include plainButton;
+      margin-top: 0.5rem;
+      padding: 0.35rem 0.5rem;
+      border: 1px solid $color-primary;
+      border-radius: 0.5rem;
+      color: $color-text;
+      font-weight: 700;
+      text-align: center;
+
+      &:hover,
+      &:focus-visible {
+        &:not(:disabled) {
+          background-color: rgba(128, 128, 128, 0.15);
+        }
+      }
+    }
   }
 
   .legend {
