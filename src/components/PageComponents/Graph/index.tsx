@@ -18,6 +18,10 @@ import styles from './style.module.scss';
 
 type NodeExtra = GraphResponse['nodes'][number] & {
   color: string;
+  // Pre-baked translucent variants; building template strings inside link
+  // accessors allocates per link per frame and causes periodic GC hitches
+  colorFaded: string;
+  colorSemi: string;
   radius: number;
   community: number;
 };
@@ -57,6 +61,9 @@ const LEGEND_SIZE = 8;
 // Below this zoom level links drop their per-node colors for one flat color,
 // which lets the canvas batch all of them into a single stroke pass
 const LINK_LOD_ZOOM = 0.35;
+
+// Shared instance — returning a fresh array per link per frame is GC churn
+const OUTBOUND_DASH = [2, 2];
 
 // ForceGraph replaces link endpoints (ids) with node object references once
 // the simulation starts, so both shapes must be handled
@@ -147,10 +154,13 @@ const GraphPage: FC = () => {
     return {
       nodes: data.nodes.map<GraphNode>((node) => {
         const community = labels.get(node.id) as number;
+        const color = colorByCommunity.get(community) ?? '#999';
         return {
           ...node,
           community,
-          color: colorByCommunity.get(community) ?? '#999',
+          color,
+          colorFaded: `${color}30`,
+          colorSemi: `${color}80`,
           radius: Math.sqrt(node.mentions ** 1.7) * NODE_REL_SIZE,
         };
       }),
@@ -534,27 +544,25 @@ const GraphPage: FC = () => {
         nodeCanvasObject={paintNode}
         nodePointerAreaPaint={paintPointerArea}
         linkColor={(link) => {
-          const sourceColor =
-            typeof link.source === 'object'
-              ? (link.source.color as string)
-              : '#999';
+          const source =
+            typeof link.source === 'object' ? link.source : undefined;
           if (activeCommunity !== null) {
             const inCommunity =
-              typeof link.source === 'object' &&
+              source !== undefined &&
               typeof link.target === 'object' &&
-              link.source.community === activeCommunity &&
+              source.community === activeCommunity &&
               link.target.community === activeCommunity;
-            return inCommunity ? `${sourceColor}80` : 'rgba(128, 128, 128, 0.02)';
+            return inCommunity && source
+              ? source.colorSemi
+              : 'rgba(128, 128, 128, 0.02)';
           }
           if (focusIds.size > 0)
             return isFocusedLink(link)
-              ? sourceColor
+              ? (source?.color ?? '#999')
               : 'rgba(128, 128, 128, 0.02)';
           if (zoomRef.current < LINK_LOD_ZOOM)
             return 'rgba(140, 140, 140, 0.15)';
-          return typeof link.source === 'object'
-            ? `${sourceColor}30`
-            : 'rgba(128, 128, 128, 0.1)';
+          return source?.colorFaded ?? 'rgba(128, 128, 128, 0.1)';
         }}
         linkWidth={(link) => (isFocusedLink(link) ? 2 : 0.2)}
         linkLineDash={(link) => {
@@ -562,7 +570,9 @@ const GraphPage: FC = () => {
           // render dotted; inbound stay solid
           if (focusIds.size === 0) return null;
           const target = endId(link.target);
-          return target !== undefined && focusIds.has(target) ? [2, 2] : null;
+          return target !== undefined && focusIds.has(target)
+            ? OUTBOUND_DASH
+            : null;
         }}
         linkDirectionalParticles={(link) =>
           showParticles && isFocusedLink(link) ? 2 : 0
