@@ -95,7 +95,7 @@ const SPRITE_BUDGET_PER_FRAME = 24;
 
 // Bump the version whenever force configuration changes, so stale layouts
 // computed under old physics are discarded
-const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v2';
+const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v3';
 
 // Base resolution label sprites are rasterized at; on-screen labels are this
 // sprite scaled, so past ~48px they soften slightly
@@ -509,10 +509,18 @@ const GraphPage: FC = () => {
         // biome-ignore lint/suspicious/noExplicitAny: idc
         ?.strength((node: any) => -(node.mentions ** 2 * 100) - 100);
 
+      // Collision sphere derives from the drawn radius (the old
+      // mentions^1.2 formula fell below the visual radius for mid-size
+      // nodes, letting blobs overlap) plus a margin that grows with size,
+      // so large blobs clear more space around themselves. Two iterations
+      // resolve stacked overlaps more firmly per tick.
       graph.d3Force(
         'collide',
-        // biome-ignore lint/suspicious/noExplicitAny: idc
-        forceCollide().radius((node: any) => node.mentions ** 1.2 + 5),
+        forceCollide()
+          // biome-ignore lint/suspicious/noExplicitAny: idc
+          .radius((node: any) => node.radius * 1.2 + 10)
+          .strength(1)
+          .iterations(2),
       );
 
       // Weight-based gravity replaces the uniform centering force: heavily
