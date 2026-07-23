@@ -40,10 +40,10 @@ export default function Header() {
         <Influences />
         <span>Mapper Influences</span>
       </Link>
-      <SearchBar className={styles.searchBar} />
+      {!isGuest && <SearchBar className={styles.searchBar} />}
       <Link
         href="/graph"
-        className={styles.graphLink}
+        className={`${styles.graphLink} ${isGuest ? styles.pushRight : ''}`}
         aria-label="Influence graph"
         {...tooltipProps('Influence graph')}
       >
