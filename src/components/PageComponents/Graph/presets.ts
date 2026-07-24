@@ -173,9 +173,9 @@ const baseline: ForcePreset = {
     mixedScale: 0.45,
     distanceNumerator: 3000,
     distanceMargin: 40,
-    typeWeakScale: 0.75,
-    typeMidScale: 1,
-    typeStrongScale: 1.3,
+    typeWeakScale: 0.25,
+    typeMidScale: 0.8,
+    typeStrongScale: 1.5,
   },
   charge: {
     exponent: 2.8,

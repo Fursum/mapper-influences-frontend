@@ -103,7 +103,7 @@ const SPRITE_BUDGET_PER_FRAME = 24;
 // Bump the version whenever force semantics change so stale layouts computed
 // under old physics are discarded; the preset name is appended per entry so
 // each lab preset caches its own settled layout
-const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v77';
+const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v78';
 
 // Single source of truth for the collision sphere, shared by the live force
 // and the post-settle cleanup pass
@@ -393,7 +393,7 @@ const influenceTier = (type: number) => (type >= 7 ? 2 : type >= 4 ? 1 : 0);
 // Community votes scale with declaration strength: a "major influence" tie
 // binds scenes harder than a passing mention. Fixed (not preset-tunable) so
 // community structure stays consistent across presets.
-const TIER_VOTE_FACTORS = [0.75, 1, 1.3] as const;
+const TIER_VOTE_FACTORS = [0.25, 0.8, 1.5] as const;
 
 // Label spread dies off with distance from its origin: each hop multiplies
 // the vote by (1 - decay*hops), hitting zero at ~3 hops, so a hub's label
