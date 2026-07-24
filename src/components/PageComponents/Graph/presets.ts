@@ -24,10 +24,15 @@ export type ForcePreset = {
     // Extra gap past both radii when anchoring a tiny node beside its hub
     anchorRingMargin: number;
     // Only this many top communities (by aggregate influence) get their own
-    // spiral slot; the rest seed as satellites beside their most-linked
-    // parent scene, so a small scene headed by an old inactive legend does
-    // not strand at a far slot
+    // slot on the compact core spiral; the rest seed as satellites beside
+    // their most-linked parent scene, so a small scene headed by an old
+    // inactive legend does not strand at a far slot
     majorCommunities: number;
+    // Communities whose internal/external link ratio reaches this are
+    // genuinely self-contained and spawn as far islands outside the core;
+    // everything below stays in the interlinked central formation where
+    // the forces can reach
+    detachRatio: number;
   };
   gravity: {
     // strength = influence^exponent * scale + floor
@@ -132,12 +137,6 @@ export type ForcePreset = {
     // Pure-collision relaxation after settle
     maxPasses: number;
     settleThreshold: number;
-    // Influential nodes stranded farther than this from the weighted
-    // centroid of their linked neighbors get relocated beside them (old
-    // inactive legends: heavy inertia + a leaf-only halo that physics
-    // drags away leaves them alone at the rim). 0 disables.
-    strayMinMentions: number;
-    strayMaxLinkDistance: number;
   };
 };
 
@@ -150,6 +149,7 @@ const baseline: ForcePreset = {
     memberSpacing: 800,
     anchorRingMargin: 80,
     majorCommunities: 12,
+    detachRatio: 1,
   },
   gravity: { exponent: 2, scale: 0.08, floor: 0.001 },
   springs: {
@@ -218,8 +218,6 @@ const baseline: ForcePreset = {
     outlierSlack: 1.25,
     maxPasses: 40,
     settleThreshold: 0.5,
-    strayMinMentions: 30,
-    strayMaxLinkDistance: 2500,
   },
 };
 

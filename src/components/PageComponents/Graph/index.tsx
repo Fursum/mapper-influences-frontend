@@ -103,7 +103,7 @@ const SPRITE_BUDGET_PER_FRAME = 24;
 // Bump the version whenever force semantics change so stale layouts computed
 // under old physics are discarded; the preset name is appended per entry so
 // each lab preset caches its own settled layout
-const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v74';
+const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v75';
 
 // Single source of truth for the collision sphere, shared by the live force
 // and the post-settle cleanup pass
@@ -238,69 +238,6 @@ const recenterLayout = (nodes: GraphNode[]) => {
   for (const node of nodes) {
     node.x = (node.x ?? 0) - centerX;
     node.y = (node.y ?? 0) - centerY;
-  }
-};
-
-// Influential mappers stranded far from everyone they are linked to get
-// relocated beside the weighted centroid of their neighbors. The classic
-// case is an old inactive legend: 100+ mentions but no declared
-// influences, so their halo is all leaves that physics drags toward the
-// core while the giant's own inertia pins it at the rim — a lone big node
-// nowhere near its scene. A head sitting inside its own halo has its
-// neighbor centroid on top of itself, so genuine scene anchors never move.
-const rescueStrayGiants = (
-  nodes: GraphNode[],
-  links: GraphLink[],
-  cleanup: ForcePreset['cleanup'],
-) => {
-  if (cleanup.strayMaxLinkDistance <= 0) return;
-  // Stranded means far from EVERY linked neighbor — the nearest-neighbor
-  // distance is scale-independent, so separated-island layouts do not
-  // false-positive. (An earlier version compared against the weighted
-  // centroid of all neighbors; cross-scene links dragged that centroid
-  // between islands and at engine stop nearly every scene head teleported
-  // toward the middle — the "instant snap to a clump" failure.)
-  const nearestDistance = new Map<number, number>();
-  const strongestNeighbor = new Map<number, GraphNode>();
-  const consider = (id: number, other: GraphNode, distance: number) => {
-    if (distance < (nearestDistance.get(id) ?? Number.POSITIVE_INFINITY))
-      nearestDistance.set(id, distance);
-    const strongest = strongestNeighbor.get(id);
-    if (
-      !strongest ||
-      other.mentions > strongest.mentions ||
-      (other.mentions === strongest.mentions &&
-        (other.id as number) < (strongest.id as number))
-    )
-      strongestNeighbor.set(id, other);
-  };
-  for (const link of links) {
-    const source = link.source;
-    const target = link.target;
-    if (typeof source !== 'object' || typeof target !== 'object') continue;
-    const distance = Math.hypot(
-      (target.x ?? 0) - (source.x ?? 0),
-      (target.y ?? 0) - (source.y ?? 0),
-    );
-    consider(source.id as number, target, distance);
-    consider(target.id as number, source, distance);
-  }
-  for (const node of nodes) {
-    if (node.mentions < cleanup.strayMinMentions) continue;
-    const nearest = nearestDistance.get(node.id as number);
-    if (nearest === undefined || nearest <= cleanup.strayMaxLinkDistance)
-      continue;
-    // Land beside the most influential connection (a real scene), not at
-    // some between-islands centroid. Deterministic ring offset; the
-    // residual overlap pass separates from locals.
-    const anchor = strongestNeighbor.get(node.id as number);
-    if (!anchor) continue;
-    const angle = ((node.id as number) % 997) * 0.006302;
-    const offset = anchor.radius + node.radius + 60;
-    node.x = (anchor.x ?? 0) + Math.cos(angle) * offset;
-    node.y = (anchor.y ?? 0) + Math.sin(angle) * offset;
-    node.vx = 0;
-    node.vy = 0;
   }
 };
 
@@ -806,15 +743,24 @@ const GraphPage: FC = () => {
       memberSpacing,
       anchorRingMargin,
       majorCommunities,
+      detachRatio,
     } = preset.seeding;
     const GOLDEN_ANGLE = 2.399963229728653;
+    // The interlinked core seeds as one compact formation (the original
+    // "giant blob with genuinely separated satellites" layout that worked);
+    // full communitySpacing between core sub-blobs put scenes beyond the
+    // forces' reach and needed teleport band-aids after settle
+    const CORE_SPACING_FACTOR = 0.4;
     const seeded = new Map<number, [number, number]>();
     if (!cachedPositions) {
-      // Major communities claim spiral slots by aggregate influence
-      // (biggest in the middle). Minor communities do NOT get their own
-      // far-out slot — a small scene headed by an old inactive legend used
-      // to strand at the rim; instead they seed as satellites beside the
-      // community they share the most links with.
+      // Three placement tiers:
+      // - genuinely self-contained communities (internal links >= external
+      //   * detachRatio) spawn as far islands outside the core — they have
+      //   almost no coupling to the rest, so nothing needs to reach them
+      // - the top majorCommunities of the interlinked rest claim compact
+      //   core spiral slots by aggregate influence
+      // - remaining minor communities seed as satellites beside the
+      //   community they share the most links with
       const communityWeight = new Map<number, number>();
       const spiralCount = new Map<number, number>();
       for (const node of data.nodes) {
@@ -826,10 +772,28 @@ const GraphPage: FC = () => {
         );
         spiralCount.set(community, (spiralCount.get(community) ?? 0) + 1);
       }
+      const internalLinks = new Map<number, number>();
+      const externalLinks = new Map<number, number>();
+      for (const link of data.links) {
+        const a = labels.get(link.source) as number;
+        const b = labels.get(link.target) as number;
+        if (a === b) internalLinks.set(a, (internalLinks.get(a) ?? 0) + 1);
+        else {
+          externalLinks.set(a, (externalLinks.get(a) ?? 0) + 1);
+          externalLinks.set(b, (externalLinks.get(b) ?? 0) + 1);
+        }
+      }
+      const isDetached = (community: number) =>
+        (internalLinks.get(community) ?? 0) >=
+        Math.max(externalLinks.get(community) ?? 0, 1) * detachRatio;
       const rankedCommunities = Array.from(communityWeight.entries())
         .sort((a, b) => b[1] - a[1] || a[0] - b[0])
         .map(([community]) => community);
-      const majorSet = new Set(rankedCommunities.slice(0, majorCommunities));
+      const detachedCommunities = rankedCommunities.filter(isDetached);
+      const coreCommunities = rankedCommunities.filter(
+        (community) => !isDetached(community),
+      );
+      const majorSet = new Set(coreCommunities.slice(0, majorCommunities));
 
       // Strongest cross-community link partner for each minor community
       const crossWeight = new Map<string, number>();
@@ -841,7 +805,7 @@ const GraphPage: FC = () => {
         crossWeight.set(key, (crossWeight.get(key) ?? 0) + 1);
       }
       const partnerOf = new Map<number, number>();
-      for (const community of rankedCommunities) {
+      for (const community of coreCommunities) {
         if (majorSet.has(community)) continue;
         let best: number | undefined;
         let bestWeight = 0;
@@ -859,31 +823,46 @@ const GraphPage: FC = () => {
         }
         if (best !== undefined) partnerOf.set(community, best);
       }
-      const resolveParent = (community: number): number => {
-        let current = community;
-        for (let step = 0; step < 10; step++) {
-          if (majorSet.has(current)) return current;
-          const next = partnerOf.get(current);
-          if (next === undefined) return rankedCommunities[0];
-          current = next;
-        }
-        return rankedCommunities[0];
-      };
 
       const communityCenter = new Map<number, [number, number]>();
-      for (const community of rankedCommunities) {
-        if (!majorSet.has(community)) continue;
-        const slot = rankedCommunities.indexOf(community);
+      // Compact core spiral for the interlinked majors
+      coreCommunities.slice(0, majorCommunities).forEach((community, slot) => {
         const angle = slot * GOLDEN_ANGLE;
-        const radius = communitySpacing * Math.sqrt(slot);
+        const radius = communitySpacing * CORE_SPACING_FACTOR * Math.sqrt(slot);
         communityCenter.set(community, [
           Math.cos(angle) * radius,
           Math.sin(angle) * radius,
         ]);
-      }
+      });
+      // Self-contained communities ring the core as true islands
+      const coreExtent =
+        communitySpacing *
+          CORE_SPACING_FACTOR *
+          Math.sqrt(Math.max(majorSet.size, 1)) +
+        communitySpacing * 0.5;
+      detachedCommunities.forEach((community, index) => {
+        const angle = index * GOLDEN_ANGLE;
+        const radius =
+          coreExtent + communitySpacing * (0.5 + 0.35 * Math.sqrt(index));
+        communityCenter.set(community, [
+          Math.cos(angle) * radius,
+          Math.sin(angle) * radius,
+        ]);
+      });
+      // Minor core communities park beside their most-linked placed scene
+      const resolveParent = (community: number): number => {
+        let current = community;
+        for (let step = 0; step < 10; step++) {
+          if (communityCenter.has(current)) return current;
+          const next = partnerOf.get(current);
+          if (next === undefined) break;
+          current = next;
+        }
+        return coreCommunities[0] ?? rankedCommunities[0];
+      };
       const satelliteIndex = new Map<number, number>();
-      for (const community of rankedCommunities) {
-        if (majorSet.has(community)) continue;
+      for (const community of coreCommunities) {
+        if (communityCenter.has(community)) continue;
         const parent = resolveParent(community);
         const parentCenter = communityCenter.get(parent) ?? [0, 0];
         const index = satelliteIndex.get(parent) ?? 0;
@@ -1427,7 +1406,6 @@ const GraphPage: FC = () => {
   const handleEngineStop = useCallback(() => {
     const {
       nodes,
-      links,
       layoutHash: hash,
       layoutCacheKey: cacheKey,
       cacheEnabled: shouldCache,
@@ -1436,7 +1414,6 @@ const GraphPage: FC = () => {
     if (nodes.length === 0) return;
     setSimulating(false);
     recenterLayout(nodes);
-    rescueStrayGiants(nodes, links, activePreset.cleanup);
     clampOutliers(nodes, activePreset.cleanup);
     resolveResidualOverlaps(nodes, activePreset.collision, activePreset.cleanup);
     // Fit the settled layout into view: remounts (preset/filter switches)

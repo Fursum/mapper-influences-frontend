@@ -26,7 +26,8 @@ const FIELD_HINTS: Record<string, string> = {
   'seeding.communitySpacing': 'gap between community centers',
   'seeding.memberSpacing': 'gap between members of a community',
   'seeding.anchorRingMargin': 'extra gap around anchored tiny nodes',
-  'seeding.majorCommunities': 'scenes with own spiral slot; rest satellite',
+  'seeding.majorCommunities': 'scenes with own core slot; rest satellite',
+  'seeding.detachRatio': 'internal/external links to spawn as far island',
   'gravity.exponent': 'size bias of the center pull',
   'gravity.scale': 'overall pull toward the center',
   'gravity.floor': 'minimum pull for tiny nodes',
@@ -85,8 +86,6 @@ const FIELD_HINTS: Record<string, string> = {
   'cleanup.outlierSlack': 'allowed distance past the rim',
   'cleanup.maxPasses': 'overlap relaxation passes',
   'cleanup.settleThreshold': 'stop once movement drops below',
-  'cleanup.strayMinMentions': 'rescue giants above this size',
-  'cleanup.strayMaxLinkDistance': 'stranded past this, moved home; 0 off',
 };
 
 // Numbers are edited as strings so intermediate states ("0.", "-", "1e")
