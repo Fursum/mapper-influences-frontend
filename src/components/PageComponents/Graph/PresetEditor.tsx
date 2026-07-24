@@ -84,6 +84,8 @@ const FIELD_HINTS: Record<string, string> = {
   'cleanup.outlierSlack': 'allowed distance past the rim',
   'cleanup.maxPasses': 'overlap relaxation passes',
   'cleanup.settleThreshold': 'stop once movement drops below',
+  'cleanup.strayMinMentions': 'rescue giants above this size',
+  'cleanup.strayMaxLinkDistance': 'stranded past this, moved home; 0 off',
 };
 
 // Numbers are edited as strings so intermediate states ("0.", "-", "1e")

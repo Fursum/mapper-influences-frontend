@@ -132,6 +132,12 @@ export type ForcePreset = {
     // Pure-collision relaxation after settle
     maxPasses: number;
     settleThreshold: number;
+    // Influential nodes stranded farther than this from the weighted
+    // centroid of their linked neighbors get relocated beside them (old
+    // inactive legends: heavy inertia + a leaf-only halo that physics
+    // drags away leaves them alone at the rim). 0 disables.
+    strayMinMentions: number;
+    strayMaxLinkDistance: number;
   };
 };
 
@@ -212,6 +218,8 @@ const baseline: ForcePreset = {
     outlierSlack: 1.25,
     maxPasses: 40,
     settleThreshold: 0.5,
+    strayMinMentions: 30,
+    strayMaxLinkDistance: 2500,
   },
 };
 

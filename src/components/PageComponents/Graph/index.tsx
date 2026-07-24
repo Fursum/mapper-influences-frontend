@@ -103,7 +103,7 @@ const SPRITE_BUDGET_PER_FRAME = 24;
 // Bump the version whenever force semantics change so stale layouts computed
 // under old physics are discarded; the preset name is appended per entry so
 // each lab preset caches its own settled layout
-const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v70';
+const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v71';
 
 // Single source of truth for the collision sphere, shared by the live force
 // and the post-settle cleanup pass
@@ -238,6 +238,58 @@ const recenterLayout = (nodes: GraphNode[]) => {
   for (const node of nodes) {
     node.x = (node.x ?? 0) - centerX;
     node.y = (node.y ?? 0) - centerY;
+  }
+};
+
+// Influential mappers stranded far from everyone they are linked to get
+// relocated beside the weighted centroid of their neighbors. The classic
+// case is an old inactive legend: 100+ mentions but no declared
+// influences, so their halo is all leaves that physics drags toward the
+// core while the giant's own inertia pins it at the rim — a lone big node
+// nowhere near its scene. A head sitting inside its own halo has its
+// neighbor centroid on top of itself, so genuine scene anchors never move.
+const rescueStrayGiants = (
+  nodes: GraphNode[],
+  links: GraphLink[],
+  cleanup: ForcePreset['cleanup'],
+) => {
+  if (cleanup.strayMaxLinkDistance <= 0) return;
+  const sumX = new Map<number, number>();
+  const sumY = new Map<number, number>();
+  const sumWeight = new Map<number, number>();
+  const accumulate = (id: number, other: GraphNode) => {
+    const weight = other.mentions + 1;
+    sumX.set(id, (sumX.get(id) ?? 0) + (other.x ?? 0) * weight);
+    sumY.set(id, (sumY.get(id) ?? 0) + (other.y ?? 0) * weight);
+    sumWeight.set(id, (sumWeight.get(id) ?? 0) + weight);
+  };
+  for (const link of links) {
+    const source = link.source;
+    const target = link.target;
+    if (typeof source !== 'object' || typeof target !== 'object') continue;
+    accumulate(source.id as number, target);
+    accumulate(target.id as number, source);
+  }
+  for (const node of nodes) {
+    if (node.mentions < cleanup.strayMinMentions) continue;
+    const weight = sumWeight.get(node.id as number);
+    if (!weight) continue;
+    const centroidX = (sumX.get(node.id as number) ?? 0) / weight;
+    const centroidY = (sumY.get(node.id as number) ?? 0) / weight;
+    const distance = Math.hypot(
+      (node.x ?? 0) - centroidX,
+      (node.y ?? 0) - centroidY,
+    );
+    if (distance <= cleanup.strayMaxLinkDistance) continue;
+    // Deterministic ring offset so multiple rescued giants with shared
+    // neighborhoods do not land on the exact same point; the residual
+    // overlap pass separates them from the locals
+    const angle = ((node.id as number) % 997) * 0.006302;
+    const offset = node.radius * 2;
+    node.x = centroidX + Math.cos(angle) * offset;
+    node.y = centroidY + Math.sin(angle) * offset;
+    node.vx = 0;
+    node.vy = 0;
   }
 };
 
@@ -1287,6 +1339,7 @@ const GraphPage: FC = () => {
   const handleEngineStop = useCallback(() => {
     const {
       nodes,
+      links,
       layoutHash: hash,
       layoutCacheKey: cacheKey,
       cacheEnabled: shouldCache,
@@ -1295,6 +1348,7 @@ const GraphPage: FC = () => {
     if (nodes.length === 0) return;
     setSimulating(false);
     recenterLayout(nodes);
+    rescueStrayGiants(nodes, links, activePreset.cleanup);
     clampOutliers(nodes, activePreset.cleanup);
     resolveResidualOverlaps(nodes, activePreset.collision, activePreset.cleanup);
     // Fit the settled layout into view: remounts (preset/filter switches)
