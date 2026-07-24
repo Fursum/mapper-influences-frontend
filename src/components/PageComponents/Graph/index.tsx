@@ -1102,6 +1102,19 @@ const GraphPage: FC = () => {
     graph.d3Force('inertia', inertia);
   }, [preset]);
 
+  // Start zoomed all the way out whenever the graph is rebuilt (preset or
+  // filter switch, data load): the seeded layout spans thousands of units,
+  // and the default camera would stare at an empty middle while the
+  // simulation sorts itself. The post-settle zoomToFit then reframes.
+  useEffect(() => {
+    if (graphData.nodes.length === 0) return;
+    try {
+      graphRef.current?.zoomToFit(0, 80);
+    } catch {
+      // Canvas not ready yet; the post-settle fit will frame the layout
+    }
+  }, [graphData]);
+
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
