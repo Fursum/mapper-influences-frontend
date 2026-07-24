@@ -26,6 +26,7 @@ const FIELD_HINTS: Record<string, string> = {
   'seeding.communitySpacing': 'gap between community centers',
   'seeding.memberSpacing': 'gap between members of a community',
   'seeding.anchorRingMargin': 'extra gap around anchored tiny nodes',
+  'seeding.majorCommunities': 'scenes with own spiral slot; rest satellite',
   'gravity.exponent': 'size bias of the center pull',
   'gravity.scale': 'overall pull toward the center',
   'gravity.floor': 'minimum pull for tiny nodes',

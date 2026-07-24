@@ -103,7 +103,7 @@ const SPRITE_BUDGET_PER_FRAME = 24;
 // Bump the version whenever force semantics change so stale layouts computed
 // under old physics are discarded; the preset name is appended per entry so
 // each lab preset caches its own settled layout
-const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v71';
+const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v72';
 
 // Single source of truth for the collision sphere, shared by the live force
 // and the post-settle cleanup pass
@@ -465,6 +465,7 @@ const COMMUNITY_SEED_COUNT = 12;
 const computeCommunities = (
   nodes: GraphResponse['nodes'],
   links: GraphResponse['links'],
+  majorCommunities: number,
 ) => {
   const seeds = new Set(
     [...nodes]
@@ -534,6 +535,78 @@ const computeCommunities = (
       }
     }
     if (!changed) break;
+  }
+
+  // Post-pass: a MINOR community whose head has declared influences belongs
+  // inside one of those idols' scenes, not off on its own — the classic
+  // case is an old legend with 100+ mentions and a couple of declared
+  // influences who ends up heading a leaf-only halo (being a top-mentions
+  // seed even locks them out of adopting during propagation). The whole
+  // community merges into the idol scene backed by the most of the head's
+  // other connections. Major scenes keep their identity.
+  const communityWeight = new Map<number, number>();
+  for (const node of nodes) {
+    const community = labels.get(node.id) as number;
+    communityWeight.set(
+      community,
+      (communityWeight.get(community) ?? 0) + node.mentions,
+    );
+  }
+  const majorSet = new Set(
+    Array.from(communityWeight.entries())
+      .sort((a, b) => b[1] - a[1] || a[0] - b[0])
+      .slice(0, majorCommunities)
+      .map(([community]) => community),
+  );
+  const mentionsById = new Map(nodes.map((node) => [node.id, node.mentions]));
+  const idolsOf = new Map<number, number[]>();
+  for (const link of links) {
+    if (!idolsOf.has(link.source)) idolsOf.set(link.source, []);
+    idolsOf.get(link.source)?.push(link.target);
+  }
+  for (const node of nodes) {
+    const own = labels.get(node.id);
+    if (own !== node.id) continue; // not a community head
+    if (majorSet.has(own)) continue;
+    const idols = idolsOf.get(node.id) ?? [];
+    if (idols.length === 0) continue;
+    const candidates = new Set(
+      idols
+        .map((idolId) => labels.get(idolId))
+        .filter(
+          (community): community is number =>
+            community !== undefined && community !== own,
+        ),
+    );
+    if (candidates.size === 0) continue;
+    // Every connection (declared or inbound) pointing into a candidate
+    // scene votes for it, weighted by the connection's influence
+    const scores = new Map<number, number>();
+    for (const neighborId of adjacency.get(node.id) ?? []) {
+      const community = labels.get(neighborId);
+      if (community === undefined || !candidates.has(community)) continue;
+      scores.set(
+        community,
+        (scores.get(community) ?? 0) +
+          Math.sqrt((mentionsById.get(neighborId) ?? 0) + 1),
+      );
+    }
+    let best: number | undefined;
+    let bestScore = 0;
+    scores.forEach((score, community) => {
+      if (
+        score > bestScore ||
+        (score === bestScore && (best === undefined || community < best))
+      ) {
+        best = community;
+        bestScore = score;
+      }
+    });
+    if (best === undefined) continue;
+    const target = best;
+    for (const other of nodes) {
+      if (labels.get(other.id) === own) labels.set(other.id, target);
+    }
   }
 
   return labels;
@@ -673,7 +746,11 @@ const GraphPage: FC = () => {
         layoutFromCache: false,
       };
 
-    const labels = computeCommunities(data.nodes, data.links);
+    const labels = computeCommunities(
+      data.nodes,
+      data.links,
+      preset.seeding.majorCommunities,
+    );
     const communitySizes = new Map<number, number>();
     for (const label of Array.from(labels.values())) {
       communitySizes.set(label, (communitySizes.get(label) ?? 0) + 1);
