@@ -103,7 +103,7 @@ const SPRITE_BUDGET_PER_FRAME = 24;
 // Bump the version whenever force semantics change so stale layouts computed
 // under old physics are discarded; the preset name is appended per entry so
 // each lab preset caches its own settled layout
-const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v65';
+const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v66';
 
 // Single source of truth for the collision sphere, shared by the live force
 // and the post-settle cleanup pass
@@ -387,17 +387,23 @@ const loadCachedLayout = (
   }
 };
 
-// Label propagation: every node repeatedly adopts the most common community
-// among its neighbors until stable. Deterministic: fixed iteration order,
-// ties break toward the lowest label.
+// Label propagation: every node repeatedly adopts the dominant community
+// among its neighbors until stable. Votes are weighted by the neighbor's
+// mentions so community identity flows DOWN from influential mappers —
+// unweighted voting let a prolific declarer's crowd of 0-mention additions
+// outvote everything and found a community around the declarer, which is
+// backwards. Deterministic: fixed iteration order, ties break toward the
+// lowest label.
 const computeCommunities = (
   nodes: GraphResponse['nodes'],
   links: GraphResponse['links'],
 ) => {
   const labels = new Map<number, number>();
+  const voteWeight = new Map<number, number>();
   const adjacency = new Map<number, number[]>();
   for (const node of nodes) {
     labels.set(node.id, node.id);
+    voteWeight.set(node.id, node.mentions + 1);
     adjacency.set(node.id, []);
   }
   for (const link of links) {
@@ -412,7 +418,10 @@ const computeCommunities = (
       for (const neighborId of adjacency.get(node.id) ?? []) {
         const label = labels.get(neighborId);
         if (label !== undefined)
-          counts.set(label, (counts.get(label) ?? 0) + 1);
+          counts.set(
+            label,
+            (counts.get(label) ?? 0) + (voteWeight.get(neighborId) ?? 1),
+          );
       }
 
       let best = labels.get(node.id) as number;
