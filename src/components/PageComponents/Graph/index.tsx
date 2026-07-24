@@ -886,11 +886,18 @@ const GraphPage: FC = () => {
     refreshView,
   ]);
 
-  // Re-applies the full force stack whenever the active preset (or the graph
-  // instance — ForceGraph remounts per preset via its key) changes
+  // Re-applies the full force stack on every graph rebuild (preset, filter,
+  // custom run, data load). Tied to graphData rather than the preset alone:
+  // the library re-initializes its force registry when the node set
+  // changes, and a rebuild without a force re-apply used to leave the
+  // simulation running stock d3 physics (default charge and rest lengths,
+  // uniform centering, no collision) — the "everything clumps in the
+  // middle" failure.
   useEffect(() => {
     const graph = graphRef.current;
-    if (!graph) return;
+    if (!graph || graphData.nodes.length === 0) return;
+    // Fresh ramp for the new simulation run
+    tickRef.current = 0;
     const { springs, charge: chargeConfig, collision, gravity } = preset;
 
     // Link rest length can never sit below the two endpoint radii: anything
@@ -1100,7 +1107,7 @@ const GraphPage: FC = () => {
       ? createInertia(preset.inertia)
       : null;
     graph.d3Force('inertia', inertia);
-  }, [preset]);
+  }, [preset, graphData]);
 
   // Start zoomed all the way out whenever the graph is rebuilt (preset or
   // filter switch, data load): the seeded layout spans thousands of units,
@@ -1720,11 +1727,11 @@ const GraphPage: FC = () => {
       </aside>
 
       <ForceGraph<NodeExtra, LinkExtra>
-        // Preset or filter switches remount the graph: fresh simulation,
-        // fresh warmup, fresh tick counter — settled layouts stay
-        // comparable. Custom runs bump the counter so pressing start always
-        // re-runs even with unchanged values.
-        key={`${preset.name}:${customRun}:${rankedOnly}:${minMentions}`}
+        // One stable instance — never keyed/remounted. Preset and filter
+        // switches rebuild graphData, which reheats the simulation; the
+        // forces effect re-applies the preset physics in the same commit.
+        // Remounting instead created a window where the fresh instance ran
+        // stock d3 physics before the forces effect fired.
         graphData={graphData}
         nodeRelSize={NODE_REL_SIZE}
         nodeVal={nodeVal}
@@ -1738,7 +1745,11 @@ const GraphPage: FC = () => {
         onRenderFramePost={paintFocusOverlay}
         maxZoom={10}
         enableNodeDrag={false}
-        warmupTicks={layoutFromCache ? 0 : preset.sim.warmupTicks}
+        // Warmup always 0: the library runs warmup ticks synchronously
+        // while processing new graphData, BEFORE the forces effect has
+        // applied the preset physics — stock-physics warmup wrecks the
+        // seeded positions. All settling happens in the cooldown instead.
+        warmupTicks={0}
         cooldownTicks={layoutFromCache ? 0 : preset.sim.cooldownTicks}
         autoPauseRedraw
         onEngineTick={() => {

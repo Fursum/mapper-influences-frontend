@@ -116,7 +116,8 @@ export type ForcePreset = {
     influenceScale: number;
   };
   sim: {
-    warmupTicks: number;
+    // All settling happens in visible cooldown ticks; warmup is unusable
+    // because the library would run it before the preset forces are applied
     cooldownTicks: number;
   };
   cleanup: {
@@ -199,7 +200,7 @@ const baseline: ForcePreset = {
     maxScale: 1.15,
     influenceScale: 0.95,
   },
-  sim: { warmupTicks: 5, cooldownTicks: 300 },
+  sim: { cooldownTicks: 300 },
   cleanup: {
     outlierPercentile: 0.9,
     outlierSlack: 1.25,
@@ -429,7 +430,7 @@ export const FORCE_PRESETS: ForcePreset[] = [
   from({
     name: 'fast-settle',
     intent: '100 aggressive ticks; the post-settle cleanup does the polish.',
-    sim: { warmupTicks: 20, cooldownTicks: 100 },
+    sim: { cooldownTicks: 100 },
     charge: { rampFloor: 0.5, rampDecay: 0.97 },
     recall: { alphaFloor: 0.4, scale: 45 },
     speedCap: { base: 350, earlyBoost: 2200 },

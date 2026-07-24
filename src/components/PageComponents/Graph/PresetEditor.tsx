@@ -79,7 +79,6 @@ const FIELD_HINTS: Record<string, string> = {
   'speedCap.earlyBoost': 'extra headroom while hot',
   'speedCap.maxScale': 'limit multiplier for tiny nodes',
   'speedCap.influenceScale': 'how much size tightens the limit',
-  'sim.warmupTicks': 'ticks before the first paint',
   'sim.cooldownTicks': 'ticks until the sim freezes',
   'cleanup.outlierPercentile': 'rim radius percentile',
   'cleanup.outlierSlack': 'allowed distance past the rim',
