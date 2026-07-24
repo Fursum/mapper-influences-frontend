@@ -103,7 +103,7 @@ const SPRITE_BUDGET_PER_FRAME = 24;
 // Bump the version whenever force semantics change so stale layouts computed
 // under old physics are discarded; the preset name is appended per entry so
 // each lab preset caches its own settled layout
-const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v78';
+const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v79';
 
 // Single source of truth for the collision sphere, shared by the live force
 // and the post-settle cleanup pass
@@ -390,10 +390,12 @@ const loadCachedLayout = (
 // influence_type enum tiers: 1 = weak, 4 = mid, 7 = strong declaration
 const influenceTier = (type: number) => (type >= 7 ? 2 : type >= 4 ? 1 : 0);
 
-// Community votes scale with declaration strength: a "major influence" tie
-// binds scenes harder than a passing mention. Fixed (not preset-tunable) so
-// community structure stays consistent across presets.
-const TIER_VOTE_FACTORS = [0.25, 0.8, 1.5] as const;
+// Community votes are intentionally tier-AGNOSTIC: weighting votes by
+// declaration strength (tried at 0.75/1/1.3 and 0.25/0.8/1.5) both times
+// re-created a 1.6k+ mega community around the strongest-declared hub.
+// Tier weighting lives in the springs instead, where it shapes distance
+// without rewriting the grouping.
+const TIER_VOTE_FACTORS = [1, 1, 1] as const;
 
 // Label spread dies off with distance from its origin: each hop multiplies
 // the vote by (1 - decay*hops), hitting zero at ~3 hops, so a hub's label
@@ -793,9 +795,25 @@ const GraphPage: FC = () => {
           externalLinks.set(b, (externalLinks.get(b) ?? 0) + 1);
         }
       }
-      const isDetached = (community: number) =>
-        (internalLinks.get(community) ?? 0) >=
-        Math.max(externalLinks.get(community) ?? 0, 1) * detachRatio;
+      // Size-gated: a 2-node disconnected pair passes the ratio test but is
+      // dust, not an island; and a dense mega community can pass it too yet
+      // must stay in the core (it IS the core)
+      const communitySize = new Map<number, number>();
+      for (const node of data.nodes) {
+        const community = labels.get(node.id) as number;
+        communitySize.set(community, (communitySize.get(community) ?? 0) + 1);
+      }
+      const ISLAND_MIN_SIZE = 8;
+      const ISLAND_MAX_SHARE = 0.25;
+      const isDetached = (community: number) => {
+        const size = communitySize.get(community) ?? 0;
+        return (
+          size >= ISLAND_MIN_SIZE &&
+          size <= data.nodes.length * ISLAND_MAX_SHARE &&
+          (internalLinks.get(community) ?? 0) >=
+            Math.max(externalLinks.get(community) ?? 0, 1) * detachRatio
+        );
+      };
       const rankedCommunities = Array.from(communityWeight.entries())
         .sort((a, b) => b[1] - a[1] || a[0] - b[0])
         .map(([community]) => community);
