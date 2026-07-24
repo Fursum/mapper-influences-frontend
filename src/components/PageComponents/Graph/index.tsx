@@ -103,7 +103,7 @@ const SPRITE_BUDGET_PER_FRAME = 24;
 // Bump the version whenever force semantics change so stale layouts computed
 // under old physics are discarded; the preset name is appended per entry so
 // each lab preset caches its own settled layout
-const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v75';
+const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v76';
 
 // Single source of truth for the collision sphere, shared by the live force
 // and the post-settle cleanup pass

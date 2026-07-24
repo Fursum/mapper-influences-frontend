@@ -409,25 +409,33 @@ export const FORCE_PRESETS: ForcePreset[] = [
 
   from({
     name: 'archipelago',
-    intent: 'Islands: huge seeding gaps, short-range forces, local cohesion.',
-    seeding: { communitySpacing: 14000, memberSpacing: 700 },
+    intent: 'Islands: eager community detachment, short-range forces, local cohesion.',
+    // Island-ness comes from a low detach bar (any halfway self-contained
+    // scene splits off), not from absurd spacing — the old 14000 gaps put
+    // scenes beyond every force's reach and the layout fell apart
+    seeding: {
+      communitySpacing: 9000,
+      memberSpacing: 700,
+      detachRatio: 0.7,
+    },
     charge: {
       exponent: 2.6,
       scale: 12,
       rampFloor: 0.3,
-      distanceMax: 1800,
+      distanceMax: 2200,
     },
     gravity: { scale: 0.03, floor: 0.0005 },
     springs: { crossCommunityBase: 0.1, crossCommunityDeclarerScale: 0.3 },
     hubSeparation: { crossRange: 3500, crossStrength: 60 },
-    recall: { start: 2500, scale: 25 },
+    recall: { start: 2000, scale: 25 },
     cleanup: { outlierPercentile: 0.95, outlierSlack: 1.35 },
   }),
 
   from({
     name: 'dense-carpet',
     intent: 'Tight weave: small gaps, strong early collision keeps the texture.',
-    seeding: { communitySpacing: 2500, memberSpacing: 400 },
+    // No islands — everything belongs to the one carpet
+    seeding: { communitySpacing: 2500, memberSpacing: 400, detachRatio: 50 },
     collision: {
       radiusScale: 1.6,
       radiusPad: 30,
