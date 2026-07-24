@@ -1109,6 +1109,12 @@ const GraphPage: FC = () => {
     graph.d3Force('inertia', inertia);
   }, [preset, graphData]);
 
+  // Simulation progress: visibility via state (per rebuild), fill width
+  // driven directly through a ref from the tick handler — a React render
+  // per tick would repaint the whole page ~60x/s for nothing
+  const [simulating, setSimulating] = useState(false);
+  const progressFillRef = useRef<HTMLDivElement | null>(null);
+
   // Start zoomed all the way out whenever the graph is rebuilt (preset or
   // filter switch, data load): the seeded layout spans thousands of units,
   // and the default camera would stare at an empty middle while the
@@ -1121,6 +1127,12 @@ const GraphPage: FC = () => {
       // Canvas not ready yet; the post-settle fit will frame the layout
     }
   }, [graphData]);
+
+  // A rebuild that actually simulates (no cached layout) shows the bar
+  useEffect(() => {
+    if (progressFillRef.current) progressFillRef.current.style.width = '0%';
+    setSimulating(graphData.nodes.length > 0 && !layoutFromCache);
+  }, [graphData, layoutFromCache]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -1142,6 +1154,7 @@ const GraphPage: FC = () => {
     } = dataRef.current;
     const activePreset = presetRef.current;
     if (nodes.length === 0) return;
+    setSimulating(false);
     recenterLayout(nodes);
     clampOutliers(nodes, activePreset.cleanup);
     resolveResidualOverlaps(nodes, activePreset.collision, activePreset.cleanup);
@@ -1645,6 +1658,15 @@ const GraphPage: FC = () => {
         </aside>
       )}
 
+      {simulating && (
+        <output className={styles.simProgress}>
+          <span>Simulating layout…</span>
+          <div className={styles.track}>
+            <div ref={progressFillRef} className={styles.fill} />
+          </div>
+        </output>
+      )}
+
       <aside className={styles.legend}>
         <span className={styles.legendTitle}>Communities</span>
         {legend.map((entry) => (
@@ -1760,6 +1782,14 @@ const GraphPage: FC = () => {
           // it). forceManyBody caches strength at init, so the accessor
           // must be re-set every tick for the ramp to take effect.
           tickRef.current++;
+          const fill = progressFillRef.current;
+          if (fill) {
+            const total = presetRef.current.sim.cooldownTicks || 1;
+            fill.style.width = `${Math.min(
+              (tickRef.current / total) * 100,
+              100,
+            )}%`;
+          }
           const chargeConfig = presetRef.current.charge;
           // rampFloor >= 1 means static charge — skip the per-tick re-set
           if (chargeConfig.rampFloor >= 1) return;
