@@ -36,6 +36,18 @@ function App({ Component, pageProps }: AppProps) {
         />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="author" content="Fursum" />
+        <meta property="og:title" content="Mapper Influences" />
+        <meta
+          property="og:description"
+          content="Track and share your osu! mapping influences."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.mapperinfluences.com" />
+        <meta
+          property="og:image"
+          content="https://www.mapperinfluences.com/icon-512.png"
+        />
+        <meta name="twitter:card" content="summary" />
         <link rel="icon" href="/favicon.ico" sizes="48x48" />
         <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192" />
         <link rel="icon" href="/svg/Influences.svg" type="image/svg+xml" />
