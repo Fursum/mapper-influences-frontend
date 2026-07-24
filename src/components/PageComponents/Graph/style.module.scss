@@ -61,6 +61,63 @@
     }
   }
 
+  // Node filters, below the search bar; applied before layout so every
+  // preset simulates only the visible subgraph
+  .filters {
+    position: absolute;
+    top: $spacing + 5.25rem;
+    left: $spacing;
+    z-index: 2;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: $spacing * 0.75;
+
+    border-radius: 0.75rem;
+    background-color: $color-background-content;
+    color: $color-text;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+
+    .filterTitle {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: $color-text-faded;
+      margin-bottom: 0.25rem;
+    }
+
+    .filterRow {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+
+      input[type='checkbox'] {
+        cursor: pointer;
+      }
+
+      input[type='number'] {
+        width: 4.5rem;
+        margin-left: auto;
+        padding: 0.1rem 0.3rem;
+        font-size: 0.75rem;
+        text-align: right;
+        border: 1px solid rgba(128, 128, 128, 0.35);
+        border-radius: 0.25rem;
+        background-color: transparent;
+        color: $color-text;
+        outline: none;
+
+        &:focus-visible {
+          border-color: $color-button-outline;
+        }
+      }
+    }
+  }
+
   .infoCard {
     position: absolute;
     top: $spacing;
@@ -314,6 +371,9 @@
     }
 
     .sectionTitle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       margin-block: 0.5rem;
       padding-top: 0.5rem;
       border-top: 1px solid rgba(128, 128, 128, 0.2);
@@ -327,6 +387,20 @@
         margin-top: 0;
         padding-top: 0;
         border-top: none;
+      }
+
+      input[type='checkbox'] {
+        cursor: pointer;
+      }
+    }
+
+    // Section switched off via its title checkbox: fields stay visible for
+    // context but read as inactive
+    .fieldRowDisabled {
+      opacity: 0.35;
+
+      input {
+        cursor: default;
       }
     }
 

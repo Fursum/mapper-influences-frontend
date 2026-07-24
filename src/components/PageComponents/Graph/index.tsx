@@ -496,6 +496,21 @@ const GraphPage: FC = () => {
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
+  // Node filters, applied before community detection and seeding so the
+  // layout is computed for exactly the visible subgraph (works with every
+  // force preset). minMentions commits on blur/enter, not per keystroke —
+  // each change re-runs the simulation.
+  const [rankedOnly, setRankedOnly] = useState(false);
+  const [minMentions, setMinMentions] = useState(0);
+  const [minMentionsDraft, setMinMentionsDraft] = useState('0');
+  const commitMinMentions = useCallback(() => {
+    setMinMentionsDraft((draft) => {
+      const parsed = Math.max(0, Math.floor(Number(draft)) || 0);
+      setMinMentions(parsed);
+      return String(parsed);
+    });
+  }, []);
+
   const [presetName, setPresetName] = useState(DEFAULT_PRESET.name);
   // Custom physics from the editor panel: the built preset, a run counter
   // (each start remounts the graph even when values repeat), and whether
@@ -521,9 +536,31 @@ const GraphPage: FC = () => {
   const [restoreDevicePixelRatio] = useState(() => capDevicePixelRatio());
   useEffect(() => restoreDevicePixelRatio, [restoreDevicePixelRatio]);
 
+  // Filtered view of the API data; links to hidden nodes drop with them
+  const filteredData = useMemo(() => {
+    if (!data) return undefined;
+    if (!rankedOnly && minMentions <= 0) return data;
+    const visible = new Set(
+      data.nodes
+        .filter(
+          (node) =>
+            (!rankedOnly || node.ranked_mapper) &&
+            node.mentions >= minMentions,
+        )
+        .map((node) => node.id),
+    );
+    return {
+      nodes: data.nodes.filter((node) => visible.has(node.id)),
+      links: data.links.filter(
+        (link) => visible.has(link.source) && visible.has(link.target),
+      ),
+    };
+  }, [data, rankedOnly, minMentions]);
+
   // Copies nodes/links because ForceGraph mutates them (layout coordinates,
   // link endpoint object references)
   const { graphData, layoutHash, layoutFromCache } = useMemo(() => {
+    const data = filteredData;
     if (!data)
       return {
         graphData: { nodes: [] as GraphNode[], links: [] as GraphLink[] },
@@ -672,7 +709,7 @@ const GraphPage: FC = () => {
         cachedPositions !== null &&
         data.nodes.every((node) => cachedPositions.has(node.id)),
     };
-  }, [data, isDarkTheme, preset, layoutCacheKey, cacheEnabled]);
+  }, [filteredData, isDarkTheme, preset, layoutCacheKey, cacheEnabled]);
 
   const nodeById = useMemo(() => {
     const map = new Map<number, GraphNode>();
@@ -1088,13 +1125,13 @@ const GraphPage: FC = () => {
     recenterLayout(nodes);
     clampOutliers(nodes, activePreset.cleanup);
     resolveResidualOverlaps(nodes, activePreset.collision, activePreset.cleanup);
-    // Positions may have shifted after the engine stopped — force one
-    // repaint so the cleanup is visible
+    // Fit the settled layout into view: remounts (preset/filter switches)
+    // reset the camera to origin at default zoom, which shows only a tiny
+    // slice of a layout that spans thousands of units
     const graph = graphRef.current;
     if (graph) {
       try {
-        const center = graph.centerAt();
-        graph.centerAt(center.x, center.y);
+        graph.zoomToFit(400, 80);
       } catch {}
     }
     if (!shouldCache) return;
@@ -1447,6 +1484,34 @@ const GraphPage: FC = () => {
         </span>
       </form>
 
+      <aside className={styles.filters}>
+        <span className={styles.filterTitle}>Filters</span>
+        <label className={styles.filterRow}>
+          <input
+            type="checkbox"
+            checked={rankedOnly}
+            onChange={(event) => setRankedOnly(event.target.checked)}
+          />
+          ranked mappers only
+        </label>
+        <label className={styles.filterRow}>
+          min influences
+          <input
+            type="number"
+            min={0}
+            value={minMentionsDraft}
+            onChange={(event) => setMinMentionsDraft(event.target.value)}
+            onBlur={commitMinMentions}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault();
+                commitMinMentions();
+              }
+            }}
+          />
+        </label>
+      </aside>
+
       {selectedNodes.length > 0 && (
         <aside className={styles.infoCard}>
           <div className={styles.cardHeader}>
@@ -1642,11 +1707,11 @@ const GraphPage: FC = () => {
       </aside>
 
       <ForceGraph<NodeExtra, LinkExtra>
-        // Preset switches remount the graph: fresh simulation, fresh warmup,
-        // fresh tick counter — settled layouts stay comparable across
-        // presets. Custom runs bump the counter so pressing start always
+        // Preset or filter switches remount the graph: fresh simulation,
+        // fresh warmup, fresh tick counter — settled layouts stay
+        // comparable. Custom runs bump the counter so pressing start always
         // re-runs even with unchanged values.
-        key={`${preset.name}:${customRun}`}
+        key={`${preset.name}:${customRun}:${rankedOnly}:${minMentions}`}
         graphData={graphData}
         nodeRelSize={NODE_REL_SIZE}
         nodeVal={nodeVal}

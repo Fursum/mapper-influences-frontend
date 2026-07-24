@@ -153,51 +153,88 @@ const PresetEditor: FC<Props> = ({ seed, onStart, onClose }) => {
         </button>
       </div>
       <div className={styles.editorFields}>
-        {SECTION_KEYS.map((section) => (
-          <Fragment key={section}>
-            <span className={styles.sectionTitle}>{section}</span>
-            {Object.entries(seed[section]).map(([field, seedValue]) => {
-              const key = draftKey(section, field);
-              const value = draft[key];
-              return (
-                <label key={key} htmlFor={key} className={styles.fieldRow}>
-                  <span className={styles.fieldMain}>
-                    <span>{field}</span>
-                    {typeof seedValue === 'boolean' ? (
-                      <input
-                        id={key}
-                        type="checkbox"
-                        checked={value === true}
-                        onChange={(event) =>
-                          setDraft((previous) => ({
-                            ...previous,
-                            [key]: event.target.checked,
-                          }))
-                        }
-                      />
-                    ) : (
-                      <input
-                        id={key}
-                        type="text"
-                        inputMode="decimal"
-                        value={typeof value === 'string' ? value : ''}
-                        onChange={(event) =>
-                          setDraft((previous) => ({
-                            ...previous,
-                            [key]: event.target.value,
-                          }))
-                        }
-                      />
-                    )}
-                  </span>
-                  {FIELD_HINTS[key] && (
-                    <span className={styles.fieldHint}>{FIELD_HINTS[key]}</span>
-                  )}
-                </label>
-              );
-            })}
-          </Fragment>
-        ))}
+        {SECTION_KEYS.map((section) => {
+          // Sections with an enable flag get the checkbox in their title
+          // row; switching it off fades and locks the whole section
+          const hasEnabled = 'enabled' in seed[section];
+          const enabledKey = draftKey(section, 'enabled');
+          const sectionOn = !hasEnabled || draft[enabledKey] === true;
+          return (
+            <Fragment key={section}>
+              <span className={styles.sectionTitle}>
+                {section}
+                {hasEnabled && (
+                  <input
+                    type="checkbox"
+                    aria-label={`${section} enabled`}
+                    title={FIELD_HINTS[enabledKey]}
+                    checked={draft[enabledKey] === true}
+                    onChange={(event) =>
+                      setDraft((previous) => ({
+                        ...previous,
+                        [enabledKey]: event.target.checked,
+                      }))
+                    }
+                  />
+                )}
+              </span>
+              {Object.entries(seed[section])
+                .filter(([field]) => field !== 'enabled')
+                .map(([field, seedValue]) => {
+                  const key = draftKey(section, field);
+                  const value = draft[key];
+                  return (
+                    <label
+                      key={key}
+                      htmlFor={key}
+                      className={
+                        sectionOn
+                          ? styles.fieldRow
+                          : `${styles.fieldRow} ${styles.fieldRowDisabled}`
+                      }
+                    >
+                      <span className={styles.fieldMain}>
+                        <span>{field}</span>
+                        {typeof seedValue === 'boolean' ? (
+                          <input
+                            id={key}
+                            type="checkbox"
+                            disabled={!sectionOn}
+                            checked={value === true}
+                            onChange={(event) =>
+                              setDraft((previous) => ({
+                                ...previous,
+                                [key]: event.target.checked,
+                              }))
+                            }
+                          />
+                        ) : (
+                          <input
+                            id={key}
+                            type="text"
+                            inputMode="decimal"
+                            disabled={!sectionOn}
+                            value={typeof value === 'string' ? value : ''}
+                            onChange={(event) =>
+                              setDraft((previous) => ({
+                                ...previous,
+                                [key]: event.target.value,
+                              }))
+                            }
+                          />
+                        )}
+                      </span>
+                      {FIELD_HINTS[key] && (
+                        <span className={styles.fieldHint}>
+                          {FIELD_HINTS[key]}
+                        </span>
+                      )}
+                    </label>
+                  );
+                })}
+            </Fragment>
+          );
+        })}
       </div>
       <button
         type="button"

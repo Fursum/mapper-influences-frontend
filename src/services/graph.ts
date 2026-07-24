@@ -13,6 +13,7 @@ export type GraphResponse = {
     mentions: number;
     influenced_by: number;
     username: string;
+    ranked_mapper: boolean;
   }[];
 };
 
