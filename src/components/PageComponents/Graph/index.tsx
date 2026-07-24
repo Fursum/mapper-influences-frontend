@@ -103,7 +103,7 @@ const SPRITE_BUDGET_PER_FRAME = 24;
 // Bump the version whenever force semantics change so stale layouts computed
 // under old physics are discarded; the preset name is appended per entry so
 // each lab preset caches its own settled layout
-const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v68';
+const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v69';
 
 // Single source of truth for the collision sphere, shared by the live force
 // and the post-settle cleanup pass
@@ -690,13 +690,26 @@ const GraphPage: FC = () => {
       for (const node of data.nodes) {
         let anchor: [number, number] | undefined;
         let anchorMentions = 0;
+        let anchorSameCommunity = false;
         if (node.mentions < spiralMinMentions) {
+          // Same-community anchors always beat cross-community ones: tiny
+          // mappers used to pile up beside whichever mega-hub they also
+          // listed, leaving their own scene's giant marooned alone at its
+          // far spiral slot while its fanbase seeded in the core
+          const community = labels.get(node.id);
           for (const neighborId of adjacency.get(node.id) ?? []) {
             const neighborMentions = mentionsById.get(neighborId) ?? 0;
             const position = seeded.get(neighborId);
-            if (position && neighborMentions > anchorMentions) {
+            if (!position) continue;
+            const sameCommunity = labels.get(neighborId) === community;
+            if (
+              (sameCommunity && !anchorSameCommunity) ||
+              (sameCommunity === anchorSameCommunity &&
+                neighborMentions > anchorMentions)
+            ) {
               anchorMentions = neighborMentions;
               anchor = position;
+              anchorSameCommunity = sameCommunity;
             }
           }
         }
