@@ -103,7 +103,7 @@ const SPRITE_BUDGET_PER_FRAME = 24;
 // Bump the version whenever force semantics change so stale layouts computed
 // under old physics are discarded; the preset name is appended per entry so
 // each lab preset caches its own settled layout
-const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v66';
+const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v68';
 
 // Single source of truth for the collision sphere, shared by the live force
 // and the post-settle cleanup pass
@@ -387,23 +387,48 @@ const loadCachedLayout = (
   }
 };
 
+// Label spread dies off with distance from its origin: each hop multiplies
+// the vote by (1 - decay*hops), hitting zero at ~3 hops, so a hub's label
+// cannot flood the entire graph through overlapping fan bases.
+// Tuned against the live dataset (see scratch sweep): 0.15 with a floor
+// still produced one 2.5k-node mega community; 0.3 with seeds=12 splits
+// the dense core into real scenes (largest ~875 of 3561).
+const COMMUNITY_HOP_DECAY = 0.3;
+
+// The most-mentioned mappers anchor their own communities and never adopt
+// another label: the dense core of the graph is so interconnected that
+// unseeded propagation collapses it into one community no matter how votes
+// are weighted
+const COMMUNITY_SEED_COUNT = 12;
+
 // Label propagation: every node repeatedly adopts the dominant community
-// among its neighbors until stable. Votes are weighted by the neighbor's
-// mentions so community identity flows DOWN from influential mappers —
-// unweighted voting let a prolific declarer's crowd of 0-mention additions
-// outvote everything and found a community around the declarer, which is
-// backwards. Deterministic: fixed iteration order, ties break toward the
-// lowest label.
+// among its neighbors until stable. Two biases shape the result:
+// - votes scale with sqrt(mentions+1), so identity flows DOWN from
+//   influential mappers (a declarer's crowd of 0-mention additions cannot
+//   found a community around the declarer) without giants drowning every
+//   mid-size scene
+// - hop attenuation, so one giant's label weakens as it travels and
+//   distant regions keep their own communities
+// Deterministic: fixed iteration order, ties break toward the lowest label.
 const computeCommunities = (
   nodes: GraphResponse['nodes'],
   links: GraphResponse['links'],
 ) => {
+  const seeds = new Set(
+    [...nodes]
+      .sort((a, b) => b.mentions - a.mentions || a.id - b.id)
+      .slice(0, COMMUNITY_SEED_COUNT)
+      .map((node) => node.id),
+  );
   const labels = new Map<number, number>();
+  // How far each node's current label has traveled from its origin
+  const labelHops = new Map<number, number>();
   const voteWeight = new Map<number, number>();
   const adjacency = new Map<number, number[]>();
   for (const node of nodes) {
     labels.set(node.id, node.id);
-    voteWeight.set(node.id, node.mentions + 1);
+    labelHops.set(node.id, 0);
+    voteWeight.set(node.id, Math.sqrt(node.mentions + 1));
     adjacency.set(node.id, []);
   }
   for (const link of links) {
@@ -414,28 +439,46 @@ const computeCommunities = (
   for (let iteration = 0; iteration < 10; iteration++) {
     let changed = false;
     for (const node of nodes) {
-      const counts = new Map<number, number>();
+      if (seeds.has(node.id)) continue;
+      const scores = new Map<number, number>();
+      const hopByLabel = new Map<number, number>();
       for (const neighborId of adjacency.get(node.id) ?? []) {
         const label = labels.get(neighborId);
-        if (label !== undefined)
-          counts.set(
-            label,
-            (counts.get(label) ?? 0) + (voteWeight.get(neighborId) ?? 1),
-          );
+        if (label === undefined) continue;
+        const hops = (labelHops.get(neighborId) ?? 0) + 1;
+        const attenuation = Math.max(1 - COMMUNITY_HOP_DECAY * hops, 0);
+        if (attenuation === 0) continue;
+        scores.set(
+          label,
+          (scores.get(label) ?? 0) +
+            (voteWeight.get(neighborId) ?? 1) * attenuation,
+        );
+        hopByLabel.set(
+          label,
+          Math.min(hopByLabel.get(label) ?? Number.POSITIVE_INFINITY, hops),
+        );
       }
 
-      let best = labels.get(node.id) as number;
-      let bestCount = 0;
-      counts.forEach((count, label) => {
-        if (count > bestCount || (count === bestCount && label < best)) {
+      const current = labels.get(node.id) as number;
+      let best = current;
+      let bestScore = 0;
+      scores.forEach((score, label) => {
+        if (score > bestScore || (score === bestScore && label < best)) {
           best = label;
-          bestCount = count;
+          bestScore = score;
         }
       });
 
-      if (best !== labels.get(node.id)) {
+      if (best !== current) {
         labels.set(node.id, best);
+        labelHops.set(node.id, hopByLabel.get(best) ?? 1);
         changed = true;
+      } else {
+        // Same label reachable through a shorter path: tighten the hop
+        // count so its onward votes are attenuated correctly
+        const shorter = hopByLabel.get(current);
+        if (shorter !== undefined && shorter < (labelHops.get(node.id) ?? 0))
+          labelHops.set(node.id, shorter);
       }
     }
     if (!changed) break;
