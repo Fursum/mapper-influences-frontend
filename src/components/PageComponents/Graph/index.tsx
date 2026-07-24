@@ -1113,10 +1113,22 @@ const GraphPage: FC = () => {
     }
 
     if (focusIds.size > 0) {
+      // Wash color = page background at high alpha. body often computes as
+      // fully transparent (the gradient lives on html), in which case fall
+      // back to a per-theme constant — the old black default was jarring
+      // in light mode.
       const background = getComputedStyle(document.body).backgroundColor;
       const channels = background.match(/\d+(\.\d+)?/g);
-      if (channels && channels.length >= 3 && background !== 'rgba(0, 0, 0, 0)')
+      if (
+        channels &&
+        channels.length >= 3 &&
+        background !== 'rgba(0, 0, 0, 0)'
+      )
         dimWashRef.current = `rgba(${channels[0]}, ${channels[1]}, ${channels[2]}, 0.85)`;
+      else
+        dimWashRef.current = themeRef.current
+          ? 'rgba(20, 18, 26, 0.85)'
+          : 'rgba(255, 255, 255, 0.85)';
     }
 
     viewRef.current = { focusIds, highlightSet, activeCommunity: community };
@@ -1530,13 +1542,25 @@ const GraphPage: FC = () => {
     [],
   );
 
-  // Hover/selection highlight, drawn on top of the untouched base render:
-  // one translucent wash dims everything at O(1), then only the focused
-  // neighborhood is redrawn. Hover cost scales with the neighborhood, never
-  // with the whole graph.
+  // Post-render pass: base labels first (drawn AFTER every node circle, so
+  // a later-painted circle can never cover an earlier node's label), then
+  // the hover/selection overlay — one translucent wash dims everything at
+  // O(1) and only the focused neighborhood is redrawn on top. Hover cost
+  // scales with the neighborhood, never with the whole graph.
   const paintFocusOverlay = useCallback(
     (ctx: CanvasRenderingContext2D, globalScale: number) => {
-      const { focusIds } = viewRef.current;
+      const { focusIds, highlightSet } = viewRef.current;
+
+      // Base labels for nodes big enough on screen (skip community-dimmed)
+      for (const node of dataRef.current.nodes) {
+        if (node.x === undefined || node.y === undefined) continue;
+        if (highlightSet !== null && !highlightSet.has(node.id as number))
+          continue;
+        if (node.radius * globalScale <= 12) continue;
+        const sprite = getLabelSprite(node);
+        if (sprite) drawLabel(node, sprite, ctx, globalScale);
+      }
+
       if (focusIds.size === 0) return;
       const { neighbors: neighborMap, linksByNode: linkIndex, nodeById: nodeIndex } =
         dataRef.current;
@@ -1658,7 +1682,7 @@ const GraphPage: FC = () => {
         }
       }
     },
-    [drawLabel],
+    [getLabelSprite, drawLabel],
   );
 
   // Base node painting is independent of hover/selection (overlay handles
@@ -1691,14 +1715,9 @@ const GraphPage: FC = () => {
       ctx.beginPath();
       ctx.arc(node.x, node.y, node.radius, 0, 2 * Math.PI);
       ctx.fill();
-
-      if (!dimmed && screenRadius > 12) {
-        const sprite = getLabelSprite(node);
-        if (sprite) drawLabel(node, sprite, ctx, globalScale);
-      }
       ctx.globalAlpha = 1;
     },
-    [getLabelSprite, drawLabel],
+    [],
   );
 
   const paintPointerArea = useCallback(
