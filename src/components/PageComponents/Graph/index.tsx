@@ -103,7 +103,7 @@ const SPRITE_BUDGET_PER_FRAME = 24;
 // Bump the version whenever force semantics change so stale layouts computed
 // under old physics are discarded; the preset name is appended per entry so
 // each lab preset caches its own settled layout
-const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v73';
+const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v74';
 
 // Single source of truth for the collision sphere, shared by the live force
 // and the post-settle cleanup pass
@@ -254,40 +254,51 @@ const rescueStrayGiants = (
   cleanup: ForcePreset['cleanup'],
 ) => {
   if (cleanup.strayMaxLinkDistance <= 0) return;
-  const sumX = new Map<number, number>();
-  const sumY = new Map<number, number>();
-  const sumWeight = new Map<number, number>();
-  const accumulate = (id: number, other: GraphNode) => {
-    const weight = other.mentions + 1;
-    sumX.set(id, (sumX.get(id) ?? 0) + (other.x ?? 0) * weight);
-    sumY.set(id, (sumY.get(id) ?? 0) + (other.y ?? 0) * weight);
-    sumWeight.set(id, (sumWeight.get(id) ?? 0) + weight);
+  // Stranded means far from EVERY linked neighbor — the nearest-neighbor
+  // distance is scale-independent, so separated-island layouts do not
+  // false-positive. (An earlier version compared against the weighted
+  // centroid of all neighbors; cross-scene links dragged that centroid
+  // between islands and at engine stop nearly every scene head teleported
+  // toward the middle — the "instant snap to a clump" failure.)
+  const nearestDistance = new Map<number, number>();
+  const strongestNeighbor = new Map<number, GraphNode>();
+  const consider = (id: number, other: GraphNode, distance: number) => {
+    if (distance < (nearestDistance.get(id) ?? Number.POSITIVE_INFINITY))
+      nearestDistance.set(id, distance);
+    const strongest = strongestNeighbor.get(id);
+    if (
+      !strongest ||
+      other.mentions > strongest.mentions ||
+      (other.mentions === strongest.mentions &&
+        (other.id as number) < (strongest.id as number))
+    )
+      strongestNeighbor.set(id, other);
   };
   for (const link of links) {
     const source = link.source;
     const target = link.target;
     if (typeof source !== 'object' || typeof target !== 'object') continue;
-    accumulate(source.id as number, target);
-    accumulate(target.id as number, source);
+    const distance = Math.hypot(
+      (target.x ?? 0) - (source.x ?? 0),
+      (target.y ?? 0) - (source.y ?? 0),
+    );
+    consider(source.id as number, target, distance);
+    consider(target.id as number, source, distance);
   }
   for (const node of nodes) {
     if (node.mentions < cleanup.strayMinMentions) continue;
-    const weight = sumWeight.get(node.id as number);
-    if (!weight) continue;
-    const centroidX = (sumX.get(node.id as number) ?? 0) / weight;
-    const centroidY = (sumY.get(node.id as number) ?? 0) / weight;
-    const distance = Math.hypot(
-      (node.x ?? 0) - centroidX,
-      (node.y ?? 0) - centroidY,
-    );
-    if (distance <= cleanup.strayMaxLinkDistance) continue;
-    // Deterministic ring offset so multiple rescued giants with shared
-    // neighborhoods do not land on the exact same point; the residual
-    // overlap pass separates them from the locals
+    const nearest = nearestDistance.get(node.id as number);
+    if (nearest === undefined || nearest <= cleanup.strayMaxLinkDistance)
+      continue;
+    // Land beside the most influential connection (a real scene), not at
+    // some between-islands centroid. Deterministic ring offset; the
+    // residual overlap pass separates from locals.
+    const anchor = strongestNeighbor.get(node.id as number);
+    if (!anchor) continue;
     const angle = ((node.id as number) % 997) * 0.006302;
-    const offset = node.radius * 2;
-    node.x = centroidX + Math.cos(angle) * offset;
-    node.y = centroidY + Math.sin(angle) * offset;
+    const offset = anchor.radius + node.radius + 60;
+    node.x = (anchor.x ?? 0) + Math.cos(angle) * offset;
+    node.y = (anchor.y ?? 0) + Math.sin(angle) * offset;
     node.vx = 0;
     node.vy = 0;
   }
