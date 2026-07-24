@@ -345,7 +345,8 @@ const endId = (end?: LinkEnd): number | undefined => {
   return Number(end);
 };
 
-const nodeVal = (node: GraphNode) => node.mentions ** 1.7;
+// Floored like visualRadius so 0-mention nodes keep a nonzero size
+const nodeVal = (node: GraphNode) => Math.max(node.mentions, 1) ** 1.7;
 const nodeTooltip = (node: GraphNode) => `${node.username} - ${node.mentions}`;
 
 // Link hover/click is unused, so painting every link onto the interaction
@@ -592,8 +593,11 @@ const GraphPage: FC = () => {
     // mentioned already-seeded neighbor instead: their link springs are too
     // weak to drag them across the graph, so they must start where they
     // belong or they strand on the wrong side.
+    // Floored at the 1-mention size: 0-mention nodes (mappers who only
+    // declared influences) would otherwise render at radius 0 — invisible
+    // and unhoverable
     const visualRadius = (mentions: number) =>
-      Math.sqrt(mentions ** 1.7) * NODE_REL_SIZE;
+      Math.sqrt(Math.max(mentions, 1) ** 1.7) * NODE_REL_SIZE;
     const mentionsById = new Map<number, number>();
     for (const node of data.nodes) mentionsById.set(node.id, node.mentions);
     const adjacency = new Map<number, number[]>();
