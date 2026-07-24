@@ -66,6 +66,11 @@ export type ForcePreset = {
     // blob and fights collision forever
     distanceNumerator: number;
     distanceMargin: number;
+    // Spring multiplier per influence_type tier (weak 1 / mid 4 / strong 7):
+    // a declared "major influence" pulls harder than a passing mention
+    typeWeakScale: number;
+    typeMidScale: number;
+    typeStrongScale: number;
   };
   charge: {
     // strength = -(mentions^exponent * scale * ramp) - base
@@ -168,6 +173,9 @@ const baseline: ForcePreset = {
     mixedScale: 0.45,
     distanceNumerator: 3000,
     distanceMargin: 40,
+    typeWeakScale: 0.75,
+    typeMidScale: 1,
+    typeStrongScale: 1.3,
   },
   charge: {
     exponent: 2.8,

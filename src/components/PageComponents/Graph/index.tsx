@@ -103,7 +103,7 @@ const SPRITE_BUDGET_PER_FRAME = 24;
 // Bump the version whenever force semantics change so stale layouts computed
 // under old physics are discarded; the preset name is appended per entry so
 // each lab preset caches its own settled layout
-const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v76';
+const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v77';
 
 // Single source of truth for the collision sphere, shared by the live force
 // and the post-settle cleanup pass
@@ -387,6 +387,14 @@ const loadCachedLayout = (
   }
 };
 
+// influence_type enum tiers: 1 = weak, 4 = mid, 7 = strong declaration
+const influenceTier = (type: number) => (type >= 7 ? 2 : type >= 4 ? 1 : 0);
+
+// Community votes scale with declaration strength: a "major influence" tie
+// binds scenes harder than a passing mention. Fixed (not preset-tunable) so
+// community structure stays consistent across presets.
+const TIER_VOTE_FACTORS = [0.75, 1, 1.3] as const;
+
 // Label spread dies off with distance from its origin: each hop multiplies
 // the vote by (1 - decay*hops), hitting zero at ~3 hops, so a hub's label
 // cannot flood the entire graph through overlapping fan bases.
@@ -425,7 +433,8 @@ const computeCommunities = (
   // How far each node's current label has traveled from its origin
   const labelHops = new Map<number, number>();
   const voteWeight = new Map<number, number>();
-  const adjacency = new Map<number, number[]>();
+  // Neighbor id + the influence-type factor of the connecting link
+  const adjacency = new Map<number, [number, number][]>();
   for (const node of nodes) {
     labels.set(node.id, node.id);
     labelHops.set(node.id, 0);
@@ -433,8 +442,9 @@ const computeCommunities = (
     adjacency.set(node.id, []);
   }
   for (const link of links) {
-    adjacency.get(link.source)?.push(link.target);
-    adjacency.get(link.target)?.push(link.source);
+    const typeFactor = TIER_VOTE_FACTORS[influenceTier(link.influence_type)];
+    adjacency.get(link.source)?.push([link.target, typeFactor]);
+    adjacency.get(link.target)?.push([link.source, typeFactor]);
   }
 
   for (let iteration = 0; iteration < 10; iteration++) {
@@ -443,7 +453,7 @@ const computeCommunities = (
       if (seeds.has(node.id)) continue;
       const scores = new Map<number, number>();
       const hopByLabel = new Map<number, number>();
-      for (const neighborId of adjacency.get(node.id) ?? []) {
+      for (const [neighborId, typeFactor] of adjacency.get(node.id) ?? []) {
         const label = labels.get(neighborId);
         if (label === undefined) continue;
         const hops = (labelHops.get(neighborId) ?? 0) + 1;
@@ -452,7 +462,7 @@ const computeCommunities = (
         scores.set(
           label,
           (scores.get(label) ?? 0) +
-            (voteWeight.get(neighborId) ?? 1) * attenuation,
+            (voteWeight.get(neighborId) ?? 1) * attenuation * typeFactor,
         );
         hopByLabel.set(
           label,
@@ -530,13 +540,13 @@ const computeCommunities = (
     // Every connection (declared or inbound) pointing into a candidate
     // scene votes for it, weighted by the connection's influence
     const scores = new Map<number, number>();
-    for (const neighborId of adjacency.get(node.id) ?? []) {
+    for (const [neighborId, typeFactor] of adjacency.get(node.id) ?? []) {
       const community = labels.get(neighborId);
       if (community === undefined || !candidates.has(community)) continue;
       scores.set(
         community,
         (scores.get(community) ?? 0) +
-          Math.sqrt((mentionsById.get(neighborId) ?? 0) + 1),
+          Math.sqrt((mentionsById.get(neighborId) ?? 0) + 1) * typeFactor,
       );
     }
     let best: number | undefined;
@@ -1170,7 +1180,6 @@ const GraphPage: FC = () => {
           link.source.radius + link.target.radius + springs.distanceMargin,
         ),
       );
-    // TODO: Add influence type for the link distance and strength
     // Each endpoint pulls proportionally to its influence count: heavily
     // mentioned mappers drag their connections toward themselves, while
     // barely mentioned mappers contribute next to nothing so leaf nodes
@@ -1213,9 +1222,17 @@ const GraphPage: FC = () => {
             ? 1
             : springs.crossCommunityBase +
               springs.crossCommunityDeclarerScale * declarerInfluence;
+        // Declaration strength tier: a "major influence" pulls harder
+        // than a passing mention
+        const tierScales = [
+          springs.typeWeakScale,
+          springs.typeMidScale,
+          springs.typeStrongScale,
+        ];
+        const typeFactor = tierScales[influenceTier(link.influence_type)];
         return (
           Math.min(
-            base * declarerBoost * communityFactor,
+            base * declarerBoost * communityFactor * typeFactor,
             springs.strengthCap,
           ) * (bothSmall ? springs.bothSmallScale : springs.mixedScale)
         );
