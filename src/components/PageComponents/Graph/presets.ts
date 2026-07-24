@@ -23,6 +23,11 @@ export type ForcePreset = {
     memberSpacing: number;
     // Extra gap past both radii when anchoring a tiny node beside its hub
     anchorRingMargin: number;
+    // Only this many top communities (by aggregate influence) get their own
+    // spiral slot; the rest seed as satellites beside their most-linked
+    // parent scene, so a small scene headed by an old inactive legend does
+    // not strand at a far slot
+    majorCommunities: number;
   };
   gravity: {
     // strength = influence^exponent * scale + floor
@@ -138,6 +143,7 @@ const baseline: ForcePreset = {
     communitySpacing: 6000,
     memberSpacing: 800,
     anchorRingMargin: 80,
+    majorCommunities: 12,
   },
   gravity: { exponent: 2, scale: 0.08, floor: 0.001 },
   springs: {

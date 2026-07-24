@@ -103,7 +103,7 @@ const SPRITE_BUDGET_PER_FRAME = 24;
 // Bump the version whenever force semantics change so stale layouts computed
 // under old physics are discarded; the preset name is appended per entry so
 // each lab preset caches its own settled layout
-const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v69';
+const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v70';
 
 // Single source of truth for the collision sphere, shared by the live force
 // and the post-settle cleanup pass
@@ -665,14 +665,18 @@ const GraphPage: FC = () => {
       communitySpacing,
       memberSpacing,
       anchorRingMargin,
+      majorCommunities,
     } = preset.seeding;
     const GOLDEN_ANGLE = 2.399963229728653;
     const seeded = new Map<number, [number, number]>();
     if (!cachedPositions) {
-      // Communities claim spiral slots by aggregate influence (biggest in
-      // the middle), members sub-spiral around their community's centroid —
-      // related clusters spawn adjacent instead of wherever raw rank lands
+      // Major communities claim spiral slots by aggregate influence
+      // (biggest in the middle). Minor communities do NOT get their own
+      // far-out slot — a small scene headed by an old inactive legend used
+      // to strand at the rim; instead they seed as satellites beside the
+      // community they share the most links with.
       const communityWeight = new Map<number, number>();
+      const spiralCount = new Map<number, number>();
       for (const node of data.nodes) {
         if (node.mentions < spiralMinMentions) continue;
         const community = labels.get(node.id) as number;
@@ -680,11 +684,81 @@ const GraphPage: FC = () => {
           community,
           (communityWeight.get(community) ?? 0) + node.mentions,
         );
+        spiralCount.set(community, (spiralCount.get(community) ?? 0) + 1);
       }
-      const communitySlot = new Map<number, number>();
-      Array.from(communityWeight.entries())
-        .sort((a, b) => b[1] - a[1])
-        .forEach(([community], index) => communitySlot.set(community, index));
+      const rankedCommunities = Array.from(communityWeight.entries())
+        .sort((a, b) => b[1] - a[1] || a[0] - b[0])
+        .map(([community]) => community);
+      const majorSet = new Set(rankedCommunities.slice(0, majorCommunities));
+
+      // Strongest cross-community link partner for each minor community
+      const crossWeight = new Map<string, number>();
+      for (const link of data.links) {
+        const a = labels.get(link.source);
+        const b = labels.get(link.target);
+        if (a === undefined || b === undefined || a === b) continue;
+        const key = a < b ? `${a}|${b}` : `${b}|${a}`;
+        crossWeight.set(key, (crossWeight.get(key) ?? 0) + 1);
+      }
+      const partnerOf = new Map<number, number>();
+      for (const community of rankedCommunities) {
+        if (majorSet.has(community)) continue;
+        let best: number | undefined;
+        let bestWeight = 0;
+        for (const [key, weight] of Array.from(crossWeight.entries())) {
+          const [a, b] = key.split('|').map(Number);
+          if (a !== community && b !== community) continue;
+          const other = a === community ? b : a;
+          if (
+            weight > bestWeight ||
+            (weight === bestWeight && (best === undefined || other < best))
+          ) {
+            best = other;
+            bestWeight = weight;
+          }
+        }
+        if (best !== undefined) partnerOf.set(community, best);
+      }
+      const resolveParent = (community: number): number => {
+        let current = community;
+        for (let step = 0; step < 10; step++) {
+          if (majorSet.has(current)) return current;
+          const next = partnerOf.get(current);
+          if (next === undefined) return rankedCommunities[0];
+          current = next;
+        }
+        return rankedCommunities[0];
+      };
+
+      const communityCenter = new Map<number, [number, number]>();
+      for (const community of rankedCommunities) {
+        if (!majorSet.has(community)) continue;
+        const slot = rankedCommunities.indexOf(community);
+        const angle = slot * GOLDEN_ANGLE;
+        const radius = communitySpacing * Math.sqrt(slot);
+        communityCenter.set(community, [
+          Math.cos(angle) * radius,
+          Math.sin(angle) * radius,
+        ]);
+      }
+      const satelliteIndex = new Map<number, number>();
+      for (const community of rankedCommunities) {
+        if (majorSet.has(community)) continue;
+        const parent = resolveParent(community);
+        const parentCenter = communityCenter.get(parent) ?? [0, 0];
+        const index = satelliteIndex.get(parent) ?? 0;
+        satelliteIndex.set(parent, index + 1);
+        const angle = index * GOLDEN_ANGLE;
+        const distance =
+          memberSpacing *
+            (Math.sqrt(spiralCount.get(parent) ?? 1) +
+              Math.sqrt(spiralCount.get(community) ?? 1)) +
+          communitySpacing * 0.3;
+        communityCenter.set(community, [
+          parentCenter[0] + Math.cos(angle) * distance,
+          parentCenter[1] + Math.sin(angle) * distance,
+        ]);
+      }
 
       const memberCount = new Map<number, number>();
       for (const node of data.nodes) {
@@ -726,18 +800,14 @@ const GraphPage: FC = () => {
           ]);
         } else {
           const community = labels.get(node.id) as number;
-          const slot = communitySlot.get(community) ?? communitySlot.size;
-          const communityAngle = slot * GOLDEN_ANGLE;
-          const communityRadius = communitySpacing * Math.sqrt(slot);
+          const center = communityCenter.get(community) ?? [0, 0];
           const member = memberCount.get(community) ?? 0;
           memberCount.set(community, member + 1);
           const memberAngle = member * GOLDEN_ANGLE;
           const memberRadius = memberSpacing * Math.sqrt(member);
           seeded.set(node.id, [
-            Math.cos(communityAngle) * communityRadius +
-              Math.cos(memberAngle) * memberRadius,
-            Math.sin(communityAngle) * communityRadius +
-              Math.sin(memberAngle) * memberRadius,
+            center[0] + Math.cos(memberAngle) * memberRadius,
+            center[1] + Math.sin(memberAngle) * memberRadius,
           ]);
         }
       }
