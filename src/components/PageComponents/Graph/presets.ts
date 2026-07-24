@@ -260,32 +260,39 @@ const from = (overrides: {
 // archipelago's separated-island geography
 const flatIsles = from({
   name: 'flat-isles',
-  intent: 'Egalitarian islands: mild size scaling inside well-separated communities.',
+  intent: 'Anchored islands: giants hold their scene in place, small nodes travel.',
   recommended: true,
-  // Archipelago's geography: wide seeding gaps, short-range repulsion,
-  // weak center pull so islands keep their distance
-  seeding: { communitySpacing: 10000, memberSpacing: 700 },
+  // Wide (but not extreme) seeding gaps; scenes keep their distance
+  seeding: { communitySpacing: 8000, memberSpacing: 700 },
   charge: {
     exponent: 1.8,
     scale: 600,
     rampFloor: 0.3,
-    distanceMax: 2000,
+    distanceMax: 2500,
   },
-  gravity: { exponent: 1, scale: 0.04, floor: 0.001 },
-  // Flat-hierarchy's internals: giants dominate their island far less,
-  // small mappers keep real spring weight
+  // Near-zero center pull: influence-weighted gravity at 0.04 converged
+  // every scene anchor onto the origin within the settle, collapsing the
+  // islands into one middle blob. Post-settle recenter/clamps handle
+  // framing instead.
+  gravity: { exponent: 1, scale: 0.008, floor: 0.0005 },
+  // Giants reel their people in: stronger receiver-side spring than the
+  // old flat tuning, so being declared by someone actually pulls them
+  // toward you instead of the middle
   springs: {
     declarerFactor: 1.2,
-    receiverFactor: 0.3,
-    declarerBoostScale: 0.8,
+    receiverFactor: 0.55,
+    declarerBoostScale: 1.2,
     crossCommunityBase: 0.1,
     crossCommunityDeclarerScale: 0.3,
+    mixedScale: 0.5,
   },
-  inertia: { earlyLoss: 0.2, lateLoss: 0.6 },
-  speedCap: { influenceScale: 0.6 },
+  // Giants sort early then anchor hard; small nodes stay mobile and do
+  // the traveling
+  inertia: { earlyLoss: 0.3, lateLoss: 0.85 },
+  speedCap: { influenceScale: 0.9 },
   hubSeparation: {
-    crossRange: 2800,
-    crossStrength: 45,
+    crossRange: 3500,
+    crossStrength: 55,
     sameRange: 800,
     sameStrength: 22,
   },
