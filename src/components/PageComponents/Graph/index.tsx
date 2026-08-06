@@ -102,8 +102,12 @@ const SPRITE_BUDGET_PER_FRAME = 24;
 
 // Bump the version whenever force semantics change so stale layouts computed
 // under old physics are discarded; the preset name is appended per entry so
-// each lab preset caches its own settled layout
-const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v79';
+// each lab preset caches its own settled layout.
+// Seeding and community constants no longer need a bump — they are mixed
+// into the entry hash (LAYOUT_TUNING) and invalidate themselves. This is
+// still the escape hatch for changes the hash cannot see, such as the
+// stored position format or the force curves themselves.
+const LAYOUT_CACHE_KEY = 'mapper-influences:graph-layout:v80';
 
 // Single source of truth for the collision sphere, shared by the live force
 // and the post-settle cleanup pass
@@ -353,7 +357,10 @@ const nodeTooltip = (node: GraphNode) => `${node.username} - ${node.mentions}`;
 // shadow canvas is wasted work
 const skipLinkPointerPaint = () => {};
 
-const hashGraphData = (data: GraphResponse) => {
+// Identifies a cached layout: the data it was computed from AND the tuning
+// it was computed under. Fractional values are scaled before mixing so a
+// 0.3 -> 0.4 decay change survives the integer xor.
+const hashGraphData = (data: GraphResponse, tuning: readonly number[]) => {
   let hash = 5381;
   const mix = (value: number) => {
     hash = ((hash * 33) ^ value) >>> 0;
@@ -365,6 +372,7 @@ const hashGraphData = (data: GraphResponse) => {
   for (const link of data.links) {
     mix(link.source * 31 + link.target);
   }
+  for (const value of tuning) mix(Math.round(value * 1000));
   return hash;
 };
 
@@ -398,18 +406,54 @@ const influenceTier = (type: number) => (type >= 7 ? 2 : type >= 4 ? 1 : 0);
 const TIER_VOTE_FACTORS = [1, 1, 1] as const;
 
 // Label spread dies off with distance from its origin: each hop multiplies
-// the vote by (1 - decay*hops), hitting zero at ~3 hops, so a hub's label
+// the vote by (1 - decay*hops), hitting zero at 2 hops, so a hub's label
 // cannot flood the entire graph through overlapping fan bases.
-// Tuned against the live dataset (see scratch sweep): 0.15 with a floor
-// still produced one 2.5k-node mega community; 0.3 with seeds=12 splits
-// the dense core into real scenes (largest ~875 of 3561).
-const COMMUNITY_HOP_DECAY = 0.3;
+// Tuned against the live dataset in the sweep order below: 0.3 with
+// seeds=12 left one 1816-node mega community, half the graph, and needed
+// 13 sweeps to settle — more than COMMUNITY_MAX_SWEEPS, so its labels were
+// a half-settled snapshot. 0.4 with seeds=30 settles in 6 and splits the
+// core into real scenes (largest 793 of 3629, nine over 100).
+// It is also the steadier of the two under edge churn: dropping 2% of the
+// links leaves the headline scenes near their size, where 0.3/12 halved
+// one of them. Mappers add and remove declared influences constantly, so
+// that matters more than any single day's partition looking tidy.
+const COMMUNITY_HOP_DECAY = 0.4;
 
 // The most-mentioned mappers anchor their own communities and never adopt
 // another label: the dense core of the graph is so interconnected that
 // unseeded propagation collapses it into one community no matter how votes
 // are weighted
-const COMMUNITY_SEED_COUNT = 12;
+const COMMUNITY_SEED_COUNT = 30;
+
+// Propagation is a fixed-point iteration, so it normally stops itself well
+// short of this; the cap only bounds the pathological case. Exceeding it
+// means the labels never settled — see the warning below.
+const COMMUNITY_MAX_SWEEPS = 10;
+
+// The interlinked core seeds as one compact formation (the original
+// "giant blob with genuinely separated satellites" layout that worked);
+// full communitySpacing between core sub-blobs put scenes beyond the
+// forces' reach and needed teleport band-aids after settle
+const CORE_SPACING_FACTOR = 0.4;
+
+// Island gates: a 2-node disconnected pair passes the internal/external
+// ratio test but is dust, not an island; and a dense mega community can
+// pass it too yet must stay in the core (it IS the core)
+const ISLAND_MIN_SIZE = 8;
+const ISLAND_MAX_SHARE = 0.25;
+
+// Every constant the seeded layout depends on. Mixed into the layout cache
+// hash so retuning any of them invalidates stored positions by itself —
+// the cache used to key on the data alone, so a tuning change would
+// silently replay the old layout and read as "my fix did nothing".
+const LAYOUT_TUNING = [
+  COMMUNITY_HOP_DECAY,
+  COMMUNITY_SEED_COUNT,
+  COMMUNITY_MAX_SWEEPS,
+  CORE_SPACING_FACTOR,
+  ISLAND_MIN_SIZE,
+  ISLAND_MAX_SHARE,
+] as const;
 
 // Label propagation: every node repeatedly adopts the dominant community
 // among its neighbors until stable. Two biases shape the result:
@@ -419,17 +463,24 @@ const COMMUNITY_SEED_COUNT = 12;
 //   mid-size scene
 // - hop attenuation, so one giant's label weakens as it travels and
 //   distant regions keep their own communities
+// Updates are in place, so a sweep sees labels its earlier nodes just
+// adopted — which makes the outcome depend on the order the nodes are
+// visited in, and the spread is wide: the same data in API order once gave
+// a 967-node largest community and in mentions-descending order 1816. So
+// the sweep runs over its own sorted copy and the caller's ordering cannot
+// reach it. The decay above is tuned for exactly this order; changing the
+// sort changes the partition, so the two move together.
 // Deterministic: fixed iteration order, ties break toward the lowest label.
 const computeCommunities = (
   nodes: GraphResponse['nodes'],
   links: GraphResponse['links'],
   majorCommunities: number,
 ) => {
+  const sweepOrder = [...nodes].sort(
+    (a, b) => b.mentions - a.mentions || a.id - b.id,
+  );
   const seeds = new Set(
-    [...nodes]
-      .sort((a, b) => b.mentions - a.mentions || a.id - b.id)
-      .slice(0, COMMUNITY_SEED_COUNT)
-      .map((node) => node.id),
+    sweepOrder.slice(0, COMMUNITY_SEED_COUNT).map((node) => node.id),
   );
   const labels = new Map<number, number>();
   // How far each node's current label has traveled from its origin
@@ -449,9 +500,10 @@ const computeCommunities = (
     adjacency.get(link.target)?.push([link.source, typeFactor]);
   }
 
-  for (let iteration = 0; iteration < 10; iteration++) {
+  let settled = false;
+  for (let iteration = 0; iteration < COMMUNITY_MAX_SWEEPS; iteration++) {
     let changed = false;
-    for (const node of nodes) {
+    for (const node of sweepOrder) {
       if (seeds.has(node.id)) continue;
       const scores = new Map<number, number>();
       const hopByLabel = new Map<number, number>();
@@ -494,7 +546,19 @@ const computeCommunities = (
           labelHops.set(node.id, shorter);
       }
     }
-    if (!changed) break;
+    if (!changed) {
+      settled = true;
+      break;
+    }
+  }
+  // Running out of sweeps is not a crash — it just means the labels below
+  // are a half-settled snapshot, which reads as a mega community swallowing
+  // real scenes. Silent truncation hid exactly that for several retunes, so
+  // say it out loud while tuning.
+  if (!settled && process.env.NODE_ENV !== 'production') {
+    console.warn(
+      `[graph] community labels did not settle in ${COMMUNITY_MAX_SWEEPS} sweeps (${nodes.length} nodes, decay ${COMMUNITY_HOP_DECAY}, seeds ${COMMUNITY_SEED_COUNT}). Partition is a snapshot, not a fixed point — raise the cap or the decay.`,
+    );
   }
 
   // Post-pass: a MINOR community whose head has declared influences belongs
@@ -524,7 +588,7 @@ const computeCommunities = (
     if (!idolsOf.has(link.source)) idolsOf.set(link.source, []);
     idolsOf.get(link.source)?.push(link.target);
   }
-  for (const node of nodes) {
+  for (const node of sweepOrder) {
     const own = labels.get(node.id);
     if (own !== node.id) continue; // not a community head
     if (majorSet.has(own)) continue;
@@ -723,7 +787,17 @@ const GraphPage: FC = () => {
         .map(([label], index) => [label, palette[index % palette.length]]),
     );
 
-    const hash = hashGraphData(data);
+    // The preset's own seeding numbers ride along: the cache key carries the
+    // preset NAME, which does not change when its values are retuned.
+    const hash = hashGraphData(data, [
+      ...LAYOUT_TUNING,
+      preset.seeding.spiralMinMentions,
+      preset.seeding.communitySpacing,
+      preset.seeding.memberSpacing,
+      preset.seeding.anchorRingMargin,
+      preset.seeding.majorCommunities,
+      preset.seeding.detachRatio,
+    ]);
     const cachedPositions = cacheEnabled
       ? loadCachedLayout(layoutCacheKey, hash)
       : null;
@@ -758,11 +832,6 @@ const GraphPage: FC = () => {
       detachRatio,
     } = preset.seeding;
     const GOLDEN_ANGLE = 2.399963229728653;
-    // The interlinked core seeds as one compact formation (the original
-    // "giant blob with genuinely separated satellites" layout that worked);
-    // full communitySpacing between core sub-blobs put scenes beyond the
-    // forces' reach and needed teleport band-aids after settle
-    const CORE_SPACING_FACTOR = 0.4;
     const seeded = new Map<number, [number, number]>();
     if (!cachedPositions) {
       // Three placement tiers:
@@ -803,8 +872,6 @@ const GraphPage: FC = () => {
         const community = labels.get(node.id) as number;
         communitySize.set(community, (communitySize.get(community) ?? 0) + 1);
       }
-      const ISLAND_MIN_SIZE = 8;
-      const ISLAND_MAX_SHARE = 0.25;
       const isDetached = (community: number) => {
         const size = communitySize.get(community) ?? 0;
         return (
