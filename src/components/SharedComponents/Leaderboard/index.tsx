@@ -31,7 +31,6 @@ const Leaderboard: FC<{ className?: string; type: 'user' | 'beatmap' }> = ({
     data: leaderboards,
     isLoading,
     isError,
-    refetch,
   } = useGetLeaderboards({
     ranked: rankedOnly,
     country: myCountry ? currentUser?.country_code : undefined,
@@ -102,7 +101,6 @@ const Leaderboard: FC<{ className?: string; type: 'user' | 'beatmap' }> = ({
         {isError && !cachedLeaderboards?.length && (
           <div className={styles.error}>
             <span>Could not load the leaderboard.</span>
-            <button onClick={() => refetch()}>Try again</button>
           </div>
         )}
       </div>
