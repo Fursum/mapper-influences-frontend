@@ -1,4 +1,4 @@
-import { type FC, type ReactNode, useEffect, useRef } from 'react';
+import { type FC, type ReactNode, useEffect, useRef, useState } from 'react';
 
 import { useOnClickOutside } from 'usehooks-ts';
 
@@ -14,6 +14,12 @@ const Modal: FC<{
   const modalRef = useRef(null);
   useOnClickOutside(modalRef, () => keepOpen || setShowModal(false));
 
+  // Kept mounted while the closing animation plays
+  const [render, setRender] = useState(showModal);
+  useEffect(() => {
+    if (showModal) setRender(true);
+  }, [showModal]);
+
   // Escape closes the modal
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -26,9 +32,15 @@ const Modal: FC<{
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [showModal, setShowModal]);
 
-  if (!showModal) return null;
+  if (!render) return null;
   return (
-    <dialog className={styles.modalBg} open>
+    <dialog
+      className={`${styles.modalBg} ${showModal ? '' : styles.closing}`}
+      open
+      onAnimationEnd={(e) => {
+        if (e.target === e.currentTarget && !showModal) setRender(false);
+      }}
+    >
       <div className={`${styles.modal} ${className}`} ref={modalRef}>
         {children}
       </div>

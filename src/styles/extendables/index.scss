@@ -2,9 +2,13 @@
 
 %cardShadow {
   box-shadow: var(--cardShadow);
+  transition:
+    box-shadow 0.15s ease-out,
+    transform 0.15s ease-out;
 
   &:hover {
     box-shadow: var(--cardShadowHover);
+    transform: translateY(-2px);
   }
 }
 

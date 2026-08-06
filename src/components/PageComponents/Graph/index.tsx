@@ -2120,11 +2120,6 @@ const GraphPage: FC = () => {
           </svg>
           Mutual influence
         </div>
-        <span className={styles.legendHint}>
-          Auto-detected clusters, named after their most mentioned mapper.
-          Links take the color of the mapper who declared the influence.
-          Connection styles show when a mapper is hovered or selected.
-        </span>
       </aside>
 
       <ForceGraph<NodeExtra, LinkExtra>

@@ -84,7 +84,7 @@ h6 {
 
   color: $color-text;
   // All of the color transitions
-  $transitionConfig: 0.075s ease-in;
+  $transitionConfig: 0.15s ease-out;
   $allTransitions:
     background-color $transitionConfig,
     color $transitionConfig,
@@ -181,5 +181,16 @@ form {
         outline-color: $color-danger;
       }
     }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

@@ -159,6 +159,7 @@ $photoSize: 5rem;
 .skeleton {
   &:hover {
     box-shadow: var(--cardShadow);
+    transform: none;
   }
 
   .rankedStat,

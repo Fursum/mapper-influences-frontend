@@ -27,7 +27,12 @@ const Leaderboard: FC<{ className?: string; type: 'user' | 'beatmap' }> = ({
 
   const scrollRef = useRef(null);
 
-  const { data: leaderboards, isLoading } = useGetLeaderboards({
+  const {
+    data: leaderboards,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetLeaderboards({
     ranked: rankedOnly,
     country: myCountry ? currentUser?.country_code : undefined,
     limit: limit,
@@ -94,6 +99,12 @@ const Leaderboard: FC<{ className?: string; type: 'user' | 'beatmap' }> = ({
             </div>
           )}
         </InfiniteScroll>
+        {isError && !cachedLeaderboards?.length && (
+          <div className={styles.error}>
+            <span>Could not load the leaderboard.</span>
+            <button onClick={() => refetch()}>Try again</button>
+          </div>
+        )}
       </div>
     </div>
   );

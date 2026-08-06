@@ -12,7 +12,7 @@
       display: flex;
       touch-action: pan-y pinch-zoom;
 
-      transition: transform 0.1s ease-out;
+      transition: transform 0.25s ease-out;
 
       // Wrapper for every card
       .slide {

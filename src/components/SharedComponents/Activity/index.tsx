@@ -49,7 +49,7 @@ const ActivityRow: FC<{
   }, [activity.created_at, tooltipProps]);
 
   return (
-    <div className="w-[25rem]">
+    <div className="w-[25rem] rounded-md px-2 py-1 hover:bg-background-card">
       <div className="flex w-full justify-between">
         <SmallUser user={activity.user} />
 

@@ -1,6 +1,15 @@
-import { type FC, useCallback, useEffect, useRef, useState } from 'react';
+import {
+  type FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { Magnify } from '@components/SvgComponents';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { MAX_NAME_LENGTH } from '@libs/consts';
 import type { UserSmall } from '@libs/types/rust';
 import { getSearchResults } from '@services/search';
@@ -22,6 +31,7 @@ const SearchBar: FC<Props> = ({ className }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [results, setResults] = useState<UserSmall[] | undefined>();
   const [showResults, setShowResults] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
   useOnClickOutside(containerRef, () => setShowResults(false));
 
@@ -35,6 +45,7 @@ const SearchBar: FC<Props> = ({ className }) => {
     if (!query) {
       setResults([]);
       setShowResults(false);
+      setIsSearching(false);
       return;
     }
 
@@ -47,16 +58,20 @@ const SearchBar: FC<Props> = ({ className }) => {
       .catch(() => {
         setResults([]);
         setShowResults(false);
-      });
+      })
+      .finally(() => setIsSearching(false));
   }, []);
 
   // keeping the debounce time a little longer for search
   // because it's 4 separate osu api requests for each query
-  const debouncedSearch = AwesomeDebouncePromise(searchUser, 600);
+  // Memoized so re-renders share one debounce timer
+  const debouncedSearch = useMemo(
+    () => AwesomeDebouncePromise(searchUser, 600),
+    [searchUser],
+  );
 
   const handleChange = (query: string) => {
-    // TODO: Display loading indicator
-
+    setIsSearching(!!query);
     debouncedSearch(query);
   };
 
@@ -72,7 +87,11 @@ const SearchBar: FC<Props> = ({ className }) => {
           ref={inputRef}
         />
         <button className={styles.magnifyButton}>
-          <Magnify className={styles.magnifySvg} />
+          {isSearching ? (
+            <FontAwesomeIcon icon={faSpinner} className={styles.spinnerSvg} />
+          ) : (
+            <Magnify className={styles.magnifySvg} />
+          )}
         </button>
       </div>
       {showResults && <Results results={results || []} />}

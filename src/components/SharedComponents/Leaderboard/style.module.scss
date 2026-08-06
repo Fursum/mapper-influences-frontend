@@ -30,6 +30,8 @@
       gap: $spacing;
       margin-bottom: $spacing;
 
+      animation: rowFadeIn 0.2s ease-out;
+
       &:first-of-type .number > span:first-of-type {
         background: -webkit-linear-gradient(
           left,
@@ -89,6 +91,25 @@
   }
 }
 
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing / 2;
+
+  margin-top: $spacing;
+  margin-inline: $spacing;
+  text-align: center;
+
+  > span {
+    color: $color-text-faded;
+  }
+
+  > button {
+    padding: $spacing / 2 $spacing;
+  }
+}
+
 .spinner {
   display: flex;
   justify-content: center;
@@ -111,5 +132,14 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes rowFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }

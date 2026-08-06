@@ -37,6 +37,14 @@
   }
 }
 
+.modalBg.closing {
+  animation: backdropBlurOut forwards ease-out 0.2s;
+
+  .modal {
+    animation: modalSlideOut forwards ease-out 0.2s;
+  }
+}
+
 @keyframes backdropBlur {
   0% {
     backdrop-filter: blur(10px) opacity(0);
@@ -54,5 +62,25 @@
   100% {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes backdropBlurOut {
+  0% {
+    backdrop-filter: blur(10px) opacity(1);
+  }
+  100% {
+    backdrop-filter: blur(10px) opacity(0);
+  }
+}
+
+@keyframes modalSlideOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-1rem);
   }
 }
