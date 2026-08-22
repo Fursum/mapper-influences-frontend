@@ -82,34 +82,41 @@ const InfluenceType: FC<Props> = ({
           <h4>Are you sure you want to delete this influence?</h4>
           <div>
             <button
+              type="button"
               className="cancel"
               disabled={isLoading}
               onClick={() => setIsModalOpen(false)}
             >
               Cancel
             </button>
-            <button className="danger" disabled={isLoading} onClick={onRemove}>
+            <button
+              type="button"
+              className="danger"
+              disabled={isLoading}
+              onClick={onRemove}
+            >
               Delete
             </button>
           </div>
         </Modal>
-        <div
-          className={`${dropdownClass} ${className}`}
-          ref={ref}
-          onClick={() => !isLoading && setIsOpen((t) => !t)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') setIsOpen((t) => !t);
-          }}
-        >
-          <span>
+        <div className={`${dropdownClass} ${className}`} ref={ref}>
+          <button
+            type="button"
+            className={styles.trigger}
+            aria-expanded={isOpen}
+            aria-haspopup="true"
+            disabled={isLoading || loading}
+            onClick={() => setIsOpen((t) => !t)}
+          >
             {selectedType}{' '}
             <Arrow className={styles.arrow} color="var(--textColor)" />
-          </span>
+          </button>
 
           {isOpen && !isPending && (
             <div className={styles.optionsCont}>
               {DROPDOWN_OPTIONS.map((option) => (
                 <button
+                  type="button"
                   key={option.value}
                   onClick={() => handleChange(option.label)}
                   disabled={option.label === selectedType}
@@ -119,6 +126,7 @@ const InfluenceType: FC<Props> = ({
               ))}
               {!hideRemove && (
                 <button
+                  type="button"
                   style={{ color: 'red' }}
                   onClick={() => {
                     setIsOpen(false);

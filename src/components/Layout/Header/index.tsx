@@ -62,7 +62,7 @@ export default function Header() {
 }
 
 export const ProfileLinkAvatar: FC<{ user?: UserSmall }> = ({ user }) => (
-  <Link href={'/profile'}>
+  <Link href={'/profile'} aria-label="Your profile">
     <ProfilePhoto
       className={styles.avatar}
       photoUrl={user?.avatar_url}

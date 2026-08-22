@@ -70,10 +70,17 @@ const AddUserButton: FC<Props> = ({
   const handleSubmit = useCallback(
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
+
+      const trimmedDescription = description.trim();
+      if (trimmedDescription.length > 500) {
+        toast.error('Description must be 500 characters or less.');
+        return;
+      }
+
       const body: AddInfluenceRequest = {
         user_id: userId,
         influence_type: convertFromInfluence(type),
-        description,
+        description: trimmedDescription,
       };
 
       addInfluence(body, {
@@ -118,7 +125,7 @@ const AddUserButton: FC<Props> = ({
             <button type="button" className="cancel" onClick={resetForm}>
               Cancel
             </button>
-            <button className="submit" disabled={isAddLoading}>
+            <button type="submit" className="submit" disabled={isAddLoading}>
               {isAddLoading ? 'Adding...' : 'Add'}
             </button>
           </div>
@@ -139,7 +146,7 @@ const AddUserButton: FC<Props> = ({
           >
             Cancel
           </button>
-          <button className="danger" onClick={onRemove}>
+          <button type="button" className="danger" onClick={onRemove}>
             Delete
           </button>
         </div>

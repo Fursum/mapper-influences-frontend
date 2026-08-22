@@ -98,6 +98,7 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
         href={`${OSU_BASE_URL}users/${userBio?.id}`}
         target="_blank"
         rel="noreferrer"
+        aria-label="Open osu! profile"
       >
         <ProfilePhoto
           photoUrl={userBio?.avatar_url}

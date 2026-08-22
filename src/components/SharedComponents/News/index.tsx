@@ -9,9 +9,11 @@ const News: FC<Props> = ({ className }) => {
   return (
     <div className={`${styles.newsContainer} ${className}`}>
       <h2>Latest News</h2>
-      {NEWS.map((item, index) => (
-        <NewsRow key={index} {...item} />
-      ))}
+      {NEWS.length === 0 ? (
+        <p>There are no news yet.</p>
+      ) : (
+        NEWS.map((item) => <NewsRow key={item.url} {...item} />)
+      )}
     </div>
   );
 };

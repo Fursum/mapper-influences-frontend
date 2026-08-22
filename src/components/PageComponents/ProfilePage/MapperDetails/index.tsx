@@ -32,7 +32,13 @@ const MapperDetails: FC<Props> = ({ userId }) => {
         <ProfileInfo userId={userId} />
         <MapStats userId={userId} />
       </div>
-      <div className={`${styles.bio} ${isLoading ? styles.loading : ''}`}>
+      <div
+        className={`${styles.bio} ${isLoading ? styles.loading : ''}`}
+        aria-busy={isLoading}
+      >
+        <span aria-live="polite" className="sr-only">
+          {isLoading ? 'Loading profile details' : 'Profile details loaded'}
+        </span>
         <div className={styles.desc}>
           <EditableDescription
             key={userId}

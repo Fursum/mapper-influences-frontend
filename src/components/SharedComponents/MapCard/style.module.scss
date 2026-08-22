@@ -117,6 +117,15 @@
     transform: translateY(0.05rem);
   }
 
+}
+
+// The delete button and the overlays live next to the link, not inside it,
+// so the card link is the only interactive element in the anchor.
+.cardWrapper {
+  position: relative;
+  width: fit-content;
+  border-radius: $border-radius;
+
   .delete {
     position: absolute;
     top: $spacing / 2;

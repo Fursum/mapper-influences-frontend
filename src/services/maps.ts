@@ -51,7 +51,7 @@ export const useAddMapToSelfMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: addMapToSelf,
-    onSuccess: (res, variables) => {
+    onSuccess: (res) => {
       queryClient.setQueryData<User>(
         ['userBio', currentUser?.id.toString()],
         (old) => {

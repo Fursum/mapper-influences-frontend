@@ -292,12 +292,16 @@ const Draggable: FC<{
     >
       <div className={styles.sortColumn}>
         <button
+          type="button"
+          aria-label="Move influence to top"
           onClick={() => changeOrder(influence.user.id, 'top')}
           disabled={isTop}
         >
           <FontAwesomeIcon icon={faAnglesUp} opacity={isTop ? 0.25 : 1} />
         </button>
         <button
+          type="button"
+          aria-label="Move influence up"
           onClick={() => changeOrder(influence.user.id, 'up')}
           disabled={isTop}
         >
@@ -310,6 +314,8 @@ const Draggable: FC<{
           className={styles.handle}
         />
         <button
+          type="button"
+          aria-label="Move influence down"
           onClick={() => changeOrder(influence.user.id, 'down')}
           disabled={isBottom}
           className={cx({
@@ -319,6 +325,8 @@ const Draggable: FC<{
           <FontAwesomeIcon icon={faAngleDown} />
         </button>
         <button
+          type="button"
+          aria-label="Move influence to bottom"
           onClick={() => changeOrder(influence.user.id, 'bottom')}
           disabled={isBottom}
           className={cx({

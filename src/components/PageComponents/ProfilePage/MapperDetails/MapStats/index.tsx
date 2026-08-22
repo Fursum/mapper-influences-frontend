@@ -72,7 +72,13 @@ const MapStats: FC<{
   }, [profileData]);
 
   return (
-    <div className={`${styles.wrapper} ${isLoading ? styles.loading : ''}`}>
+    <div
+      className={`${styles.wrapper} ${isLoading ? styles.loading : ''}`}
+      aria-busy={isLoading}
+    >
+      <span aria-live="polite" className="sr-only">
+        {isLoading ? 'Loading map statistics' : 'Map statistics loaded'}
+      </span>
       <SingleStat
         count={ranked_and_approved_beatmapset_count + guest_beatmapset_count}
         {...(rankedTooltip ? tooltipProps(rankedTooltip) : {})}

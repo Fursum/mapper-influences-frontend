@@ -20,21 +20,33 @@ const useNewsText = (url: string, enabled: boolean) =>
 const NewsRow: FC<NewsType> = ({ url, title, date, desc }) => {
   const [showModal, setShowModal] = useState(false);
 
-  const { data: fullText } = useNewsText(url, showModal);
+  const { data: fullText, isLoading, isError } = useNewsText(url, showModal);
 
   return (
     <>
       {showModal && (
         <Modal showModal={showModal} setShowModal={setShowModal}>
-          <Suspense fallback={<h4>Loading...</h4>}>
-            <LazyMarkdown mdString={fullText} />
-          </Suspense>
+          {isError ? (
+            <p role="alert">Could not load the update notes.</p>
+          ) : isLoading ? (
+            <h4 aria-live="polite">Loading...</h4>
+          ) : !fullText ? (
+            <p>There are no notes for this update.</p>
+          ) : (
+            <Suspense fallback={<h4 aria-live="polite">Loading...</h4>}>
+              <LazyMarkdown mdString={fullText} />
+            </Suspense>
+          )}
         </Modal>
       )}
       <div
         className={styles.newsRow}
+        // biome-ignore lint/a11y/useSemanticElements: a button element cannot contain the heading and paragraph content of the row
+        role="button"
+        tabIndex={0}
         onKeyDown={(e) => {
-          if (e.key === 'Enter') {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
             setShowModal(true);
           }
         }}

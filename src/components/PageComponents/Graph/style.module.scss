@@ -54,6 +54,25 @@
       }
     }
 
+    .searchButton {
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid $color-text-faded;
+      background-color: $color-background-content;
+      color: $color-text;
+      cursor: pointer;
+
+      &:hover:not(:disabled),
+      &:focus-visible {
+        border-color: $color-primary;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
+    }
+
     .hint {
       font-size: 0.75rem;
       color: $color-text-faded;

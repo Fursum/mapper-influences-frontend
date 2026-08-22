@@ -11,6 +11,7 @@ export const ReportBug: FC = () => {
       href={'https://github.com/Fursum/mapper-influences-frontend/issues'}
       target="_blank"
       rel="noreferrer"
+      aria-label="Report a bug on GitHub"
     >
       <Github className={styles.icon} color={'var(--buttonText-alt)'} />
     </a>
@@ -24,6 +25,7 @@ export const SendFeedback: FC = () => {
       href={'https://discord.gg/SAwxBDe3Rf'}
       target="_blank"
       rel="noreferrer"
+      aria-label="Send feedback on Discord"
     >
       <Discord className={styles.icon} color={'var(--buttonText-alt)'} />
     </a>

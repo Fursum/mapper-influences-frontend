@@ -1,19 +1,19 @@
 import AwesomeDebouncePromise from "awesome-debounce-promise";
 import { useCallback, useEffect, useState } from "react";
 
+const getMatches = (query: string): boolean => {
+  // Prevents SSR issues
+  if (typeof window !== "undefined") {
+    return window.matchMedia(query).matches;
+  }
+  return false;
+};
+
 /**
  * Changes state when matching width on resize
  */
 const useMatchesWindowSize = (width = "60rem") => {
   const [matches, setMatches] = useState<boolean>(false);
-
-  const getMatches = (query: string): boolean => {
-    // Prevents SSR issues
-    if (typeof window !== "undefined") {
-      return window.matchMedia(query).matches;
-    }
-    return false;
-  };
 
   const debounceSetState = useCallback(
     () =>
@@ -24,7 +24,7 @@ const useMatchesWindowSize = (width = "60rem") => {
         //Add random delay to updates
         50 + Math.random() * 15
       )(),
-    [width, getMatches]
+    [width]
   );
 
   useEffect(() => {

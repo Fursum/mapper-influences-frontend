@@ -64,51 +64,55 @@ const MapCard: FC<{
   const canDelete = !!deleteFn;
 
   return (
-    <a
-      href={mapUrl}
-      target={'_blank'}
-      rel="noreferrer"
-      style={{
-        // only allow hover if loading
-        pointerEvents: loading ? 'none' : 'auto',
-      }}
-      className={styles.card}
-    >
-      <img src={map.cover} alt="cover" loading="lazy" />
-      <div className={styles.songInfo}>
-        <div className={styles.title}>{map.title}</div>
-        <div className={styles.artist}>{map.artist}</div>
-      </div>
-
-      {diff && (
-        <div className={styles.diff}>
-          <ModeIcon
-            mode={diff?.mode}
-            color={diffColor}
-            {...tooltipProps(`${diff.difficulty_rating}*`)}
-          />
-          {diff.version}
+    <div className={styles.cardWrapper}>
+      <a
+        href={mapUrl}
+        target={'_blank'}
+        rel="noreferrer"
+        style={{
+          // only allow hover if loading
+          pointerEvents: loading ? 'none' : 'auto',
+        }}
+        className={styles.card}
+      >
+        <img src={map.cover} alt={`${map.title} cover`} loading="lazy" />
+        <div className={styles.songInfo}>
+          <div className={styles.title}>{map.title}</div>
+          <div className={styles.artist}>{map.artist}</div>
         </div>
-      )}
-      <ProfilePhoto
-        className={styles.ownerAvatar}
-        photoUrl={map?.user_avatar_url}
-        size="md"
-        circle
-        parentProps={
-          map?.user_name
-            ? {
-                ...tooltipProps(map?.user_name),
-              }
-            : {}
-        }
-      />
+
+        {diff && (
+          <div className={styles.diff}>
+            <ModeIcon
+              mode={diff?.mode}
+              color={diffColor}
+              {...tooltipProps(`${diff.difficulty_rating}*`)}
+            />
+            {diff.version}
+          </div>
+        )}
+        <ProfilePhoto
+          className={styles.ownerAvatar}
+          photoUrl={map?.user_avatar_url}
+          size="md"
+          circle
+          parentProps={
+            map?.user_name
+              ? {
+                  ...tooltipProps(map?.user_name),
+                }
+              : {}
+          }
+        />
+      </a>
       {canDelete && (
         <button
+          type="button"
+          aria-label={
+            deleteConfirmation ? 'Confirm map removal' : 'Remove map'
+          }
           className={`danger ${styles.delete}`}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
+          onClick={() => {
             if (!deleteConfirmation) {
               setDeleteConfirmation(true);
               setTimeout(() => setDeleteConfirmation(false), 3000);
@@ -124,7 +128,7 @@ const MapCard: FC<{
         </div>
       )}
       {loading && <div className={styles.loading} />}
-    </a>
+    </div>
   );
 };
 

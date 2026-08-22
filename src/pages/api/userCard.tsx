@@ -15,7 +15,6 @@ export default async function handler(req: NextRequest) {
   const username = searchParams.get('username');
   const avatar = searchParams.get('avatar');
   const banner = searchParams.get('banner');
-  const mentions = searchParams.get('mentions');
 
   return new ImageResponse(
     (

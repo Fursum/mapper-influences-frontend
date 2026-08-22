@@ -33,6 +33,7 @@ const AdvancedFilters: FC<{
         <h4>Mode</h4>
         {MODES.map((mode) => (
           <button
+            type="button"
             key={mode}
             onClick={(e) => {
               e.preventDefault();
@@ -50,6 +51,7 @@ const AdvancedFilters: FC<{
         <h4>Status</h4>
         {STATUSES.map((status) => (
           <button
+            type="button"
             key={status}
             onClick={(e) => {
               e.preventDefault();
@@ -68,6 +70,7 @@ const AdvancedFilters: FC<{
         <h4>Genre</h4>
         {GENRES.map((genre) => (
           <button
+            type="button"
             key={genre.name}
             onClick={(e) => {
               e.preventDefault();
@@ -86,6 +89,7 @@ const AdvancedFilters: FC<{
         <h4>Language</h4>
         {LANGUAGES.map((language) => (
           <button
+            type="button"
             key={language.name}
             onClick={(e) => {
               e.preventDefault();
@@ -113,6 +117,12 @@ const AdvancedFilters: FC<{
           }}
         />
         <button
+          type="button"
+          aria-label={
+            selectedMaps.includes(Number(difficultyId))
+              ? 'Remove map from selection'
+              : 'Add map to selection'
+          }
           disabled={!mapData || isLoading}
           onClick={(e) => {
             e.preventDefault();
@@ -126,9 +136,9 @@ const AdvancedFilters: FC<{
           />
         </button>
       </label>
-      {mapData && difficultyId && (
-        <div className={styles.mapPreview}>
-          <MapCard map={mapData} />
+      {difficultyId && (isLoading || mapData) && (
+        <div className={styles.mapPreview} aria-live="polite">
+          <MapCard map={isLoading ? undefined : mapData} />
         </div>
       )}
     </>

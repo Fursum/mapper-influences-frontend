@@ -56,6 +56,7 @@ const SearchResults: FC<{
                 .map((row) => {
                   return (
                     <button
+                      type="button"
                       key={row.id}
                       className={cx({
                         [styles.selected]: selectedMaps.includes(row.id),

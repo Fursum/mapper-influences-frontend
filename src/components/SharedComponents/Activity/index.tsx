@@ -14,7 +14,9 @@ const ActivityList: FC = () => {
 
   return (
     <div className="bg-background-content p-2">
-      <h2 className="my-3 min-w-[25rem] text-center">Recent Activity</h2>
+      <h2 className="my-3 max-w-full text-center sm:min-w-[25rem]">
+        Recent Activity
+      </h2>
       <div
         className="flex h-[37rem] max-h-[37rem] flex-col gap-4 overflow-y-auto px-2"
         style={{ scrollbarGutter: 'stable' }} // Firefox scrollbar fix
@@ -49,7 +51,7 @@ const ActivityRow: FC<{
   }, [activity.created_at, tooltipProps]);
 
   return (
-    <div className="w-[25rem] rounded-md px-2 py-1 hover:bg-background-card">
+    <div className="w-[25rem] max-w-full rounded-md px-2 py-1 hover:bg-background-card">
       <div className="flex w-full justify-between">
         <SmallUser user={activity.user} />
 

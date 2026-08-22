@@ -1,8 +1,7 @@
-import { type FC, useCallback, useEffect, useState } from 'react';
+import { type FC, useEffect, useMemo, useState } from 'react';
 
 import type { BeatmapsetSmall } from '@libs/types/rust';
 import { searchMaps } from '@services/search';
-import { useUserBio } from '@services/user';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 
 import AdvancedFilters from './AdvancedFilters';
@@ -39,11 +38,13 @@ export const AddMapModalContents: FC<{
       : '',
   );
 
-  const debouncedSearch = useCallback(
-    AwesomeDebouncePromise((query: string) => {
-      searchMaps(query + getFiltersQuery()).then(setMapResults);
-    }, 400),
-    [getFiltersQuery]
+  // Memoized so re-renders share one debounce timer
+  const debouncedSearch = useMemo(
+    () =>
+      AwesomeDebouncePromise((query: string) => {
+        searchMaps(query + getFiltersQuery()).then(setMapResults);
+      }, 400),
+    [getFiltersQuery],
   );
 
   const toggleMap = (id: number) => {
@@ -77,6 +78,7 @@ export const AddMapModalContents: FC<{
 
         <div className={styles.tabs}>
           <button
+            type="button"
             onClick={(e) => {
               e.preventDefault();
               setSelectedTab('search');
@@ -86,6 +88,7 @@ export const AddMapModalContents: FC<{
             Search
           </button>
           <button
+            type="button"
             onClick={(e) => {
               e.preventDefault();
               setSelectedTab('advanced');
@@ -129,13 +132,14 @@ export const AddMapModalContents: FC<{
         )}
 
         <div className={styles.buttons}>
-          <button className="cancel" onClick={closeForm}>
+          <button type="button" className="cancel" onClick={closeForm}>
             Cancel
           </button>
           <span
             className={limitExceeded ? 'danger' : ''}
           >{`${selectedMaps.length} / ${mapLimit}`}</span>
           <button
+            type="submit"
             className="submit"
             disabled={loading || !selectedMaps.length || limitExceeded}
           >

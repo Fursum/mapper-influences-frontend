@@ -81,12 +81,17 @@ const SearchBar: FC<Props> = ({ className }) => {
     <div className={wrapperClass} ref={containerRef}>
       <div className={styles.searchBar}>
         <input
+          aria-label="Search user"
           onChange={(e) => handleChange(e.target.value)}
           placeholder={'Search User'}
           maxLength={MAX_NAME_LENGTH}
           ref={inputRef}
         />
-        <button className={styles.magnifyButton}>
+        <button
+          type="button"
+          aria-label="Search"
+          className={styles.magnifyButton}
+        >
           {isSearching ? (
             <FontAwesomeIcon icon={faSpinner} className={styles.spinnerSvg} />
           ) : (

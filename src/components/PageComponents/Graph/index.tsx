@@ -702,9 +702,9 @@ const GraphPage: FC = () => {
   // layout is computed for exactly the visible subgraph (works with every
   // force preset). minMentions commits on blur/enter, not per keystroke —
   // each change re-runs the simulation.
-  const [rankedOnly, setRankedOnly] = useState(false);
-  const [minMentions, setMinMentions] = useState(0);
-  const [minMentionsDraft, setMinMentionsDraft] = useState('0');
+  const [rankedOnly, setRankedOnly] = useState(true);
+  const [minMentions, setMinMentions] = useState(1);
+  const [minMentionsDraft, setMinMentionsDraft] = useState('1');
   const commitMinMentions = useCallback(() => {
     setMinMentionsDraft((draft) => {
       const parsed = Math.max(0, Math.floor(Number(draft)) || 0);
@@ -1882,7 +1882,11 @@ const GraphPage: FC = () => {
 
   return (
     <div className={styles.graphPage}>
-      {isLoading && <p className={styles.loading}>Loading...</p>}
+      {isLoading && (
+        <p aria-live="polite" className={styles.loading}>
+          Loading...
+        </p>
+      )}
 
       <form className={styles.searchBar} onSubmit={handleSearch}>
         <input
@@ -1890,7 +1894,15 @@ const GraphPage: FC = () => {
           onChange={(event) => setSearch(event.target.value)}
           placeholder="Search mapper..."
           aria-label="Search mapper"
+          disabled={isLoading}
         />
+        <button
+          type="submit"
+          className={styles.searchButton}
+          disabled={isLoading}
+        >
+          {isLoading ? 'Loading...' : 'Search'}
+        </button>
         <span className={styles.hint}>
           Enter adds to selection · Ctrl+click multi-selects · Esc clears
         </span>

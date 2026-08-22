@@ -30,12 +30,23 @@
     }
   }
 
-  > span {
+  .trigger {
+    @extend %resetButtonDefaults;
+
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     padding: $spacing / 2;
+
+    font-weight: 500;
+    color: $color-text;
+    background-color: transparent;
+
+    &:disabled {
+      cursor: default;
+    }
   }
 
   > * {
