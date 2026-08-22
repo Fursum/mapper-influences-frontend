@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { CookiesProvider } from 'react-cookie';
 
 import Layout from '@components/Layout';
+import ThemeProvider from '@components/ThemeProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { AppProps } from 'next/app';
@@ -58,9 +59,11 @@ function App({ Component, pageProps }: AppProps) {
       <QueryClientProvider client={queryClient}>
         <ReactQueryDevtools initialIsOpen={false} />
         <CookiesProvider>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          <ThemeProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </ThemeProvider>
         </CookiesProvider>
       </QueryClientProvider>
     </>
