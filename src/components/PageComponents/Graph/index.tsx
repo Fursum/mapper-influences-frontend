@@ -16,7 +16,9 @@ import type {
 } from 'react-force-graph-2d';
 import ForceGraph from 'react-force-graph-2d';
 
+import { Magnify } from '@components/SvgComponents';
 import { type GraphResponse, useGraphData } from '@services/graph';
+import { useGlobalTooltip } from '@states/globalTooltip';
 import { useGlobalTheme } from '@states/theme';
 
 import PresetEditor from './PresetEditor';
@@ -86,6 +88,21 @@ const LIGHT_THEME_PALETTE = [
 ];
 
 const LEGEND_SIZE = 8;
+
+const SEARCH_HINT =
+  'Enter adds to selection · Ctrl+click to multi-select · Esc clears';
+
+// On-screen radius a searched node is zoomed to; small nodes stop at the
+// zoom cap instead
+const SEARCH_FOCUS_RADIUS_PX = 60;
+const SEARCH_MAX_ZOOM = 2.5;
+
+// Matches $responsive-breakpoint / 2: below it the side panels start
+// collapsed so they do not cover the graph
+const COMPACT_QUERY = '(max-width: 30rem)';
+
+const plural = (count: number, word: string) =>
+  `${count} ${word}${count === 1 ? '' : 's'}`;
 
 // Shared mutable instances used by the hover overlay — rescaled in place
 // each frame instead of allocating
@@ -674,13 +691,26 @@ type ViewState = {
 };
 
 const GraphPage: FC = () => {
-  const { data, isLoading } = useGraphData();
+  const { data, isLoading, isError } = useGraphData();
+  const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
 
   const graphRef = useRef<ForceGraphMethods<GraphNode>>();
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [activeCommunity, setActiveCommunity] = useState<number | null>(null);
   const [search, setSearch] = useState('');
+  const [searchMiss, setSearchMiss] = useState(false);
+
+  // The page renders client-only (ssr: false), so window is safe here.
+  // Preset tuning is a development tool: production shows it only with ?lab
+  const [labMode] = useState(
+    () =>
+      process.env.NODE_ENV !== 'production' ||
+      new URLSearchParams(window.location.search).has('lab'),
+  );
+  const [panelsOpen] = useState(
+    () => !window.matchMedia(COMPACT_QUERY).matches,
+  );
 
   // Tracked in state: the canvas size props only re-evaluate on render, so
   // without this a window resize leaves the canvas at its mount-time size
@@ -1123,6 +1153,16 @@ const GraphPage: FC = () => {
       .sort((a, b) => b.size - a.size)
       .slice(0, LEGEND_SIZE);
   }, [graphData]);
+
+  // Memoized so typing in the search box does not re-diff thousands of
+  // options
+  const usernameOptions = useMemo(
+    () =>
+      graphData.nodes.map((node) => (
+        <option key={node.id} value={node.username} />
+      )),
+    [graphData],
+  );
 
   const selectedNodes = useMemo(
     () =>
@@ -1860,16 +1900,22 @@ const GraphPage: FC = () => {
       graphData.nodes.find((node) =>
         node.username.toLowerCase().includes(query),
       );
-    if (match && match.x !== undefined && match.y !== undefined) {
-      const id = match.id as number;
-      setActiveCommunity(null);
-      setSelectedIds((previous) =>
-        previous.includes(id) ? previous : [...previous, id],
-      );
-      setSearch('');
-      graphRef.current?.centerAt(match.x, match.y, 600);
-      graphRef.current?.zoom(2.5, 600);
+    if (!match || match.x === undefined || match.y === undefined) {
+      setSearchMiss(true);
+      return;
     }
+    const id = match.id as number;
+    setActiveCommunity(null);
+    setSelectedIds((previous) =>
+      previous.includes(id) ? previous : [...previous, id],
+    );
+    setSearch('');
+    graphRef.current?.centerAt(match.x, match.y, 600);
+    // A fixed zoom made big hubs fill the whole screen
+    graphRef.current?.zoom(
+      Math.min(SEARCH_MAX_ZOOM, SEARCH_FOCUS_RADIUS_PX / match.radius),
+      600,
+    );
   };
 
   const hoverFromList = useCallback(
@@ -1883,171 +1929,272 @@ const GraphPage: FC = () => {
   return (
     <div className={styles.graphPage}>
       {isLoading && (
-        <p aria-live="polite" className={styles.loading}>
+        <p aria-live="polite" className={styles.status}>
           Loading...
         </p>
       )}
+      {isError && (
+        <p role="alert" className={styles.status}>
+          The graph did not load. Try again later.
+        </p>
+      )}
 
-      <form className={styles.searchBar} onSubmit={handleSearch}>
-        <input
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          placeholder="Search mapper..."
-          aria-label="Search mapper"
-          disabled={isLoading}
-        />
-        <button
-          type="submit"
-          className={styles.searchButton}
-          disabled={isLoading}
-        >
-          {isLoading ? 'Loading...' : 'Search'}
-        </button>
-        <span className={styles.hint}>
-          Enter adds to selection · Ctrl+click multi-selects · Esc clears
-        </span>
-      </form>
-
-      <aside className={styles.filters}>
-        <span className={styles.filterTitle}>Filters</span>
-        <label className={styles.filterRow}>
-          <input
-            type="checkbox"
-            checked={rankedOnly}
-            onChange={(event) => setRankedOnly(event.target.checked)}
-          />
-          ranked mappers only
-        </label>
-        <label className={styles.filterRow}>
-          min influences
-          <input
-            type="number"
-            min={0}
-            value={minMentionsDraft}
-            onChange={(event) => setMinMentionsDraft(event.target.value)}
-            onBlur={commitMinMentions}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') {
-                event.preventDefault();
-                commitMinMentions();
-              }
-            }}
-          />
-        </label>
-      </aside>
-
-      {selectedNodes.length > 0 && (
-        <aside className={styles.infoCard}>
-          <div className={styles.cardHeader}>
-            <span className={styles.cardTitle}>
-              Selected · {selectedNodes.length}
-            </span>
+      {/* Panels stack in two flex columns instead of fixed offsets, so a
+          growing panel pushes its neighbor instead of covering it */}
+      <div className={styles.leftColumn}>
+        <form className={styles.searchBar} onSubmit={handleSearch}>
+          <div className={styles.searchField} {...tooltipProps(SEARCH_HINT)}>
+            <input
+              value={search}
+              onChange={(event) => {
+                setSearch(event.target.value);
+                setSearchMiss(false);
+              }}
+              placeholder="Search mapper..."
+              aria-label="Search mapper"
+              aria-describedby="graph-search-hint"
+              list="graph-usernames"
+              disabled={isLoading}
+            />
             <button
-              type="button"
-              className={styles.clearAll}
-              onClick={() => setSelectedIds([])}
+              type="submit"
+              aria-label="Search"
+              className={styles.searchButton}
+              disabled={isLoading}
             >
-              Clear all
+              <Magnify className={styles.magnify} />
             </button>
           </div>
-          <ul className={styles.selectedList}>
-            {selectedNodes.map((node) => (
-              <li
-                key={node.id}
-                className={styles.selectedUser}
-                onMouseEnter={() => hoverFromList(node.id as number)}
-                onMouseLeave={() => hoverFromList(null)}
-              >
-                <img
-                  src={node.avatar_url}
-                  alt={node.username}
-                  style={{ borderColor: node.color }}
-                />
-                <div className={styles.info}>
-                  <Link
-                    href={`/profile/${node.id}`}
-                    className={styles.username}
-                  >
-                    {node.username}
-                  </Link>
-                  <span className={styles.stats}>
-                    Influenced {node.mentions} · Influenced by{' '}
-                    {node.influenced_by ?? 0}
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  className={styles.close}
-                  onClick={() =>
-                    setSelectedIds((previous) =>
-                      previous.filter((id) => id !== node.id),
-                    )
-                  }
-                  aria-label={`Deselect ${node.username}`}
-                >
-                  ×
-                </button>
-              </li>
-            ))}
-          </ul>
-        </aside>
-      )}
+          <datalist id="graph-usernames">{usernameOptions}</datalist>
+          <span id="graph-search-hint" className="sr-only">
+            {SEARCH_HINT}
+          </span>
+          <output className={styles.searchMiss}>
+            {searchMiss ? 'No mapper matches that name.' : ''}
+          </output>
+        </form>
 
-      {editorOpen ? (
-        <PresetEditor
-          // Remount per active preset so reopening seeds fresh values from
-          // whatever is currently running (including the last custom run).
-          // Prefixed: ForceGraph below is a sibling keyed on the same
-          // preset/run pair, and duplicate sibling keys corrupt React's
-          // reconciliation (the closed editor stayed mounted as a ghost).
-          key={`editor:${preset.name}:${customRun}`}
-          seed={preset}
-          onStart={(built) => {
-            setCustomPreset(built);
-            setPresetName(CUSTOM_PRESET_NAME);
-            setCustomRun((run) => run + 1);
-          }}
-          onClose={() => setEditorOpen(false)}
-        />
-      ) : (
-        <aside className={styles.labPanel}>
-          <span className={styles.labTitle}>Layout presets</span>
-          {FORCE_PRESETS.map((candidate) => (
-            <button
-              type="button"
-              key={candidate.name}
-              className={
-                candidate.name === preset.name ? styles.active : undefined
-              }
-              onClick={() => setPresetName(candidate.name)}
-            >
-              {candidate.name}
-              {candidate.recommended && (
-                <span className={styles.recommended}>recommended</span>
-              )}
-            </button>
+        <details className={styles.filters} open={panelsOpen}>
+          <summary className={styles.panelTitle}>Filters</summary>
+          <label className={styles.filterRow}>
+            <input
+              type="checkbox"
+              checked={rankedOnly}
+              onChange={(event) => setRankedOnly(event.target.checked)}
+            />
+            Ranked mappers only
+          </label>
+          <label className={styles.filterRow}>
+            Min. mentions
+            <input
+              type="number"
+              min={0}
+              value={minMentionsDraft}
+              onChange={(event) => setMinMentionsDraft(event.target.value)}
+              onBlur={commitMinMentions}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  commitMinMentions();
+                }
+              }}
+            />
+          </label>
+        </details>
+
+        {legend.length > 0 && (
+          <details className={styles.legend} open={panelsOpen}>
+            <summary className={styles.panelTitle}>Communities</summary>
+            {legend.map((entry) => (
+              <button
+                type="button"
+                key={entry.community}
+                className={
+                  activeCommunity === entry.community
+                    ? styles.active
+                    : undefined
+                }
+                onClick={() =>
+                  setActiveCommunity((previous) =>
+                    previous === entry.community ? null : entry.community,
+                  )
+                }
+              >
+                <span
+                  className={styles.swatch}
+                  style={{ backgroundColor: entry.color }}
+                />
+                {entry.topUsername}
+                <span className={styles.count}>
+                  {plural(entry.size, 'mapper')}
+                </span>
+              </button>
+            ))}
+          </details>
+        )}
+      </div>
+
+      <div className={styles.rightColumn}>
+        {selectedNodes.length > 0 && (
+          <aside className={styles.infoCard}>
+            <div className={styles.cardHeader}>
+              <span className={styles.cardTitle}>
+                Selected · {selectedNodes.length}
+              </span>
+              <button
+                type="button"
+                className={styles.clearAll}
+                onClick={() => setSelectedIds([])}
+              >
+                Clear all
+              </button>
+            </div>
+            <ul className={styles.selectedList}>
+              {selectedNodes.map((node) => (
+                <li
+                  key={node.id}
+                  className={styles.selectedUser}
+                  onMouseEnter={() => hoverFromList(node.id as number)}
+                  onMouseLeave={() => hoverFromList(null)}
+                >
+                  <img
+                    src={node.avatar_url}
+                    alt={node.username}
+                    style={{ borderColor: node.color }}
+                  />
+                  <div className={styles.info}>
+                    <Link
+                      href={`/profile/${node.id}`}
+                      className={styles.username}
+                    >
+                      {node.username}
+                    </Link>
+                    <span className={styles.stats}>
+                      {plural(node.mentions, 'mention')} ·{' '}
+                      {plural(node.influenced_by ?? 0, 'influence')}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    className={styles.close}
+                    onClick={() =>
+                      setSelectedIds((previous) =>
+                        previous.filter((id) => id !== node.id),
+                      )
+                    }
+                    aria-label={`Deselect ${node.username}`}
+                  >
+                    ×
+                  </button>
+                </li>
+              ))}
+            </ul>
+            {/* Line styles only mean something while links are drawn for a
+                selection, so the key lives with the selection */}
+            <div className={styles.connectionKey}>
+              <span className={styles.panelTitle}>Connections</span>
+              <div className={styles.linkType}>
+                <svg viewBox="0 0 40 6" aria-hidden="true">
+                  <line
+                    x1="0"
+                    y1="3"
+                    x2="40"
+                    y2="3"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeDasharray="5 4"
+                  />
+                </svg>
+                Mappers they influenced
+              </div>
+              <div className={styles.linkType}>
+                <svg viewBox="0 0 40 6" aria-hidden="true">
+                  <line
+                    x1="0"
+                    y1="3"
+                    x2="40"
+                    y2="3"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                </svg>
+                Influences they added
+              </div>
+              <div className={styles.linkType}>
+                <svg viewBox="0 0 40 6" aria-hidden="true">
+                  <line
+                    x1="0"
+                    y1="1.5"
+                    x2="40"
+                    y2="1.5"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  />
+                  <line
+                    x1="0"
+                    y1="4.5"
+                    x2="40"
+                    y2="4.5"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  />
+                </svg>
+                Mutual influence
+              </div>
+            </div>
+          </aside>
+        )}
+
+        {labMode &&
+          (editorOpen ? (
+            <PresetEditor
+              // Remount per active preset so reopening seeds fresh values from
+              // whatever is currently running (including the last custom run).
+              // Prefixed: ForceGraph below is a sibling keyed on the same
+              // preset/run pair, and duplicate sibling keys corrupt React's
+              // reconciliation (the closed editor stayed mounted as a ghost).
+              key={`editor:${preset.name}:${customRun}`}
+              seed={preset}
+              onStart={(built) => {
+                setCustomPreset(built);
+                setPresetName(CUSTOM_PRESET_NAME);
+                setCustomRun((run) => run + 1);
+              }}
+              onClose={() => setEditorOpen(false)}
+            />
+          ) : (
+            <aside className={styles.labPanel}>
+              <label htmlFor="graph-preset" className={styles.labTitle}>
+                Layout preset
+              </label>
+              <select
+                id="graph-preset"
+                value={preset.name}
+                onChange={(event) => setPresetName(event.target.value)}
+              >
+                {FORCE_PRESETS.map((candidate) => (
+                  <option key={candidate.name} value={candidate.name}>
+                    {candidate.name}
+                    {candidate.recommended ? ' (recommended)' : ''}
+                  </option>
+                ))}
+                {customPreset && (
+                  <option value={CUSTOM_PRESET_NAME}>
+                    {CUSTOM_PRESET_NAME}
+                  </option>
+                )}
+              </select>
+              <button
+                type="button"
+                className={styles.customizeButton}
+                onClick={() => setEditorOpen(true)}
+              >
+                customize…
+              </button>
+              <span className={styles.labIntent}>{preset.intent}</span>
+            </aside>
           ))}
-          {customPreset && (
-            <button
-              type="button"
-              className={
-                preset.name === CUSTOM_PRESET_NAME ? styles.active : undefined
-              }
-              onClick={() => setPresetName(CUSTOM_PRESET_NAME)}
-            >
-              {CUSTOM_PRESET_NAME}
-            </button>
-          )}
-          <button
-            type="button"
-            className={styles.customizeButton}
-            onClick={() => setEditorOpen(true)}
-          >
-            customize…
-          </button>
-          <span className={styles.labIntent}>{preset.intent}</span>
-        </aside>
-      )}
+      </div>
 
       {simulating && (
         <output className={styles.simProgress}>
@@ -2057,82 +2204,6 @@ const GraphPage: FC = () => {
           </div>
         </output>
       )}
-
-      <aside className={styles.legend}>
-        <span className={styles.legendTitle}>Communities</span>
-        {legend.map((entry) => (
-          <button
-            type="button"
-            key={entry.community}
-            className={
-              activeCommunity === entry.community ? styles.active : undefined
-            }
-            onClick={() =>
-              setActiveCommunity((previous) =>
-                previous === entry.community ? null : entry.community,
-              )
-            }
-          >
-            <span
-              className={styles.swatch}
-              style={{ backgroundColor: entry.color }}
-            />
-            {entry.topUsername}
-            <span className={styles.count}>+{entry.size - 1}</span>
-          </button>
-        ))}
-        <span className={`${styles.legendTitle} ${styles.linkTitle}`}>
-          Connections
-        </span>
-        <div className={styles.linkType}>
-          <svg viewBox="0 0 40 6" aria-hidden="true">
-            <line
-              x1="0"
-              y1="3"
-              x2="40"
-              y2="3"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeDasharray="5 4"
-            />
-          </svg>
-          Mappers they influenced
-        </div>
-        <div className={styles.linkType}>
-          <svg viewBox="0 0 40 6" aria-hidden="true">
-            <line
-              x1="0"
-              y1="3"
-              x2="40"
-              y2="3"
-              stroke="currentColor"
-              strokeWidth="2"
-            />
-          </svg>
-          Influences they added
-        </div>
-        <div className={styles.linkType}>
-          <svg viewBox="0 0 40 6" aria-hidden="true">
-            <line
-              x1="0"
-              y1="1.5"
-              x2="40"
-              y2="1.5"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            />
-            <line
-              x1="0"
-              y1="4.5"
-              x2="40"
-              y2="4.5"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            />
-          </svg>
-          Mutual influence
-        </div>
-      </aside>
 
       <ForceGraph<NodeExtra, LinkExtra>
         // One stable instance — never keyed/remounted. Preset and filter
