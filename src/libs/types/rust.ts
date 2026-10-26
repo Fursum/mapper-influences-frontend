@@ -29,6 +29,16 @@ export type User = UserSmall & {
   previous_usernames: string[];
 };
 
+// Public profile card stats from /og/user/{id}/card
+export type UserCard = Pick<
+  UserSmall,
+  'username' | 'avatar_url' | 'country_code' | 'country_name' | 'groups'
+> & {
+  ranked_maps: number;
+  mentions: number;
+  influences: number;
+};
+
 export type BeatmapsetSmall = {
   artist: string;
   beatmaps: {
