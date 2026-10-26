@@ -12,8 +12,26 @@ const regexEqual = (x, y) => {
 };
 
 const nextConfig = {
+  // next/image is not used. This turns off /_next/image so bots cannot use it.
   images: {
-    domains: ['a.ppy.sh'], // Add domains here
+    unoptimized: true,
+  },
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'Content-Security-Policy', value: "frame-ancestors 'none'" },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()',
+          },
+        ],
+      },
+    ];
   },
   sassOptions: {
     silenceDeprecations: ['legacy-js-api', 'import', 'slash-div'],
