@@ -55,7 +55,7 @@ const InfluenceList: FC<{
     !userId;
 
   const queryClient = useQueryClient();
-  const { data: influences } = useGetInfluences(userId);
+  const { data: influences, isLoading } = useGetInfluences(userId);
 
   const [visibleCount, setVisibleCount] = useState<number>(5);
 
@@ -173,7 +173,14 @@ const InfluenceList: FC<{
       className={styles.mapperInfluences}
       style={!open ? { display: 'none' } : {}}
     >
-      {!influences?.length && (
+      {isLoading && (
+        <div
+          className={styles.skeleton}
+          role="status"
+          aria-label="Loading influences"
+        />
+      )}
+      {!isLoading && !influences?.length && (
         <span>
           {'This person is unique!'}
           <br />

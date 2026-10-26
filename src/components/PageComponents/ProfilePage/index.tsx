@@ -27,8 +27,10 @@ export default ProfilePage;
 const TabContainer: FC<{ userId?: number | string }> = ({ userId }) => {
   const router = useRouter();
 
-  const { data: influences } = useGetInfluences(userId);
-  const { data: mentions } = useGetMentions(userId);
+  const { data: influences, isLoading: influencesLoading } =
+    useGetInfluences(userId);
+  const { data: mentions, isLoading: mentionsLoading } =
+    useGetMentions(userId);
   const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
 
   const [selectedTab, setSelectedTab] = useState<'influences' | 'mentions'>(
@@ -47,7 +49,9 @@ const TabContainer: FC<{ userId?: number | string }> = ({ userId }) => {
           className={selectedTab === 'influences' ? styles.selected : ''}
           onClick={() => setSelectedTab('influences')}
           {...tooltipProps(
-            `${influences?.length || 0} influence${influences?.length === 1 ? '' : 's'}`,
+            influencesLoading
+              ? 'Loading influences'
+              : `${influences?.length || 0} influence${influences?.length === 1 ? '' : 's'}`,
           )}
         >
           Influences
@@ -56,7 +60,9 @@ const TabContainer: FC<{ userId?: number | string }> = ({ userId }) => {
           className={selectedTab === 'mentions' ? styles.selected : ''}
           onClick={() => setSelectedTab('mentions')}
           {...tooltipProps(
-            `${mentions?.length || 0} mention${mentions?.length === 1 ? '' : 's'}`,
+            mentionsLoading
+              ? 'Loading mentions'
+              : `${mentions?.length || 0} mention${mentions?.length === 1 ? '' : 's'}`,
           )}
         >
           Mentions

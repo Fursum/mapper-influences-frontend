@@ -21,6 +21,13 @@
     text-align: center;
   }
 
+  // Nested to beat the "> div" rule below
+  > .skeleton {
+    @extend %skeleton;
+    width: 100%;
+    height: 8rem;
+  }
+
   // Infinite scroll
   > div {
     width: 100%;

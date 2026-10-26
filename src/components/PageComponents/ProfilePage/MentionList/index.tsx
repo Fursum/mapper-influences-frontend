@@ -9,7 +9,7 @@ import styles from './style.module.scss';
 
 type Props = { open?: boolean; userId?: number | string };
 const MentionList: FC<Props> = ({ open, userId }) => {
-  const { data: mentions } = useGetMentions(userId);
+  const { data: mentions, isLoading } = useGetMentions(userId);
 
   const [visibleMentions, setVisibleMentions] = useState<Influence[]>([]);
 
@@ -22,7 +22,14 @@ const MentionList: FC<Props> = ({ open, userId }) => {
       className={styles.mentionList}
       style={!open ? { display: 'none' } : {}}
     >
-      {!mentions?.length && <span>{'No mentions :('}</span>}
+      {isLoading && (
+        <div
+          className={styles.skeleton}
+          role="status"
+          aria-label="Loading mentions"
+        />
+      )}
+      {!isLoading && !mentions?.length && <span>{'No mentions :('}</span>}
       <InfiniteScroll
         initialLoad={true}
         className={styles.mentionGrid}

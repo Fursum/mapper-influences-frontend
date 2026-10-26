@@ -13,7 +13,7 @@ import { useIsClient } from 'usehooks-ts';
 import styles from './style.module.scss';
 
 const FeaturedMaps: FC<{ userId?: string | number }> = ({ userId }) => {
-  const { data: profileData } = useUserBio(userId?.toString());
+  const { data: profileData, isLoading } = useUserBio(userId?.toString());
 
   const beatmapCount = profileData?.beatmaps?.length || 0;
 
@@ -22,7 +22,8 @@ const FeaturedMaps: FC<{ userId?: string | number }> = ({ userId }) => {
   if (!isClient) return null;
 
   // Dont show anything if featured maps dont exist
-  if (userId && !beatmapCount) return <></>;
+  // Also hide while loading so own profile does not show "0 / 5" slots
+  if (isLoading || (userId && !beatmapCount)) return <></>;
 
   return (
     <div className={styles.featuredMaps}>
