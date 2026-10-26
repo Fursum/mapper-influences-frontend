@@ -13,6 +13,8 @@
   max-width: 100%;
   max-height: 100%;
   margin: 0;
+  // The UA padding shrinks the modal and adds a second scrollbar
+  padding: 0;
 
   animation: backdropBlur forwards ease-out 0.2s;
 
