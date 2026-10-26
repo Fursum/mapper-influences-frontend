@@ -1,5 +1,5 @@
 # Start from low size builder image
-FROM node:22-alpine3.18 as builder
+FROM node:24-alpine as builder
 
 # Set the working directory
 WORKDIR /app
