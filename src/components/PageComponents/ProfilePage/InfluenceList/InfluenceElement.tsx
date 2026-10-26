@@ -1,5 +1,4 @@
-import { type FC, useCallback, useMemo, useState } from 'react';
-import { toast } from 'react-toastify';
+import { type FC, useCallback, useState } from 'react';
 
 import BaseProfileCard from '@components/SharedComponents/BaseProfileCard';
 import MapCarousel from '@components/SharedComponents/MapCarousel/SingleItem';
@@ -14,7 +13,6 @@ import { useDeleteMapFromInfluenceMutation } from '@services/influence/deleteMap
 import { useEditInfluenceDescriptionMutation } from '@services/influence/editDescription';
 import { useEditInfluenceTypeMutation } from '@services/influence/editType';
 import { useGlobalTooltip } from '@states/globalTooltip';
-import AwesomeDebouncePromise from 'awesome-debounce-promise';
 import cx from 'classnames';
 
 import EditableDescription from '../EditableDescription';
@@ -50,31 +48,16 @@ const InfluenceElement: FC<Props> = ({
     'untouched' | 'dirty' | 'success' | 'error'
   >('untouched');
 
-  // Debounce the description update
-  const debouncedUpdateDescription = useMemo(
-    () =>
-      AwesomeDebouncePromise(
-        (description: string) =>
-          editDescription({
-            influenceId: influenceData.user.id,
-            description,
-          }),
-        3000,
-      ),
-    [editDescription, influenceData.user.id],
-  );
-
+  // EditableDescription debounces this call. The mutation shows the error toast.
   const onDescriptionChange = useCallback(
-    (description: string) => {
-      setUpdateState('dirty');
-      debouncedUpdateDescription(description)
+    (description: string) =>
+      editDescription({
+        influenceId: influenceData.user.id,
+        description,
+      })
         .then(() => setUpdateState('success'))
-        .catch(() => {
-          setUpdateState('error');
-          toast.error('Could not update description.');
-        });
-    },
-    [debouncedUpdateDescription],
+        .catch(() => setUpdateState('error')),
+    [editDescription, influenceData.user.id],
   );
 
   const onDelete = editable
@@ -113,14 +96,16 @@ const InfluenceElement: FC<Props> = ({
             influenceData={influenceData}
             onChange={(type) => {
               setUpdateState('dirty');
+              // Rethrow so InfluenceType reverts its selection.
+              // The mutation shows the error toast.
               return editType({
                 influenceId: influenceData.user.id,
                 influenceType: convertFromInfluence(type),
               })
                 .then(() => setUpdateState('success'))
-                .catch(() => {
+                .catch((error) => {
                   setUpdateState('error');
-                  toast.error('Could not update influence type.');
+                  throw error;
                 });
             }}
           />
@@ -135,7 +120,8 @@ const InfluenceElement: FC<Props> = ({
           description={influenceData.description || ''}
           editable={editable}
           placeholder={'Describe your influence here.'}
-          noSubmitOnChange={onDescriptionChange}
+          onChange={onDescriptionChange}
+          noSubmitOnChange={() => setUpdateState('dirty')}
         />
         <div className={styles.maps}>
           {editable || !!influenceData.beatmaps.length ? (
@@ -191,10 +177,8 @@ const AddButton: FC<{
           setUpdateState('success');
           setModalOpen(false);
         })
-        .catch(() => {
-          setUpdateState('error');
-          toast.error('Could not add maps to influence.');
-        });
+        // The mutation shows the error toast
+        .catch(() => setUpdateState('error'));
     },
     [influenceData, setUpdateState, addMaps],
   );

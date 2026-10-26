@@ -1,7 +1,6 @@
 import type { FC } from 'react';
 
 import { useDescriptionMutation, useUserBio } from '@services/user';
-import AwesomeDebouncePromise from 'awesome-debounce-promise';
 
 import EditableDescription from '../EditableDescription';
 import FeaturedMaps from './FeaturedMaps';
@@ -20,11 +19,6 @@ const MapperDetails: FC<Props> = ({ userId }) => {
 
   const { data: profileData } = useUserBio(userId?.toString());
   const { mutateAsync: updateDescription } = useDescriptionMutation();
-
-  const updateDescriptionDebounce = AwesomeDebouncePromise(
-    updateDescription,
-    500,
-  );
 
   return (
     <div className={styles.mapperDetails}>
@@ -46,7 +40,7 @@ const MapperDetails: FC<Props> = ({ userId }) => {
             description={profileData?.bio || ''}
             placeholder={'Enter a description for your profile.'}
             editable={editable}
-            onChange={(e) => updateDescriptionDebounce(e)}
+            onChange={updateDescription}
             statusText={{
               loading: 'Submitting your bio.',
               error: 'Could not submit your bio.',

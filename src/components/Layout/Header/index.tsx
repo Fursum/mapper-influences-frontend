@@ -7,7 +7,6 @@ import { getOsuAuthUrl } from '@libs/consts/urls';
 import type { UserSmall } from '@libs/types/rust';
 import { useCurrentUser } from '@services/user';
 import { useGlobalTooltip } from '@states/globalTooltip';
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -19,10 +18,6 @@ export default function Header() {
   const router = useRouter();
   const { data: user } = useCurrentUser();
   const tooltipProps = useGlobalTooltip((state) => state.tooltipProps);
-  const NoSSRProfile = dynamic(
-    () => import('.').then((modules) => modules.ProfileLinkAvatar),
-    { ssr: false },
-  );
 
   // This block prevents hydration render mismatch from persisted user store
   const [hasHydrated, setHasHydrated] = useState(false);
@@ -55,13 +50,15 @@ export default function Header() {
           Log In
         </a>
       ) : (
-        <NoSSRProfile user={user} />
+        <ProfileLinkAvatar user={user} />
       )}
     </div>
   );
 }
 
-export const ProfileLinkAvatar: FC<{ user?: UserSmall }> = ({ user }) => (
+// The server and the first client render both have no user yet, so this
+// renders the same default avatar on both and needs no client-only wrapper
+const ProfileLinkAvatar: FC<{ user?: UserSmall }> = ({ user }) => (
   <Link href={'/profile'} aria-label="Your profile">
     <ProfilePhoto
       className={styles.avatar}

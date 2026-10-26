@@ -56,14 +56,14 @@ const TutorialScreen: FC<Props> = ({ children }) => {
           number={2}
           title={'Add the user to  your influences list'}
         >
-          <AddUserButton
-            userId={0}
-            action="add"
-            dontShowForm
+          {/* AddUserButton does not take mouse handlers, so the span holds the tooltip */}
+          <span
             {...tooltipProps(
               'You need to click this inside a profile. Search someone first!',
             )}
-          />
+          >
+            <AddUserButton userId={0} action="add" dontShowForm />
+          </span>
         </TutorialStep>
 
         <TutorialStep
@@ -71,7 +71,8 @@ const TutorialScreen: FC<Props> = ({ children }) => {
           title={'In your profile, describe how the mapper influenced you'}
         >
           <div className={styles.profileSide}>
-            <InfluenceType editable influenceData={influenceData} />
+            {/* hideRemove: this demo must not delete a real influence */}
+            <InfluenceType editable hideRemove influenceData={influenceData} />
             <BaseProfileCard userData={user} className={styles.card} />
           </div>
           <div className={styles.descriptionSide}>

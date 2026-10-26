@@ -28,7 +28,8 @@ const BaseProfileCard: FC<Props> = ({ className = '', userData }) => {
   const { data: currentUser } = useCurrentUser();
 
   const prefetchUserBio = useCallback(() => {
-    if (!userData?.id || currentUser) return;
+    // Guests cannot open profiles, so only prefetch for logged-in users
+    if (!userData?.id || !currentUser) return;
     queryClient.prefetchQuery({
       queryKey: ['userBio', userData?.id.toString()],
       queryFn: () => getUserBio(userData?.id),

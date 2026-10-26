@@ -58,6 +58,10 @@ const AddUserButton: FC<Props> = ({
     (e: MouseEvent<HTMLButtonElement>) => {
       onClick?.(e); // Used in tutorial
       if (action === 'add' && !dontShowForm) {
+        // The modal unmounts on close (cancel, Escape, or submit), so its
+        // fields open empty with Respect selected. Match that state here.
+        setDescription('');
+        setType(InfluenceTypeEnum.Respect);
         setShowForm(true);
       }
       if (action === 'remove') {
@@ -96,7 +100,7 @@ const AddUserButton: FC<Props> = ({
 
   const resetForm = () => {
     setDescription('');
-    setType(InfluenceTypeEnum.Fascination);
+    setType(InfluenceTypeEnum.Respect);
     setShowForm(false);
   };
 

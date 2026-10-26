@@ -65,16 +65,23 @@ export function updateUserDescription(bio: string) {
 
 export const useDescriptionMutation = () => {
   const queryClient = useQueryClient();
+  const { data: currentUser } = useCurrentUser();
   return useMutation({
     mutationFn: updateUserDescription,
     onSuccess: (_, variables: string) => {
-      queryClient.setQueryData<User>(['currentUser'], (old) => {
+      const updater = (old: User | undefined) => {
         if (!old) return old;
         return {
           ...old,
           bio: variables,
         };
-      });
+      };
+      queryClient.setQueryData<User>(['currentUser'], updater);
+      // The profile page reads the bio from this key
+      queryClient.setQueryData<User>(
+        ['userBio', currentUser?.id.toString()],
+        updater,
+      );
     },
   });
 };

@@ -10,37 +10,48 @@ const backupActivityUrl = `${process.env.NEXT_PUBLIC_API_URL}/activity`;
 export const useActivities = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
 
-  const { readyState, lastMessage } = useWebSocket<Activity>(url);
+  // Without shouldReconnect, the library never reconnects after a drop
+  const { readyState, lastMessage } = useWebSocket<Activity>(url, {
+    shouldReconnect: () => true,
+  });
 
   useEffect(() => {
     if (!lastMessage?.data) return;
     const lastMessageParsed = JSON.parse(lastMessage.data);
+    const incoming: Activity[] = Array.isArray(lastMessageParsed)
+      ? lastMessageParsed
+      : [lastMessageParsed];
 
-    if (Array.isArray(lastMessageParsed)) {
-      setActivities((prev) => [...prev, ...lastMessageParsed]);
-      return;
-    }
-
-    setActivities((prev) => [...prev, lastMessageParsed]);
+    // A reconnect sends the initial batch again, so skip known ids
+    setActivities((prev) => {
+      const knownIds = new Set(prev.map((activity) => activity.id));
+      return [
+        ...prev,
+        ...incoming.filter((activity) => !knownIds.has(activity.id)),
+      ];
+    });
   }, [lastMessage?.data]);
 
-  // Pull the data with from the fallback endpoint if the websocket fails
+  // Pull the data from the fallback endpoint if the websocket fails.
+  // Keyed on emptiness, not the array, so an empty response does not
+  // start the timer again in a loop.
+  const isEmpty = activities.length === 0;
   useEffect(() => {
-    const timeoutId = setTimeout(async () => {
-      if (activities.length === 0) {
-        axios
-          .get<Activity[]>(backupActivityUrl)
-          .then((res) => {
-            setActivities(res.data);
-          })
-          .catch((err) => {
-            console.warn('Error fetching fallback data', err);
-          });
-      }
+    if (!isEmpty) return;
+    const timeoutId = setTimeout(() => {
+      axios
+        .get<Activity[]>(backupActivityUrl)
+        .then((res) => {
+          // Do not replace websocket data that arrived during the request
+          setActivities((prev) => (prev.length ? prev : res.data));
+        })
+        .catch((err) => {
+          console.warn('Error fetching fallback data', err);
+        });
     }, 1500);
 
     return () => clearTimeout(timeoutId);
-  }, [activities]);
+  }, [isEmpty]);
 
   return {
     activities: activities?.toReversed() || [],

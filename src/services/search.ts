@@ -1,11 +1,11 @@
 import type { BeatmapsetSmall, UserSmall } from '@libs/types/rust';
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
 export function getSearchResults(query: string) {
   return axios
     .get<UserSmall[]>(
-      `${process.env.NEXT_PUBLIC_API_URL}/search/user/${query}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/search/user/${encodeURIComponent(query)}`,
       {
         withCredentials: true,
       },
@@ -13,10 +13,11 @@ export function getSearchResults(query: string) {
     .then((res) => res.data);
 }
 
-export function searchMaps(query: string) {
+// filters is a prebuilt "&key=value" string from useFilterStore
+export function searchMaps(query: string, filters = '') {
   return axios
     .get<BeatmapsetSmall[]>(
-      `${process.env.NEXT_PUBLIC_API_URL}/search/map?q=${query}&nsfw=true`,
+      `${process.env.NEXT_PUBLIC_API_URL}/search/map?q=${encodeURIComponent(query)}${filters}&nsfw=true`,
       {
         withCredentials: true,
       },
@@ -24,10 +25,16 @@ export function searchMaps(query: string) {
     .then((res) => res.data);
 }
 
-export const useMapSearch = (query: string) => {
+export const useMapSearch = (
+  query: string,
+  filters: string,
+  enabled: boolean,
+) => {
   return useQuery({
-    queryKey: ['mapSearch', query],
-    queryFn: () => searchMaps(query),
-    enabled: !!query,
+    queryKey: ['mapSearch', query, filters],
+    queryFn: () => searchMaps(query, filters),
+    enabled,
+    // Keep the old results on screen while the next query loads
+    placeholderData: keepPreviousData,
   });
 };

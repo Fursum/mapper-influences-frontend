@@ -1,8 +1,7 @@
-import { type FC, useEffect, useMemo, useState } from 'react';
+import { type FC, useState } from 'react';
 
-import type { BeatmapsetSmall } from '@libs/types/rust';
-import { searchMaps } from '@services/search';
-import AwesomeDebouncePromise from 'awesome-debounce-promise';
+import { useMapSearch } from '@services/search';
+import { useDebounceValue } from 'usehooks-ts';
 
 import AdvancedFilters from './AdvancedFilters';
 import SearchResults from './SearchResults';
@@ -25,9 +24,8 @@ export const AddMapModalContents: FC<{
   suggestedUserPreviousNames,
   mapLimit,
 }) => {
-  const getFiltersQuery = useFilterStore((state) => state.getQueryString);
+  const filtersQuery = useFilterStore((state) => state.getQueryString());
 
-  const [mapResults, setMapResults] = useState<BeatmapsetSmall[]>([]);
   const [selectedTab, setSelectedTab] = useState<'search' | 'advanced'>(
     'search',
   );
@@ -37,14 +35,14 @@ export const AddMapModalContents: FC<{
       ? `creator:${suggestedUsername?.replaceAll(' ', '_')}`
       : '',
   );
+  const [debouncedInput] = useDebounceValue(searchInput, 400);
 
-  // Memoized so re-renders share one debounce timer
-  const debouncedSearch = useMemo(
-    () =>
-      AwesomeDebouncePromise((query: string) => {
-        searchMaps(query + getFiltersQuery()).then(setMapResults);
-      }, 400),
-    [getFiltersQuery],
+  // Only searches on the search tab, so filter edits apply when the user
+  // returns to it. react-query drops stale responses that arrive late.
+  const { data: mapResults } = useMapSearch(
+    debouncedInput,
+    filtersQuery,
+    selectedTab === 'search',
   );
 
   const toggleMap = (id: number) => {
@@ -54,12 +52,6 @@ export const AddMapModalContents: FC<{
       return [...old, id];
     });
   };
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <This should only trigger on tab change>
-  useEffect(() => {
-    if (selectedTab === 'search')
-      searchMaps(`${searchInput}${getFiltersQuery()}`).then(setMapResults);
-  }, [selectedTab]);
 
   const limitExceeded = mapLimit < selectedMaps.length;
 
@@ -102,10 +94,7 @@ export const AddMapModalContents: FC<{
         <label>
           <span>Search maps</span>
           <input
-            onChange={(e) => {
-              setSearchInput(e.target.value);
-              debouncedSearch(e.target.value);
-            }}
+            onChange={(e) => setSearchInput(e.target.value)}
             value={searchInput}
             onKeyDown={(e) => {
               if (e.key === 'Enter') e.preventDefault();

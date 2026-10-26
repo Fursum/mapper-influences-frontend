@@ -1,5 +1,4 @@
 import { type FC, useRef, useState } from 'react';
-import { toast } from 'react-toastify';
 
 import Modal from '@components/SharedComponents/Modal';
 import Arrow from '@components/SvgComponents/Arrow';
@@ -58,11 +57,9 @@ const InfluenceType: FC<Props> = ({
     noSubmitOnChange?.(newType);
     if (onChange) {
       setIsLoading(true);
+      // The caller shows the error toast
       onChange(newType)
-        .catch(() => {
-          setSelectedType(selectedType);
-          toast.error('Failed to update influence level.');
-        })
+        .catch(() => setSelectedType(selectedType))
         .finally(() => setIsLoading(false));
     }
   };

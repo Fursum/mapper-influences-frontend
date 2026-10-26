@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import ProfilePage from '@components/PageComponents/ProfilePage';
 import useAuth from '@hooks/useAuth';
 import { getUserBio, useCurrentUser, useUserBio } from '@services/user';
@@ -30,9 +32,9 @@ const MapperPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
   // Before i was assuming the current profile wouldnt use the id from the url
   const isSelf = currentUser?.id.toString() === mapperId?.toString();
 
-  if (!isLoading && error && mapperId) {
-    router.push('/404');
-  }
+  useEffect(() => {
+    if (!isLoading && error && mapperId) router.push('/404');
+  }, [isLoading, error, mapperId, router.push]);
 
   return (
     <>
@@ -67,7 +69,8 @@ export const getStaticProps = async (
       revalidate: 1200,
     };
   } catch (_) {
-    return { props: {} };
+    // Retry soon. Without revalidate, one failed fetch is cached until the next deploy.
+    return { props: {}, revalidate: 60 };
   }
 };
 
